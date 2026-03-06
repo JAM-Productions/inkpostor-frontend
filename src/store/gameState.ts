@@ -1,0 +1,158 @@
+import { create } from 'zustand';
+import { socket } from '../socket';
+
+export type GamePhase = 'LOBBY' | 'ROLE_REVEAL' | 'DRAWING' | 'VOTING' | 'RESULTS';
+
+export interface Player {
+    id: string;
+    name: string;
+    isConnected: boolean;
+    score: number;
+    hasVoted?: boolean;
+}
+
+export interface StrokeData {
+    x: number;
+    y: number;
+    color: string;
+    isNewStroke: boolean; // True if it's the first point of a line
+}
+
+export interface GameState {
+    roomId: string | null;
+    hostId: string | null;
+    phase: GamePhase;
+    players: Player[];
+    impostorId: string | null; // Only available in RESULTS or to the impostor themselves locally
+    secretWord: string | null; // Only available to non-impostors
+    secretCategory: string | null;
+    currentTurnPlayerId: string | null;
+    turnOrder: string[];
+    turnIndex: number;
+    votes: Record<string, string>;
+    canvasStrokes: StrokeData[];
+
+    // Local only state
+    myId: string | null;
+    myName: string | null;
+    amIImpostor: boolean | null;
+    errorMessage: string | null;
+
+    // Actions mapped to Socket
+    actions: {
+        connectAndJoin: (roomId: string, playerName: string) => void;
+        connectAndCreate: (roomId: string, playerName: string) => void;
+        startGame: () => void;
+        proceedToDrawing: () => void;
+        drawStroke: (stroke: StrokeData) => void;
+        clearCanvas: () => void;
+        endTurn: () => void;
+        vote: (votedForId: string) => void;
+        playAgain: () => void;
+        setError: (msg: string | null) => void;
+    };
+}
+
+export const useGameStore = create<GameState>()((set, get) => ({
+    roomId: null,
+    hostId: null,
+    phase: 'LOBBY',
+    players: [],
+    impostorId: null,
+    secretWord: null,
+    secretCategory: null,
+    currentTurnPlayerId: null,
+    turnOrder: [],
+    turnIndex: 0,
+    votes: {},
+    canvasStrokes: [],
+
+    myId: null,
+    myName: null,
+    amIImpostor: null,
+    errorMessage: null,
+
+    actions: {
+        connectAndCreate: (roomId, playerName) => {
+            socket.connect();
+            socket.emit('createRoom', { roomId, playerName });
+            set({ myName: playerName });
+        },
+        connectAndJoin: (roomId, playerName) => {
+            socket.connect();
+            socket.emit('joinRoom', { roomId, playerName });
+            set({ myName: playerName });
+        },
+        startGame: () => {
+            socket.emit('startGame');
+        },
+        proceedToDrawing: () => {
+            socket.emit('proceedToDrawing');
+        },
+        drawStroke: (stroke) => {
+            socket.emit('drawStroke', stroke);
+        },
+        clearCanvas: () => {
+            socket.emit('clearCanvas');
+        },
+        endTurn: () => {
+            socket.emit('endTurn');
+        },
+        vote: (votedForId) => {
+            socket.emit('vote', votedForId);
+        },
+        playAgain: () => {
+            socket.emit('playAgain');
+        },
+        setError: (msg) => {
+            set({ errorMessage: msg });
+        }
+    }
+}));
+
+// Setup socket listeners
+socket.on('connect', () => {
+    useGameStore.setState({ myId: socket.id });
+});
+
+socket.on('gameStateUpdate', (newState) => {
+    // Sync all server-provided state that exists on client state
+    useGameStore.setState(state => ({
+        ...state,
+        roomId: newState.roomId,
+        hostId: newState.hostId,
+        phase: newState.phase,
+        players: newState.players,
+        impostorId: newState.impostorId, // Usually null from server until RESULTS
+        secretWord: newState.secretWord, // Usually null from server unless RESULTS
+        secretCategory: newState.secretCategory,
+        currentTurnPlayerId: newState.currentTurnPlayerId,
+        turnOrder: newState.turnOrder,
+        turnIndex: newState.turnIndex,
+        votes: newState.votes,
+        canvasStrokes: newState.canvasStrokes
+    }));
+});
+
+socket.on('roleAssignment', (roles: { isImpostor: boolean, secretWord: string | null, secretCategory: string | null }) => {
+    useGameStore.setState({
+        amIImpostor: roles.isImpostor,
+        secretWord: roles.secretWord,
+        secretCategory: roles.secretCategory
+    });
+});
+
+socket.on('strokeUpdate', (stroke: StrokeData) => {
+    useGameStore.setState(state => ({
+        canvasStrokes: [...state.canvasStrokes, stroke]
+    }));
+});
+
+socket.on('canvasCleared', () => {
+    useGameStore.setState({ canvasStrokes: [] });
+});
+
+socket.on('error', (msg: string) => {
+    useGameStore.setState({ errorMessage: msg });
+    socket.disconnect();
+});

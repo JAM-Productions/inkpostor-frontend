@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  /* Dynamic vibrant palette for Web App */
+  --color-ink-bg: #0f172a;
+  --color-ink-surface: #1e293b;
+  --color-ink-accent: #3b82f6;
+  --color-ink-danger: #ef4444;
+  --color-ink-success: #10b981;
+  --color-ink-text: #f8fafc;
+  --color-ink-text-muted: #94a3b8;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@layer base {
+  body {
+    background-color: var(--color-ink-bg);
+    color: var(--color-ink-text);
+    font-family: var(--font-sans);
+    margin: 0;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom scrollbar for web app feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-surface);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-accent);
+}
