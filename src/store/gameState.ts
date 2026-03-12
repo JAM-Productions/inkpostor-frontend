@@ -88,7 +88,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
                 const { token } = await res.json();
                 socket.auth = { token };
                 socket.connect();
-                socket.emit('createRoom', { roomId, playerName });
+                socket.emit('createRoom', { roomId });
                 set({ myName: playerName });
             } catch (err) {
                 set({ errorMessage: 'Server connection error.' });
@@ -109,7 +109,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
                 const { token } = await res.json();
                 socket.auth = { token };
                 socket.connect();
-                socket.emit('joinRoom', { roomId, playerName });
+                socket.emit('joinRoom', { roomId });
                 set({ myName: playerName });
             } catch (err) {
                 set({ errorMessage: 'Server connection error.' });
