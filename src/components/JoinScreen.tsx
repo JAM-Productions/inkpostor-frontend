@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../store/gameState';
-import { PenTool, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 export const JoinScreen: React.FC = () => {
     const [playerName, setPlayerName] = useState('');
