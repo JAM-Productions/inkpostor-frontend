@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { socket } from '../socket';
+import { socket, SERVER_URL } from '../socket';
 
 export type GamePhase = 'LOBBY' | 'ROLE_REVEAL' | 'DRAWING' | 'VOTING' | 'RESULTS';
 
@@ -73,15 +73,47 @@ export const useGameStore = create<GameState>()((set, get) => ({
     errorMessage: null,
 
     actions: {
-        connectAndCreate: (roomId, playerName) => {
-            socket.connect();
-            socket.emit('createRoom', { roomId, playerName });
-            set({ myName: playerName });
+        connectAndCreate: async (roomId, playerName) => {
+            try {
+                const res = await fetch(`${SERVER_URL || ''}/auth`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerName }),
+                });
+                if (!res.ok) {
+                    const data = await res.json();
+                    set({ errorMessage: data.message || 'Authentication failed' });
+                    return;
+                }
+                const { token } = await res.json();
+                socket.auth = { token };
+                socket.connect();
+                socket.emit('createRoom', { roomId, playerName });
+                set({ myName: playerName });
+            } catch (err) {
+                set({ errorMessage: 'Server connection error.' });
+            }
         },
-        connectAndJoin: (roomId, playerName) => {
-            socket.connect();
-            socket.emit('joinRoom', { roomId, playerName });
-            set({ myName: playerName });
+        connectAndJoin: async (roomId, playerName) => {
+            try {
+                const res = await fetch(`${SERVER_URL || ''}/auth`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerName }),
+                });
+                if (!res.ok) {
+                    const data = await res.json();
+                    set({ errorMessage: data.message || 'Authentication failed' });
+                    return;
+                }
+                const { token } = await res.json();
+                socket.auth = { token };
+                socket.connect();
+                socket.emit('joinRoom', { roomId, playerName });
+                set({ myName: playerName });
+            } catch (err) {
+                set({ errorMessage: 'Server connection error.' });
+            }
         },
         startGame: () => {
             socket.emit('startGame');
