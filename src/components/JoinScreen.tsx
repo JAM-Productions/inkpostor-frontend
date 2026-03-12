@@ -25,10 +25,9 @@ export const JoinScreen: React.FC = () => {
         <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-slate-900">
             <div className="max-w-md w-full text-center space-y-8">
                 <div className="space-y-2">
-                    <div className="inline-flex items-center justify-center p-3 bg-blue-500 rounded-2xl mb-4 shadow-lg shadow-blue-500/30">
-                        <PenTool className="w-10 h-10 text-white" />
+                    <div className="inline-flex items-center justify-center">
+                        <img src="/favicon.svg" alt="Inkpostor Logo" className="w-60 h-60" />
                     </div>
-                    <h1 className="text-5xl font-extrabold tracking-tight text-white mb-2">Inkpostor</h1>
                     <p className="text-slate-400 text-lg">Draw together. Find the fake.</p>
                 </div>
 
