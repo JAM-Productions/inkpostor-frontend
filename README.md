@@ -32,7 +32,7 @@ Inkpostor is a creative social deduction game. Players are given a secret word a
    ```bash
    # Run tests once
    npm run test
-   
+
    # Run tests with coverage
    npm run test:coverage
    ```
