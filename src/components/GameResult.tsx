@@ -1,6 +1,12 @@
 import React, { useMemo } from "react";
 import { useGameStore } from "../store/gameState";
-import { Skull, Trophy, Play } from "lucide-react";
+import {
+  Skull,
+  Trophy,
+  Play,
+  ArrowRight,
+  CircleQuestionMark,
+} from "lucide-react";
 
 export const GameResult: React.FC = () => {
   const impostorId = useGameStore((state) => state.impostorId);
@@ -40,32 +46,48 @@ export const GameResult: React.FC = () => {
   }, [votes]);
 
   const impostorCaught = ejectedResult === impostorId;
+  // For now that we dont have eject logic
+  const isGameOver = impostorCaught || ejectedResult;
+  // --------------------------------------
   const impostorName =
     players.find((p) => p.id === impostorId)?.name || "Unknown";
   const ejectedName = players.find((p) => p.id === ejectedResult)?.name;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-950">
-      {/* We could add react-confetti here if installed, but for MVP CSS animations are enough */}
       <div className="max-w-2xl w-full text-center space-y-8 z-10">
         <div
-          className={`p-8 rounded-3xl border-2 ${impostorCaught ? "bg-emerald-950/40 border-emerald-500/30" : "bg-red-950/40 border-red-500/30"}`}
+          className={`p-8 rounded-3xl border-2 transition-colors ${
+            isGameOver
+              ? impostorCaught
+                ? "bg-emerald-950/40 border-emerald-500/30"
+                : "bg-red-950/40 border-red-500/30"
+              : "bg-stone-900/60 border-stone-700"
+          }`}
         >
           <div className="flex justify-center mb-6">
-            {impostorCaught ? (
-              <Trophy className="w-24 h-24 text-emerald-400" />
+            {isGameOver ? (
+              impostorCaught ? (
+                <Trophy className="w-24 h-24 text-emerald-400" />
+              ) : (
+                <Skull className="w-24 h-24 text-red-500" />
+              )
             ) : (
-              <Skull className="w-24 h-24 text-red-500" />
+              <CircleQuestionMark className="w-24 h-24 text-stone-400" />
             )}
           </div>
 
           <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">
-            {impostorCaught ? "Impostor Defeated!" : "Impostor Won!"}
+            {isGameOver
+              ? impostorCaught
+                ? "Impostor Defeated!"
+                : "Impostor Won!"
+              : "Result of the vote"}
           </h1>
 
           <div className="text-xl md:text-2xl text-stone-300 font-medium space-y-2">
             {!ejectedResult ? (
-              <p>Votes were tied or skipped.</p>
+              <p className="text-stone-400 italic">Nobody was ejected.</p>
             ) : (
               <p>
                 <span className="font-bold text-white">{ejectedName}</span> was
@@ -73,36 +95,55 @@ export const GameResult: React.FC = () => {
               </p>
             )}
 
-            <p className="mt-4">
-              <span className="font-bold text-white">{impostorName}</span> was
-              the Inkpostor!
-            </p>
+            {isGameOver && (
+              <p className="mt-4">
+                <span className="font-bold text-white">{impostorName}</span> was
+                the Inkpostor!
+              </p>
+            )}
           </div>
         </div>
 
-        <div className="bg-stone-800 rounded-2xl p-6 border border-stone-700 shadow-xl">
-          <p className="text-stone-400 mb-2 uppercase tracking-wider text-sm font-semibold">
-            The secret word was
-          </p>
-          <div className="text-3xl font-black text-white">{secretWord}</div>
-          <div className="text-stone-500 mt-1">{secretCategory}</div>
-        </div>
+        {isGameOver && (
+          <div className="bg-stone-800 rounded-2xl p-6 border border-stone-700 shadow-xl animate-in fade-in zoom-in duration-300">
+            <p className="text-stone-400 mb-2 uppercase tracking-wider text-sm font-semibold">
+              The secret word was
+            </p>
+            <div className="text-3xl font-black text-white">{secretWord}</div>
+            <div className="text-stone-500 mt-1">{secretCategory}</div>
+          </div>
+        )}
 
         {isHost ? (
           <button
-            onClick={actions.playAgain}
-            className="w-full group relative overflow-hidden rounded-2xl bg-white text-stone-900 p-[2px] transition-all hover:scale-[1.02] active:scale-[0.98]"
+            onClick={isGameOver ? actions.playAgain : actions.nextRound}
+            className={`w-full group relative overflow-hidden rounded-2xl p-[2px] transition-all hover:scale-[1.02] active:scale-[0.98] ${
+              isGameOver ? "bg-white text-stone-900" : "bg-stone-700 text-white"
+            }`}
           >
-            <div className="flex h-full w-full items-center justify-center gap-2 rounded-2xl bg-white px-8 py-5 font-black text-stone-900">
-              <Play className="fill-stone-900 w-6 h-6" />
-              <span className="text-xl tracking-wide uppercase">
-                Play Again
-              </span>
+            <div
+              className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-5 font-black ${isGameOver ? "bg-white" : "bg-stone-800"}`}
+            >
+              {isGameOver ? (
+                <>
+                  <Play className="fill-current w-6 h-6" />
+                  <span className="text-xl tracking-wide uppercase">
+                    Play Again
+                  </span>
+                </>
+              ) : (
+                <>
+                  <ArrowRight className="w-6 h-6" />
+                  <span className="text-xl tracking-wide uppercase">
+                    Next Round
+                  </span>
+                </>
+              )}
             </div>
           </button>
         ) : (
           <div className="text-stone-500 animate-pulse mt-8">
-            Waiting for host to start a new game...
+            Waiting for host to {isGameOver ? "restart" : "continue"}...
           </div>
         )}
       </div>

@@ -36,6 +36,7 @@ export interface GameState {
   turnIndex: number;
   votes: Record<string, string>;
   canvasStrokes: StrokeData[];
+  currentRound: number;
 
   // Local only state
   myId: string | null;
@@ -54,6 +55,7 @@ export interface GameState {
     endTurn: () => void;
     vote: (votedForId: string) => void;
     playAgain: () => void;
+    nextRound: () => void;
     setError: (msg: string | null) => void;
   };
 }
@@ -71,6 +73,7 @@ export const useGameStore = create<GameState>()((set) => ({
   turnIndex: 0,
   votes: {},
   canvasStrokes: [],
+  currentRound: 1,
 
   myId: null,
   myName: null,
@@ -142,6 +145,9 @@ export const useGameStore = create<GameState>()((set) => ({
     playAgain: () => {
       socket.emit("playAgain");
     },
+    nextRound: () => {
+      socket.emit("nextRound");
+    },
     setError: (msg) => {
       set({ errorMessage: msg });
     },
@@ -169,6 +175,7 @@ socket.on("gameStateUpdate", (newState) => {
     turnIndex: newState.turnIndex,
     votes: newState.votes,
     canvasStrokes: newState.canvasStrokes,
+    currentRound: newState.currentRound,
   }));
 });
 

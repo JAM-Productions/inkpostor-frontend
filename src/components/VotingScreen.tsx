@@ -7,6 +7,7 @@ export const VotingScreen: React.FC = () => {
   const myId = useGameStore((state) => state.myId);
   const votes = useGameStore((state) => state.votes);
   const actions = useGameStore((state) => state.actions);
+  const currentRound = useGameStore((state) => state.currentRound);
 
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
 
@@ -27,6 +28,9 @@ export const VotingScreen: React.FC = () => {
             Voting Time
           </h1>
           <p className="text-stone-400 text-lg">Who is the Inkpostor?</p>
+          <p className="text-stone-400 text-lg font-bold">
+            Round {currentRound}
+          </p>
         </div>
 
         {!hasVoted ? (
