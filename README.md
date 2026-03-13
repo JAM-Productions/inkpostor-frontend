@@ -8,7 +8,7 @@ Inkpostor is a creative social deduction game. Players are given a secret word a
 
 ## Tech Stack
 
-- **Frontend Framework:** React (+ TypeScript)
+- **Frontend Framework:** React (+ TypeScript).
 - **Tooling:** Vite
 - **Styling:** Tailwind CSS + Lucide Icons
 - **State Management:** Zustand
@@ -19,16 +19,19 @@ Inkpostor is a creative social deduction game. Players are given a secret word a
 ## Running Locally
 
 1. **Install Dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Start the Development Server:**
+
    ```bash
    npm run dev
    ```
 
 3. **Running the Tests:**
+
    ```bash
    # Run tests once
    npm run test
@@ -38,6 +41,7 @@ Inkpostor is a creative social deduction game. Players are given a secret word a
    ```
 
 4. **Linting and Formatting:**
+
    ```bash
    # Run ESLint
    npm run lint
