@@ -24,17 +24,12 @@ export const JoinScreen: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-900">
       <div className="max-w-md w-full text-center space-y-8">
-        <div className="space-y-2">
-          <div className="inline-flex items-center justify-center">
-            <img
-              src="/favicon.svg"
-              alt="Inkpostor Logo"
-              className="w-60 h-60"
-            />
-          </div>
-          <p className="text-stone-400 text-lg">
-            Draw together. Find the fake.
-          </p>
+        <div className="inline-flex items-center justify-center">
+          <img
+            src="/inkpostor-logo.png"
+            alt="Inkpostor Logo"
+            className=" h-42"
+          />
         </div>
 
         {errorMessage && (
@@ -52,7 +47,7 @@ export const JoinScreen: React.FC = () => {
               <input
                 type="text"
                 placeholder="Enter your name"
-                className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none text-white placeholder-stone-500"
+                className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-[#8e0000] focus:border-transparent transition-all outline-none text-white placeholder-stone-500"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 maxLength={15}
@@ -63,7 +58,7 @@ export const JoinScreen: React.FC = () => {
               <button
                 onClick={handleCreate}
                 disabled={!playerName}
-                className="w-full relative group overflow-hidden rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition-all hover:bg-blue-500 active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+                className="w-full relative group overflow-hidden rounded-xl bg-[#8e0000] px-4 py-3 font-semibold text-white transition-all hover:bg-[#a60000] active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Users className="w-5 h-5" />
                 <span>Create New Game</span>
@@ -88,7 +83,7 @@ export const JoinScreen: React.FC = () => {
               <input
                 type="text"
                 placeholder="E.g. X7K9A2"
-                className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-center uppercase tracking-widest text-white placeholder-stone-600"
+                className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-[#F8F6E7] focus:border-transparent transition-all outline-none text-center uppercase tracking-widest text-white placeholder-stone-600"
                 value={roomId}
                 onChange={(e) => setRoomId(e.target.value)}
                 maxLength={6}
@@ -97,7 +92,7 @@ export const JoinScreen: React.FC = () => {
             <button
               type="submit"
               disabled={!playerName || !roomId}
-              className="w-full rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white transition-all hover:bg-emerald-500 active:scale-95 disabled:opacity-50 disabled:active:scale-100"
+              className="w-full rounded-xl bg-[#F8F6E7] px-4 py-3 font-semibold text-black transition-all hover:bg-white active:scale-95 disabled:opacity-50 disabled:active:scale-100 cursor-pointer"
             >
               Join Game
             </button>

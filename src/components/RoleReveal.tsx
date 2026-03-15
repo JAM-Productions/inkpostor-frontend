@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useGameStore } from "../store/gameState";
-import { Eye, Sparkles, AlertTriangle } from "lucide-react";
+import { Eye } from "lucide-react";
 
 export const RoleReveal: React.FC = () => {
   const [revealed, setRevealed] = useState(false);
@@ -45,31 +45,36 @@ export const RoleReveal: React.FC = () => {
               }`}
           >
             {revealed ? (
-              <div className="animate-in zoom-in-95 duration-200 fade-in flex flex-col items-center">
+              <div className="animate-in zoom-in-95 duration-200 fade-in flex flex-col items-center space-y-4 my-4">
                 {amIImpostor ? (
                   <>
-                    <AlertTriangle className="w-16 h-16 text-red-500 mb-4 animate-pulse" />
+                    <img
+                      src="/inkpostor-character.png"
+                      alt="Inkpostor Logo"
+                      className="h-20"
+                    />
                     <h3 className="text-3xl font-black text-white tracking-widest uppercase text-red-100">
                       You are the <br />
                       <span className="text-red-500">Inkpostor</span>
                     </h3>
-                    <p className="mt-4 text-red-200/80 font-medium text-lg">
-                      Fake it till you make it.
-                    </p>
-                    <p className="text-stone-400 mt-2 text-sm max-w-xs mx-auto">
-                      Category: {secretCategory}
+                    <p className="text-red-500 font-medium px-4 py-1 bg-red-900/50 rounded-full border border-red-500/30 text-sm ">
+                      Hint: {secretCategory}
                     </p>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-16 h-16 text-emerald-400 mb-4" />
-                    <p className="text-emerald-200/80 font-medium mb-1 uppercase tracking-widest text-sm">
+                    <img
+                      src="/no-inkpostor-character.png"
+                      alt="No Inkpostor Logo"
+                      className="h-20"
+                    />
+                    <p className="text-emerald-200/80 font-medium mb-0 uppercase tracking-widest text-sm">
                       The word is
                     </p>
                     <h3 className="text-4xl font-black text-white">
                       {secretWord}
                     </h3>
-                    <p className="text-emerald-400 mt-4 font-medium px-4 py-1 bg-emerald-900/50 rounded-full border border-emerald-500/30 text-sm">
+                    <p className="text-emerald-400  font-medium px-4 py-1 bg-emerald-900/50 rounded-full border border-emerald-500/30 text-sm">
                       Category: {secretCategory}
                     </p>
                   </>
@@ -93,13 +98,13 @@ export const RoleReveal: React.FC = () => {
             </p>
             <button
               onClick={actions.proceedToDrawing}
-              className="w-full rounded-2xl bg-white text-stone-900 px-6 py-4 font-bold text-lg transition-all hover:bg-stone-200 active:scale-95 shadow-lg shadow-white/10"
+              className="w-full rounded-2xl bg-[#F8F6E7] text-stone-900 px-8 py-3 font-bold text-lg transition-all hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
             >
               Start Drawing!
             </button>
           </div>
         ) : (
-          <div className="pt-12 text-stone-500 flex items-center justify-center gap-3">
+          <div className=" text-stone-500 flex items-center justify-center gap-3">
             <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-stone-500"></span>

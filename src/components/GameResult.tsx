@@ -1,18 +1,11 @@
 import React, { useMemo } from "react";
 import { useGameStore } from "../store/gameState";
-import {
-  Skull,
-  Trophy,
-  Play,
-  ArrowRight,
-  CircleQuestionMark,
-} from "lucide-react";
+import { CircleQuestionMark } from "lucide-react";
 
 export const GameResult: React.FC = () => {
   const impostorId = useGameStore((state) => state.impostorId);
   const players = useGameStore((state) => state.players);
   const secretWord = useGameStore((state) => state.secretWord);
-  const secretCategory = useGameStore((state) => state.secretCategory);
   const votes = useGameStore((state) => state.votes);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
@@ -60,34 +53,42 @@ export const GameResult: React.FC = () => {
           className={`p-8 rounded-3xl border-2 transition-colors ${
             isGameOver
               ? impostorCaught
-                ? "bg-emerald-950/40 border-emerald-500/30"
-                : "bg-red-950/40 border-red-500/30"
+                ? "border-emerald-500/50 bg-emerald-950/40 shadow-[0_0_50px_rgba(16,185,129,0.2)]"
+                : "border-red-500/50 bg-red-950/40 shadow-[0_0_50px_rgba(239,68,68,0.2)]"
               : "bg-stone-900/60 border-stone-700"
           }`}
         >
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-4">
             {isGameOver ? (
               impostorCaught ? (
-                <Trophy className="w-24 h-24 text-emerald-400" />
+                <img
+                  src="/no-inkpostor-character.png"
+                  alt="Inkpostor"
+                  className="sm:h-28 h-22"
+                />
               ) : (
-                <Skull className="w-24 h-24 text-red-500" />
+                <img
+                  src="/inkpostor-character.png"
+                  alt="Inkpostor"
+                  className="sm:h-28 h-22"
+                />
               )
             ) : (
-              <CircleQuestionMark className="w-24 h-24 text-stone-400" />
+              <CircleQuestionMark className="sm:w-16 sm:h-16 w-14 h-14 text-stone-400" />
             )}
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">
+          <h1 className="text-4xl md:text-5xl text-white uppercase tracking-tight mb-8 font-rubik-wet-paint font-extralight">
             {isGameOver
               ? impostorCaught
-                ? "Impostor Defeated!"
-                : "Impostor Won!"
+                ? "Inkpostor Defeated"
+                : "Inkpostor Won"
               : "Result of the vote"}
           </h1>
 
           <div className="text-xl md:text-2xl text-stone-300 font-medium space-y-2">
             {!ejectedResult ? (
-              <p className="text-stone-400 italic">Nobody was ejected.</p>
+              <p className="text-stone-400 italic">Nobody was ejected...</p>
             ) : (
               <p>
                 <span className="font-bold text-white">{ejectedName}</span> was
@@ -96,7 +97,7 @@ export const GameResult: React.FC = () => {
             )}
 
             {isGameOver && (
-              <p className="mt-4">
+              <p className="">
                 <span className="font-bold text-white">{impostorName}</span> was
                 the Inkpostor!
               </p>
@@ -110,34 +111,29 @@ export const GameResult: React.FC = () => {
               The secret word was
             </p>
             <div className="text-3xl font-black text-white">{secretWord}</div>
-            <div className="text-stone-500 mt-1">{secretCategory}</div>
           </div>
         )}
 
         {isHost ? (
           <button
             onClick={isGameOver ? actions.playAgain : actions.nextRound}
-            className={`w-full group relative overflow-hidden rounded-2xl p-[2px] transition-all hover:scale-[1.02] active:scale-[0.98] ${
-              isGameOver ? "bg-white text-stone-900" : "bg-stone-700 text-white"
+            className={`w-full cursor-pointer group relative overflow-hidden rounded-2xl p-[2px] transition-all hover:scale-[1.02] active:scale-[0.98] ${
+              isGameOver
+                ? "bg-[#8e0000] hover:bg-ink-accent"
+                : "bg-[#F8F6E7] hover:bg-white text-black"
             }`}
           >
             <div
-              className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-5 font-black ${isGameOver ? "bg-white" : "bg-stone-800"}`}
+              className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 `}
             >
               {isGameOver ? (
-                <>
-                  <Play className="fill-current w-6 h-6" />
-                  <span className="text-xl tracking-wide uppercase">
-                    Play Again
-                  </span>
-                </>
+                <span className="text-xl sm:text-2xl tracking-wide uppercase font-rubik-wet-paint font-extralight">
+                  Play Again
+                </span>
               ) : (
-                <>
-                  <ArrowRight className="w-6 h-6" />
-                  <span className="text-xl tracking-wide uppercase">
-                    Next Round
-                  </span>
-                </>
+                <span className="sm:text-xl text-lg font-extrabold">
+                  Next Round
+                </span>
               )}
             </div>
           </button>

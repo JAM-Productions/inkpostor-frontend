@@ -198,13 +198,13 @@ export const Canvas: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[100dvh] bg-stone-900 p-2 md:p-6 pb-24">
+    <div className="flex flex-col items-center min-h-[100dvh] bg-stone-900 p-2 md:p-6 pb-24 sm:justify-center mt-12 sm:mt-0">
       <div className="w-full max-w-4xl space-y-4">
         {/* Header Banner */}
-        <div className="flex items-center justify-between bg-stone-800 p-4 rounded-2xl border border-stone-700 shadow-xl">
+        <div className="flex items-center justify-between bg-stone-800 p-3 sm:p-4 rounded-2xl border border-stone-700 shadow-xl">
           <div className="flex items-center gap-3">
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${isMyTurn ? "bg-emerald-500 shadow-emerald-500/30" : "bg-stone-600"}`}
+              className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${isMyTurn ? "bg-[#8e0000] shadow-[#8e0000]/30" : "bg-stone-600"}`}
             >
               {activePlayer?.name.charAt(0) || "?"}
             </div>
@@ -212,14 +212,16 @@ export const Canvas: React.FC = () => {
               <p className="text-sm font-bold text-stone-400 uppercase tracking-widest">
                 {isMyTurn ? "Your turn!" : "Now Drawing"}
               </p>
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-lg font-bold text-white">
                 {activePlayer?.name || "Someone"}
               </h2>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <div className="hidden sm:flex flex-col items-end">
+            <div
+              className={`flex flex-col items-end ${isMyTurn ? "hidden sm:flex" : "block sm:flex"}`}
+            >
               <p className="text-xs text-stone-400 font-semibold uppercase mb-1 flex items-center gap-1">
                 <Clock className="w-3 h-3" /> Time
               </p>
@@ -231,7 +233,7 @@ export const Canvas: React.FC = () => {
             {isMyTurn && (
               <button
                 onClick={() => actions.endTurn()}
-                className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20 flex items-center gap-2"
+                className="bg-[#F8F6E7] hover:bg-white text-black px-5 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-[#F8F6E7]/20 cursor-pointer flex items-center gap-2"
               >
                 <CheckSquare className="w-5 h-5" />
                 <span>Done</span>
@@ -244,22 +246,24 @@ export const Canvas: React.FC = () => {
         <div className="relative group">
           <div
             ref={containerRef}
-            className="w-full aspect-[4/3] sm:aspect-video bg-[#E9DEB9] rounded-3xl border-2 border-[#d4c59a] overflow-hidden shadow-2xl relative"
+            className="w-full h-[55vh] sm:aspect-video sm:h-auto bg-[#E9DEB9] rounded-2xl overflow-hidden shadow-2xl relative"
           >
             <canvas
               ref={canvasRef}
-              className={`w-full h-full touch-none ${isMyTurn && !OutOfInk ? "cursor-crosshair" : "cursor-not-allowed"}`}
+              className={`w-full h-full touch-none ${
+                isMyTurn && !OutOfInk
+                  ? "cursor-crosshair"
+                  : "cursor-not-allowed"
+              }`}
               onMouseDown={startDrawing}
               onTouchStart={startDrawing}
             />
-
-            {!isMyTurn && (
-              <div className="absolute inset-0 z-10 pointer-events-none rounded-3xl ring-4 ring-inset ring-black/10" />
-            )}
           </div>
 
           {/* Mobile Time indicator (floats over canvas on small screens) */}
-          <div className="absolute top-4 right-4 sm:hidden bg-stone-900/80 backdrop-blur-md rounded-xl p-2 border border-stone-700 shadow-xl pointer-events-none flex items-center gap-2">
+          <div
+            className={`absolute top-2.5 right-2.5 bg-stone-900/80 backdrop-blur-md rounded-xl p-2 border border-stone-700 shadow-xl pointer-events-none flex items-center gap-2 ${isMyTurn ? "sm:hidden" : "hidden"}`}
+          >
             <Clock className="w-4 h-4 text-emerald-400" />
             <span className="text-xl font-black text-white">
               {(timeLeft / 1000).toFixed(1)}

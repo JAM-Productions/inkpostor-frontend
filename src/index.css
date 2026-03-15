@@ -1,16 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap');
 @import "tailwindcss";
 
 @theme {
   /* Dynamic vibrant palette for Web App */
   --color-ink-bg: #1c1917;
   --color-ink-surface: #292524;
-  --color-ink-accent: #dc2626;
+  --color-ink-accent: #a60000;
   --color-ink-danger: #ef4444;
   --color-ink-success: #10b981;
   --color-ink-text: #fafaf9;
   --color-ink-text-muted: #a8a29e;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-rubik-wet-paint: "Rubik Wet Paint", system-ui;
 }
 
 @layer base {
@@ -36,4 +38,22 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-ink-accent);
+}
+
+/* Scrollbar personalizada */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-ink-bg);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #F8F6E7;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: white;
 }

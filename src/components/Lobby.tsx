@@ -1,6 +1,7 @@
 import React from "react";
 import { useGameStore } from "../store/gameState";
-import { Users, Crown, Play, Loader2 } from "lucide-react";
+import { Users, Crown, Loader2 } from "lucide-react";
+import { MAX_PLAYERS } from "../lib/constants";
 
 export const Lobby: React.FC = () => {
   const roomId = useGameStore((state) => state.roomId);
@@ -13,9 +14,9 @@ export const Lobby: React.FC = () => {
   const canStart = isHost && players.length >= 3;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 py-12 bg-stone-900">
-      <div className="max-w-lg w-full space-y-8">
-        <div className="text-center space-y-4">
+    <div className="flex flex-col items-center justify-center max-h-screen p-4 py-12 bg-stone-900">
+      <div className="max-w-lg w-full space-y-4 sm:space-y-8">
+        <div className="text-center space-y-2 sm:space-y-4">
           <h2 className="text-stone-400 font-medium tracking-widest uppercase text-sm">
             Room Code
           </h2>
@@ -29,38 +30,39 @@ export const Lobby: React.FC = () => {
           </p>
         </div>
 
-        <div className="bg-stone-800 rounded-3xl p-6 shadow-xl border border-stone-700">
+        <div className="bg-stone-800 rounded-3xl p-6 shadow-xl border border-stone-700 flex flex-col max-h-[70vh]">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-              <Users className="text-blue-400" />
+            <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+              <Users className="text-[#F8F6E7] w-5 h-5 sm:w-6 sm:h-6" />
               Players
             </h3>
-            <span className="bg-stone-700 text-stone-300 text-sm font-semibold px-3 py-1 rounded-full">
-              {players.length} joined
+            <span className="bg-stone-700 text-stone-300 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full">
+              {players.length < MAX_PLAYERS ? (
+                <span>
+                  {players.length} / {MAX_PLAYERS} joined
+                </span>
+              ) : (
+                <span className="text-green-400">Full lobby</span>
+              )}
             </span>
           </div>
 
-          <div className="space-y-3 mb-8">
+          <div className="space-y-2 sm:space-y-3 mb-8 overflow-y-auto flex-1 pr-2">
             {players.map((player) => (
               <div
                 key={player.id}
-                className={`flex items-center justify-between p-4 rounded-xl border ${player.id === myId ? "bg-blue-900/20 border-blue-500/30" : "bg-stone-900 border-stone-700/50"}`}
+                className={`flex items-center justify-between p-3 sm:p-4 rounded-xl border ${player.id === myId ? "bg-white/20 border-white/40" : "bg-stone-900 border-stone-700/50"}`}
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${player.id === hostId ? "bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg shadow-orange-500/20" : "bg-stone-700 text-stone-300"}`}
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${player.id === hostId ? "bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg shadow-orange-500/20" : "bg-stone-700 text-stone-300"}`}
                   >
                     {player.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <span className="font-semibold text-white text-lg">
+                    <span className="font-semibold text-white text-sm sm:text-lg">
                       {player.name}
                     </span>
-                    {player.id === myId && (
-                      <span className="ml-2 text-xs font-bold text-blue-400 uppercase tracking-wider">
-                        (You)
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -90,11 +92,12 @@ export const Lobby: React.FC = () => {
             <button
               onClick={actions.startGame}
               disabled={!canStart}
-              className="w-full group relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 p-[2px] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+              className="w-full shrink-0 group relative overflow-hidden rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer bg-[#8e0000] hover:bg-ink-accent"
             >
-              <div className="flex h-full w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-8 py-4 font-bold text-white transition-all group-hover:bg-opacity-0">
-                <Play className="fill-white w-6 h-6" />
-                <span className="text-xl tracking-wide">START GAME</span>
+              <div className="flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 font-bold text-white transition-all group-hover:bg-opacity-0">
+                <span className="text-xl sm:text-2xl tracking-wide font-rubik-wet-paint font-extralight">
+                  START GAME
+                </span>
               </div>
             </button>
           ) : (
