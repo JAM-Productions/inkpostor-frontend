@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useGameStore } from "../store/gameState";
-import { CircleQuestionMark } from "lucide-react";
+import { CircleQuestionMark, Play } from "lucide-react";
 
 export const GameResult: React.FC = () => {
   const impostorId = useGameStore((state) => state.impostorId);
@@ -131,9 +131,12 @@ export const GameResult: React.FC = () => {
                   Play Again
                 </span>
               ) : (
+                <>
+                <Play className="fill-current w-5 h-5" />
                 <span className="sm:text-xl text-lg font-extrabold">
                   Next Round
                 </span>
+                </>
               )}
             </div>
           </button>
