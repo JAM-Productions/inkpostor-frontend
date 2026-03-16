@@ -37,7 +37,7 @@ describe("RoleReveal", () => {
     expect(screen.getByText("Your Secret Role")).toBeInTheDocument();
     expect(screen.getByText("Press and hold to reveal")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /start drawing!/i }),
+      screen.getByRole("button", { name: /start drawing/i }),
     ).toBeInTheDocument();
   });
 
@@ -91,7 +91,7 @@ describe("RoleReveal", () => {
 
     render(<RoleReveal />);
 
-    const startButton = screen.getByRole("button", { name: /start drawing!/i });
+    const startButton = screen.getByRole("button", { name: /start drawing/i });
     fireEvent.click(startButton);
 
     expect(mockProceedToDrawing).toHaveBeenCalled();
