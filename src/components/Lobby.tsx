@@ -12,7 +12,7 @@ export const Lobby: React.FC = () => {
   const [copied, setCopied] = useState(false);
 
   const isHost = myId === hostId;
-  const canStart = isHost && players.length >= 3;
+  const canStart = isHost && players.length >= MIN_PLAYERS;
 
   const handleCopy = async () => {
     if (!roomId) return;
