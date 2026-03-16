@@ -9,7 +9,8 @@ export const Canvas: React.FC = () => {
   const [color, setColor] = useState("#1a1a1a"); // Dark ink default
 
   // Limits
-  const MAX_INK = 2000;
+  const MAX_INK = 1000;
+  const MIN_INK_FOR_DOT = 2;
   const TURN_TIME_MS = 15000; // 15 seconds
   const [inkUsed, setInkUsed] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TURN_TIME_MS);
@@ -23,6 +24,10 @@ export const Canvas: React.FC = () => {
   const myId = useGameStore((state) => state.myId);
   const players = useGameStore((state) => state.players);
   const actions = useGameStore((state) => state.actions);
+
+  const secretWord = useGameStore((state) => state.secretWord);
+  const secretCategory = useGameStore((state) => state.secretCategory);
+  const amIImpostor = useGameStore((state) => state.amIImpostor);
 
   const isMyTurn = currentTurnPlayerId === myId;
   const activePlayer = players.find((p) => p.id === currentTurnPlayerId);
@@ -116,12 +121,13 @@ export const Canvas: React.FC = () => {
   };
 
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isMyTurn || inkUsed >= MAX_INK) return;
+    if (!isMyTurn || inkUsed + MIN_INK_FOR_DOT > MAX_INK) return;
     e.preventDefault();
     setIsDrawing(true);
     const { x, y } = getCoordinates(e);
     lastPoint.current = { x, y };
 
+    setInkUsed((prev) => prev + MIN_INK_FOR_DOT);
     actions.drawStroke({ x, y, color, isNewStroke: true });
   };
 
@@ -242,6 +248,24 @@ export const Canvas: React.FC = () => {
           </div>
         </div>
 
+        {/* Secret Word Display */}
+        <div className="bg-stone-800/50 backdrop-blur-sm border border-stone-700/50 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg">
+          <p className="text-[10px] font-bold text-stone-500 uppercase tracking-[0.2em] mb-1">
+            {secretCategory || "Category Unknown"}
+          </p>
+          <div className="flex items-center gap-3">
+            {amIImpostor ? (
+              <span className="text-xl font-black text-red-500 uppercase tracking-tight italic">
+                You are the Inkpostor!
+              </span>
+            ) : (
+              <span className="text-2xl font-black text-white uppercase tracking-tight">
+                {secretWord || "???"}
+              </span>
+            )}
+          </div>
+        </div>
+
         {/* Canvas Area */}
         <div className="relative group">
           <div
@@ -316,7 +340,7 @@ export const Canvas: React.FC = () => {
               <div className="h-4 bg-stone-900 rounded-full overflow-hidden border border-stone-700 shadow-inner">
                 <div
                   className={`h-full transition-all duration-100 ease-out ${OutOfInk ? "bg-red-500" : "bg-linear-to-r from-emerald-400 to-teal-400"}`}
-                  style={{ width: `${inkPercentage}%` }}
+                  style={{ width: `${100 - inkPercentage}%` }}
                 />
               </div>
             </div>
