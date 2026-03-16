@@ -62,13 +62,13 @@ export const GameResult: React.FC = () => {
             {isGameOver ? (
               impostorCaught ? (
                 <img
-                  src="/no-inkpostor-character.png"
+                  src="/no-inkpostor-character.webp"
                   alt="Inkpostor"
                   className="sm:h-28 h-22"
                 />
               ) : (
                 <img
-                  src="/inkpostor-character.png"
+                  src="/inkpostor-character.webp"
                   alt="Inkpostor"
                   className="sm:h-28 h-22"
                 />

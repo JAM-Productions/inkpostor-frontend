@@ -26,7 +26,7 @@ export const JoinScreen: React.FC = () => {
       <div className="max-w-md w-full text-center space-y-8">
         <div className="inline-flex items-center justify-center">
           <img
-            src="/inkpostor-logo.png"
+            src="/inkpostor-logo.webp"
             alt="Inkpostor Logo"
             className=" h-42"
           />

@@ -47,7 +47,7 @@ export const Lobby: React.FC = () => {
             </span>
           </div>
 
-          <div className="space-y-2 sm:space-y-3 mb-8 overflow-y-auto flex-1 pr-2">
+          <div className="space-y-2 sm:space-y-3 mb-8 overflow-y-auto flex-1 pr-2 custom-scrollbar">
             {players.map((player) => (
               <div
                 key={player.id}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useGameStore } from "../store/gameState";
-import { Eye } from "lucide-react";
+import { Brush, Eye } from "lucide-react";
 
 export const RoleReveal: React.FC = () => {
   const [revealed, setRevealed] = useState(false);
@@ -49,7 +49,7 @@ export const RoleReveal: React.FC = () => {
                 {amIImpostor ? (
                   <>
                     <img
-                      src="/inkpostor-character.png"
+                      src="/inkpostor-character.webp"
                       alt="Inkpostor Logo"
                       className="h-20"
                     />
@@ -64,7 +64,7 @@ export const RoleReveal: React.FC = () => {
                 ) : (
                   <>
                     <img
-                      src="/no-inkpostor-character.png"
+                      src="/no-inkpostor-character.webp"
                       alt="No Inkpostor Logo"
                       className="h-20"
                     />
@@ -98,9 +98,10 @@ export const RoleReveal: React.FC = () => {
             </p>
             <button
               onClick={actions.proceedToDrawing}
-              className="w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-all hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
+              className="flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-all hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
             >
-              Start Drawing!
+              <Brush className="w-5 h-5" />
+              Start Drawing
             </button>
           </div>
         ) : (
