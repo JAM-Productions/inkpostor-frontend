@@ -110,7 +110,12 @@ describe("VotingScreen", () => {
         ...mockStateBase,
         players: [
           { id: "socket-123", name: "Me", hasVoted: false },
-          { id: "socket-456", name: "Player 2", hasVoted: false, isEjected: true }, // Ejected player
+          {
+            id: "socket-456",
+            name: "Player 2",
+            hasVoted: false,
+            isEjected: true,
+          }, // Ejected player
           { id: "socket-789", name: "Player 3", hasVoted: false },
         ],
       };
@@ -141,8 +146,10 @@ describe("VotingScreen", () => {
     render(<VotingScreen />);
 
     expect(screen.getByText("You have been ejected")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /confirm vote/i })).not.toBeInTheDocument();
-    
+    expect(
+      screen.queryByRole("button", { name: /confirm vote/i }),
+    ).not.toBeInTheDocument();
+
     // Other players should be disabled
     const otherPlayerBtn = screen.getByText("Player 2").closest("button");
     expect(otherPlayerBtn).toBeDisabled();
