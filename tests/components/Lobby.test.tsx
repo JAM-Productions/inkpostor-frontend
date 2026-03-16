@@ -103,4 +103,28 @@ describe("Lobby", () => {
       screen.getByText("Waiting for host to start..."),
     ).toBeInTheDocument();
   });
+
+  it("copies the room code to clipboard when clicked", async () => {
+    const user = userEvent.setup();
+    const writeTextMock = vi.fn().mockResolvedValue(undefined);
+
+    vi.stubGlobal("navigator", {
+      clipboard: {
+        writeText: writeTextMock,
+      },
+    });
+
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase, players: [] };
+      return selector(state);
+    });
+
+    render(<Lobby />);
+
+    const copyButton = screen.getByRole("button", { name: /TESTX9/i });
+    await user.click(copyButton);
+
+    expect(writeTextMock).toHaveBeenCalledWith("TESTX9");
+    expect(screen.getByText("Copied!")).toBeInTheDocument();
+  });
 });
