@@ -2,7 +2,6 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Canvas } from "../src/components/Canvas";
 import { useGameStore } from "../src/store/gameState";
-import React from "react";
 
 vi.mock("../src/store/gameState", () => ({
   useGameStore: vi.fn(),
@@ -29,7 +28,9 @@ describe("Canvas Ink Consumption", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useGameStore as any).mockImplementation((selector: any) => selector(mockStateBase));
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(mockStateBase),
+    );
 
     // Mock getBoundingClientRect for canvas
     HTMLCanvasElement.prototype.getBoundingClientRect = vi.fn(() => ({
@@ -57,7 +58,7 @@ describe("Canvas Ink Consumption", () => {
     // Initial ink should be 100%
     expect(screen.getByText("100%")).toBeInTheDocument();
 
-    const canvas = document.querySelector('canvas')!;
+    const canvas = document.querySelector("canvas")!;
 
     // Simulate mousedown (startDrawing)
     fireEvent.mouseDown(canvas, { clientX: 100, clientY: 100 });
@@ -67,24 +68,28 @@ describe("Canvas Ink Consumption", () => {
     // inkUsed = 2. inkPercentage = (2 / 1000) * 100 = 0.2.
     // Displayed: Math.floor(100 - 0.2) = 99%
     expect(screen.getByText("99%")).toBeInTheDocument();
-    expect(mockDrawStroke).toHaveBeenCalledWith(expect.objectContaining({
-        isNewStroke: true
-    }));
+    expect(mockDrawStroke).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isNewStroke: true,
+      }),
+    );
   });
 
   it("displays secret word and category", () => {
-      render(<Canvas />);
-      expect(screen.getByText("Fruit")).toBeInTheDocument();
-      expect(screen.getByText("Apple")).toBeInTheDocument();
+    render(<Canvas />);
+    expect(screen.getByText("Fruit")).toBeInTheDocument();
+    expect(screen.getByText("Apple")).toBeInTheDocument();
   });
 
   it("displays Impostor message for impostor", () => {
-      (useGameStore as any).mockImplementation((selector: any) => selector({
-          ...mockStateBase,
-          amIImpostor: true,
-          secretWord: null
-      }));
-      render(<Canvas />);
-      expect(screen.getByText("You are the Inkpostor!")).toBeInTheDocument();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        amIImpostor: true,
+        secretWord: null,
+      }),
+    );
+    render(<Canvas />);
+    expect(screen.getByText("You are the Inkpostor!")).toBeInTheDocument();
   });
 });
