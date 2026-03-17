@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useGameStore } from "../store/gameState";
-import { Users, Crown, Loader2 } from "lucide-react";
+import { Users, Crown, Loader2, Copy, Check } from "lucide-react";
 import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
 
 export const Lobby: React.FC = () => {
@@ -9,9 +9,21 @@ export const Lobby: React.FC = () => {
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
+  const [copied, setCopied] = useState(false);
 
   const isHost = myId === hostId;
-  const canStart = isHost && players.length >= 3;
+  const canStart = isHost && players.length >= MIN_PLAYERS;
+
+  const handleCopy = async () => {
+    if (!roomId) return;
+    try {
+      await navigator.clipboard.writeText(roomId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center max-h-screen p-4 py-12 bg-stone-900">
@@ -20,11 +32,31 @@ export const Lobby: React.FC = () => {
           <h2 className="text-stone-400 font-medium tracking-widest uppercase text-sm">
             Room Code
           </h2>
-          <div className="inline-block bg-stone-800 border border-stone-700 rounded-2xl px-8 py-4 shadow-inner">
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="group relative inline-flex flex-col items-center gap-2 bg-stone-800 border border-stone-700 hover:border-stone-600 rounded-2xl px-8 py-4 shadow-inner transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            title="Click to copy"
+          >
             <span className="text-5xl font-mono font-bold tracking-[0.2em] text-white">
               {roomId}
             </span>
-          </div>
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider">
+              {copied ? (
+                <>
+                  <Check className="w-3 h-3 text-green-400" />
+                  <span className="text-green-400">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3 h-3 text-stone-500 group-hover:text-stone-400" />
+                  <span className="text-stone-500 group-hover:text-stone-400">
+                    Click to copy
+                  </span>
+                </>
+              )}
+            </div>
+          </button>
           <p className="text-stone-500 text-sm">
             Share this code with your friends to let them join!
           </p>
