@@ -103,4 +103,55 @@ describe("VotingScreen", () => {
       screen.queryByRole("button", { name: /confirm vote/i }),
     ).not.toBeInTheDocument();
   });
+
+  it("disables voting on ejected players", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        players: [
+          { id: "socket-123", name: "Me", hasVoted: false },
+          {
+            id: "socket-456",
+            name: "Player 2",
+            hasVoted: false,
+            isEjected: true,
+          }, // Ejected player
+          { id: "socket-789", name: "Player 3", hasVoted: false },
+        ],
+      };
+      return selector(state);
+    });
+
+    render(<VotingScreen />);
+
+    const ejectedPlayerBtn = screen.getByText("Player 2").closest("button");
+    expect(ejectedPlayerBtn).toBeDisabled();
+
+    const normalPlayerBtn = screen.getByText("Player 3").closest("button");
+    expect(normalPlayerBtn).not.toBeDisabled();
+  });
+
+  it("disables voting interface if current player is ejected", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        players: [
+          { id: "socket-123", name: "Me", hasVoted: false, isEjected: true }, // Me ejected
+          { id: "socket-456", name: "Player 2", hasVoted: false },
+        ],
+      };
+      return selector(state);
+    });
+
+    render(<VotingScreen />);
+
+    expect(screen.getByText("You have been ejected")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /confirm vote/i }),
+    ).not.toBeInTheDocument();
+
+    // Other players should be disabled
+    const otherPlayerBtn = screen.getByText("Player 2").closest("button");
+    expect(otherPlayerBtn).toBeDisabled();
+  });
 });

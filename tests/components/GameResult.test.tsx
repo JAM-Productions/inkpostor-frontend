@@ -34,6 +34,7 @@ describe("GameResult", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         ...mockStateBase,
+        ejectedId: "socket-456",
         votes: {
           "socket-123": "socket-456", // Host votes Impostor
           "socket-789": "socket-456", // P3 votes Impostor
@@ -59,6 +60,12 @@ describe("GameResult", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         ...mockStateBase,
+        ejectedId: "socket-789",
+        players: [
+          { id: "socket-123", name: "Host" },
+          { id: "socket-456", name: "Impostor" },
+          { id: "socket-789", name: "Player 3", isEjected: true },
+        ],
         votes: {
           "socket-123": "socket-789", // Host votes P3
           "socket-456": "socket-789", // Impostor votes P3
@@ -93,7 +100,11 @@ describe("GameResult", () => {
 
   it("allows host to play again", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase, votes: { "socket-123": "socket-456" } };
+      const state = {
+        ...mockStateBase,
+        ejectedId: "socket-456",
+        votes: { "socket-123": "socket-456" },
+      };
       return selector(state);
     });
 
@@ -109,6 +120,7 @@ describe("GameResult", () => {
       const state = {
         ...mockStateBase,
         myId: "socket-456",
+        ejectedId: "socket-456", // Impostor caught
         votes: { "socket-456": "socket-123" },
       }; // Not host
       return selector(state);

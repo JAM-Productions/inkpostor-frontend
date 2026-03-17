@@ -24,6 +24,7 @@ export interface Player {
   isConnected: boolean;
   score: number;
   hasVoted?: boolean;
+  isEjected?: boolean;
 }
 
 export interface StrokeData {
@@ -47,6 +48,7 @@ export interface GameState {
   votes: Record<string, string>;
   canvasStrokes: StrokeData[];
   currentRound: number;
+  ejectedId: string | null;
 
   // Local only state
   myId: string | null;
@@ -84,6 +86,7 @@ export const useGameStore = create<GameState>()((set) => ({
   votes: {},
   canvasStrokes: [],
   currentRound: 1,
+  ejectedId: null,
 
   myId: null,
   myName: null,
@@ -200,6 +203,7 @@ socket.on("gameStateUpdate", (newState) => {
     votes: newState.votes,
     canvasStrokes: newState.canvasStrokes,
     currentRound: newState.currentRound,
+    ejectedId: newState.ejectedId,
   }));
 });
 

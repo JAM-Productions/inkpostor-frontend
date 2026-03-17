@@ -1,50 +1,24 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useGameStore } from "../store/gameState";
 import { CircleQuestionMark, Play } from "lucide-react";
+import { MIN_PLAYERS } from "../lib/constants";
 
 export const GameResult: React.FC = () => {
   const impostorId = useGameStore((state) => state.impostorId);
   const players = useGameStore((state) => state.players);
   const secretWord = useGameStore((state) => state.secretWord);
-  const votes = useGameStore((state) => state.votes);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
-
   const isHost = myId === hostId;
+  const ejectedId = useGameStore((state) => state.ejectedId);
+  const playersRemaining = players.filter((p) => !p.isEjected);
 
-  // Tally votes
-  const ejectedResult = useMemo(() => {
-    const counts: Record<string, number> = {};
-    Object.values(votes).forEach((vote) => {
-      counts[vote] = (counts[vote] || 0) + 1;
-    });
-
-    let maxVotes = 0;
-    let ejectedId: null | string = null;
-    let isTie = false;
-
-    Object.entries(counts).forEach(([id, count]) => {
-      if (count > maxVotes) {
-        maxVotes = count;
-        ejectedId = id;
-        isTie = false;
-      } else if (count === maxVotes) {
-        isTie = true;
-      }
-    });
-
-    if (isTie || ejectedId === "skip") return null;
-    return ejectedId;
-  }, [votes]);
-
-  const impostorCaught = ejectedResult === impostorId;
-  // For now that we dont have eject logic
-  const isGameOver = impostorCaught || ejectedResult;
-  // --------------------------------------
+  const impostorCaught = ejectedId === impostorId;
+  const isGameOver = impostorCaught || playersRemaining.length < MIN_PLAYERS;
   const impostorName =
     players.find((p) => p.id === impostorId)?.name || "Unknown";
-  const ejectedName = players.find((p) => p.id === ejectedResult)?.name;
+  const ejectedName = players.find((p) => p.id === ejectedId)?.name;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-950">
@@ -87,13 +61,20 @@ export const GameResult: React.FC = () => {
           </h1>
 
           <div className="text-xl md:text-2xl text-stone-300 font-medium space-y-2">
-            {!ejectedResult ? (
+            {!ejectedId ? (
               <p className="text-stone-400 italic">Nobody was ejected...</p>
             ) : (
-              <p>
-                <span className="font-bold text-white">{ejectedName}</span> was
-                ejected.
-              </p>
+              <>
+                <p>
+                  <span className="font-bold text-white">{ejectedName}</span>{" "}
+                  was ejected.
+                </p>
+                {!isGameOver && (
+                  <p className="text-stone-400 italic">
+                    Inkpostor is still among us...
+                  </p>
+                )}
+              </>
             )}
 
             {isGameOver && (
