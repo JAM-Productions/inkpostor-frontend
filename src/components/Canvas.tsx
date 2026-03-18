@@ -123,7 +123,11 @@ export const Canvas: React.FC = () => {
     const { x, y } = getCoordinates(e);
     lastPoint.current = { x, y };
 
-    setInkUsed((prev) => Math.min(prev + DOT_INK_COST, MAX_INK));
+    if (inkUsed + DOT_INK_COST >= MAX_INK) {
+      setInkUsed(MAX_INK);
+    } else {
+      setInkUsed((prev) => prev + DOT_INK_COST);
+    }
 
     actions.drawStroke({ x, y, color, isNewStroke: true });
   };
@@ -142,6 +146,7 @@ export const Canvas: React.FC = () => {
       );
 
       if (inkUsed + distance > MAX_INK) {
+        setInkUsed(MAX_INK);
         setIsDrawing(false);
         lastPoint.current = null;
         return;
