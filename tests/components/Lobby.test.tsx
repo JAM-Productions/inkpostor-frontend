@@ -127,4 +127,20 @@ describe("Lobby", () => {
     expect(writeTextMock).toHaveBeenCalledWith("TESTX9");
     expect(screen.getByText("Copied!")).toBeInTheDocument();
   });
+
+  it("disables the copy button and shows placeholder when roomId is null", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase, roomId: null, players: [] };
+      return selector(state);
+    });
+
+    render(<Lobby />);
+
+    const copyButton = screen.getByRole("button", {
+      name: /Waiting for room code\.\.\./i,
+    });
+    expect(copyButton).toBeDisabled();
+    expect(screen.getByText("------")).toBeInTheDocument();
+    expect(copyButton).toHaveAttribute("title", "Room code not ready");
+  });
 });

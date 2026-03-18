@@ -13,6 +13,7 @@ export const Lobby: React.FC = () => {
 
   const isHost = myId === hostId;
   const canStart = isHost && players.length >= MIN_PLAYERS;
+  const hasRoomId = !!roomId;
 
   const handleCopy = async () => {
     if (!roomId) return;
@@ -35,11 +36,14 @@ export const Lobby: React.FC = () => {
           <button
             type="button"
             onClick={handleCopy}
-            className="group relative inline-flex flex-col items-center gap-2 bg-stone-800 border border-stone-700 hover:border-stone-600 rounded-2xl px-8 py-4 shadow-inner transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-            title="Click to copy"
+            disabled={!hasRoomId}
+            className={`group relative inline-flex flex-col items-center gap-2 bg-stone-800 border border-stone-700 hover:border-stone-600 rounded-2xl px-8 py-4 shadow-inner transition-all hover:scale-[1.02] active:scale-[0.98] ${
+              hasRoomId ? "cursor-pointer" : "cursor-not-allowed opacity-60"
+            }`}
+            title={hasRoomId ? "Click to copy" : "Room code not ready"}
           >
             <span className="text-5xl font-mono font-bold tracking-[0.2em] text-white">
-              {roomId}
+              {roomId ?? "------"}
             </span>
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider">
               {copied ? (
@@ -49,9 +53,21 @@ export const Lobby: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Copy className="w-3 h-3 text-stone-500 group-hover:text-stone-400" />
-                  <span className="text-stone-500 group-hover:text-stone-400">
-                    Click to copy
+                  <Copy
+                    className={`w-3 h-3 ${
+                      hasRoomId
+                        ? "text-stone-500 group-hover:text-stone-400"
+                        : "text-stone-600"
+                    }`}
+                  />
+                  <span
+                    className={
+                      hasRoomId
+                        ? "text-stone-500 group-hover:text-stone-400"
+                        : "text-stone-600"
+                    }
+                  >
+                    {hasRoomId ? "Click to copy" : "Waiting for room code..."}
                   </span>
                 </>
               )}
