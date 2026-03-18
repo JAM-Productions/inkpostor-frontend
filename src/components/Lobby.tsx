@@ -37,8 +37,10 @@ export const Lobby: React.FC = () => {
             type="button"
             onClick={handleCopy}
             disabled={!hasRoomId}
-            className={`group relative inline-flex flex-col items-center gap-2 bg-stone-800 border border-stone-700 hover:border-stone-600 rounded-2xl px-8 py-4 shadow-inner transition-all hover:scale-[1.02] active:scale-[0.98] ${
-              hasRoomId ? "cursor-pointer" : "cursor-not-allowed opacity-60"
+            className={`group relative inline-flex flex-col items-center gap-2 bg-stone-800 border border-stone-700 rounded-2xl px-8 py-4 shadow-inner transition-all ${
+              hasRoomId
+                ? "hover:border-stone-600 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                : "cursor-not-allowed opacity-60"
             }`}
             title={hasRoomId ? "Click to copy" : "Room code not ready"}
           >
