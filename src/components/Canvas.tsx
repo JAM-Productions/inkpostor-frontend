@@ -9,7 +9,8 @@ export const Canvas: React.FC = () => {
   const [color, setColor] = useState("#1a1a1a"); // Dark ink default
 
   // Limits
-  const MAX_INK = 2000;
+  const MAX_INK = 1000;
+  const DOT_INK_COST = 5;
   const TURN_TIME_MS = 15000; // 15 seconds
   const [inkUsed, setInkUsed] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TURN_TIME_MS);
@@ -122,6 +123,12 @@ export const Canvas: React.FC = () => {
     const { x, y } = getCoordinates(e);
     lastPoint.current = { x, y };
 
+    if (inkUsed + DOT_INK_COST >= MAX_INK) {
+      setInkUsed(MAX_INK);
+    } else {
+      setInkUsed((prev) => prev + DOT_INK_COST);
+    }
+
     actions.drawStroke({ x, y, color, isNewStroke: true });
   };
 
@@ -139,6 +146,7 @@ export const Canvas: React.FC = () => {
       );
 
       if (inkUsed + distance > MAX_INK) {
+        setInkUsed(MAX_INK);
         setIsDrawing(false);
         lastPoint.current = null;
         return;
