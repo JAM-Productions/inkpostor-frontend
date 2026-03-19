@@ -316,6 +316,7 @@ export const Canvas: React.FC = () => {
                 onClick={undoLastStroke}
                 className="w-10 h-10 rounded-xl bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                 title="Undo Last Stroke"
+                aria-label="Undo last stroke"
               >
                 <Undo className="w-5 h-5" />
               </button>

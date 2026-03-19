@@ -101,7 +101,7 @@ describe("Canvas", () => {
     expect(mockEndTurn).toHaveBeenCalled();
   });
 
-  it("button is present", () => {
+  it("calls undoStroke when undo button is clicked", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = { ...mockStateBase };
       return selector(state);
@@ -110,6 +110,7 @@ describe("Canvas", () => {
     render(<Canvas />);
 
     const undoBtn = screen.getByTitle("Undo Last Stroke");
-    expect(undoBtn).toBeInTheDocument();
+    fireEvent.click(undoBtn);
+    expect(mockUndoStroke).toHaveBeenCalled();
   });
 });
