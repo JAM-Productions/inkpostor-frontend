@@ -118,4 +118,43 @@ describe("Canvas", () => {
     // Verify it is active (has the active classes)
     expect(eraserBtn).toHaveClass("bg-white", "text-stone-900", "scale-110");
   });
+
+  it("resets to default color at the start of a new turn", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase };
+      return selector(state);
+    });
+
+    const { rerender } = render(<Canvas />);
+
+    // Select Eraser
+    const eraserBtn = screen.getByTitle("Eraser");
+    fireEvent.click(eraserBtn);
+    expect(eraserBtn).toHaveClass("bg-white");
+
+    // Simulate turn ending and starting again (rerender with same state to trigger effect if dependency changed,
+    // but here the reset logic is in useEffect dependency on isMyTurn).
+    // Actually, our reset logic is: useEffect(() => { if (isMyTurn) { setColor("#1a1a1a"); ... } }, [isMyTurn, actions]);
+    // So we need to toggle isMyTurn from false to true.
+
+    // 1. Not my turn
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase, myId: "socket-456" };
+      return selector(state);
+    });
+    rerender(<Canvas />);
+    expect(screen.queryByTitle("Eraser")).not.toBeInTheDocument();
+
+    // 2. My turn starts
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase, myId: "socket-123" };
+      return selector(state);
+    });
+    rerender(<Canvas />);
+
+    // Should be reset to default (not white background on eraser button)
+    const newEraserBtn = screen.getByTitle("Eraser");
+    expect(newEraserBtn).not.toHaveClass("bg-white");
+    expect(newEraserBtn).toHaveClass("bg-stone-700");
+  });
 });

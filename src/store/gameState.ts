@@ -31,6 +31,7 @@ export interface StrokeData {
   x: number;
   y: number;
   color: string;
+  lineWidth: number;
   isNewStroke: boolean; // True if it's the first point of a line
 }
 

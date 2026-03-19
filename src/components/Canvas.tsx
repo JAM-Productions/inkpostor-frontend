@@ -73,7 +73,7 @@ export const Canvas: React.FC = () => {
     let currentPathStart: null | { x: number; y: number } = null;
 
     canvasStrokes.forEach((stroke) => {
-      ctx.lineWidth = stroke.color === CANVAS_BG ? 24 : 4;
+      ctx.lineWidth = stroke.lineWidth;
       if (stroke.isNewStroke || !currentPathStart) {
         ctx.beginPath();
         ctx.strokeStyle = stroke.color;
@@ -131,7 +131,8 @@ export const Canvas: React.FC = () => {
       setInkUsed((prev) => prev + DOT_INK_COST);
     }
 
-    actions.drawStroke({ x, y, color, isNewStroke: true });
+    const lineWidth = color === CANVAS_BG ? 24 : 4;
+    actions.drawStroke({ x, y, color, lineWidth, isNewStroke: true });
   };
 
   const draw = useCallback(
@@ -157,7 +158,8 @@ export const Canvas: React.FC = () => {
       setInkUsed((prev) => prev + distance);
       lastPoint.current = { x, y };
 
-      actions.drawStroke({ x, y, color, isNewStroke: false });
+      const lineWidth = color === CANVAS_BG ? 24 : 4;
+      actions.drawStroke({ x, y, color, lineWidth, isNewStroke: false });
     },
     [isDrawing, isMyTurn, inkUsed, color, actions],
   );
@@ -256,7 +258,8 @@ export const Canvas: React.FC = () => {
         <div className="relative group">
           <div
             ref={containerRef}
-            className="w-full h-[55vh] sm:aspect-video sm:h-auto bg-[#E9DEB9] rounded-2xl overflow-hidden shadow-2xl relative"
+            className="w-full h-[55vh] sm:aspect-video sm:h-auto rounded-2xl overflow-hidden shadow-2xl relative"
+            style={{ backgroundColor: CANVAS_BG }}
           >
             <canvas
               ref={canvasRef}
