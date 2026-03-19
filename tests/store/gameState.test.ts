@@ -84,7 +84,7 @@ describe("useGameStore", () => {
 
   it("should update state to store strokes on drawStroke", () => {
     const state = useGameStore.getState();
-    const stroke = { x: 10, y: 10, color: "black", isNewStroke: true };
+    const stroke = { x: 10, y: 10, color: "black", lineWidth: 4, isNewStroke: true };
 
     state.actions.drawStroke(stroke);
 
