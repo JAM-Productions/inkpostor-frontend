@@ -63,7 +63,7 @@ describe("Canvas", () => {
     expect(screen.getByText("15.0s")).toBeInTheDocument();
 
     // Tools
-    expect(screen.getByTitle("Clear Canvas")).toBeInTheDocument();
+    expect(screen.getByTitle("Eraser")).toBeInTheDocument();
     expect(screen.getByText("Ink Supply")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /done/i })).toBeInTheDocument();
   });
@@ -81,7 +81,7 @@ describe("Canvas", () => {
     expect(screen.getByText("Host")).toBeInTheDocument();
 
     // Shouldn't see tools
-    expect(screen.queryByTitle("Clear Canvas")).not.toBeInTheDocument();
+    expect(screen.queryByTitle("Eraser")).not.toBeInTheDocument();
     expect(screen.queryByText("Ink Supply")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /done/i }),
@@ -101,7 +101,7 @@ describe("Canvas", () => {
     expect(mockEndTurn).toHaveBeenCalled();
   });
 
-  it("calls clearCanvas when trash is clicked", () => {
+  it("clicking the Eraser button sets the color but does NOT call clearCanvas", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = { ...mockStateBase };
       return selector(state);
@@ -109,8 +109,13 @@ describe("Canvas", () => {
 
     render(<Canvas />);
 
-    const clearBtn = screen.getByTitle("Clear Canvas");
-    fireEvent.click(clearBtn);
-    expect(mockClearCanvas).toHaveBeenCalled();
+    const eraserBtn = screen.getByTitle("Eraser");
+    fireEvent.click(eraserBtn);
+
+    // Should not clear everything
+    expect(mockClearCanvas).not.toHaveBeenCalled();
+
+    // Verify it is active (has the active classes)
+    expect(eraserBtn).toHaveClass("bg-white", "text-stone-900", "scale-110");
   });
 });

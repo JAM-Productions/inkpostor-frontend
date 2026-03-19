@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useGameStore } from "../store/gameState";
 import { Eraser, CheckSquare, Clock } from "lucide-react";
+import { CANVAS_BG } from "../lib/constants";
 
 export const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -42,6 +43,7 @@ export const Canvas: React.FC = () => {
   useEffect(() => {
     if (isMyTurn) {
       setInkUsed(0);
+      setColor("#1a1a1a");
       setTimeLeft(TURN_TIME_MS);
       const interval = setInterval(() => {
         setTimeLeft((prev) => {
@@ -67,11 +69,11 @@ export const Canvas: React.FC = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.lineWidth = 4;
 
     let currentPathStart: null | { x: number; y: number } = null;
 
     canvasStrokes.forEach((stroke) => {
+      ctx.lineWidth = stroke.color === CANVAS_BG ? 24 : 4;
       if (stroke.isNewStroke || !currentPathStart) {
         ctx.beginPath();
         ctx.strokeStyle = stroke.color;
@@ -297,9 +299,13 @@ export const Canvas: React.FC = () => {
               ))}
               <div className="w-px h-8 bg-stone-700 mx-1" />
               <button
-                onClick={() => actions.clearCanvas()}
-                className="w-10 h-10 rounded-xl bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
-                title="Clear Canvas"
+                onClick={() => setColor(CANVAS_BG)}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95 ${
+                  color === CANVAS_BG
+                    ? "bg-white text-stone-900 scale-110 shadow-lg"
+                    : "bg-stone-700 text-stone-300 hover:bg-stone-600"
+                }`}
+                title="Eraser"
               >
                 <Eraser className="w-5 h-5" />
               </button>
