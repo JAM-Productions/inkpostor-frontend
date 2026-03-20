@@ -1,5 +1,15 @@
 import React, { useEffect, useRef } from "react";
-import { X, HelpCircle, Target, Settings, PenTool, Search, Vote, Trophy, Lightbulb } from "lucide-react";
+import {
+  X,
+  HelpCircle,
+  Target,
+  Settings,
+  PenTool,
+  Search,
+  Vote,
+  Trophy,
+  Lightbulb,
+} from "lucide-react";
 
 interface RulesModalProps {
   isOpen: boolean;
@@ -48,7 +58,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       <div
         ref={modalRef}
         tabIndex={-1}
-        className="relative w-full h-full sm:h-auto sm:max-w-2xl bg-stone-900 sm:rounded-3xl border-0 sm:border border-stone-800 shadow-2xl flex flex-col overflow-hidden outline-none"
+        className="relative w-full h-full sm:h-auto sm:max-h-[calc(100vh-4rem)] sm:max-w-2xl bg-stone-900 sm:rounded-3xl border-0 sm:border border-stone-800 shadow-2xl flex flex-col overflow-hidden outline-none"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-stone-800 bg-stone-900/50">
@@ -56,7 +66,10 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
             <div className="p-2 bg-ink-primary/10 rounded-lg">
               <HelpCircle className="w-6 h-6 text-ink-primary" />
             </div>
-            <h2 id="rules-title" className="text-2xl font-bold text-white font-rubik-wet-paint tracking-wide">
+            <h2
+              id="rules-title"
+              className="text-2xl font-extralight text-white font-rubik-wet-paint tracking-wide"
+            >
               How to Play Inkpostor
             </h2>
           </div>
@@ -75,7 +88,9 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           <section className="space-y-3">
             <div className="flex items-center gap-2 text-ink-primary">
               <Target className="w-5 h-5" />
-              <h3 className="font-bold uppercase tracking-wider text-sm">Objective</h3>
+              <h3 className="font-bold uppercase tracking-wider text-sm">
+                Objective
+              </h3>
             </div>
             <p className="text-stone-300 leading-relaxed">
               Find out who the impostor is… or fool everyone if it's you.
@@ -86,7 +101,9 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           <section className="space-y-3">
             <div className="flex items-center gap-2 text-amber-500">
               <Settings className="w-5 h-5" />
-              <h3 className="font-bold uppercase tracking-wider text-sm">Setup</h3>
+              <h3 className="font-bold uppercase tracking-wider text-sm">
+                Setup
+              </h3>
             </div>
             <ul className="space-y-2 text-stone-400 text-sm">
               <li className="flex gap-3">
@@ -108,7 +125,9 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           <section className="space-y-3">
             <div className="flex items-center gap-2 text-blue-500">
               <PenTool className="w-5 h-5" />
-              <h3 className="font-bold uppercase tracking-wider text-sm">Drawing Turns</h3>
+              <h3 className="font-bold uppercase tracking-wider text-sm">
+                Drawing Turns
+              </h3>
             </div>
             <ul className="space-y-2 text-stone-400 text-sm">
               <li className="flex gap-3">
@@ -130,7 +149,9 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           <section className="space-y-3">
             <div className="flex items-center gap-2 text-purple-500">
               <Search className="w-5 h-5" />
-              <h3 className="font-bold uppercase tracking-wider text-sm">Observe & Deduce</h3>
+              <h3 className="font-bold uppercase tracking-wider text-sm">
+                Observe & Deduce
+              </h3>
             </div>
             <ul className="space-y-2 text-stone-400 text-sm">
               <li className="flex gap-3">
@@ -148,9 +169,13 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           <section className="space-y-3">
             <div className="flex items-center gap-2 text-orange-500">
               <Vote className="w-5 h-5" />
-              <h3 className="font-bold uppercase tracking-wider text-sm">Voting Phase</h3>
+              <h3 className="font-bold uppercase tracking-wider text-sm">
+                Voting Phase
+              </h3>
             </div>
-            <p className="text-stone-300 text-sm mb-2">At the end of the round:</p>
+            <p className="text-stone-300 text-sm mb-2">
+              At the end of the round:
+            </p>
             <ul className="space-y-2 text-stone-400 text-sm">
               <li className="flex gap-3">
                 <span className="text-orange-500">•</span>
@@ -167,7 +192,9 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           <section className="space-y-3">
             <div className="flex items-center gap-2 text-green-500">
               <Trophy className="w-5 h-5" />
-              <h3 className="font-bold uppercase tracking-wider text-sm">End of the Game</h3>
+              <h3 className="font-bold uppercase tracking-wider text-sm">
+                End of the Game
+              </h3>
             </div>
             <ul className="space-y-2 text-stone-400 text-sm">
               <li className="flex gap-3">
@@ -182,14 +209,15 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           </section>
 
           {/* Tip */}
-          <div className="bg-stone-800/50 rounded-2xl p-4 border border-stone-700/50 flex gap-4">
+          <div className="bg-stone-800/50 rounded-2xl p-4 border border-stone-700/50 flex gap-4 items-center">
             <div className="shrink-0 p-2 bg-yellow-500/10 rounded-lg h-fit">
               <Lightbulb className="w-5 h-5 text-yellow-500" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm mb-1">💡 Tip</h4>
+              <h4 className="font-bold text-white text-sm mb-1">Tip</h4>
               <p className="text-stone-400 text-sm italic">
-                Draw enough to show you know the word… but don't make it too obvious 😉
+                Draw enough to show you know the word… but don't make it too
+                obvious
               </p>
             </div>
           </div>
@@ -199,7 +227,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
         <div className="p-6 border-t border-stone-800 bg-stone-900/50">
           <button
             onClick={onClose}
-            className="w-full py-3 bg-stone-800 hover:bg-stone-700 text-white font-bold rounded-xl transition-all active:scale-[0.98]"
+            className="w-full py-3 bg-stone-800 hover:bg-stone-700 text-white font-bold rounded-xl transition-all active:scale-[0.98] cursor-pointer"
           >
             GOT IT!
           </button>
