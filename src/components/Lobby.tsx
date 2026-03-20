@@ -29,8 +29,8 @@ export const Lobby: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 py-12 bg-stone-900">
-      <div className="max-w-lg w-full space-y-4 sm:space-y-8 relative">
+    <div className="flex flex-col items-center justify-center max-h-screen p-4 py-12 bg-stone-900">
+      <div className="max-w-lg w-full space-y-4 sm:space-y-8">
         <div className="text-center space-y-2 sm:space-y-4">
           <h2 className="text-stone-400 font-medium tracking-widest uppercase text-sm">
             Room Code
