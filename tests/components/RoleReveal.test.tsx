@@ -33,11 +33,11 @@ describe("RoleReveal", () => {
 
     render(<RoleReveal />);
 
-    expect(screen.getByText("Phase 1")).toBeInTheDocument();
-    expect(screen.getByText("Your Secret Role")).toBeInTheDocument();
-    expect(screen.getByText("Press and hold to reveal")).toBeInTheDocument();
+    expect(screen.getByText("role.phase")).toBeInTheDocument();
+    expect(screen.getByText("role.title")).toBeInTheDocument();
+    expect(screen.getByText("role.press_hold")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /start drawing/i }),
+      screen.getByRole("button", { name: /role\.start_drawing/i }),
     ).toBeInTheDocument();
   });
 
@@ -51,7 +51,7 @@ describe("RoleReveal", () => {
 
     // The reveal button is the one containing 'Press and hold to reveal'
     const revealButton = screen
-      .getByText("Press and hold to reveal")
+      .getByText("role.press_hold")
       .closest("button");
     expect(revealButton).not.toBeNull();
 
@@ -59,9 +59,9 @@ describe("RoleReveal", () => {
     fireEvent.mouseDown(revealButton!);
 
     // Word and category should be visible
-    expect(screen.getByText("The word is")).toBeInTheDocument();
+    expect(screen.getByText("role.word_is")).toBeInTheDocument();
     expect(screen.getByText("Elephant")).toBeInTheDocument();
-    expect(screen.getByText("Category: Animals")).toBeInTheDocument();
+    expect(screen.getByText("role.category")).toBeInTheDocument();
   });
 
   it("reveals impostor status when clicked for impostors", () => {
@@ -73,14 +73,15 @@ describe("RoleReveal", () => {
     render(<RoleReveal />);
 
     const revealButton = screen
-      .getByText("Press and hold to reveal")
+      .getByText("role.press_hold")
       .closest("button");
     expect(revealButton).not.toBeNull();
 
     fireEvent.mouseDown(revealButton!);
 
-    expect(screen.getByText("Inkpostor")).toBeInTheDocument();
-    expect(screen.getByText("Hint: Animals")).toBeInTheDocument();
+    // Since our mock Trans returns children if present, and "Inkpostor" is within <span>
+    expect(screen.getByText(/Inkpostor/i)).toBeInTheDocument();
+    expect(screen.getByText("role.hint")).toBeInTheDocument();
   });
 
   it("allows the host to start drawing", () => {
@@ -91,7 +92,7 @@ describe("RoleReveal", () => {
 
     render(<RoleReveal />);
 
-    const startButton = screen.getByRole("button", { name: /start drawing/i });
+    const startButton = screen.getByRole("button", { name: /role\.start_drawing/i });
     fireEvent.click(startButton);
 
     expect(mockProceedToDrawing).toHaveBeenCalled();
@@ -106,10 +107,10 @@ describe("RoleReveal", () => {
     render(<RoleReveal />);
 
     expect(
-      screen.queryByRole("button", { name: /start drawing!/i }),
+      screen.queryByRole("button", { name: /role\.start_drawing!/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByText("Waiting for Host to begin..."),
+      screen.getByText("role.waiting_host"),
     ).toBeInTheDocument();
   });
 });

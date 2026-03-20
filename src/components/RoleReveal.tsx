@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useGameStore } from "../store/gameState";
 import { Brush, Eye } from "lucide-react";
+import { useTranslation, Trans } from "react-i18next";
 
 export const RoleReveal: React.FC = () => {
+  const { t } = useTranslation();
   const [revealed, setRevealed] = useState(false);
   const amIImpostor = useGameStore((state) => state.amIImpostor);
   const secretCategory = useGameStore((state) => state.secretCategory);
@@ -22,9 +24,9 @@ export const RoleReveal: React.FC = () => {
 
       <div className="z-10 max-w-md w-full text-center space-y-8">
         <div className="space-y-2">
-          <h2 className="text-xl font-medium text-stone-400">Phase 1</h2>
+          <h2 className="text-xl font-medium text-stone-400">{t("role.phase")}</h2>
           <h1 className="text-4xl font-black text-white tracking-tight">
-            Your Secret Role
+            {t("role.title")}
           </h1>
         </div>
 
@@ -54,11 +56,13 @@ export const RoleReveal: React.FC = () => {
                       className="h-20"
                     />
                     <h3 className="text-3xl font-black text-white tracking-widest uppercase">
-                      You are the <br />
-                      <span className="text-red-500">Inkpostor</span>
+                      <Trans i18nKey="role.impostor">
+                        You are the <br />
+                        <span className="text-red-500">Inkpostor</span>
+                      </Trans>
                     </h3>
                     <p className="text-red-500 font-medium px-4 py-1 bg-red-900/50 rounded-full border border-red-500/30 text-sm ">
-                      Hint: {secretCategory}
+                      {t("role.hint", { category: secretCategory })}
                     </p>
                   </>
                 ) : (
@@ -69,13 +73,13 @@ export const RoleReveal: React.FC = () => {
                       className="h-20"
                     />
                     <p className="text-emerald-200/80 font-medium mb-0 uppercase tracking-widest text-sm">
-                      The word is
+                      {t("role.word_is")}
                     </p>
                     <h3 className="text-4xl font-black text-white">
                       {secretWord}
                     </h3>
                     <p className="text-emerald-400  font-medium px-4 py-1 bg-emerald-900/50 rounded-full border border-emerald-500/30 text-sm">
-                      Category: {secretCategory}
+                      {t("role.category", { category: secretCategory })}
                     </p>
                   </>
                 )}
@@ -84,7 +88,7 @@ export const RoleReveal: React.FC = () => {
               <div className="flex flex-col items-center text-stone-400 gap-4 transition-transform group-hover:scale-105">
                 <Eye className="w-12 h-12" />
                 <span className="text-lg font-medium">
-                  Press and hold to reveal
+                  {t("role.press_hold")}
                 </span>
               </div>
             )}
@@ -94,14 +98,14 @@ export const RoleReveal: React.FC = () => {
         {isHost ? (
           <div className="pt-8">
             <p className="text-stone-500 text-sm mb-4">
-              Make sure everyone knows their role before continuing.
+              {t("role.make_sure")}
             </p>
             <button
               onClick={actions.proceedToDrawing}
               className="flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-all hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
             >
               <Brush className="w-5 h-5" />
-              Start Drawing
+              {t("role.start_drawing")}
             </button>
           </div>
         ) : (
@@ -110,7 +114,7 @@ export const RoleReveal: React.FC = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-stone-500"></span>
             </span>
-            Waiting for Host to begin...
+            {t("role.waiting_host")}
           </div>
         )}
       </div>

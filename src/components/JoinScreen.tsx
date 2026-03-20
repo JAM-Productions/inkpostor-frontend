@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useGameStore } from "../store/gameState";
-import { Users } from "lucide-react";
+import { Users, Globe } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export const JoinScreen: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [playerName, setPlayerName] = useState("");
   const [roomId, setRoomId] = useState("");
   const actions = useGameStore((state) => state.actions);
@@ -21,8 +23,25 @@ export const JoinScreen: React.FC = () => {
     actions.connectAndJoin(roomId.toUpperCase(), playerName);
   };
 
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-900">
+      <div className="absolute top-4 right-4 flex gap-2">
+        <Globe className="text-stone-500 w-5 h-5" />
+        <select
+          onChange={(e) => changeLanguage(e.target.value)}
+          value={i18n.language}
+          className="bg-stone-800 text-stone-300 text-xs rounded border border-stone-700 outline-none"
+        >
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="ca">Català</option>
+        </select>
+      </div>
+
       <div className="max-w-md w-full text-center space-y-8">
         <div className="inline-flex items-center justify-center">
           <img
@@ -42,11 +61,11 @@ export const JoinScreen: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-stone-400 mb-1 text-left">
-                Your Name
+                {t("join.your_name")}
               </label>
               <input
                 type="text"
-                placeholder="Enter your name"
+                placeholder={t("join.enter_name")}
                 className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-ink-primary focus:border-transparent transition-all outline-none text-white placeholder-stone-500"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
@@ -61,7 +80,7 @@ export const JoinScreen: React.FC = () => {
                 className="w-full relative group overflow-hidden rounded-xl bg-ink-primary px-4 py-3 font-semibold text-white transition-all hover:bg-ink-primary-accent active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Users className="w-5 h-5" />
-                <span>Create New Game</span>
+                <span>{t("join.create_game")}</span>
               </button>
             </div>
           </div>
@@ -71,18 +90,20 @@ export const JoinScreen: React.FC = () => {
               <div className="w-full border-t border-stone-700"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-stone-800 text-stone-500">OR</span>
+              <span className="px-2 bg-stone-800 text-stone-500">
+                {t("join.or")}
+              </span>
             </div>
           </div>
 
           <form onSubmit={handleJoin} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-stone-400 mb-1 text-left">
-                Room Code
+                {t("join.room_code")}
               </label>
               <input
                 type="text"
-                placeholder="E.g. X7K9A2"
+                placeholder={t("join.eg_room")}
                 className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-ink-secondary focus:border-transparent transition-all outline-none text-center uppercase tracking-widest text-white placeholder-stone-600"
                 value={roomId}
                 onChange={(e) => setRoomId(e.target.value)}
@@ -94,7 +115,7 @@ export const JoinScreen: React.FC = () => {
               disabled={!playerName || !roomId}
               className="w-full rounded-xl bg-ink-secondary px-4 py-3 font-semibold text-black transition-all hover:bg-white active:scale-95 disabled:opacity-50 disabled:active:scale-100 cursor-pointer"
             >
-              Join Game
+              {t("join.join_game")}
             </button>
           </form>
         </div>

@@ -46,13 +46,13 @@ describe("Lobby", () => {
     });
 
     render(<Lobby />);
-    expect(screen.getByText("Waiting for more players...")).toBeInTheDocument();
+    expect(screen.getByText("lobby.waiting_players")).toBeInTheDocument();
     expect(
-      screen.getByText("Need at least 3 players to start"),
+      screen.getByText("lobby.need_min"),
     ).toBeInTheDocument();
 
     // Start Game button should be disabled for the host
-    const startButton = screen.getByRole("button", { name: /start game/i });
+    const startButton = screen.getByRole("button", { name: /lobby\.start_game/i });
     expect(startButton).toBeDisabled();
   });
 
@@ -73,7 +73,7 @@ describe("Lobby", () => {
     render(<Lobby />);
 
     // Start Game button should be enabled
-    const startButton = screen.getByRole("button", { name: /start game/i });
+    const startButton = screen.getByRole("button", { name: /lobby\.start_game/i });
     expect(startButton).toBeEnabled();
 
     await user.click(startButton);
@@ -97,10 +97,10 @@ describe("Lobby", () => {
     render(<Lobby />);
 
     expect(
-      screen.queryByRole("button", { name: /start game/i }),
+      screen.queryByRole("button", { name: /lobby\.start_game/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByText("Waiting for host to start..."),
+      screen.getByText("lobby.waiting_host"),
     ).toBeInTheDocument();
   });
 
@@ -125,7 +125,7 @@ describe("Lobby", () => {
     await user.click(copyButton);
 
     expect(writeTextMock).toHaveBeenCalledWith("TESTX9");
-    expect(screen.getByText("Copied!")).toBeInTheDocument();
+    expect(screen.getByText("lobby.copied")).toBeInTheDocument();
   });
 
   it("disables the copy button and shows placeholder when roomId is null", () => {
@@ -137,11 +137,11 @@ describe("Lobby", () => {
     render(<Lobby />);
 
     const copyButton = screen.getByRole("button", {
-      name: /Waiting for room code\.\.\./i,
+      name: /lobby\.waiting_room_code/i,
     });
     expect(copyButton).toBeDisabled();
     expect(screen.getByText("------")).toBeInTheDocument();
-    expect(copyButton).toHaveAttribute("title", "Room code not ready");
+    expect(copyButton).toHaveAttribute("title", "lobby.waiting_room_code");
   });
 
   it("opens the rules modal when the how to play button is clicked", async () => {
@@ -156,12 +156,12 @@ describe("Lobby", () => {
     const howToPlayBtn = screen.getByTestId("how-to-play-btn");
     await user.click(howToPlayBtn);
 
-    expect(screen.getByText("How to Play Inkpostor")).toBeInTheDocument();
-    expect(screen.getByText("Objective")).toBeInTheDocument();
+    expect(screen.getByText("rules.title")).toBeInTheDocument();
+    expect(screen.getByText("rules.objective.title")).toBeInTheDocument();
 
-    const closeBtn = screen.getByText("GOT IT!");
+    const closeBtn = screen.getByText("rules.got_it");
     await user.click(closeBtn);
 
-    expect(screen.queryByText("How to Play Inkpostor")).not.toBeInTheDocument();
+    expect(screen.queryByText("rules.title")).not.toBeInTheDocument();
   });
 });

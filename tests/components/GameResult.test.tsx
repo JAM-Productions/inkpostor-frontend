@@ -46,10 +46,10 @@ describe("GameResult", () => {
 
     render(<GameResult />);
 
-    expect(screen.getByText("Inkpostor Defeated")).toBeInTheDocument();
+    expect(screen.getByText("result.defeated")).toBeInTheDocument();
 
-    // Use getAllByText for 'Impostor' since it appears twice
-    // (Once as ejected player, once as the inkpostor text)
+    // Since our mock Trans returns children if present
+    // It will render the children of Trans components which contain names
     const impostorTexts = screen.getAllByText("Impostor");
     expect(impostorTexts).toHaveLength(2);
 
@@ -76,7 +76,7 @@ describe("GameResult", () => {
 
     render(<GameResult />);
 
-    expect(screen.getByText("Inkpostor Won")).toBeInTheDocument();
+    expect(screen.getByText("result.won")).toBeInTheDocument();
     expect(screen.getByText("Player 3")).toBeInTheDocument(); // Ejected name
     expect(screen.getByText("Impostor")).toBeInTheDocument(); // Was the inkpostor
   });
@@ -95,7 +95,7 @@ describe("GameResult", () => {
 
     render(<GameResult />);
 
-    expect(screen.getByText("Nobody was ejected...")).toBeInTheDocument();
+    expect(screen.getByText("result.nobody_ejected")).toBeInTheDocument();
   });
 
   it("allows host to play again", () => {
@@ -110,7 +110,7 @@ describe("GameResult", () => {
 
     render(<GameResult />);
 
-    const playAgainBtn = screen.getByRole("button", { name: /play again/i });
+    const playAgainBtn = screen.getByRole("button", { name: /result\.play_again/i });
     fireEvent.click(playAgainBtn);
     expect(mockPlayAgain).toHaveBeenCalled();
   });
@@ -129,10 +129,10 @@ describe("GameResult", () => {
     render(<GameResult />);
 
     expect(
-      screen.queryByRole("button", { name: /play again/i }),
+      screen.queryByRole("button", { name: /result\.play_again/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByText("Waiting for host to restart..."),
+      screen.getByText("result.waiting_host_restart"),
     ).toBeInTheDocument();
   });
 });

@@ -1,0 +1,116 @@
+{
+  "join": {
+    "your_name": "El teu Nom",
+    "enter_name": "Introdueix el teu nom",
+    "create_game": "Crear Nova Partida",
+    "or": "O",
+    "room_code": "Codi de Sala",
+    "eg_room": "P. ex. X7K9A2",
+    "join_game": "Unir-se a la Partida"
+  },
+  "lobby": {
+    "room_code": "Codi de Sala",
+    "copied": "Copiat!",
+    "click_to_copy": "Fes clic per copiar",
+    "waiting_room_code": "Esperant el codi de sala...",
+    "share_code": "Comparteix aquest codi amb els teus amics perquè s'uneixin!",
+    "players": "Jugadors",
+    "joined": "{{count}} / {{max}} units",
+    "full": "Sala plena",
+    "host": "Amfitrió",
+    "waiting_players": "Esperant més jugadors...",
+    "need_min": "Es necessiten almenys {{count}} jugadors per començar",
+    "start_game": "COMENÇAR PARTIDA",
+    "waiting_host": "Esperant que l'amfitrió comenci..."
+  },
+  "rules": {
+    "title": "Com Jugar a Inkpostor",
+    "got_it": "ENTÈS!",
+    "objective": {
+      "title": "Objectiu",
+      "description": "Descobreix qui és l'impostor... o enganya a tothom si ho ets tu."
+    },
+    "setup": {
+      "title": "Preparació",
+      "item1": "Cada jugador rep una paraula secreta.",
+      "item2": "Tots els jugadors reben la mateixa paraula, excepte l'impostor.",
+      "item3": "L'impostor rep només una pista relacionada, no la paraula exacta."
+    },
+    "drawing": {
+      "title": "Torns de Dibuix",
+      "item1": "El joc es desenvolupa per torns.",
+      "item2": "En cada torn, cada jugador dibuixa una part de la paraula.",
+      "item3": "El dibuix és compartit: tothom contribueix al mateix llenç."
+    },
+    "observe": {
+      "title": "Observa i Dedueix",
+      "item1": "Mentre dibuixes, intenta descobrir qui no coneix la paraula.",
+      "item2": "L'impostor ha de dibuixar amb cura per evitar sospites."
+    },
+    "voting": {
+      "title": "Fase de Votació",
+      "description": "Al final de la ronda:",
+      "item1": "Els jugadors poden votar per eliminar algú o saltar el vot.",
+      "item2": "Si un jugador rep la majoria de vots, és eliminat."
+    },
+    "end": {
+      "title": "Fi de la Partida",
+      "item1": "Si l'impostor és atrapat → els jugadors guanyen.",
+      "item2": "Si l'impostor sobreviu → l'impostor guanya."
+    },
+    "tip": {
+      "title": "Consell",
+      "description": "Dibuixa prou per demostrar que coneixes la paraula... però no ho facis massa obvi."
+    }
+  },
+  "role": {
+    "phase": "Fase 1",
+    "title": "El Teu Rol Secret",
+    "impostor": "Ets l'<br /> <span class=\"text-red-500\">Inkpostor</span>",
+    "hint": "Pista: {{category}}",
+    "word_is": "La paraula és",
+    "category": "Categoria: {{category}}",
+    "press_hold": "Mantén premut per revelar",
+    "make_sure": "Assegura't que tothom coneix el seu rol abans de continuar.",
+    "start_drawing": "Començar a Dibuixar",
+    "waiting_host": "Esperant que l'amfitrió comenci..."
+  },
+  "canvas": {
+    "your_turn": "El teu torn!",
+    "now_drawing": "Dibuixant ara",
+    "someone": "Algú",
+    "time": "Temps",
+    "done": "Fet",
+    "undo": "Desfés l'últim traç",
+    "ink_supply": "Subministrament de Tinta",
+    "out_of_ink": "SENSE TINTA!"
+  },
+  "voting": {
+    "title": "Temps de Votació",
+    "round": "Ronda {{round}}",
+    "who_is": "Qui és l'Inkpostor?",
+    "skip": "Saltar Vot",
+    "confirm": "Confirmar Vot",
+    "ejected": "Has estat expulsat",
+    "waiting_others": "Esperant que altres jugadors votin...",
+    "cast": "Vot Emès!",
+    "recorded": "{{count}} / {{total}} vots registrats"
+  },
+  "result": {
+    "defeated": "Inkpostor Derrotat",
+    "won": "L'Inkpostor ha Guanyat",
+    "vote_result": "Resultat de la votació",
+    "nobody_ejected": "Ningú ha estat expulsat...",
+    "ejected_was": "<span class=\"font-bold text-white\">{{name}}</span> ha estat expulsat.",
+    "still_among_us": "L'Inkpostor encara és entre nosaltres...",
+    "impostor_was": "<span class=\"font-bold text-white\">{{name}}</span> era l'Inkpostor!",
+    "secret_word": "La paraula secreta era",
+    "play_again": "Jugar de Nou",
+    "next_round": "Següent Ronda",
+    "waiting_host_restart": "Esperant que l'amfitrió reiniciï...",
+    "waiting_host_continue": "Esperant que l'amfitrió continuï..."
+  },
+  "common": {
+    "unknown_phase": "Fase de Joc Desconeguda: {{phase}}"
+  }
+}

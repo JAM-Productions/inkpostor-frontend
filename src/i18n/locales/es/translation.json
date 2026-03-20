@@ -1,0 +1,116 @@
+{
+  "join": {
+    "your_name": "Nombre",
+    "enter_name": "Ingresa tu nombre",
+    "create_game": "Crear Nueva Partida",
+    "or": "O",
+    "room_code": "Código de Sala",
+    "eg_room": "Ej. X7K9A2",
+    "join_game": "Unirse a la Partida"
+  },
+  "lobby": {
+    "room_code": "Código de Sala",
+    "copied": "¡Copiado!",
+    "click_to_copy": "Haz clic para copiar",
+    "waiting_room_code": "Esperando el código de sala...",
+    "share_code": "¡Comparte este código con tus amigos para que se unan!",
+    "players": "Jugadores",
+    "joined": "{{count}} / {{max}} unidos",
+    "full": "Sala llena",
+    "host": "Anfitrión",
+    "waiting_players": "Esperando más jugadores...",
+    "need_min": "Se necesitan al menos {{count}} jugadores para empezar",
+    "start_game": "EMPEZAR PARTIDA",
+    "waiting_host": "Esperando a que el anfitrión empiece..."
+  },
+  "rules": {
+    "title": "Cómo Jugar Inkpostor",
+    "got_it": "¡ENTENDIDO!",
+    "objective": {
+      "title": "Objetivo",
+      "description": "Descubre quién es el impostor... o engaña a todos si eres tú."
+    },
+    "setup": {
+      "title": "Preparación",
+      "item1": "Cada jugador recibe una palabra secreta.",
+      "item2": "Todos los jugadores reciben la misma palabra, excepto el impostor.",
+      "item3": "El impostor recibe solo una pista relacionada, no la palabra exacta."
+    },
+    "drawing": {
+      "title": "Turnos de Dibujo",
+      "item1": "El juego se desarrolla por turnos.",
+      "item2": "En cada turno, cada jugador dibuja una parte de la palabra.",
+      "item3": "El dibujo es compartido: todos contribuyen al mismo lienzo."
+    },
+    "observe": {
+      "title": "Observa y Deduce",
+      "item1": "Mientras dibujas, intenta descubrir quién no conoce la palabra.",
+      "item2": "El impostor debe dibujar con cuidado para evitar sospechas."
+    },
+    "voting": {
+      "title": "Fase de Votación",
+      "description": "Al final de la ronda:",
+      "item1": "Los jugadores pueden votar para eliminar a alguien o saltar el voto.",
+      "item2": "Si un jugador recibe la mayoría de los votos, es eliminado."
+    },
+    "end": {
+      "title": "Fin de la Partida",
+      "item1": "Si el impostor es atrapado → los jugadores ganan.",
+      "item2": "Si el impostor sobrevive → el impostor gana."
+    },
+    "tip": {
+      "title": "Consejo",
+      "description": "Dibuja lo suficiente para demostrar que conoces la palabra... pero no lo hagas demasiado obvio."
+    }
+  },
+  "role": {
+    "phase": "Fase 1",
+    "title": "Tu Rol Secreto",
+    "impostor": "Eres el <br /> <span class=\"text-red-500\">Inkpostor</span>",
+    "hint": "Pista: {{category}}",
+    "word_is": "La palabra es",
+    "category": "Categoría: {{category}}",
+    "press_hold": "Mantén presionado para revelar",
+    "make_sure": "Asegúrate de que todos conozcan su rol antes de continuar.",
+    "start_drawing": "Empezar a Dibujar",
+    "waiting_host": "Esperando a que el anfitrión comience..."
+  },
+  "canvas": {
+    "your_turn": "¡Tu turno!",
+    "now_drawing": "Dibujando ahora",
+    "someone": "Alguien",
+    "time": "Tiempo",
+    "done": "Listo",
+    "undo": "Deshacer último trazo",
+    "ink_supply": "Suministro de Tinta",
+    "out_of_ink": "¡SIN TINTA!"
+  },
+  "voting": {
+    "title": "Tiempo de Votación",
+    "round": "Ronda {{round}}",
+    "who_is": "¿Quién es el Inkpostor?",
+    "skip": "Saltar Voto",
+    "confirm": "Confirmar Voto",
+    "ejected": "Has sido expulsado",
+    "waiting_others": "Esperando a que otros jugadores voten...",
+    "cast": "¡Voto Emitido!",
+    "recorded": "{{count}} / {{total}} votos registrados"
+  },
+  "result": {
+    "defeated": "Inkpostor Derrotado",
+    "won": "Inkpostor Ganó",
+    "vote_result": "Resultado de la votación",
+    "nobody_ejected": "Nadie fue expulsado...",
+    "ejected_was": "<span class=\"font-bold text-white\">{{name}}</span> fue expulsado.",
+    "still_among_us": "El Inkpostor todavía está entre nosotros...",
+    "impostor_was": "¡<span class=\"font-bold text-white\">{{name}}</span> era el Inkpostor!",
+    "secret_word": "La palabra secreta era",
+    "play_again": "Jugar de Nuevo",
+    "next_round": "Siguiente Ronda",
+    "waiting_host_restart": "Esperando a que el anfitrión reinicie...",
+    "waiting_host_continue": "Esperando a que el anfitrión continúe..."
+  },
+  "common": {
+    "unknown_phase": "Fase de Juego Desconocida: {{phase}}"
+  }
+}

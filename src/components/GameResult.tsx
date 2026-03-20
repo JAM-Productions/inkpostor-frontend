@@ -2,8 +2,10 @@ import React from "react";
 import { useGameStore } from "../store/gameState";
 import { CircleQuestionMark, Play } from "lucide-react";
 import { MIN_PLAYERS } from "../lib/constants";
+import { useTranslation, Trans } from "react-i18next";
 
 export const GameResult: React.FC = () => {
+  const { t } = useTranslation();
   const impostorId = useGameStore((state) => state.impostorId);
   const players = useGameStore((state) => state.players);
   const secretWord = useGameStore((state) => state.secretWord);
@@ -55,23 +57,24 @@ export const GameResult: React.FC = () => {
           <h1 className="text-4xl md:text-5xl text-white uppercase tracking-tight mb-8 font-rubik-wet-paint font-extralight">
             {isGameOver
               ? impostorCaught
-                ? "Inkpostor Defeated"
-                : "Inkpostor Won"
-              : "Result of the vote"}
+                ? t("result.defeated")
+                : t("result.won")
+              : t("result.vote_result")}
           </h1>
 
           <div className="text-xl md:text-2xl text-stone-300 font-medium space-y-2">
             {!ejectedId ? (
-              <p className="text-stone-400 italic">Nobody was ejected...</p>
+              <p className="text-stone-400 italic">{t("result.nobody_ejected")}</p>
             ) : (
               <>
                 <p>
-                  <span className="font-bold text-white">{ejectedName}</span>{" "}
-                  was ejected.
+                  <Trans i18nKey="result.ejected_was" values={{ name: ejectedName }}>
+                    <span className="font-bold text-white">{ejectedName}</span> was ejected.
+                  </Trans>
                 </p>
                 {!isGameOver && (
                   <p className="text-stone-400 italic">
-                    Inkpostor is still among us...
+                    {t("result.still_among_us")}
                   </p>
                 )}
               </>
@@ -79,8 +82,9 @@ export const GameResult: React.FC = () => {
 
             {isGameOver && (
               <p className="">
-                <span className="font-bold text-white">{impostorName}</span> was
-                the Inkpostor!
+                <Trans i18nKey="result.impostor_was" values={{ name: impostorName }}>
+                  <span className="font-bold text-white">{impostorName}</span> was the Inkpostor!
+                </Trans>
               </p>
             )}
           </div>
@@ -89,7 +93,7 @@ export const GameResult: React.FC = () => {
         {isGameOver && (
           <div className="bg-stone-800 rounded-2xl p-6 border border-stone-700 shadow-xl animate-in fade-in zoom-in duration-300">
             <p className="text-stone-400 mb-2 uppercase tracking-wider text-sm font-semibold">
-              The secret word was
+              {t("result.secret_word")}
             </p>
             <div className="text-3xl font-black text-white">{secretWord}</div>
           </div>
@@ -109,13 +113,13 @@ export const GameResult: React.FC = () => {
             >
               {isGameOver ? (
                 <span className="text-xl sm:text-2xl tracking-wide uppercase font-rubik-wet-paint font-extralight">
-                  Play Again
+                  {t("result.play_again")}
                 </span>
               ) : (
                 <>
                   <Play className="fill-current w-5 h-5" />
                   <span className="sm:text-xl text-lg font-extrabold uppercase">
-                    Next Round
+                    {t("result.next_round")}
                   </span>
                 </>
               )}
@@ -123,7 +127,7 @@ export const GameResult: React.FC = () => {
           </button>
         ) : (
           <div className="text-stone-500 animate-pulse mt-8">
-            Waiting for host to {isGameOver ? "restart" : "continue"}...
+            {isGameOver ? t("result.waiting_host_restart") : t("result.waiting_host_continue")}
           </div>
         )}
       </div>

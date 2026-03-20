@@ -40,7 +40,7 @@ describe("VotingScreen", () => {
     // Should see other players
     expect(screen.getByText("Player 2")).toBeInTheDocument();
     expect(screen.getByText("Player 3")).toBeInTheDocument();
-    expect(screen.getByText("Skip Vote")).toBeInTheDocument();
+    expect(screen.getByText("voting.skip")).toBeInTheDocument();
   });
 
   it("disables confirm button initially and enables it when a player is selected", () => {
@@ -51,7 +51,7 @@ describe("VotingScreen", () => {
 
     render(<VotingScreen />);
 
-    const confirmBtn = screen.getByRole("button", { name: /confirm vote/i });
+    const confirmBtn = screen.getByRole("button", { name: /voting\.confirm/i });
     expect(confirmBtn).toBeDisabled();
 
     // Select Player 2
@@ -59,7 +59,7 @@ describe("VotingScreen", () => {
     expect(confirmBtn).toBeEnabled();
 
     // Select Skip
-    fireEvent.click(screen.getByText("Skip Vote"));
+    fireEvent.click(screen.getByText("voting.skip"));
     expect(confirmBtn).toBeEnabled();
   });
 
@@ -75,7 +75,7 @@ describe("VotingScreen", () => {
     const playerBtn = screen.getByText("Player 2").closest("button");
     fireEvent.click(playerBtn!);
 
-    const confirmBtn = screen.getByRole("button", { name: /confirm vote/i });
+    const confirmBtn = screen.getByRole("button", { name: /voting\.confirm/i });
     fireEvent.click(confirmBtn);
 
     expect(mockVote).toHaveBeenCalledWith("socket-456");
@@ -95,12 +95,12 @@ describe("VotingScreen", () => {
 
     render(<VotingScreen />);
 
-    expect(screen.getByText("Vote Cast!")).toBeInTheDocument();
+    expect(screen.getByText("voting.cast")).toBeInTheDocument();
     expect(
-      screen.getByText("Waiting for other players to vote..."),
+      screen.getByText("voting.waiting_others"),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: /confirm vote/i }),
+      screen.queryByRole("button", { name: /voting\.confirm/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -145,9 +145,9 @@ describe("VotingScreen", () => {
 
     render(<VotingScreen />);
 
-    expect(screen.getByText("You have been ejected")).toBeInTheDocument();
+    expect(screen.getByText("voting.ejected")).toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: /confirm vote/i }),
+      screen.queryByRole("button", { name: /voting\.confirm/i }),
     ).not.toBeInTheDocument();
 
     // Other players should be disabled

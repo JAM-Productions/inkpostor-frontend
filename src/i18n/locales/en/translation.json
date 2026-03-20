@@ -1,0 +1,116 @@
+{
+  "join": {
+    "your_name": "Your Name",
+    "enter_name": "Enter your name",
+    "create_game": "Create New Game",
+    "or": "OR",
+    "room_code": "Room Code",
+    "eg_room": "E.g. X7K9A2",
+    "join_game": "Join Game"
+  },
+  "lobby": {
+    "room_code": "Room Code",
+    "copied": "Copied!",
+    "click_to_copy": "Click to copy",
+    "waiting_room_code": "Waiting for room code...",
+    "share_code": "Share this code with your friends to let them join!",
+    "players": "Players",
+    "joined": "{{count}} / {{max}} joined",
+    "full": "Full lobby",
+    "host": "Host",
+    "waiting_players": "Waiting for more players...",
+    "need_min": "Need at least {{count}} players to start",
+    "start_game": "START GAME",
+    "waiting_host": "Waiting for host to start..."
+  },
+  "rules": {
+    "title": "How to Play Inkpostor",
+    "got_it": "GOT IT!",
+    "objective": {
+      "title": "Objective",
+      "description": "Find out who the impostor is… or fool everyone if it's you."
+    },
+    "setup": {
+      "title": "Setup",
+      "item1": "Each player receives a secret word.",
+      "item2": "All players get the same word, except the impostor.",
+      "item3": "The impostor receives only a related hint, not the exact word."
+    },
+    "drawing": {
+      "title": "Drawing Turns",
+      "item1": "The game is played in turns.",
+      "item2": "In each turn, each player draws a part of the word.",
+      "item3": "The drawing is shared: everyone contributes to the same canvas."
+    },
+    "observe": {
+      "title": "Observe & Deduce",
+      "item1": "While drawing, try to figure out who doesn't know the word.",
+      "item2": "The impostor must draw carefully to avoid suspicion."
+    },
+    "voting": {
+      "title": "Voting Phase",
+      "description": "At the end of the round:",
+      "item1": "Players can vote to eliminate someone or skip the vote.",
+      "item2": "If a player gets the majority of votes, they are eliminated."
+    },
+    "end": {
+      "title": "End of the Game",
+      "item1": "If the impostor is caught → the players win.",
+      "item2": "If the impostor survives → the impostor wins."
+    },
+    "tip": {
+      "title": "Tip",
+      "description": "Draw enough to show you know the word… but don't make it too obvious"
+    }
+  },
+  "role": {
+    "phase": "Phase 1",
+    "title": "Your Secret Role",
+    "impostor": "You are the <br /> <span class=\"text-red-500\">Inkpostor</span>",
+    "hint": "Hint: {{category}}",
+    "word_is": "The word is",
+    "category": "Category: {{category}}",
+    "press_hold": "Press and hold to reveal",
+    "make_sure": "Make sure everyone knows their role before continuing.",
+    "start_drawing": "Start Drawing",
+    "waiting_host": "Waiting for Host to begin..."
+  },
+  "canvas": {
+    "your_turn": "Your turn!",
+    "now_drawing": "Now Drawing",
+    "someone": "Someone",
+    "time": "Time",
+    "done": "Done",
+    "undo": "Undo Last Stroke",
+    "ink_supply": "Ink Supply",
+    "out_of_ink": "OUT OF INK!"
+  },
+  "voting": {
+    "title": "Voting Time",
+    "round": "Round {{round}}",
+    "who_is": "Who is the Inkpostor?",
+    "skip": "Skip Vote",
+    "confirm": "Confirm Vote",
+    "ejected": "You have been ejected",
+    "waiting_others": "Waiting for other players to vote...",
+    "cast": "Vote Cast!",
+    "recorded": "{{count}} / {{total}} votes recorded"
+  },
+  "result": {
+    "defeated": "Inkpostor Defeated",
+    "won": "Inkpostor Won",
+    "vote_result": "Result of the vote",
+    "nobody_ejected": "Nobody was ejected...",
+    "ejected_was": "<span class=\"font-bold text-white\">{{name}}</span> was ejected.",
+    "still_among_us": "Inkpostor is still among us...",
+    "impostor_was": "<span class=\"font-bold text-white\">{{name}}</span> was the Inkpostor!",
+    "secret_word": "The secret word was",
+    "play_again": "Play Again",
+    "next_round": "Next Round",
+    "waiting_host_restart": "Waiting for host to restart...",
+    "waiting_host_continue": "Waiting for host to continue..."
+  },
+  "common": {
+    "unknown_phase": "Unknown Game Phase: {{phase}}"
+  }
+}

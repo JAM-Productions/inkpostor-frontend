@@ -30,13 +30,13 @@ describe("JoinScreen", () => {
   it("renders the initial screen with inputs and buttons", () => {
     render(<JoinScreen />);
 
-    expect(screen.getByPlaceholderText("Enter your name")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("join.enter_name")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /create new game/i }),
+      screen.getByRole("button", { name: /join.create_game/i }),
     ).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("E.g. X7K9A2")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("join.eg_room")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /join game/i }),
+      screen.getByRole("button", { name: /join.join_game/i }),
     ).toBeInTheDocument();
   });
 
@@ -44,7 +44,7 @@ describe("JoinScreen", () => {
     render(<JoinScreen />);
 
     const createButton = screen.getByRole("button", {
-      name: /create new game/i,
+      name: /join.create_game/i,
     });
     expect(createButton).toBeDisabled();
   });
@@ -53,9 +53,9 @@ describe("JoinScreen", () => {
     const user = userEvent.setup();
     render(<JoinScreen />);
 
-    const nameInput = screen.getByPlaceholderText("Enter your name");
+    const nameInput = screen.getByPlaceholderText("join.enter_name");
     const createButton = screen.getByRole("button", {
-      name: /create new game/i,
+      name: /join.create_game/i,
     });
 
     await user.type(nameInput, "Player1");
@@ -72,9 +72,9 @@ describe("JoinScreen", () => {
     const user = userEvent.setup();
     render(<JoinScreen />);
 
-    const nameInput = screen.getByPlaceholderText("Enter your name");
-    const roomInput = screen.getByPlaceholderText("E.g. X7K9A2");
-    const joinButton = screen.getByRole("button", { name: /join game/i });
+    const nameInput = screen.getByPlaceholderText("join.enter_name");
+    const roomInput = screen.getByPlaceholderText("join.eg_room");
+    const joinButton = screen.getByRole("button", { name: /join.join_game/i });
 
     expect(joinButton).toBeDisabled();
 
@@ -90,9 +90,9 @@ describe("JoinScreen", () => {
     const user = userEvent.setup();
     render(<JoinScreen />);
 
-    const nameInput = screen.getByPlaceholderText("Enter your name");
-    const roomInput = screen.getByPlaceholderText("E.g. X7K9A2");
-    const joinButton = screen.getByRole("button", { name: /join game/i });
+    const nameInput = screen.getByPlaceholderText("join.enter_name");
+    const roomInput = screen.getByPlaceholderText("join.eg_room");
+    const joinButton = screen.getByRole("button", { name: /join.join_game/i });
 
     await user.type(nameInput, "Player1");
     await user.type(roomInput, "room12");

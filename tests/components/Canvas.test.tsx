@@ -56,16 +56,16 @@ describe("Canvas", () => {
     render(<Canvas />);
 
     // Header
-    expect(screen.getByText("Your turn!")).toBeInTheDocument();
+    expect(screen.getByText("canvas.your_turn")).toBeInTheDocument();
     expect(screen.getByText("Host")).toBeInTheDocument();
 
     // Should display time
     expect(screen.getByText("15.0s")).toBeInTheDocument();
 
     // Tools
-    expect(screen.getByTitle("Undo Last Stroke")).toBeInTheDocument();
-    expect(screen.getByText("Ink Supply")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /done/i })).toBeInTheDocument();
+    expect(screen.getByTitle("canvas.undo")).toBeInTheDocument();
+    expect(screen.getByText("canvas.ink_supply")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /canvas\.done/i })).toBeInTheDocument();
   });
 
   it("renders waiting UI for non-active players", () => {
@@ -77,14 +77,14 @@ describe("Canvas", () => {
     render(<Canvas />);
 
     // Header
-    expect(screen.getByText("Now Drawing")).toBeInTheDocument();
+    expect(screen.getByText("canvas.now_drawing")).toBeInTheDocument();
     expect(screen.getByText("Host")).toBeInTheDocument();
 
     // Shouldn't see tools
-    expect(screen.queryByTitle("Undo Last Stroke")).not.toBeInTheDocument();
-    expect(screen.queryByText("Ink Supply")).not.toBeInTheDocument();
+    expect(screen.queryByTitle("canvas.undo")).not.toBeInTheDocument();
+    expect(screen.queryByText("canvas.ink_supply")).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: /done/i }),
+      screen.queryByRole("button", { name: /canvas\.done/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -96,7 +96,7 @@ describe("Canvas", () => {
 
     render(<Canvas />);
 
-    const doneBtn = screen.getByRole("button", { name: /done/i });
+    const doneBtn = screen.getByRole("button", { name: /canvas\.done/i });
     fireEvent.click(doneBtn);
     expect(mockEndTurn).toHaveBeenCalled();
   });
@@ -109,7 +109,7 @@ describe("Canvas", () => {
 
     render(<Canvas />);
 
-    const undoBtn = screen.getByTitle("Undo Last Stroke");
+    const undoBtn = screen.getByTitle("canvas.undo");
     expect(undoBtn).toBeInTheDocument();
   });
 });

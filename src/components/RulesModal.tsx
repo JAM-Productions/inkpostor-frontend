@@ -10,6 +10,7 @@ import {
   Trophy,
   Lightbulb,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface RulesModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ interface RulesModalProps {
 }
 
 export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
 
@@ -70,7 +72,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
               id="rules-title"
               className="text-2xl font-extralight text-white font-rubik-wet-paint tracking-wide"
             >
-              How to Play Inkpostor
+              {t("rules.title")}
             </h2>
           </div>
           <button
@@ -89,11 +91,11 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
             <div className="flex items-center gap-2 text-ink-primary">
               <Target className="w-5 h-5" />
               <h3 className="font-bold uppercase tracking-wider text-sm">
-                Objective
+                {t("rules.objective.title")}
               </h3>
             </div>
             <p className="text-stone-300 leading-relaxed">
-              Find out who the impostor is… or fool everyone if it's you.
+              {t("rules.objective.description")}
             </p>
           </section>
 
@@ -102,21 +104,21 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
             <div className="flex items-center gap-2 text-amber-500">
               <Settings className="w-5 h-5" />
               <h3 className="font-bold uppercase tracking-wider text-sm">
-                Setup
+                {t("rules.setup.title")}
               </h3>
             </div>
             <ul className="space-y-2 text-stone-400 text-sm">
               <li className="flex gap-3">
                 <span className="text-amber-500">•</span>
-                Each player receives a secret word.
+                {t("rules.setup.item1")}
               </li>
               <li className="flex gap-3">
                 <span className="text-amber-500">•</span>
-                All players get the same word, except the impostor.
+                {t("rules.setup.item2")}
               </li>
               <li className="flex gap-3">
                 <span className="text-amber-500">•</span>
-                The impostor receives only a related hint, not the exact word.
+                {t("rules.setup.item3")}
               </li>
             </ul>
           </section>
@@ -126,21 +128,21 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
             <div className="flex items-center gap-2 text-blue-500">
               <PenTool className="w-5 h-5" />
               <h3 className="font-bold uppercase tracking-wider text-sm">
-                Drawing Turns
+                {t("rules.drawing.title")}
               </h3>
             </div>
             <ul className="space-y-2 text-stone-400 text-sm">
               <li className="flex gap-3">
                 <span className="text-blue-500">•</span>
-                The game is played in turns.
+                {t("rules.drawing.item1")}
               </li>
               <li className="flex gap-3">
                 <span className="text-blue-500">•</span>
-                In each turn, each player draws a part of the word.
+                {t("rules.drawing.item2")}
               </li>
               <li className="flex gap-3">
                 <span className="text-blue-500">•</span>
-                The drawing is shared: everyone contributes to the same canvas.
+                {t("rules.drawing.item3")}
               </li>
             </ul>
           </section>
@@ -150,17 +152,17 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
             <div className="flex items-center gap-2 text-purple-500">
               <Search className="w-5 h-5" />
               <h3 className="font-bold uppercase tracking-wider text-sm">
-                Observe & Deduce
+                {t("rules.observe.title")}
               </h3>
             </div>
             <ul className="space-y-2 text-stone-400 text-sm">
               <li className="flex gap-3">
                 <span className="text-purple-500">•</span>
-                While drawing, try to figure out who doesn't know the word.
+                {t("rules.observe.item1")}
               </li>
               <li className="flex gap-3">
                 <span className="text-purple-500">•</span>
-                The impostor must draw carefully to avoid suspicion.
+                {t("rules.observe.item2")}
               </li>
             </ul>
           </section>
@@ -170,20 +172,20 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
             <div className="flex items-center gap-2 text-orange-500">
               <Vote className="w-5 h-5" />
               <h3 className="font-bold uppercase tracking-wider text-sm">
-                Voting Phase
+                {t("rules.voting.title")}
               </h3>
             </div>
             <p className="text-stone-300 text-sm mb-2">
-              At the end of the round:
+              {t("rules.voting.description")}
             </p>
             <ul className="space-y-2 text-stone-400 text-sm">
               <li className="flex gap-3">
                 <span className="text-orange-500">•</span>
-                Players can vote to eliminate someone or skip the vote.
+                {t("rules.voting.item1")}
               </li>
               <li className="flex gap-3">
                 <span className="text-orange-500">•</span>
-                If a player gets the majority of votes, they are eliminated.
+                {t("rules.voting.item2")}
               </li>
             </ul>
           </section>
@@ -193,17 +195,17 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
             <div className="flex items-center gap-2 text-green-500">
               <Trophy className="w-5 h-5" />
               <h3 className="font-bold uppercase tracking-wider text-sm">
-                End of the Game
+                {t("rules.end.title")}
               </h3>
             </div>
             <ul className="space-y-2 text-stone-400 text-sm">
               <li className="flex gap-3">
                 <span className="text-green-500">•</span>
-                If the impostor is caught → the players win.
+                {t("rules.end.item1")}
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500">•</span>
-                If the impostor survives → the impostor wins.
+                {t("rules.end.item2")}
               </li>
             </ul>
           </section>
@@ -214,10 +216,9 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
               <Lightbulb className="w-5 h-5 text-yellow-500" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm mb-1">Tip</h4>
+              <h4 className="font-bold text-white text-sm mb-1">{t("rules.tip.title")}</h4>
               <p className="text-stone-400 text-sm italic">
-                Draw enough to show you know the word… but don't make it too
-                obvious
+                {t("rules.tip.description")}
               </p>
             </div>
           </div>
@@ -229,7 +230,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
             onClick={onClose}
             className="w-full py-3 bg-stone-800 hover:bg-stone-700 text-white font-bold rounded-xl transition-all active:scale-[0.98] cursor-pointer"
           >
-            GOT IT!
+            {t("rules.got_it")}
           </button>
         </div>
       </div>

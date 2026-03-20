@@ -5,9 +5,11 @@ import { RoleReveal } from "./components/RoleReveal";
 import { Canvas } from "./components/Canvas";
 import { VotingScreen } from "./components/VotingScreen";
 import { GameResult } from "./components/GameResult";
+import { useTranslation } from "react-i18next";
 
 // App orchestrates the current phase of the game
 function App() {
+  const { t } = useTranslation();
   const phase = useGameStore((state) => state.phase);
   const roomId = useGameStore((state) => state.roomId);
   const myName = useGameStore((state) => state.myName);
@@ -32,7 +34,7 @@ function App() {
     default:
       return (
         <div className="min-h-screen flex items-center justify-center bg-stone-900 text-stone-400">
-          Unknown Game Phase: {phase}
+          {t("common.unknown_phase", { phase })}
         </div>
       );
   }
