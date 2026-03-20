@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useGameStore } from "../store/gameState";
-import { Users, Crown, Loader2, Copy, Check } from "lucide-react";
+import { Users, Crown, Loader2, Copy, Check, HelpCircle } from "lucide-react";
 import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
+import { RulesModal } from "./RulesModal";
 
 export const Lobby: React.FC = () => {
   const roomId = useGameStore((state) => state.roomId);
@@ -10,6 +11,7 @@ export const Lobby: React.FC = () => {
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
   const [copied, setCopied] = useState(false);
+  const [isRulesOpen, setIsRulesOpen] = useState(false);
 
   const isHost = myId === hostId;
   const canStart = isHost && players.length >= MIN_PLAYERS;
@@ -86,15 +88,24 @@ export const Lobby: React.FC = () => {
               <Users className="text-ink-secondary w-5 h-5 sm:w-6 sm:h-6" />
               Players
             </h3>
-            <span className="bg-stone-700 text-stone-300 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full">
-              {players.length < MAX_PLAYERS ? (
-                <span>
-                  {players.length} / {MAX_PLAYERS} joined
-                </span>
-              ) : (
-                <span className="text-green-400">Full lobby</span>
-              )}
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsRulesOpen(true)}
+                className="flex items-center gap-2 font-bold cursor-pointer"
+                data-testid="how-to-play-btn"
+              >
+                <HelpCircle className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-ink-primary hover:text-ink-primary-accent" />
+              </button>
+              <span className="bg-stone-700 text-stone-300 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full">
+                {players.length < MAX_PLAYERS ? (
+                  <span>
+                    {players.length} / {MAX_PLAYERS} joined
+                  </span>
+                ) : (
+                  <span className="text-green-400">Full lobby</span>
+                )}
+              </span>
+            </div>
           </div>
 
           <div className="space-y-2 sm:space-y-3 mb-8 overflow-y-auto flex-1 pr-2 custom-scrollbar">
@@ -159,6 +170,8 @@ export const Lobby: React.FC = () => {
           )}
         </div>
       </div>
+
+      <RulesModal isOpen={isRulesOpen} onClose={() => setIsRulesOpen(false)} />
     </div>
   );
 };
