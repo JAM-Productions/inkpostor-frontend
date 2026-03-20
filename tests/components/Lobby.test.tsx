@@ -143,4 +143,25 @@ describe("Lobby", () => {
     expect(screen.getByText("------")).toBeInTheDocument();
     expect(copyButton).toHaveAttribute("title", "Room code not ready");
   });
+
+  it("opens the rules modal when the how to play button is clicked", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase, players: [] };
+      return selector(state);
+    });
+
+    render(<Lobby />);
+
+    const howToPlayBtn = screen.getByRole("button", { name: /how to play/i });
+    await user.click(howToPlayBtn);
+
+    expect(screen.getByText("How to Play Inkpostor")).toBeInTheDocument();
+    expect(screen.getByText("Objective")).toBeInTheDocument();
+
+    const closeBtn = screen.getByText("GOT IT!");
+    await user.click(closeBtn);
+
+    expect(screen.queryByText("How to Play Inkpostor")).not.toBeInTheDocument();
+  });
 });

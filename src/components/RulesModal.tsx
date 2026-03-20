@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { X, HelpCircle, Target, Settings, PenTool, Search, Vote, Trophy, Lightbulb } from "lucide-react";
 
 interface RulesModalProps {
@@ -7,31 +7,63 @@ interface RulesModalProps {
 }
 
 export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      previousFocus.current = document.activeElement as HTMLElement;
+      modalRef.current?.focus();
+
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === "Escape") onClose();
+      };
+
+      window.addEventListener("keydown", handleEscape);
+      return () => {
+        window.removeEventListener("keydown", handleEscape);
+        previousFocus.current?.focus();
+      };
+    }
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="rules-title"
+    >
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-stone-950/80 backdrop-blur-sm"
+      <button
+        type="button"
+        className="absolute inset-0 bg-stone-950/80 backdrop-blur-sm w-full h-full cursor-default"
         onClick={onClose}
+        aria-label="Close rules"
       />
 
       {/* Modal Content */}
-      <div className="relative w-full h-full sm:h-auto sm:max-w-2xl bg-stone-900 sm:rounded-3xl border-0 sm:border border-stone-800 shadow-2xl flex flex-col overflow-hidden">
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        className="relative w-full h-full sm:h-auto sm:max-w-2xl bg-stone-900 sm:rounded-3xl border-0 sm:border border-stone-800 shadow-2xl flex flex-col overflow-hidden outline-none"
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-stone-800 bg-stone-900/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-ink-primary/10 rounded-lg">
               <HelpCircle className="w-6 h-6 text-ink-primary" />
             </div>
-            <h2 className="text-2xl font-bold text-white font-rubik-wet-paint tracking-wide">
+            <h2 id="rules-title" className="text-2xl font-bold text-white font-rubik-wet-paint tracking-wide">
               How to Play Inkpostor
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-stone-800 rounded-full transition-colors text-stone-400 hover:text-white"
+            className="p-2 hover:bg-stone-800 rounded-full transition-colors text-stone-400 hover:text-white cursor-pointer"
+            aria-label="Close rules dialog"
           >
             <X className="w-6 h-6" />
           </button>
