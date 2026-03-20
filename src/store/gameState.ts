@@ -63,7 +63,7 @@ export interface GameState {
     startGame: () => void;
     proceedToDrawing: () => void;
     drawStroke: (stroke: StrokeData) => void;
-    clearCanvas: () => void;
+    undoStroke: () => void;
     endTurn: () => void;
     vote: (votedForId: string) => void;
     playAgain: () => void;
@@ -148,8 +148,8 @@ export const useGameStore = create<GameState>()((set) => ({
       socket.emit("drawStroke", stroke);
       set((state) => ({ canvasStrokes: [...state.canvasStrokes, stroke] }));
     },
-    clearCanvas: () => {
-      socket.emit("clearCanvas");
+    undoStroke: () => {
+      socket.emit("undoStroke");
     },
     endTurn: () => {
       socket.emit("endTurn");
@@ -228,8 +228,26 @@ socket.on("strokeUpdate", (stroke: StrokeData) => {
   }));
 });
 
-socket.on("canvasCleared", () => {
-  useGameStore.setState({ canvasStrokes: [] });
+socket.on("strokeUndone", () => {
+  useGameStore.setState((state) => {
+    if (state.canvasStrokes.length === 0) return state;
+
+    let lastNewStrokeIndex = state.canvasStrokes.length - 1;
+    while (
+      lastNewStrokeIndex >= 0 &&
+      !state.canvasStrokes[lastNewStrokeIndex].isNewStroke
+    ) {
+      lastNewStrokeIndex--;
+    }
+
+    if (lastNewStrokeIndex >= 0) {
+      return {
+        canvasStrokes: state.canvasStrokes.slice(0, lastNewStrokeIndex),
+      };
+    } else {
+      return { canvasStrokes: [] };
+    }
+  });
 });
 
 socket.on("error", (msg: string) => {

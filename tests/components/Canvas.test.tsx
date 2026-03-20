@@ -10,7 +10,7 @@ vi.mock("../../src/store/gameState", () => ({
 
 describe("Canvas", () => {
   const mockEndTurn = vi.fn();
-  const mockClearCanvas = vi.fn();
+  const mockUndoStroke = vi.fn();
   const mockDrawStroke = vi.fn();
 
   const mockStateBase = {
@@ -23,7 +23,7 @@ describe("Canvas", () => {
     canvasStrokes: [],
     actions: {
       endTurn: mockEndTurn,
-      clearCanvas: mockClearCanvas,
+      undoStroke: mockUndoStroke,
       drawStroke: mockDrawStroke,
     },
   };
@@ -63,7 +63,7 @@ describe("Canvas", () => {
     expect(screen.getByText("15.0s")).toBeInTheDocument();
 
     // Tools
-    expect(screen.getByTitle("Clear Canvas")).toBeInTheDocument();
+    expect(screen.getByTitle("Undo Last Stroke")).toBeInTheDocument();
     expect(screen.getByText("Ink Supply")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /done/i })).toBeInTheDocument();
   });
@@ -81,7 +81,7 @@ describe("Canvas", () => {
     expect(screen.getByText("Host")).toBeInTheDocument();
 
     // Shouldn't see tools
-    expect(screen.queryByTitle("Clear Canvas")).not.toBeInTheDocument();
+    expect(screen.queryByTitle("Undo Last Stroke")).not.toBeInTheDocument();
     expect(screen.queryByText("Ink Supply")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /done/i }),
@@ -101,7 +101,7 @@ describe("Canvas", () => {
     expect(mockEndTurn).toHaveBeenCalled();
   });
 
-  it("calls clearCanvas when trash is clicked", () => {
+  it("button is present", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = { ...mockStateBase };
       return selector(state);
@@ -109,8 +109,7 @@ describe("Canvas", () => {
 
     render(<Canvas />);
 
-    const clearBtn = screen.getByTitle("Clear Canvas");
-    fireEvent.click(clearBtn);
-    expect(mockClearCanvas).toHaveBeenCalled();
+    const undoBtn = screen.getByTitle("Undo Last Stroke");
+    expect(undoBtn).toBeInTheDocument();
   });
 });

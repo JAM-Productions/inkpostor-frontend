@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useGameStore } from "../store/gameState";
-import { Eraser, CheckSquare, Clock } from "lucide-react";
+import { Undo, CheckSquare, Clock } from "lucide-react";
 
 export const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -16,6 +16,7 @@ export const Canvas: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(TURN_TIME_MS);
 
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
+  const inkCosts = useRef<number[]>([]);
 
   const canvasStrokes = useGameStore((state) => state.canvasStrokes);
   const currentTurnPlayerId = useGameStore(
@@ -42,6 +43,7 @@ export const Canvas: React.FC = () => {
   useEffect(() => {
     if (isMyTurn) {
       setInkUsed(0);
+      inkCosts.current = [];
       setTimeLeft(TURN_TIME_MS);
       const interval = setInterval(() => {
         setTimeLeft((prev) => {
@@ -124,9 +126,12 @@ export const Canvas: React.FC = () => {
     lastPoint.current = { x, y };
 
     if (inkUsed + DOT_INK_COST >= MAX_INK) {
+      const addedCost = MAX_INK - inkUsed;
       setInkUsed(MAX_INK);
+      inkCosts.current.push(addedCost);
     } else {
       setInkUsed((prev) => prev + DOT_INK_COST);
+      inkCosts.current.push(DOT_INK_COST);
     }
 
     actions.drawStroke({ x, y, color, isNewStroke: true });
@@ -146,6 +151,8 @@ export const Canvas: React.FC = () => {
       );
 
       if (inkUsed + distance > MAX_INK) {
+        const allowedDistance = MAX_INK - inkUsed;
+        inkCosts.current[inkCosts.current.length - 1] += allowedDistance;
         setInkUsed(MAX_INK);
         setIsDrawing(false);
         lastPoint.current = null;
@@ -153,6 +160,7 @@ export const Canvas: React.FC = () => {
       }
 
       setInkUsed((prev) => prev + distance);
+      inkCosts.current[inkCosts.current.length - 1] += distance;
       lastPoint.current = { x, y };
 
       actions.drawStroke({ x, y, color, isNewStroke: false });
@@ -163,6 +171,14 @@ export const Canvas: React.FC = () => {
   const stopDrawing = () => {
     setIsDrawing(false);
     lastPoint.current = null;
+  };
+
+  const undoLastStroke = () => {
+    if (inkCosts.current.length > 0) {
+      const restoredInk = inkCosts.current.pop() || 0;
+      setInkUsed((prev) => Math.max(0, prev - restoredInk));
+      actions.undoStroke();
+    }
   };
 
   // Attach global listeners for draw to prevent "sticking" if mouse leaves canvas
@@ -297,11 +313,12 @@ export const Canvas: React.FC = () => {
               ))}
               <div className="w-px h-8 bg-stone-700 mx-1" />
               <button
-                onClick={() => actions.clearCanvas()}
+                onClick={undoLastStroke}
                 className="w-10 h-10 rounded-xl bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
-                title="Clear Canvas"
+                title="Undo Last Stroke"
+                aria-label="Undo last stroke"
               >
-                <Eraser className="w-5 h-5" />
+                <Undo className="w-5 h-5" />
               </button>
             </div>
 
