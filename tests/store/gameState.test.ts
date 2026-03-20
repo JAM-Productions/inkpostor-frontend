@@ -2,12 +2,18 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { useGameStore } from "../../src/store/gameState";
 import { socket } from "../../src/socket";
 
+const { socketListeners } = vi.hoisted(() => ({
+  socketListeners: new Map<string, (...args: any[]) => void>(),
+}));
+
 // Mock the socket and fetch
 vi.mock("../../src/socket", () => ({
   socket: {
     connect: vi.fn(),
     emit: vi.fn(),
-    on: vi.fn(),
+    on: vi.fn((event: string, callback: (...args: any[]) => void) => {
+      socketListeners.set(event, callback);
+    }),
     disconnect: vi.fn(),
     id: "test-socket-id",
     auth: {},
@@ -16,6 +22,16 @@ vi.mock("../../src/socket", () => ({
 }));
 
 global.fetch = vi.fn();
+
+function getSocketListener(eventName: string) {
+  const listener = socketListeners.get(eventName);
+
+  if (!listener) {
+    throw new Error(`Socket listener for "${eventName}" was not registered`);
+  }
+
+  return listener;
+}
 
 describe("useGameStore", () => {
   beforeEach(() => {
@@ -90,6 +106,67 @@ describe("useGameStore", () => {
 
     expect(socket.emit).toHaveBeenCalledWith("drawStroke", stroke);
     expect(useGameStore.getState().canvasStrokes).toEqual([stroke]);
+  });
+
+  it("should emit undoStroke when undoStroke action is called", () => {
+    const state = useGameStore.getState();
+
+    state.actions.undoStroke();
+
+    expect(socket.emit).toHaveBeenCalledWith("undoStroke");
+  });
+
+  it("should remove the most recent stroke group when strokeUndone is received", () => {
+    const strokeUndone = getSocketListener("strokeUndone");
+    const firstStroke = { x: 0, y: 0, color: "black", isNewStroke: true };
+    const firstStrokeContinuation = {
+      x: 1,
+      y: 1,
+      color: "black",
+      isNewStroke: false,
+    };
+    const secondStroke = { x: 10, y: 10, color: "red", isNewStroke: true };
+    const secondStrokeContinuation = {
+      x: 11,
+      y: 11,
+      color: "red",
+      isNewStroke: false,
+    };
+
+    useGameStore.setState({
+      canvasStrokes: [
+        firstStroke,
+        firstStrokeContinuation,
+        secondStroke,
+        secondStrokeContinuation,
+      ],
+    });
+
+    strokeUndone();
+
+    expect(useGameStore.getState().canvasStrokes).toEqual([
+      firstStroke,
+      firstStrokeContinuation,
+    ]);
+  });
+
+  it("should clear the canvas when strokeUndone removes the only stroke group", () => {
+    const strokeUndone = getSocketListener("strokeUndone");
+    const firstStroke = { x: 0, y: 0, color: "black", isNewStroke: true };
+    const firstStrokeContinuation = {
+      x: 1,
+      y: 1,
+      color: "black",
+      isNewStroke: false,
+    };
+
+    useGameStore.setState({
+      canvasStrokes: [firstStroke, firstStrokeContinuation],
+    });
+
+    strokeUndone();
+
+    expect(useGameStore.getState().canvasStrokes).toEqual([]);
   });
 
   it("should set error message", () => {
