@@ -202,9 +202,6 @@ describe("JoinScreen", () => {
       render(<JoinScreen />);
 
       await waitFor(() => {
-        const indicators = screen.getAllByRole("img", {
-          hidden: true,
-        });
         const onlineIndicator = screen.getByText("Server online")
           .previousElementSibling as HTMLElement;
         expect(onlineIndicator).toHaveClass("bg-green-500");
