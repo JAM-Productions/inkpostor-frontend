@@ -16,6 +16,7 @@ export function LanguageSwitcher() {
         onChange={(e) => changeLanguage(e.target.value)}
         className="bg-transparent text-white outline-none cursor-pointer appearance-none pr-4"
         style={{ colorScheme: "dark" }}
+        aria-label="Select language"
       >
         <option value="en">English</option>
         <option value="ca">Català</option>
