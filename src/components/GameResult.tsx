@@ -24,7 +24,7 @@ export const GameResult: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-950">
       <div className="max-w-2xl w-full text-center space-y-8 z-10">
         <div
-          className={`p-8 rounded-3xl border-2 transition-colors ${
+          className={`p-8 rounded-3xl border-2 transition-colors animate-fade-in animate-delay-200 animate-duration-slower ${
             isGameOver
               ? impostorCaught
                 ? "border-emerald-500/50 bg-emerald-950/40 shadow-[0_0_50px_rgba(16,185,129,0.2)]"
@@ -87,7 +87,7 @@ export const GameResult: React.FC = () => {
         </div>
 
         {isGameOver && (
-          <div className="bg-stone-800 rounded-2xl p-6 border border-stone-700 shadow-xl animate-in fade-in zoom-in duration-300">
+          <div className="bg-stone-800 rounded-2xl p-6 border border-stone-700 shadow-xl animate-fade-in animate-delay-1000 animate-duration-slower">
             <p className="text-stone-400 mb-2 uppercase tracking-wider text-sm font-semibold">
               The secret word was
             </p>
@@ -98,7 +98,7 @@ export const GameResult: React.FC = () => {
         {isHost ? (
           <button
             onClick={isGameOver ? actions.playAgain : actions.nextRound}
-            className={`w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] ${
+            className={`w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower ${
               isGameOver
                 ? "bg-ink-primary hover:bg-ink-primary-accent"
                 : "bg-ink-secondary hover:bg-white text-black"
@@ -122,8 +122,10 @@ export const GameResult: React.FC = () => {
             </div>
           </button>
         ) : (
-          <div className="text-stone-500 animate-pulse mt-8">
-            Waiting for host to {isGameOver ? "restart" : "continue"}...
+          <div className="animate-fade-in animate-delay-2000 animate-duration-slower">
+            <div className="text-stone-500 animate-pulse mt-8 ">
+              Waiting for host to {isGameOver ? "restart" : "continue"}...
+            </div>
           </div>
         )}
       </div>

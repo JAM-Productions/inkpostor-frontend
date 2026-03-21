@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap');
 @import "tailwindcss";
+@import "tailwind-animations";
 
 @theme {
   /* Dynamic vibrant palette for Web App */

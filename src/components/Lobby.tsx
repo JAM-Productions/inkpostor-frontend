@@ -112,7 +112,7 @@ export const Lobby: React.FC = () => {
             {players.map((player) => (
               <div
                 key={player.id}
-                className={`flex items-center justify-between p-3 sm:p-4 rounded-xl border ${player.id === myId ? "bg-white/20 border-white/40" : "bg-stone-900 border-stone-700/50"}`}
+                className={`flex items-center justify-between p-3 sm:p-4 rounded-xl border animate-fade-in-right ${player.id === myId ? "bg-white/20 border-white/40" : "bg-stone-900 border-stone-700/50"}`}
               >
                 <div className="flex items-center gap-3">
                   <div

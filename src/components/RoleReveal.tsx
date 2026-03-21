@@ -35,7 +35,7 @@ export const RoleReveal: React.FC = () => {
             onMouseLeave={() => setRevealed(false)}
             onTouchStart={() => setRevealed(true)}
             onTouchEnd={() => setRevealed(false)}
-            className={`w-full aspect-video rounded-3xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none
+            className={`w-full aspect-video rounded-3xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in
               ${
                 revealed
                   ? amIImpostor

@@ -28,7 +28,7 @@ export const JoinScreen: React.FC = () => {
           <img
             src="/inkpostor-logo.webp"
             alt="Inkpostor Logo"
-            className=" h-42"
+            className=" h-42 animate-zoom-in"
           />
         </div>
 
@@ -38,7 +38,7 @@ export const JoinScreen: React.FC = () => {
           </div>
         )}
 
-        <div className="bg-stone-800 p-6 rounded-2xl shadow-xl border border-stone-700 space-y-6">
+        <div className="bg-stone-800 p-6 rounded-2xl shadow-xl border border-stone-700 space-y-6 animate-fade-in-up">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-stone-400 mb-1 text-left">

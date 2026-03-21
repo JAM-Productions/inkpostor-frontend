@@ -46,18 +46,19 @@ export const VotingScreen: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 overflow-y-auto px-2 py-2 max-h-[50vh] custom-scrollbar">
               {players
                 .filter((p) => p.id !== myId)
-                .map((player) => (
+                .map((player, index) => (
                   <button
                     key={player.id}
                     onClick={() => setSelectedPlayer(player.id)}
                     disabled={player.isEjected || hasBeenEjected}
-                    className={`flex items-center gap-3 sm:p-4 p-3 rounded-xl border-2 transition-all duration-200 text-left ${
+                    className={`flex items-center gap-3 sm:p-4 p-3 rounded-xl border-2 transition-all duration-200 text-left animate-pulse-fade-in  ${
                       player.isEjected
                         ? "opacity-40 border-stone-700 bg-stone-900"
                         : selectedPlayer === player.id
                           ? "border-ink-primary bg-ink-primary/10 scale-[1.02] cursor-pointer "
                           : "border-stone-700 bg-stone-900 hover:border-stone-500 cursor-pointer "
                     }`}
+                    style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div
                       className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${
