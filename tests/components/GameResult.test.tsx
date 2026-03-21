@@ -20,7 +20,7 @@ describe("GameResult", () => {
       { id: "socket-456", name: "Impostor" },
       { id: "socket-789", name: "Player 3" },
     ],
-    secretWord: "Pineapple",
+    secretWord: "Apple",
     secretCategory: "Food",
     votes: {}, // To be populated in tests
     actions: { playAgain: mockPlayAgain },
@@ -48,12 +48,10 @@ describe("GameResult", () => {
 
     expect(screen.getByText("Inkpostor Defeated")).toBeInTheDocument();
 
-    // Use getAllByText for 'Impostor' since it appears twice
-    // (Once as ejected player, once as the inkpostor text)
-    const impostorTexts = screen.getAllByText("Impostor");
-    expect(impostorTexts).toHaveLength(2);
+    expect(screen.getByText("Impostor was ejected.")).toBeInTheDocument();
+    expect(screen.getByText("Impostor was the Inkpostor!")).toBeInTheDocument();
 
-    expect(screen.getByText("Pineapple")).toBeInTheDocument();
+    expect(screen.getByText("Apple")).toBeInTheDocument();
   });
 
   it("shows Impostor Won if normal player receives most votes", () => {
@@ -77,8 +75,8 @@ describe("GameResult", () => {
     render(<GameResult />);
 
     expect(screen.getByText("Inkpostor Won")).toBeInTheDocument();
-    expect(screen.getByText("Player 3")).toBeInTheDocument(); // Ejected name
-    expect(screen.getByText("Impostor")).toBeInTheDocument(); // Was the inkpostor
+    expect(screen.getByText("Player 3 was ejected.")).toBeInTheDocument();
+    expect(screen.getByText("Impostor was the Inkpostor!")).toBeInTheDocument();
   });
 
   it("shows tie state if vote is tied", () => {

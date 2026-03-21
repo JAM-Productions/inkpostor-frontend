@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { Undo, CheckSquare, Clock } from "lucide-react";
 
 export const Canvas: React.FC = () => {
+  const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -234,10 +236,10 @@ export const Canvas: React.FC = () => {
             </div>
             <div>
               <p className="text-sm font-bold text-stone-400 uppercase tracking-widest">
-                {isMyTurn ? "Your turn!" : "Now Drawing"}
+                {isMyTurn ? t("canvas.yourTurn") : t("canvas.nowDrawing")}
               </p>
               <h2 className="text-lg font-bold text-white">
-                {activePlayer?.name || "Someone"}
+                {activePlayer?.name || t("canvas.someone")}
               </h2>
             </div>
           </div>
@@ -247,7 +249,7 @@ export const Canvas: React.FC = () => {
               className={`flex flex-col items-end ${isMyTurn ? "hidden sm:flex" : "block sm:flex"}`}
             >
               <p className="text-xs text-stone-400 font-semibold uppercase mb-1 flex items-center gap-1">
-                <Clock className="w-3 h-3" /> Time
+                <Clock className="w-3 h-3" /> {t("canvas.time")}
               </p>
               <div className="text-2xl font-black text-white px-3 py-1 bg-stone-900 rounded-lg">
                 {(timeLeft / 1000).toFixed(1)}s
@@ -260,7 +262,7 @@ export const Canvas: React.FC = () => {
                 className="bg-ink-secondary hover:bg-white text-black px-5 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-ink-secondary/20 cursor-pointer flex items-center gap-2"
               >
                 <CheckSquare className="w-5 h-5" />
-                <span>Done</span>
+                <span>{t("canvas.done")}</span>
               </button>
             )}
           </div>
@@ -326,7 +328,7 @@ export const Canvas: React.FC = () => {
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-bold uppercase tracking-widest px-1">
                 <span className={OutOfInk ? "text-red-400" : "text-stone-400"}>
-                  Ink Supply
+                  {t("canvas.inkSupply")}
                 </span>
                 <span
                   className={
@@ -334,7 +336,7 @@ export const Canvas: React.FC = () => {
                   }
                 >
                   {OutOfInk
-                    ? "OUT OF INK!"
+                    ? t("canvas.outOfInk")
                     : `${Math.floor(100 - inkPercentage)}%`}
                 </span>
               </div>

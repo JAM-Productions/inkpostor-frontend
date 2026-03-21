@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { Users } from "lucide-react";
 import { SERVER_URL } from "../socket";
 
 export const JoinScreen: React.FC = () => {
+  const { t } = useTranslation();
   const [playerName, setPlayerName] = useState("");
   const [roomId, setRoomId] = useState("");
   const [isCheckingHealth, setIsCheckingHealth] = useState(true);
@@ -68,11 +70,11 @@ export const JoinScreen: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-stone-400 mb-1 text-left">
-                Your Name
+                {t("join.yourName")}
               </label>
               <input
                 type="text"
-                placeholder="Enter your name"
+                placeholder={t("join.enterName")}
                 className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-ink-primary focus:border-transparent transition-all outline-none text-white placeholder-stone-500"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
@@ -87,7 +89,7 @@ export const JoinScreen: React.FC = () => {
                 className="w-full relative group overflow-hidden rounded-xl bg-ink-primary px-4 py-3 font-semibold text-white transition-all hover:bg-ink-primary-accent active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Users className="w-5 h-5" />
-                <span>Create New Game</span>
+                <span>{t("join.createGame")}</span>
               </button>
             </div>
           </div>
@@ -97,18 +99,20 @@ export const JoinScreen: React.FC = () => {
               <div className="w-full border-t border-stone-700"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-stone-800 text-stone-500">OR</span>
+              <span className="px-2 bg-stone-800 text-stone-500">
+                {t("join.or")}
+              </span>
             </div>
           </div>
 
           <form onSubmit={handleJoin} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-stone-400 mb-1 text-left">
-                Room Code
+                {t("join.roomCode")}
               </label>
               <input
                 type="text"
-                placeholder="E.g. X7K9A2"
+                placeholder={t("join.roomCodePlaceholder")}
                 className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-ink-secondary focus:border-transparent transition-all outline-none text-center uppercase tracking-widest text-white placeholder-stone-600"
                 value={roomId}
                 onChange={(e) => setRoomId(e.target.value)}
@@ -120,7 +124,7 @@ export const JoinScreen: React.FC = () => {
               disabled={!playerName || !roomId}
               className="w-full rounded-xl bg-ink-secondary px-4 py-3 font-semibold text-black transition-all hover:bg-white active:scale-95 disabled:opacity-50 disabled:active:scale-100 cursor-pointer"
             >
-              Join Game
+              {t("join.joinGame")}
             </button>
           </form>
         </div>
@@ -130,18 +134,22 @@ export const JoinScreen: React.FC = () => {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
             <span className="text-sm text-stone-400">
-              Checking server status...
+              {t("join.checkingServer")}
             </span>
           </div>
         ) : serverOnline ? (
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-green-500">Server online</span>
+            <span className="text-sm text-green-500">
+              {t("join.serverOnline")}
+            </span>
           </div>
         ) : (
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-red-500">Server offline</span>
+            <span className="text-sm text-red-500">
+              {t("join.serverOffline")}
+            </span>
           </div>
         )}
       </div>

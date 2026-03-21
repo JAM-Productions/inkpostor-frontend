@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { SkipForward, CheckCircle2 } from "lucide-react";
 
 export const VotingScreen: React.FC = () => {
+  const { t } = useTranslation();
   const players = useGameStore((state) => state.players);
   const playersRemaining = players.filter((p) => !p.isEjected);
   const myId = useGameStore((state) => state.myId);
@@ -27,17 +29,17 @@ export const VotingScreen: React.FC = () => {
       <div className="w-full max-w-2xl space-y-8">
         <div className="text-center space-y-2 mb-2">
           <h1 className="text-4xl text-white uppercase font-rubik-wet-paint font-extralight">
-            Voting Time
+            {t("voting.title")}
           </h1>
           <p className="text-stone-300 text-xl sm:text-2xl font-bold mb-7">
-            Round {currentRound}
+            {t("voting.round", { round: currentRound })}
           </p>
           <p
             className={`text-stone-400 text-base sm:text-lg tracking-wider font-semibold ${
               hasVoted ? "invisible" : "visible"
             }`}
           >
-            Who is the Inkpostor?
+            {t("voting.whoIsInkpostor")}
           </p>
         </div>
 
@@ -101,7 +103,7 @@ export const VotingScreen: React.FC = () => {
                 <span
                   className={`text-sm sm:text-lg font-semibold ${selectedPlayer === "skip" ? "text-white" : "text-stone-300"}`}
                 >
-                  Skip Vote
+                  {t("voting.skipVote")}
                 </span>
               </button>
               {!hasBeenEjected ? (
@@ -110,15 +112,15 @@ export const VotingScreen: React.FC = () => {
                   disabled={!selectedPlayer}
                   className="w-full py-3 rounded-xl bg-ink-primary hover:bg-ink-primary-accent text-white sm:text-xl text-lg disabled:opacity-50 transition-all active:scale-95 cursor-pointer font-extrabold"
                 >
-                  Confirm Vote
+                  {t("voting.confirmVote")}
                 </button>
               ) : (
                 <div className="w-full flex-col text-center flex items-center justify-center space-y-2">
                   <p className="text-ink-primary-accent text-sm sm:text-base font-bold">
-                    You have been ejected
+                    {t("voting.ejected")}
                   </p>
                   <p className="text-stone-400 animate-pulse text-sm sm:text-base">
-                    Waiting for other players to vote...
+                    {t("voting.waitingOthers")}
                   </p>
                 </div>
               )}
@@ -127,9 +129,11 @@ export const VotingScreen: React.FC = () => {
         ) : (
           <div className=" bg-stone-800 rounded-3xl p-12 border border-stone-700 shadow-xl text-center flex flex-col items-center justify-center min-h-100">
             <CheckCircle2 className="w-20 h-20 text-emerald-500 mb-6" />
-            <h2 className="text-2xl font-bold text-white mb-2">Vote Cast!</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">
+              {t("voting.voteCast")}
+            </h2>
             <p className="text-stone-400 animate-pulse">
-              Waiting for other players to vote...
+              {t("voting.waitingOthers")}
             </p>
 
             <div className="mt-8 flex gap-2">
@@ -141,8 +145,10 @@ export const VotingScreen: React.FC = () => {
               ))}
             </div>
             <p className="text-sm text-stone-500 mt-4">
-              {Object.keys(votes).length} / {playersRemaining.length} votes
-              recorded
+              {t("voting.votesRecorded", {
+                count: Object.keys(votes).length,
+                total: playersRemaining.length,
+              })}
             </p>
           </div>
         )}

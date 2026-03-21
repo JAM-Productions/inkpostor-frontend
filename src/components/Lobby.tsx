@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { Users, Crown, Loader2, Copy, Check, HelpCircle } from "lucide-react";
 import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
 import { RulesModal } from "./RulesModal";
 
 export const Lobby: React.FC = () => {
+  const { t } = useTranslation();
   const roomId = useGameStore((state) => state.roomId);
   const players = useGameStore((state) => state.players);
   const myId = useGameStore((state) => state.myId);
@@ -33,7 +35,7 @@ export const Lobby: React.FC = () => {
       <div className="max-w-lg w-full space-y-4 sm:space-y-8">
         <div className="text-center space-y-2 sm:space-y-4">
           <h2 className="text-stone-400 font-medium tracking-widest uppercase text-sm">
-            Room Code
+            {t("lobby.roomCode")}
           </h2>
           <button
             type="button"
@@ -44,7 +46,7 @@ export const Lobby: React.FC = () => {
                 ? "hover:border-stone-600 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 : "cursor-not-allowed opacity-60"
             }`}
-            title={hasRoomId ? "Click to copy" : "Room code not ready"}
+            title={hasRoomId ? t("lobby.clickToCopy") : t("lobby.waitingCode")}
           >
             <span className="text-5xl font-mono font-bold tracking-[0.2em] text-white">
               {roomId ?? "------"}
@@ -53,7 +55,7 @@ export const Lobby: React.FC = () => {
               {copied ? (
                 <>
                   <Check className="w-3 h-3 text-green-400" />
-                  <span className="text-green-400">Copied!</span>
+                  <span className="text-green-400">{t("lobby.copied")}</span>
                 </>
               ) : (
                 <>
@@ -71,22 +73,22 @@ export const Lobby: React.FC = () => {
                         : "text-stone-600"
                     }
                   >
-                    {hasRoomId ? "Click to copy" : "Waiting for room code..."}
+                    {hasRoomId
+                      ? t("lobby.clickToCopy")
+                      : t("lobby.waitingCode")}
                   </span>
                 </>
               )}
             </div>
           </button>
-          <p className="text-stone-500 text-sm">
-            Share this code with your friends to let them join!
-          </p>
+          <p className="text-stone-500 text-sm">{t("lobby.shareCode")}</p>
         </div>
 
         <div className="bg-stone-800 rounded-3xl p-6 shadow-xl border border-stone-700 flex flex-col max-h-[70vh]">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
               <Users className="text-ink-secondary w-5 h-5 sm:w-6 sm:h-6" />
-              Players
+              {t("lobby.players")}
             </h3>
             <div className="flex items-center gap-2">
               <button
@@ -99,10 +101,13 @@ export const Lobby: React.FC = () => {
               <span className="bg-stone-700 text-stone-300 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full">
                 {players.length < MAX_PLAYERS ? (
                   <span>
-                    {players.length} / {MAX_PLAYERS} joined
+                    {t("lobby.joined", {
+                      count: players.length,
+                      max: MAX_PLAYERS,
+                    })}
                   </span>
                 ) : (
-                  <span className="text-green-400">Full lobby</span>
+                  <span className="text-green-400">{t("lobby.fullLobby")}</span>
                 )}
               </span>
             </div>
@@ -131,7 +136,7 @@ export const Lobby: React.FC = () => {
                   <div className="flex items-center text-amber-500 gap-1 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
                     <Crown className="w-4 h-4" />
                     <span className="text-xs font-bold uppercase tracking-wider">
-                      Host
+                      {t("lobby.host")}
                     </span>
                   </div>
                 )}
@@ -141,9 +146,9 @@ export const Lobby: React.FC = () => {
             {players.length < MIN_PLAYERS && (
               <div className="p-4 rounded-xl border border-dashed border-stone-600 bg-stone-800/50 text-center flex flex-col items-center gap-2">
                 <Loader2 className="w-6 h-6 text-stone-500 animate-spin" />
-                <p className="text-stone-400">Waiting for more players...</p>
+                <p className="text-stone-400">{t("lobby.waitingPlayers")}</p>
                 <p className="text-xs text-stone-500">
-                  Need at least {MIN_PLAYERS} players to start
+                  {t("lobby.needMore", { min: MIN_PLAYERS })}
                 </p>
               </div>
             )}
@@ -157,14 +162,14 @@ export const Lobby: React.FC = () => {
             >
               <div className="flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 font-bold text-white transition-all group-hover:bg-opacity-0">
                 <span className="text-xl sm:text-2xl tracking-wide font-rubik-wet-paint font-extralight">
-                  START GAME
+                  {t("lobby.startGame")}
                 </span>
               </div>
             </button>
           ) : (
             <div className="text-center p-4 bg-stone-900 rounded-xl border border-stone-700 animate-pulse">
               <span className="text-stone-400 font-medium">
-                Waiting for host to start...
+                {t("lobby.waitingHost")}
               </span>
             </div>
           )}
