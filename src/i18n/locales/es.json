@@ -1,0 +1,45 @@
+{
+  "translation": {
+    "join": {
+      "yourName": "Tu Nombre",
+      "enterName": "Introduce tu nombre",
+      "createGame": "Crear Nueva Partida",
+      "or": "O",
+      "roomCode": "Código de Sala",
+      "roomCodePlaceholder": "Ej. X7K9A2",
+      "joinGame": "Unirse",
+      "checkingServer": "Comprobando servidor...",
+      "serverOnline": "Servidor en línea",
+      "serverOffline": "Servidor fuera de línea"
+    },
+    "lobby": {
+      "roomCode": "Código de Sala",
+      "clickToCopy": "Haz clic para copiar",
+      "waitingCode": "Esperando código...",
+      "copied": "¡Copiado!",
+      "shareCode": "¡Comparte este código con tus amigos!",
+      "players": "Jugadores",
+      "joined": "{{count}} / {{max}} unidos",
+      "fullLobby": "Sala llena",
+      "host": "Anfitrión",
+      "waitingPlayers": "Esperando más jugadores...",
+      "needMore": "Se necesitan al menos {{min}} jugadores para empezar",
+      "startGame": "EMPEZAR PARTIDA",
+      "waitingHost": "Esperando al anfitrión..."
+    },
+    "result": {
+      "voteResult": "Resultado de la votación",
+      "impostorDefeated": "Inkpostor Derrotado",
+      "impostorWon": "Inkpostor Ha Ganado",
+      "nobodyEjected": "Nadie ha sido expulsado...",
+      "wasEjected": "{{name}} ha sido expulsado/a.",
+      "stillAmongUs": "El Inkpostor sigue entre nosotros...",
+      "wasImpostor": "¡{{name}} era el Inkpostor!",
+      "secretWord": "La palabra secreta era",
+      "playAgain": "Volver a Jugar",
+      "nextRound": "Siguiente Ronda",
+      "waitingRestart": "Esperando al anfitrión para reiniciar...",
+      "waitingContinue": "Esperando al anfitrión para continuar..."
+    }
+  }
+}

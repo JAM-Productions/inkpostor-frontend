@@ -141,7 +141,7 @@ describe("Lobby", () => {
     });
     expect(copyButton).toBeDisabled();
     expect(screen.getByText("------")).toBeInTheDocument();
-    expect(copyButton).toHaveAttribute("title", "Room code not ready");
+    expect(copyButton).toHaveAttribute("title", "Waiting for room code...");
   });
 
   it("opens the rules modal when the how to play button is clicked", async () => {

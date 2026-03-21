@@ -1,0 +1,45 @@
+{
+  "translation": {
+    "join": {
+      "yourName": "Your Name",
+      "enterName": "Enter your name",
+      "createGame": "Create New Game",
+      "or": "OR",
+      "roomCode": "Room Code",
+      "roomCodePlaceholder": "E.g. X7K9A2",
+      "joinGame": "Join Game",
+      "checkingServer": "Checking server status...",
+      "serverOnline": "Server online",
+      "serverOffline": "Server offline"
+    },
+    "lobby": {
+      "roomCode": "Room Code",
+      "clickToCopy": "Click to copy",
+      "waitingCode": "Waiting for room code...",
+      "copied": "Copied!",
+      "shareCode": "Share this code with your friends to let them join!",
+      "players": "Players",
+      "joined": "{{count}} / {{max}} joined",
+      "fullLobby": "Full lobby",
+      "host": "Host",
+      "waitingPlayers": "Waiting for more players...",
+      "needMore": "Need at least {{min}} players to start",
+      "startGame": "START GAME",
+      "waitingHost": "Waiting for host to start..."
+    },
+    "result": {
+      "voteResult": "Result of the vote",
+      "impostorDefeated": "Inkpostor Defeated",
+      "impostorWon": "Inkpostor Won",
+      "nobodyEjected": "Nobody was ejected...",
+      "wasEjected": "{{name}} was ejected.",
+      "stillAmongUs": "Inkpostor is still among us...",
+      "wasImpostor": "{{name}} was the Inkpostor!",
+      "secretWord": "The secret word was",
+      "playAgain": "Play Again",
+      "nextRound": "Next Round",
+      "waitingRestart": "Waiting for host to restart...",
+      "waitingContinue": "Waiting for host to continue..."
+    }
+  }
+}

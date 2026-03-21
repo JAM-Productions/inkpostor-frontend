@@ -48,10 +48,8 @@ describe("GameResult", () => {
 
     expect(screen.getByText("Inkpostor Defeated")).toBeInTheDocument();
 
-    // Use getAllByText for 'Impostor' since it appears twice
-    // (Once as ejected player, once as the inkpostor text)
-    const impostorTexts = screen.getAllByText("Impostor");
-    expect(impostorTexts).toHaveLength(2);
+    expect(screen.getByText("Impostor was ejected.")).toBeInTheDocument();
+    expect(screen.getByText("Impostor was the Inkpostor!")).toBeInTheDocument();
 
     expect(screen.getByText("Pineapple")).toBeInTheDocument();
   });
@@ -77,8 +75,8 @@ describe("GameResult", () => {
     render(<GameResult />);
 
     expect(screen.getByText("Inkpostor Won")).toBeInTheDocument();
-    expect(screen.getByText("Player 3")).toBeInTheDocument(); // Ejected name
-    expect(screen.getByText("Impostor")).toBeInTheDocument(); // Was the inkpostor
+    expect(screen.getByText("Player 3 was ejected.")).toBeInTheDocument();
+    expect(screen.getByText("Impostor was the Inkpostor!")).toBeInTheDocument();
   });
 
   it("shows tie state if vote is tied", () => {

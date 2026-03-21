@@ -1,0 +1,45 @@
+{
+  "translation": {
+    "join": {
+      "yourName": "El teu nom",
+      "enterName": "Introdueix el teu nom",
+      "createGame": "Crear Nova Partida",
+      "or": "O",
+      "roomCode": "Codi de Sala",
+      "roomCodePlaceholder": "Ex. X7K9A2",
+      "joinGame": "Unir-se",
+      "checkingServer": "Comprovant l'estat del servidor...",
+      "serverOnline": "Servidor en línia",
+      "serverOffline": "Servidor fora de línia"
+    },
+    "lobby": {
+      "roomCode": "Codi de Sala",
+      "clickToCopy": "Fes clic per copiar",
+      "waitingCode": "Esperant el codi...",
+      "copied": "Copiat!",
+      "shareCode": "Comparteix aquest codi amb els teus amics!",
+      "players": "Jugadors",
+      "joined": "{{count}} / {{max}} units",
+      "fullLobby": "Sala plena",
+      "host": "Amfitrió",
+      "waitingPlayers": "Esperant més jugadors...",
+      "needMore": "Calen almenys {{min}} jugadors per començar",
+      "startGame": "COMENÇAR PARTIDA",
+      "waitingHost": "Esperant a l'amfitrió..."
+    },
+    "result": {
+      "voteResult": "Resultat de la votació",
+      "impostorDefeated": "Inkpostor Derrotat",
+      "impostorWon": "Inkpostor Ha Guanyat",
+      "nobodyEjected": "Ningú ha estat expulsat...",
+      "wasEjected": "{{name}} ha estat expulsat/da.",
+      "stillAmongUs": "L'Inkpostor segueix entre nosaltres...",
+      "wasImpostor": "{{name}} era l'Inkpostor!",
+      "secretWord": "La paraula secreta era",
+      "playAgain": "Tornar a Jugar",
+      "nextRound": "Següent Ronda",
+      "waitingRestart": "Esperant a l'amfitrió per reiniciar...",
+      "waitingContinue": "Esperant a l'amfitrió per continuar..."
+    }
+  }
+}
