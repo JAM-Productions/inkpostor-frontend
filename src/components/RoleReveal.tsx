@@ -65,7 +65,7 @@ export const RoleReveal: React.FC = () => {
                     </h3>
                     <p className="text-red-500 font-medium px-4 py-1 bg-red-900/50 rounded-full border border-red-500/30 text-sm ">
                       {t("roleReveal.hint", {
-                        category: t(`words.${secretCategory}`),
+                        category: secretCategory ? t(`words.${secretCategory}`) : "",
                       })}
                     </p>
                   </>
