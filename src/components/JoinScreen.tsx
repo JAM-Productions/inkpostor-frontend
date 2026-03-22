@@ -15,14 +15,14 @@ export const JoinScreen: React.FC = () => {
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!playerName) return;
+    if (!playerName || !serverOnline) return;
     const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
     actions.connectAndCreate(newRoomId, playerName);
   };
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!playerName || !roomId) return;
+    if (!playerName || !roomId || !serverOnline) return;
     actions.connectAndJoin(roomId.toUpperCase(), playerName);
   };
 
@@ -137,13 +137,15 @@ export const JoinScreen: React.FC = () => {
               {t("join.checkingServer")}
             </span>
           </div>
-        ) : !serverOnline && (
-          <div className="flex items-center gap-2 mt-2.5">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-red-500">
-              {t("join.serverOffline")}
-            </span>
-          </div>
+        ) : (
+          !serverOnline && (
+            <div className="flex items-center gap-2 mt-2.5">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-red-500">
+                {t("join.serverOffline")}
+              </span>
+            </div>
+          )
         )}
       </div>
     </div>
