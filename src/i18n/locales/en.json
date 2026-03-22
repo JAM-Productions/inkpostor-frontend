@@ -9,8 +9,7 @@
       "roomCodePlaceholder": "E.g. X7K9A2",
       "joinGame": "Join Game",
       "checkingServer": "Checking server status...",
-      "serverOnline": "Server online",
-      "serverOffline": "Server offline"
+      "serverOffline": "Server is currently unavailable"
     },
     "lobby": {
       "roomCode": "Room Code",

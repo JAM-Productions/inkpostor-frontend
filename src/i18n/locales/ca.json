@@ -9,8 +9,7 @@
       "roomCodePlaceholder": "Ex. X7K9A2",
       "joinGame": "Unir-se",
       "checkingServer": "Comprovant l'estat del servidor...",
-      "serverOnline": "Servidor en línia",
-      "serverOffline": "Servidor fora de línia"
+      "serverOffline": "El servidor no està disponible en aquest moment"
     },
     "lobby": {
       "roomCode": "Codi de Sala",

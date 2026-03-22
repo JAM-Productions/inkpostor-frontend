@@ -15,14 +15,14 @@ export const JoinScreen: React.FC = () => {
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!playerName) return;
+    if (!playerName || !serverOnline) return;
     const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
     actions.connectAndCreate(newRoomId, playerName);
   };
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!playerName || !roomId) return;
+    if (!playerName || !roomId || !serverOnline) return;
     actions.connectAndJoin(roomId.toUpperCase(), playerName);
   };
 
@@ -85,7 +85,7 @@ export const JoinScreen: React.FC = () => {
             <div className="pt-2">
               <button
                 onClick={handleCreate}
-                disabled={!playerName}
+                disabled={!playerName || !serverOnline}
                 className="w-full relative group overflow-hidden rounded-xl bg-ink-primary px-4 py-3 font-semibold text-white transition-all hover:bg-ink-primary-accent active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Users className="w-5 h-5" />
@@ -121,7 +121,7 @@ export const JoinScreen: React.FC = () => {
             </div>
             <button
               type="submit"
-              disabled={!playerName || !roomId}
+              disabled={!playerName || !roomId || !serverOnline}
               className="w-full rounded-xl bg-ink-secondary px-4 py-3 font-semibold text-black transition-all hover:bg-white active:scale-95 disabled:opacity-50 disabled:active:scale-100 cursor-pointer"
             >
               {t("join.joinGame")}
@@ -129,28 +129,23 @@ export const JoinScreen: React.FC = () => {
           </form>
         </div>
       </div>
-      <div className="flex items-center justify-center h-8">
+      <div className="flex items-center justify-center animate-fade-in animate-delay-600">
         {isCheckingHealth ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-2.5">
             <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
             <span className="text-sm text-stone-400">
               {t("join.checkingServer")}
             </span>
           </div>
-        ) : serverOnline ? (
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-green-500">
-              {t("join.serverOnline")}
-            </span>
-          </div>
         ) : (
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-red-500">
-              {t("join.serverOffline")}
-            </span>
-          </div>
+          !serverOnline && (
+            <div className="flex items-center gap-2 mt-2.5">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-red-500">
+                {t("join.serverOffline")}
+              </span>
+            </div>
+          )
         )}
       </div>
     </div>
