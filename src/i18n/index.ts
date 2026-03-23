@@ -5,19 +5,51 @@ import enTranslation from "./locales/en.json";
 import caTranslation from "./locales/ca.json";
 import esTranslation from "./locales/es.json";
 
-const resources = {
+export const resources = {
   en: enTranslation,
   ca: caTranslation,
   es: esTranslation,
 };
 
-i18n.use(initReactI18next).init({
-  resources,
-  lng: "en", // Default language
-  fallbackLng: "en",
-  interpolation: {
-    escapeValue: false, // React already safe from xss
-  },
-});
+export const LANGUAGE_KEY = "inkpostor_language";
+export const SUPPORTED_LANGUAGES = Object.keys(resources);
 
-export default i18n;
+export const getInitialLanguage = () => {
+  try {
+    const saved = localStorage.getItem(LANGUAGE_KEY);
+    if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
+      return saved;
+    }
+  } catch (e) {
+    console.error("Error reading language from localStorage:", e);
+  }
+  return "en";
+};
+
+// Create a new instance for easier testing without affecting global state
+export const createI18nInstance = (lng?: string) => {
+  const instance = i18n.createInstance();
+  instance.use(initReactI18next).init({
+    resources,
+    lng: lng || getInitialLanguage(),
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false,
+    },
+  });
+
+  instance.on("languageChanged", (newLng) => {
+    try {
+      localStorage.setItem(LANGUAGE_KEY, newLng);
+    } catch (e) {
+      console.error("Error saving language to localStorage:", e);
+    }
+  });
+
+  return instance;
+};
+
+// Default instance for the app
+const defaultI18n = createI18nInstance();
+
+export default defaultI18n;

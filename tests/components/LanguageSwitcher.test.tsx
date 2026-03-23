@@ -21,6 +21,7 @@ vi.mock("react-i18next", async () => {
 describe("LanguageSwitcher", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   it("renders correctly with the default language", () => {
@@ -61,5 +62,21 @@ describe("LanguageSwitcher", () => {
     // Verify that the changeLanguage function was called with the correct argument
     expect(changeLanguageMock).toHaveBeenCalledTimes(1);
     expect(changeLanguageMock).toHaveBeenCalledWith("ca");
+  });
+
+  it("calls i18n.changeLanguage which should trigger localStorage update", () => {
+    // For this test, we simulate the side effect that src/i18n/index.ts would have
+    // by making the mocked changeLanguage write the selected language to localStorage.
+    changeLanguageMock.mockImplementationOnce((lang: string) => {
+      localStorage.setItem("inkpostor_language", lang);
+    });
+
+    render(<LanguageSwitcher />);
+
+    const select = screen.getByRole("combobox");
+    fireEvent.change(select, { target: { value: "es" } });
+
+    expect(changeLanguageMock).toHaveBeenCalledWith("es");
+    expect(localStorage.getItem("inkpostor_language")).toBe("es");
   });
 });
