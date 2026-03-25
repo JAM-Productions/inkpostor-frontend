@@ -1,6 +1,14 @@
 import { create } from "zustand";
 import { socket, SERVER_URL } from "../socket";
 
+function detectIsMobile(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const userAgent = navigator.userAgent || "";
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    userAgent,
+  );
+}
+
 function getOrCreateUserId(): string {
   const key = "inkpostor_user_id";
   let id = localStorage.getItem(key);
@@ -37,6 +45,7 @@ export interface StrokeData {
 export interface GameState {
   roomId: string | null;
   hostId: string | null;
+  isMobile: boolean;
   phase: GamePhase;
   players: Player[];
   impostorId: string | null; // Only available in RESULTS or to the impostor themselves locally
@@ -75,6 +84,7 @@ export interface GameState {
 export const useGameStore = create<GameState>()((set) => ({
   roomId: null,
   hostId: null,
+  isMobile: detectIsMobile(),
   phase: "LOBBY",
   players: [],
   impostorId: null,
