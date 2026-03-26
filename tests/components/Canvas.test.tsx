@@ -63,7 +63,7 @@ describe("Canvas", () => {
     expect(screen.getByText("20.0s")).toBeInTheDocument();
 
     // Tools
-    expect(screen.getByTitle("Undo Last Stroke")).toBeInTheDocument();
+    expect(screen.getByLabelText("Undo last stroke")).toBeInTheDocument();
     expect(screen.getByText("Ink Supply")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /done/i })).toBeInTheDocument();
   });
@@ -81,7 +81,7 @@ describe("Canvas", () => {
     expect(screen.getByText("Host")).toBeInTheDocument();
 
     // Shouldn't see tools
-    expect(screen.queryByTitle("Undo Last Stroke")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Undo last stroke")).not.toBeInTheDocument();
     expect(screen.queryByText("Ink Supply")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /done/i }),
@@ -109,7 +109,30 @@ describe("Canvas", () => {
 
     render(<Canvas />);
 
-    const undoBtn = screen.getByTitle("Undo Last Stroke");
+    const undoBtn = screen.getByLabelText("Undo last stroke");
     expect(undoBtn).toBeInTheDocument();
+  });
+
+  it("can toggle toolbar compression", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase };
+      return selector(state);
+    });
+
+    render(<Canvas />);
+
+    // Initially expanded
+    expect(screen.getByLabelText("Compress toolbar")).toBeInTheDocument();
+
+    // Toggle compression
+    fireEvent.click(screen.getByLabelText("Compress toolbar"));
+
+    // Now compressed
+    expect(screen.queryByLabelText("Compress toolbar")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Expand toolbar")).toBeInTheDocument();
+
+    // Toggle back
+    fireEvent.click(screen.getByLabelText("Expand toolbar"));
+    expect(screen.getByLabelText("Compress toolbar")).toBeInTheDocument();
   });
 });

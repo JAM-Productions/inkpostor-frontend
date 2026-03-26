@@ -59,6 +59,9 @@
       "done": "Fet",
       "inkSupply": "Tinta Restant",
       "outOfInk": "SENSE TINTA!",
+      "undo": "Desfés",
+      "compress": "Comprimeix la barra",
+      "expand": "Expandeix la barra",
       "secretWord": "La teva paraula secreta és: {{word}}",
       "youAreInkpostor": "Ets l'Inkpostor! Intenta passar desapercebut."
     },
