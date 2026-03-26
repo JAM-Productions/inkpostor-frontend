@@ -27,10 +27,17 @@ describe("LanguageSwitcher", () => {
   it("renders correctly with the default language", () => {
     render(<LanguageSwitcher />);
 
-    // Check if the select element is present and has the correct default value
-    const select = screen.getByRole("combobox");
-    expect(select).toBeInTheDocument();
-    expect(select).toHaveValue("en");
+    // Check if the trigger button is present
+    const button = screen.getByRole("button", { name: /select language/i });
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveTextContent("English");
+  });
+
+  it("opens the dropdown when the button is clicked", () => {
+    render(<LanguageSwitcher />);
+
+    const button = screen.getByRole("button", { name: /select language/i });
+    fireEvent.click(button);
 
     // Check if all language options are rendered
     expect(screen.getByRole("option", { name: "English" })).toBeInTheDocument();
@@ -41,23 +48,30 @@ describe("LanguageSwitcher", () => {
   it("calls i18n.changeLanguage when a new language is selected", () => {
     render(<LanguageSwitcher />);
 
-    const select = screen.getByRole("combobox");
+    const button = screen.getByRole("button", { name: /select language/i });
+    fireEvent.click(button);
 
     // Simulate changing the language to Spanish
-    fireEvent.change(select, { target: { value: "es" } });
+    const spanishOption = screen.getByRole("option", { name: "Español" });
+    fireEvent.click(spanishOption);
 
     // Verify that the changeLanguage function was called with the correct argument
     expect(changeLanguageMock).toHaveBeenCalledTimes(1);
     expect(changeLanguageMock).toHaveBeenCalledWith("es");
+
+    // Dropdown should be closed after selection
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
   });
 
   it("calls i18n.changeLanguage when Catalan is selected", () => {
     render(<LanguageSwitcher />);
 
-    const select = screen.getByRole("combobox");
+    const button = screen.getByRole("button", { name: /select language/i });
+    fireEvent.click(button);
 
     // Simulate changing the language to Catalan
-    fireEvent.change(select, { target: { value: "ca" } });
+    const catalanOption = screen.getByRole("option", { name: "Català" });
+    fireEvent.click(catalanOption);
 
     // Verify that the changeLanguage function was called with the correct argument
     expect(changeLanguageMock).toHaveBeenCalledTimes(1);
@@ -73,10 +87,27 @@ describe("LanguageSwitcher", () => {
 
     render(<LanguageSwitcher />);
 
-    const select = screen.getByRole("combobox");
-    fireEvent.change(select, { target: { value: "es" } });
+    const button = screen.getByRole("button", { name: /select language/i });
+    fireEvent.click(button);
+
+    const spanishOption = screen.getByRole("option", { name: "Español" });
+    fireEvent.click(spanishOption);
 
     expect(changeLanguageMock).toHaveBeenCalledWith("es");
     expect(localStorage.getItem("inkpostor_language")).toBe("es");
+  });
+
+  it("closes the dropdown when clicking outside", () => {
+    render(<LanguageSwitcher />);
+
+    const button = screen.getByRole("button", { name: /select language/i });
+    fireEvent.click(button);
+
+    expect(screen.getByRole("listbox")).toBeInTheDocument();
+
+    // Click outside
+    fireEvent.mouseDown(document.body);
+
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
   });
 });
