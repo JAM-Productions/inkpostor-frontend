@@ -5,6 +5,7 @@ import { Undo, CheckSquare, Clock } from "lucide-react";
 
 export const Canvas: React.FC = () => {
   const { t } = useTranslation();
+  const isMobile = useGameStore((state) => state.isMobile);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -214,13 +215,38 @@ export const Canvas: React.FC = () => {
   const OutOfInk = inkPercentage >= 100;
 
   const colors = [
-    "#1a1a1a",
-    "#991b1b",
-    "#92400e",
-    "#166534",
-    "#1e40af",
-    "#6b21a8",
-    "#9d174d",
+    // Neutrals
+    "#1a1a1a", // black
+    "#ffffff", // white
+    "#6b7280", // gray
+
+    // Reds
+    "#991b1b", // dark red
+    "#ef4444", // medium red
+
+    // Oranges
+    "#92400e", // dark orange
+    "#f97316", // orange
+
+    // Yellows
+    "#ca8a04", // mustard
+    "#facc15", // light yellow
+
+    // Greens
+    "#166534", // dark green
+    "#22c55e", // green
+
+    // Blues
+    "#1e40af", // dark blue
+    "#3b82f6", // blue
+
+    // Purples
+    "#6b21a8", // dark purple
+    "#a855f7", // purple
+
+    // Pinks
+    "#9d174d", // dark pink
+    "#ec4899", // pink
   ];
 
   return (
@@ -299,24 +325,29 @@ export const Canvas: React.FC = () => {
 
         {/* Toolbar (Only for active player) */}
         {isMyTurn && (
-          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md bg-stone-800/95 backdrop-blur-xl p-4 rounded-3xl border border-stone-700 shadow-2xl flex flex-col gap-4 animate-in slide-in-from-bottom-10 z-50">
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-3xl bg-stone-800/95 backdrop-blur-xl p-4 rounded-3xl border border-stone-700 shadow-2xl flex flex-col gap-4 animate-in slide-in-from-bottom-10 z-50">
             {/* Color Palette */}
-            <div className="flex justify-between items-center gap-2">
-              {colors.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setColor(c)}
-                  className={`w-10 h-10 rounded-full transition-transform border-[3px] ${color === c ? "scale-110 shadow-lg" : "scale-90 opacity-80 hover:opacity-100"} cursor-pointer active:scale-95`}
-                  style={{
-                    backgroundColor: c,
-                    borderColor: color === c ? "white" : "transparent",
-                  }}
-                />
-              ))}
-              <div className="w-px h-8 bg-stone-700 mx-1" />
+            <div className="flex gap-3 w-full">
+              <div
+                className={`flex flex-1 min-w-0 gap-1 p-0.5 ${isMobile ? "overflow-x-auto no-scrollbar" : "overflow-x-auto custom-scrollbar pb-3"}`}
+              >
+                {colors.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setColor(c)}
+                    className={`w-10 h-10 shrink-0 rounded-full transition-transform border-[3px] ${color === c ? "scale-105 shadow-lg" : "scale-90 opacity-80 hover:opacity-100"} cursor-pointer active:scale-95`}
+                    style={{
+                      backgroundColor: c,
+                      borderColor: color === c ? "white" : "transparent",
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="w-px h-8 shrink-0 bg-stone-700 mt-1.5" />
               <button
                 onClick={undoLastStroke}
-                className="w-10 h-10 rounded-xl bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
+                className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                 title="Undo Last Stroke"
                 aria-label="Undo last stroke"
               >
