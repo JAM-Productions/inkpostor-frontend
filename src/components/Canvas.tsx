@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { Undo, CheckSquare, Clock } from "lucide-react";
+import { TURN_TIME_MS } from "../lib/constants";
 
 export const Canvas: React.FC = () => {
   const { t } = useTranslation();
@@ -14,7 +15,6 @@ export const Canvas: React.FC = () => {
   // Limits
   const MAX_INK = 1000;
   const DOT_INK_COST = 5;
-  const TURN_TIME_MS = 15000; // 15 seconds
   const [inkUsed, setInkUsed] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TURN_TIME_MS);
 

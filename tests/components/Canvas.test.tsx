@@ -60,7 +60,7 @@ describe("Canvas", () => {
     expect(screen.getByText("Host")).toBeInTheDocument();
 
     // Should display time
-    expect(screen.getByText("15.0s")).toBeInTheDocument();
+    expect(screen.getByText("20.0s")).toBeInTheDocument();
 
     // Tools
     expect(screen.getByTitle("Undo Last Stroke")).toBeInTheDocument();
