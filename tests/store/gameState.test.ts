@@ -18,7 +18,7 @@ vi.mock("../../src/socket", () => ({
     id: "test-socket-id",
     auth: {},
   },
-  SERVER_URL: "http://localhost:3000",
+  SERVICE_URL: "http://localhost:3000",
 }));
 
 global.fetch = vi.fn();

@@ -2,27 +2,27 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { Users } from "lucide-react";
-import { SERVER_URL } from "../socket";
+import { SERVICE_URL } from "../socket";
 
 export const JoinScreen: React.FC = () => {
   const { t } = useTranslation();
   const [playerName, setPlayerName] = useState("");
   const [roomId, setRoomId] = useState("");
   const [isCheckingHealth, setIsCheckingHealth] = useState(true);
-  const [serverOnline, setServerOnline] = useState(false);
+  const [serviceOnline, setServiceOnline] = useState(false);
   const actions = useGameStore((state) => state.actions);
   const errorMessage = useGameStore((state) => state.errorMessage);
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!playerName || !serverOnline) return;
+    if (!playerName || !serviceOnline) return;
     const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
     actions.connectAndCreate(newRoomId, playerName);
   };
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!playerName || !roomId || !serverOnline) return;
+    if (!playerName || !roomId || !serviceOnline) return;
     actions.connectAndJoin(roomId.toUpperCase(), playerName);
   };
 
@@ -30,17 +30,17 @@ export const JoinScreen: React.FC = () => {
     const checkHealth = async () => {
       setIsCheckingHealth(true);
       try {
-        const res = await fetch(`${SERVER_URL || ""}/health`, {
+        const res = await fetch(`${SERVICE_URL || ""}/health`, {
           method: "GET",
         });
 
         if (res.ok) {
-          setServerOnline(true);
+          setServiceOnline(true);
         } else {
-          setServerOnline(false);
+          setServiceOnline(false);
         }
       } catch {
-        setServerOnline(false);
+        setServiceOnline(false);
       } finally {
         setIsCheckingHealth(false);
       }
@@ -66,7 +66,7 @@ export const JoinScreen: React.FC = () => {
           </div>
         )}
 
-        {serverOnline || isCheckingHealth ? (
+        {serviceOnline || isCheckingHealth ? (
           <div className="bg-stone-800 p-6 rounded-2xl shadow-xl border border-stone-700 space-y-6 animate-fade-in-up">
             <div className="space-y-4">
               <div>
@@ -134,7 +134,7 @@ export const JoinScreen: React.FC = () => {
         ) : (
           <div className="flex  gap-3 justify-center animate-fade-in animate-duration-slower animate-delay-400 min-h-100.5">
             <span className="text-xl font-rubik-wet-paint font-extralight text-red-700 mt-10 ">
-              {t("join.serverOffline")}
+              {t("join.serviceOffline")}
             </span>
           </div>
         )}
@@ -144,7 +144,7 @@ export const JoinScreen: React.FC = () => {
           <div className="flex items-center gap-2 mt-2.5">
             <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
             <span className="text-sm text-stone-400">
-              {t("join.checkingServer")}
+              {t("join.checkingService")}
             </span>
           </div>
         )}

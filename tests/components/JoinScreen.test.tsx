@@ -59,7 +59,7 @@ describe("JoinScreen", () => {
     expect(createButton).toBeDisabled();
   });
 
-  it("disables inputs and buttons while checking server health", async () => {
+  it("disables inputs and buttons while checking service health", async () => {
     (global.fetch as any).mockImplementation(
       () =>
         new Promise(() => {
@@ -120,7 +120,7 @@ describe("JoinScreen", () => {
     );
   });
 
-  it("disables create button even with name entered while server is offline", async () => {
+  it("disables create button even with name entered while service is offline", async () => {
     (global.fetch as any).mockResolvedValueOnce({
       ok: false,
     });
@@ -210,7 +210,7 @@ describe("JoinScreen", () => {
     ).toBeInTheDocument();
   });
 
-  describe("Server Health Check", () => {
+  describe("Service Health Check", () => {
     it("shows 'Checking the service status...' on initial render", async () => {
       (global.fetch as any).mockImplementation(
         () =>
@@ -226,7 +226,7 @@ describe("JoinScreen", () => {
       ).toBeInTheDocument();
     });
 
-    it("hides form and shows offline message when server check completes and server is offline", async () => {
+    it("hides form and shows offline message when service check completes and service is offline", async () => {
       (global.fetch as any).mockResolvedValueOnce({
         ok: false,
       });

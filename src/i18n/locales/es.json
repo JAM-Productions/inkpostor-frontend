@@ -8,8 +8,8 @@
       "roomCode": "Código de Sala",
       "roomCodePlaceholder": "Ej. X7K9A2",
       "joinGame": "Unirse",
-      "checkingServer": "Comprobando el estado del servicio...",
-      "serverOffline": "El servicio no está disponible en este momento"
+      "checkingService": "Comprobando el estado del servicio...",
+      "serviceOffline": "El servicio no está disponible en este momento"
     },
     "lobby": {
       "roomCode": "Código de Sala",

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { socket, SERVER_URL } from "../socket";
+import { socket, SERVICE_URL } from "../socket";
 
 function detectIsMobile(): boolean {
   if (typeof navigator === "undefined") return false;
@@ -107,7 +107,7 @@ export const useGameStore = create<GameState>()((set) => ({
     connectAndCreate: async (roomId, playerName) => {
       try {
         const userId = getOrCreateUserId();
-        const res = await fetch(`${SERVER_URL || ""}/auth`, {
+        const res = await fetch(`${SERVICE_URL || ""}/auth`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: playerName, userId }),
@@ -123,13 +123,13 @@ export const useGameStore = create<GameState>()((set) => ({
         socket.emit("createRoom", { roomId });
         set({ myName: playerName, myId: userId });
       } catch {
-        set({ errorMessage: "Server connection error." });
+        set({ errorMessage: "Service connection error." });
       }
     },
     connectAndJoin: async (roomId, playerName) => {
       try {
         const userId = getOrCreateUserId();
-        const res = await fetch(`${SERVER_URL || ""}/auth`, {
+        const res = await fetch(`${SERVICE_URL || ""}/auth`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: playerName, userId }),
@@ -145,7 +145,7 @@ export const useGameStore = create<GameState>()((set) => ({
         socket.emit("joinRoom", { roomId });
         set({ myName: playerName, myId: userId });
       } catch {
-        set({ errorMessage: "Server connection error." });
+        set({ errorMessage: "Service connection error." });
       }
     },
     startGame: () => {
@@ -197,15 +197,15 @@ socket.on("connect", () => {
 });
 
 socket.on("gameStateUpdate", (newState) => {
-  // Sync all server-provided state that exists on client state
+  // Sync all service-provided state that exists on client state
   useGameStore.setState((state) => ({
     ...state,
     roomId: newState.roomId,
     hostId: newState.hostId,
     phase: newState.phase,
     players: newState.players,
-    impostorId: newState.impostorId, // Usually null from server until RESULTS
-    secretWord: newState.secretWord, // Usually null from server unless RESULTS
+    impostorId: newState.impostorId, // Usually null from service until RESULTS
+    secretWord: newState.secretWord, // Usually null from service unless RESULTS
     secretCategory: newState.secretCategory,
     currentTurnPlayerId: newState.currentTurnPlayerId,
     turnOrder: newState.turnOrder,
