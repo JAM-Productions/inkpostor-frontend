@@ -376,7 +376,9 @@ export const Canvas: React.FC = () => {
             <div className="flex items-center gap-4">
               <div className="flex-1 space-y-1">
                 <div className="flex justify-between text-xs font-bold uppercase tracking-widest px-1">
-                  <span className={OutOfInk ? "text-red-400" : "text-stone-400"}>
+                  <span
+                    className={OutOfInk ? "text-red-400" : "text-stone-400"}
+                  >
                     {t("canvas.inkSupply")}
                   </span>
                   <span
