@@ -26,7 +26,7 @@ export const VotingScreen: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-stone-900 p-4 md:p-8">
-      <div className="w-full max-w-2xl space-y-8">
+      <div className="w-full max-w-2xl space-y-8 pt-20">
         <div className="text-center space-y-2 mb-2">
           <h1 className="text-4xl text-white uppercase font-rubik-wet-paint font-extralight">
             {t("voting.title")}
