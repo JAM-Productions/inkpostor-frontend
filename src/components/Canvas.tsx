@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
-import { Undo, CheckSquare, Clock } from "lucide-react";
+import { Undo, CheckSquare, Clock, Maximize2, Minimize2 } from "lucide-react";
 import { TURN_TIME_MS } from "../lib/constants";
 
 export const Canvas: React.FC = () => {
@@ -10,6 +10,7 @@ export const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [isCompressed, setIsCompressed] = useState(false);
   const [color, setColor] = useState("#1a1a1a"); // Dark ink default
 
   // Limits
@@ -325,58 +326,102 @@ export const Canvas: React.FC = () => {
 
         {/* Toolbar (Only for active player) */}
         {isMyTurn && (
-          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-3xl bg-stone-800/95 backdrop-blur-xl p-4 rounded-3xl border border-stone-700 shadow-2xl flex flex-col gap-4 animate-in slide-in-from-bottom-10 z-50">
-            {/* Color Palette */}
-            <div className="flex gap-3 w-full">
-              <div
-                className={`flex flex-1 min-w-0 gap-1 p-0.5 ${isMobile ? "overflow-x-auto no-scrollbar" : "overflow-x-auto custom-scrollbar pb-3"}`}
-              >
-                {colors.map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => setColor(c)}
-                    className={`w-10 h-10 shrink-0 rounded-full transition-transform border-[3px] ${color === c ? "scale-105 shadow-lg" : "scale-90 opacity-80 hover:opacity-100"} cursor-pointer active:scale-95`}
-                    style={{
-                      backgroundColor: c,
-                      borderColor: color === c ? "white" : "transparent",
-                    }}
-                  />
-                ))}
-              </div>
-
-              <div className="w-px h-8 shrink-0 bg-stone-700 mt-1.5" />
-              <button
-                onClick={undoLastStroke}
-                className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
-                title="Undo Last Stroke"
-                aria-label="Undo last stroke"
-              >
-                <Undo className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Ink Meter */}
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs font-bold uppercase tracking-widest px-1">
-                <span className={OutOfInk ? "text-red-400" : "text-stone-400"}>
-                  {t("canvas.inkSupply")}
-                </span>
-                <span
-                  className={
-                    OutOfInk ? "text-red-400 animate-pulse" : "text-emerald-400"
-                  }
-                >
-                  {OutOfInk
-                    ? t("canvas.outOfInk")
-                    : `${Math.floor(100 - inkPercentage)}%`}
-                </span>
-              </div>
-              <div className="h-4 bg-stone-900 rounded-full overflow-hidden border border-stone-700 shadow-inner">
+          <div
+            className={`fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] bg-stone-800/95 backdrop-blur-xl p-4 rounded-3xl border border-stone-700 shadow-2xl flex flex-col gap-4 animate-in slide-in-from-bottom-10 z-50 transition-all duration-300 ${isCompressed ? "max-w-sm" : "max-w-3xl"}`}
+          >
+            {/* Color Palette & Controls */}
+            {!isCompressed && (
+              <div className="flex gap-3 w-full">
                 <div
-                  className={`h-full transition-all duration-100 ease-out ${OutOfInk ? "bg-red-500" : "bg-linear-to-r from-emerald-400 to-teal-400"}`}
-                  style={{ width: `${inkPercentage}%` }}
-                />
+                  className={`flex flex-1 min-w-0 gap-1 p-0.5 ${isMobile ? "overflow-x-auto no-scrollbar" : "overflow-x-auto custom-scrollbar pb-3"}`}
+                >
+                  {colors.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setColor(c)}
+                      className={`w-10 h-10 shrink-0 rounded-full transition-transform border-[3px] ${color === c ? "scale-105 shadow-lg" : "scale-90 opacity-80 hover:opacity-100"} cursor-pointer active:scale-95`}
+                      style={{
+                        backgroundColor: c,
+                        borderColor: color === c ? "white" : "transparent",
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <div className="w-px h-8 shrink-0 bg-stone-700 mt-1.5" />
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={undoLastStroke}
+                    className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
+                    title={t("canvas.undo")}
+                    aria-label="Undo last stroke"
+                  >
+                    <Undo className="w-5 h-5" />
+                  </button>
+
+                  <button
+                    onClick={() => setIsCompressed(true)}
+                    className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
+                    title={t("canvas.compress")}
+                    aria-label="Compress toolbar"
+                  >
+                    <Minimize2 className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
+            )}
+
+            {/* Ink Meter & Compressed Mode Controls */}
+            <div className="flex items-center gap-4">
+              <div className="flex-1 space-y-1">
+                <div className="flex justify-between text-xs font-bold uppercase tracking-widest px-1">
+                  <span
+                    className={OutOfInk ? "text-red-400" : "text-stone-400"}
+                  >
+                    {t("canvas.inkSupply")}
+                  </span>
+                  <span
+                    className={
+                      OutOfInk
+                        ? "text-red-400 animate-pulse"
+                        : "text-emerald-400"
+                    }
+                  >
+                    {OutOfInk
+                      ? t("canvas.outOfInk")
+                      : `${Math.floor(100 - inkPercentage)}%`}
+                  </span>
+                </div>
+                <div className="h-4 bg-stone-900 rounded-full overflow-hidden border border-stone-700 shadow-inner">
+                  <div
+                    className={`h-full transition-all duration-100 ease-out ${OutOfInk ? "bg-red-500" : "bg-linear-to-r from-emerald-400 to-teal-400"}`}
+                    style={{ width: `${inkPercentage}%` }}
+                  />
+                </div>
+              </div>
+
+              {isCompressed && (
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={undoLastStroke}
+                    className="w-10 h-10 rounded-xl cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
+                    title={t("canvas.undo")}
+                    aria-label="Undo last stroke"
+                  >
+                    <Undo className="w-5 h-5" />
+                  </button>
+
+                  <button
+                    onClick={() => setIsCompressed(false)}
+                    className="w-10 h-10 rounded-xl cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
+                    title={t("canvas.expand")}
+                    aria-label="Expand toolbar"
+                  >
+                    <Maximize2 className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

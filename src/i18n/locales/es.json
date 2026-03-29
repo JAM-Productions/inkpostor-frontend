@@ -59,6 +59,9 @@
       "done": "Hecho",
       "inkSupply": "Tinta Restante",
       "outOfInk": "¡SIN TINTA!",
+      "undo": "Deshacer",
+      "compress": "Comprimir barra",
+      "expand": "Expandir barra",
       "secretWord": "Tu palabra secreta es: {{word}}",
       "youAreInkpostor": "¡Eres el Inkpostor! Intenta pasar desapercibido."
     },

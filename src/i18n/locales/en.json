@@ -59,6 +59,9 @@
       "done": "Done",
       "inkSupply": "Ink Supply",
       "outOfInk": "OUT OF INK!",
+      "undo": "Undo",
+      "compress": "Compress toolbar",
+      "expand": "Expand toolbar",
       "secretWord": "Your secret word is: {{word}}",
       "youAreInkpostor": "You are the Inkpostor! Try to blend in."
     },
