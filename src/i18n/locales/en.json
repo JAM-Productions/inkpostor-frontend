@@ -247,6 +247,46 @@
       "makeSure": "Make sure everyone knows their role before continuing.",
       "startDrawing": "Start Drawing",
       "waitingHost": "Waiting for Host to begin..."
+    },
+    "rules": {
+      "title": "How to Play Inkpostor",
+      "objective": {
+        "title": "Objective",
+        "description": "Find out who the impostor is… or fool everyone if it's you."
+      },
+      "setup": {
+        "title": "Setup",
+        "item1": "Each player receives a secret word.",
+        "item2": "All players get the same word, except the impostor.",
+        "item3": "The impostor receives only a related hint, not the exact word."
+      },
+      "drawing": {
+        "title": "Drawing Turns",
+        "item1": "The game is played in turns.",
+        "item2": "In each turn, each player draws a part of the word.",
+        "item3": "The drawing is shared: everyone contributes to the same canvas."
+      },
+      "deduce": {
+        "title": "Observe & Deduce",
+        "item1": "While drawing, try to figure out who doesn't know the word.",
+        "item2": "The impostor must draw carefully to avoid suspicion."
+      },
+      "voting": {
+        "title": "Voting Phase",
+        "description": "At the end of the round:",
+        "item1": "Players can vote to eliminate someone or skip the vote.",
+        "item2": "If a player gets the majority of votes, they are eliminated."
+      },
+      "end": {
+        "title": "End of the Game",
+        "item1": "If the impostor is caught → the players win.",
+        "item2": "If the impostor survives → the impostor wins."
+      },
+      "tip": {
+        "title": "Tip",
+        "description": "Draw enough to show you know the word… but don't make it too obvious"
+      },
+      "gotIt": "GOT IT!"
     }
   }
 }

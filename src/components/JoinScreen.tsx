@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
-import { Users } from "lucide-react";
+import { Users, HelpCircle } from "lucide-react";
 import { SERVICE_URL } from "../socket";
+import { RulesModal } from "./RulesModal";
 
 export const JoinScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -10,6 +11,7 @@ export const JoinScreen: React.FC = () => {
   const [roomId, setRoomId] = useState("");
   const [isCheckingHealth, setIsCheckingHealth] = useState(true);
   const [serviceOnline, setServiceOnline] = useState(false);
+  const [isRulesOpen, setIsRulesOpen] = useState(false);
   const actions = useGameStore((state) => state.actions);
   const errorMessage = useGameStore((state) => state.errorMessage);
 
@@ -52,12 +54,20 @@ export const JoinScreen: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-900">
       <div className="max-w-md w-full text-center space-y-8">
-        <div className="inline-flex items-center justify-center">
+        <div className="inline-flex items-center justify-center relative">
           <img
             src="/inkpostor-logo.webp"
             alt="Inkpostor Logo"
             className=" h-42 animate-zoom-in"
           />
+          <button
+            onClick={() => setIsRulesOpen(true)}
+            className="absolute -right-12 top-1/2 -translate-y-1/2 p-2 text-stone-400 hover:text-white transition-colors cursor-pointer"
+            title={t("rules.title")}
+            data-testid="how-to-play-btn"
+          >
+            <HelpCircle className="w-8 h-8" />
+          </button>
         </div>
 
         {errorMessage && (
@@ -149,6 +159,7 @@ export const JoinScreen: React.FC = () => {
           </div>
         )}
       </div>
+      <RulesModal isOpen={isRulesOpen} onClose={() => setIsRulesOpen(false)} />
     </div>
   );
 };
