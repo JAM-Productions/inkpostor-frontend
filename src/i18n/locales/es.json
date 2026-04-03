@@ -247,6 +247,48 @@
       "makeSure": "Asegúrate de que todos conozcan su rol antes de continuar.",
       "startDrawing": "Empezar a Dibujar",
       "waitingHost": "Esperando al anfitrión..."
+    },
+    "rules": {
+      "title": "Cómo Jugar Inkpostor",
+      "close": "Cerrar reglas",
+      "closeDialog": "Cerrar diálogo de reglas",
+      "objective": {
+        "title": "Objetivo",
+        "description": "Descubre quién es el impostor... o engaña a todos si eres tú."
+      },
+      "setup": {
+        "title": "Preparación",
+        "item1": "Cada jugador recibe una palabra secreta.",
+        "item2": "Todos los jugadores reciben la misma palabra, excepto el impostor.",
+        "item3": "El servidor envía solo una pista relacionada, no la palabra exacta."
+      },
+      "drawing": {
+        "title": "Turnos de Dibujo",
+        "item1": "El juego se desarrolla por turnos.",
+        "item2": "En cada turno, cada jugador dibuja una parte de la palabra.",
+        "item3": "El dibujo es compartido: todos contribuyen al mismo lienzo."
+      },
+      "observe": {
+        "title": "Observar y Deducir",
+        "item1": "Mientras dibujas, intenta averiguar quién no conoce la palabra.",
+        "item2": "El impostor debe dibujar con cuidado para evitar sospechas."
+      },
+      "voting": {
+        "title": "Fase de Votación",
+        "description": "Al final de la ronda:",
+        "item1": "Los jugadores pueden votar para eliminar a alguien u omitir el voto.",
+        "item2": "Si un jugador obtiene la mayoría de los votos, es eliminado."
+      },
+      "end": {
+        "title": "Fin del Juego",
+        "item1": "Si el impostor es atrapado → los jugadores ganan.",
+        "item2": "Si el impostor sobrevive → el impostor gana."
+      },
+      "tip": {
+        "title": "Consejo",
+        "description": "Dibuja lo suficiente para demostrar que conoces la palabra... pero no lo hagas demasiado obvio."
+      },
+      "gotIt": "¡ENTENDIDO!"
     }
   }
 }

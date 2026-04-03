@@ -247,6 +247,48 @@
       "makeSure": "Assegura't que tothom conegui el seu rol abans de continuar.",
       "startDrawing": "Començar a Dibuixar",
       "waitingHost": "Esperant l'amfitrió..."
+    },
+    "rules": {
+      "title": "Com Jugar Inkpostor",
+      "close": "Tancar regles",
+      "closeDialog": "Tancar diàleg de regles",
+      "objective": {
+        "title": "Objectiu",
+        "description": "Descobreix qui és l'impostor... o enganya tothom si ets tu."
+      },
+      "setup": {
+        "title": "Preparació",
+        "item1": "Cada jugador rep una paraula secreta.",
+        "item2": "Tots els jugadors reben la mateixa paraula, excepte l'impostor.",
+        "item3": "L'impostor rep només una pista relacionada, no la paraula exacta."
+      },
+      "drawing": {
+        "title": "Torns de Dibuix",
+        "item1": "El joc es desenvolupa per torns.",
+        "item2": "En cada torn, cada jugador dibuixa una part de la paraula.",
+        "item3": "El dibuix és compartit: tothom contribueix al mateix llenç."
+      },
+      "observe": {
+        "title": "Observar i Deduir",
+        "item1": "Mentre dibuixes, intenta esbrinar qui no coneix la paraula.",
+        "item2": "L'impostor ha de dibuixar amb cura per evitar sospites."
+      },
+      "voting": {
+        "title": "Fase de Votació",
+        "description": "Al final de la ronda:",
+        "item1": "Els jugadors poden votar per eliminar algú o ometre el vot.",
+        "item2": "Si un jugador obté la majoria dels vots, és eliminat."
+      },
+      "end": {
+        "title": "Fi del Joc",
+        "item1": "Si l'impostor és atrapat → els jugadors guanyen.",
+        "item2": "Si l'impostor sobreviu → l'impostor guanya."
+      },
+      "tip": {
+        "title": "Consell",
+        "description": "Dibuixa prou per demostrar que coneixes la paraula... però no ho facis massa obvi."
+      },
+      "gotIt": "¡ENTÈS!"
     }
   }
 }
