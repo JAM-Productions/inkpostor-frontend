@@ -20,6 +20,9 @@ export const VotingScreen: React.FC = () => {
 
   const handleVote = () => {
     if (selectedPlayer && !hasVoted && !hasBeenEjected) {
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        navigator.vibrate(50);
+      }
       actions.vote(selectedPlayer);
     }
   };

@@ -166,6 +166,15 @@ export const useGameStore = create<GameState>()((set) => ({
     },
     vote: (votedForId) => {
       socket.emit("vote", votedForId);
+      // Optimistic update for better performance and feedback
+      set((state) => {
+        if (!state.myId) return state;
+        const newPlayers = state.players.map((p) =>
+          p.id === state.myId ? { ...p, hasVoted: true } : p,
+        );
+        const newVotes = { ...state.votes, [state.myId]: votedForId };
+        return { players: newPlayers, votes: newVotes };
+      });
     },
     playAgain: () => {
       socket.emit("playAgain");
