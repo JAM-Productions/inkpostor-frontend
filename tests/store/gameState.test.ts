@@ -175,6 +175,45 @@ describe("useGameStore", () => {
     expect(useGameStore.getState().errorMessage).toBe("Test error");
   });
 
+  it("should optimistically update local state on vote action", () => {
+    const myId = "voter-id";
+    const targetPlayerId = "target-id";
+
+    useGameStore.setState({
+      myId,
+      players: [
+        {
+          id: myId,
+          name: "Voter",
+          isConnected: true,
+          score: 0,
+          hasVoted: false,
+        },
+        {
+          id: targetPlayerId,
+          name: "Target",
+          isConnected: true,
+          score: 0,
+          hasVoted: false,
+        },
+      ],
+      votes: {},
+    });
+
+    const state = useGameStore.getState();
+    state.actions.vote(targetPlayerId);
+
+    // Verify socket emission
+    expect(socket.emit).toHaveBeenCalledWith("vote", targetPlayerId);
+
+    // Verify optimistic store update
+    const updatedState = useGameStore.getState();
+    expect(updatedState.votes[myId]).toBe(targetPlayerId);
+
+    const myself = updatedState.players.find((p) => p.id === myId);
+    expect(myself?.hasVoted).toBe(true);
+  });
+
   // -----------------------------------------------------------------------
   // UUID persistence tests
   // -----------------------------------------------------------------------
