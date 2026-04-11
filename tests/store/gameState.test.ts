@@ -214,6 +214,64 @@ describe("useGameStore", () => {
     expect(myself?.hasVoted).toBe(true);
   });
 
+  it("should not emit vote or update state if myId is missing", () => {
+    useGameStore.setState({
+      myId: null,
+      players: [],
+      votes: {},
+    });
+
+    const state = useGameStore.getState();
+    state.actions.vote("target-player");
+
+    expect(socket.emit).not.toHaveBeenCalledWith("vote", expect.anything());
+  });
+
+  it("should not emit vote or update state if player has already voted", () => {
+    const myId = "voter-id";
+    useGameStore.setState({
+      myId,
+      players: [
+        {
+          id: myId,
+          name: "Voter",
+          isConnected: true,
+          score: 0,
+          hasVoted: true,
+        }, // Already voted
+      ],
+      votes: { [myId]: "some-player" },
+    });
+
+    const state = useGameStore.getState();
+    state.actions.vote("target-player");
+
+    expect(socket.emit).not.toHaveBeenCalledWith("vote", "target-player");
+  });
+
+  it("should not emit vote or update state if player is ejected", () => {
+    const myId = "voter-id";
+    useGameStore.setState({
+      myId,
+      players: [
+        {
+          id: myId,
+          name: "Voter",
+          isConnected: true,
+          score: 0,
+          isEjected: true,
+          hasVoted: false,
+        }, // Ejected
+      ],
+      votes: {},
+    });
+
+    const state = useGameStore.getState();
+    state.actions.vote("target-player");
+
+    expect(socket.emit).not.toHaveBeenCalledWith("vote", "target-player");
+  });
+
   // -----------------------------------------------------------------------
   // UUID persistence tests
   // -----------------------------------------------------------------------

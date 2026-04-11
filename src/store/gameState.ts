@@ -81,7 +81,7 @@ export interface GameState {
   };
 }
 
-export const useGameStore = create<GameState>()((set) => ({
+export const useGameStore = create<GameState>()((set, get) => ({
   roomId: null,
   hostId: null,
   isMobile: detectIsMobile(),
@@ -165,6 +165,12 @@ export const useGameStore = create<GameState>()((set) => ({
       socket.emit("endTurn");
     },
     vote: (votedForId) => {
+      const currentState = get();
+      if (!currentState.myId) return;
+
+      const me = currentState.players.find((p) => p.id === currentState.myId);
+      if (!me || me.hasVoted || me.isEjected) return;
+
       socket.emit("vote", votedForId);
       // Optimistic update for better performance and feedback
       set((state) => {
