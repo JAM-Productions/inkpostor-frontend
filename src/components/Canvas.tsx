@@ -314,7 +314,7 @@ export const Canvas: React.FC = () => {
 
             {isMyTurn && OutOfInk && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                <span className="text-red-500 animate-pulse text-4xl md:text-6xl font-black uppercase drop-shadow-lg">
+                <span className="text-red-500 animate-zoom-in text-4xl md:text-6xl uppercase drop-shadow-lg font-rubik-wet-paint font-extralight">
                   {t("canvas.outOfInk")}
                 </span>
               </div>

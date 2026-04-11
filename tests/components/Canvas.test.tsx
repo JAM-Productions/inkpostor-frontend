@@ -167,8 +167,8 @@ describe("Canvas", () => {
     // So 1000 + 5 would definitely exceed 1000.
 
     // We also need to mock the width/height on the element directly because of the useEffect resize
-    Object.defineProperty(canvasElement, 'width', { value: 800 });
-    Object.defineProperty(canvasElement, 'height', { value: 600 });
+    Object.defineProperty(canvasElement, "width", { value: 800 });
+    Object.defineProperty(canvasElement, "height", { value: 600 });
 
     fireEvent.mouseMove(canvasElement, { clientX: 800, clientY: 600 });
 
@@ -177,7 +177,10 @@ describe("Canvas", () => {
 
     // Check for the big indicator specifically (the one with large text classes)
     const outOfInkElements = screen.getAllByText("OUT OF INK!");
-    const bigIndicator = outOfInkElements.find(el => el.className.includes("text-4xl") || el.className.includes("text-6xl"));
+    const bigIndicator = outOfInkElements.find(
+      (el) =>
+        el.className.includes("text-4xl") || el.className.includes("text-6xl"),
+    );
     expect(bigIndicator).toBeInTheDocument();
   });
 });
