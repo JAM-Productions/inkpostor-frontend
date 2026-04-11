@@ -13,13 +13,18 @@ export const VotingScreen: React.FC = () => {
   const currentRound = useGameStore((state) => state.currentRound);
 
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const me = players.find((p) => p.id === myId);
   const hasVoted = me?.hasVoted;
   const hasBeenEjected = me?.isEjected;
 
   const handleVote = () => {
-    if (selectedPlayer && !hasVoted && !hasBeenEjected) {
+    if (selectedPlayer && !hasVoted && !hasBeenEjected && !isSubmitting) {
+      setIsSubmitting(true);
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        navigator.vibrate(50);
+      }
       actions.vote(selectedPlayer);
     }
   };
@@ -109,7 +114,7 @@ export const VotingScreen: React.FC = () => {
               {!hasBeenEjected ? (
                 <button
                   onClick={handleVote}
-                  disabled={!selectedPlayer}
+                  disabled={!selectedPlayer || isSubmitting}
                   className="w-full py-3 rounded-xl bg-ink-primary hover:bg-ink-primary-accent text-white sm:text-xl text-lg disabled:opacity-50 transition-all active:scale-95 cursor-pointer font-extrabold"
                 >
                   {t("voting.confirmVote")}

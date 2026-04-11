@@ -81,6 +81,30 @@ describe("VotingScreen", () => {
     expect(mockVote).toHaveBeenCalledWith("socket-456");
   });
 
+  it("prevents double submission on fast clicks and disables confirm button", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase };
+      return selector(state);
+    });
+
+    render(<VotingScreen />);
+
+    // Select Player 2
+    const playerBtn = screen.getByText("Player 2").closest("button");
+    fireEvent.click(playerBtn!);
+
+    const confirmBtn = screen.getByRole("button", { name: /confirm vote/i });
+
+    // Simulate fast double click
+    fireEvent.click(confirmBtn);
+    fireEvent.click(confirmBtn);
+
+    // Vote should only be called once because isSubmitting disables it
+    expect(mockVote).toHaveBeenCalledTimes(1);
+    expect(mockVote).toHaveBeenCalledWith("socket-456");
+    expect(confirmBtn).toBeDisabled();
+  });
+
   it("shows waiting screen if current player has voted", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {

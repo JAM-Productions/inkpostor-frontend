@@ -175,6 +175,103 @@ describe("useGameStore", () => {
     expect(useGameStore.getState().errorMessage).toBe("Test error");
   });
 
+  it("should optimistically update local state on vote action", () => {
+    const myId = "voter-id";
+    const targetPlayerId = "target-id";
+
+    useGameStore.setState({
+      myId,
+      players: [
+        {
+          id: myId,
+          name: "Voter",
+          isConnected: true,
+          score: 0,
+          hasVoted: false,
+        },
+        {
+          id: targetPlayerId,
+          name: "Target",
+          isConnected: true,
+          score: 0,
+          hasVoted: false,
+        },
+      ],
+      votes: {},
+    });
+
+    const state = useGameStore.getState();
+    state.actions.vote(targetPlayerId);
+
+    // Verify socket emission
+    expect(socket.emit).toHaveBeenCalledWith("vote", targetPlayerId);
+
+    // Verify optimistic store update
+    const updatedState = useGameStore.getState();
+    expect(updatedState.votes[myId]).toBe(targetPlayerId);
+
+    const myself = updatedState.players.find((p) => p.id === myId);
+    expect(myself?.hasVoted).toBe(true);
+  });
+
+  it("should not emit vote or update state if myId is missing", () => {
+    useGameStore.setState({
+      myId: null,
+      players: [],
+      votes: {},
+    });
+
+    const state = useGameStore.getState();
+    state.actions.vote("target-player");
+
+    expect(socket.emit).not.toHaveBeenCalledWith("vote", expect.anything());
+  });
+
+  it("should not emit vote or update state if player has already voted", () => {
+    const myId = "voter-id";
+    useGameStore.setState({
+      myId,
+      players: [
+        {
+          id: myId,
+          name: "Voter",
+          isConnected: true,
+          score: 0,
+          hasVoted: true,
+        }, // Already voted
+      ],
+      votes: { [myId]: "some-player" },
+    });
+
+    const state = useGameStore.getState();
+    state.actions.vote("target-player");
+
+    expect(socket.emit).not.toHaveBeenCalledWith("vote", "target-player");
+  });
+
+  it("should not emit vote or update state if player is ejected", () => {
+    const myId = "voter-id";
+    useGameStore.setState({
+      myId,
+      players: [
+        {
+          id: myId,
+          name: "Voter",
+          isConnected: true,
+          score: 0,
+          isEjected: true,
+          hasVoted: false,
+        }, // Ejected
+      ],
+      votes: {},
+    });
+
+    const state = useGameStore.getState();
+    state.actions.vote("target-player");
+
+    expect(socket.emit).not.toHaveBeenCalledWith("vote", "target-player");
+  });
+
   // -----------------------------------------------------------------------
   // UUID persistence tests
   // -----------------------------------------------------------------------
