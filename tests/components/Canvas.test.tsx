@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Canvas } from "../../src/components/Canvas";
 import { useGameStore } from "../../src/store/gameState";
@@ -86,6 +86,26 @@ describe("Canvas", () => {
     expect(
       screen.queryByRole("button", { name: /done/i }),
     ).not.toBeInTheDocument();
+  });
+
+  it("timer decrements for non-active players too", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase, myId: "socket-456" }; // Not me
+      return selector(state);
+    });
+
+    render(<Canvas />);
+
+    // Initially 20.0s
+    expect(screen.getByText("20.0s")).toBeInTheDocument();
+
+    // Advance time by 1 second
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    // Should now show 19.0s
+    expect(screen.getByText("19.0s")).toBeInTheDocument();
   });
 
   it("allows active player to end turn manually", () => {

@@ -43,17 +43,21 @@ export const Canvas: React.FC = () => {
     canvas.height = container.clientHeight;
   }, []);
 
-  // Timer logic for active player
+  // Timer logic for all players
   useEffect(() => {
-    if (isMyTurn) {
-      setInkUsed(0);
-      inkCosts.current = [];
+    if (currentTurnPlayerId) {
+      if (isMyTurn) {
+        setInkUsed(0);
+        inkCosts.current = [];
+      }
       setTimeLeft(TURN_TIME_MS);
       const interval = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 100) {
             clearInterval(interval);
-            actions.endTurn();
+            if (isMyTurn) {
+              actions.endTurn();
+            }
             return 0;
           }
           return prev - 100;
@@ -61,7 +65,7 @@ export const Canvas: React.FC = () => {
       }, 100);
       return () => clearInterval(interval);
     }
-  }, [isMyTurn, actions]);
+  }, [currentTurnPlayerId, isMyTurn, actions]);
 
   // Redraw all strokes whenever they change
   useEffect(() => {
