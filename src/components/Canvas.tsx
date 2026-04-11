@@ -255,7 +255,7 @@ export const Canvas: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center bg-stone-900 p-2 md:p-6 pb-24 sm:justify-center mt-12 sm:mt-0">
+    <div className="flex flex-col items-center bg-stone-900 p-2 md:p-6 pb-24 sm:justify-center mt-12">
       <div className="w-full max-w-4xl space-y-4">
         {/* Header Banner */}
         <div className="flex items-center justify-between bg-stone-800 p-3 sm:p-4 rounded-2xl border border-stone-700 shadow-xl">
@@ -303,7 +303,7 @@ export const Canvas: React.FC = () => {
         <div className="relative group">
           <div
             ref={containerRef}
-            className="w-full h-[55vh] sm:aspect-video sm:h-auto bg-[#E9DEB9] rounded-2xl overflow-hidden shadow-2xl relative"
+            className="w-full h-[70vh] sm:aspect-video sm:h-auto bg-[#E9DEB9] rounded-2xl overflow-hidden shadow-2xl relative"
           >
             <canvas
               ref={canvasRef}
