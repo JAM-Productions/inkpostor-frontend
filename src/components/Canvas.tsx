@@ -311,6 +311,14 @@ export const Canvas: React.FC = () => {
               onMouseDown={startDrawing}
               onTouchStart={startDrawing}
             />
+
+            {isMyTurn && OutOfInk && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <span className="text-red-500 animate-zoom-in text-4xl md:text-6xl uppercase drop-shadow-lg font-rubik-wet-paint font-extralight">
+                  {t("canvas.outOfInk")}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Mobile Time indicator (floats over canvas on small screens) */}

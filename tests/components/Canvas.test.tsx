@@ -135,4 +135,52 @@ describe("Canvas", () => {
     fireEvent.click(screen.getByLabelText("Expand toolbar"));
     expect(screen.getByLabelText("Compress toolbar")).toBeInTheDocument();
   });
+
+  it("displays big Out of Ink message when ink is exhausted", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase };
+      return selector(state);
+    });
+
+    const { container } = render(<Canvas />);
+
+    // To reach MAX_INK, we need to draw.
+    const canvasElement = container.querySelector("canvas")!;
+
+    // We need to mock getBoundingClientRect for the coordinate calculation
+    canvasElement.getBoundingClientRect = vi.fn(() => ({
+      width: 800,
+      height: 600,
+      left: 0,
+      top: 0,
+      right: 800,
+      bottom: 600,
+    })) as any;
+
+    // Start drawing
+    fireEvent.mouseDown(canvasElement, { clientX: 0, clientY: 0 });
+
+    // Move a lot to consume ink (MAX_INK is 1000)
+    // Distance formula: sqrt((x2-x1)^2 + (y2-y1)^2)
+    // From 0,0 to 800,600 is sqrt(800^2 + 600^2) = 1000.
+    // However, the component also adds DOT_INK_COST (5) on mouseDown.
+    // So 1000 + 5 would definitely exceed 1000.
+
+    // We also need to mock the width/height on the element directly because of the useEffect resize
+    Object.defineProperty(canvasElement, "width", { value: 800 });
+    Object.defineProperty(canvasElement, "height", { value: 600 });
+
+    fireEvent.mouseMove(canvasElement, { clientX: 800, clientY: 600 });
+
+    // Now it should be out of ink
+    expect(screen.getAllByText("OUT OF INK!").length).toBeGreaterThan(0);
+
+    // Check for the big indicator specifically (the one with large text classes)
+    const outOfInkElements = screen.getAllByText("OUT OF INK!");
+    const bigIndicator = outOfInkElements.find(
+      (el) =>
+        el.className.includes("text-4xl") || el.className.includes("text-6xl"),
+    );
+    expect(bigIndicator).toBeInTheDocument();
+  });
 });
