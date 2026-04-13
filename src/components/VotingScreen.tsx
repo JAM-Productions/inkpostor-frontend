@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { SkipForward, CheckCircle2 } from "lucide-react";
+import { VoteDotsPreview } from "./VoteDotsPreview";
 
 export const VotingScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -14,6 +15,14 @@ export const VotingScreen: React.FC = () => {
 
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const voteCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const votedForId of Object.values(votes)) {
+      counts[votedForId] = (counts[votedForId] || 0) + 1;
+    }
+    return counts;
+  }, [votes]);
 
   const me = players.find((p) => p.id === myId);
   const hasVoted = me?.hasVoted;
@@ -82,26 +91,11 @@ export const VotingScreen: React.FC = () => {
                       {player.name}
                     </span>
 
-                    {Object.values(votes).filter((vId) => vId === player.id)
-                      .length > 0 && (
-                      <div className="ml-auto flex gap-1.5 pr-2">
-                        {Array.from({
-                          length: Object.values(votes).filter(
-                            (vId) => vId === player.id,
-                          ).length,
-                        }).map((_, i) => (
-                          <div
-                            key={i}
-                            data-testid={`vote-dot-${player.id}`}
-                            className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${
-                              selectedPlayer === player.id
-                                ? "bg-white/80"
-                                : "bg-stone-500/70"
-                            } animate-pulse-fade-in`}
-                          />
-                        ))}
-                      </div>
-                    )}
+                    <VoteDotsPreview
+                      count={voteCounts[player.id] || 0}
+                      testId={`vote-dot-${player.id}`}
+                      isSelected={selectedPlayer === player.id}
+                    />
                   </button>
                 ))}
             </div>
@@ -132,26 +126,11 @@ export const VotingScreen: React.FC = () => {
                   {t("voting.skipVote")}
                 </span>
 
-                {Object.values(votes).filter((vId) => vId === "skip").length >
-                  0 && (
-                  <div className="ml-auto flex gap-1.5 pr-2">
-                    {Array.from({
-                      length: Object.values(votes).filter(
-                        (vId) => vId === "skip",
-                      ).length,
-                    }).map((_, i) => (
-                      <div
-                        key={i}
-                        data-testid="vote-dot-skip"
-                        className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${
-                          selectedPlayer === "skip"
-                            ? "bg-white/80"
-                            : "bg-stone-500/70"
-                        } animate-pulse-fade-in`}
-                      />
-                    ))}
-                  </div>
-                )}
+                <VoteDotsPreview
+                  count={voteCounts["skip"] || 0}
+                  testId="vote-dot-skip"
+                  isSelected={selectedPlayer === "skip"}
+                />
               </button>
               {!hasBeenEjected ? (
                 <button
