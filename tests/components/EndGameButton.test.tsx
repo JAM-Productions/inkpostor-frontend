@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { EndGameButton } from "../../src/components/EndGameButton";
 import { useGameStore } from "../../src/store/gameState";
@@ -12,7 +12,7 @@ describe("EndGameButton", () => {
   const mockStateBase = {
     myId: "socket-123",
     hostId: "socket-123",
-    phase: "GAME",
+    phase: "ROLE_REVEAL",
   };
 
   beforeEach(() => {
@@ -23,7 +23,7 @@ describe("EndGameButton", () => {
     });
   });
 
-  it("renders the button when user is host and phase is GAME", () => {
+  it("renders the button when user is host and phase is ROLE_REVEAL", () => {
     render(<EndGameButton />);
 
     const button = screen.getByRole("button", { name: /end game/i });
