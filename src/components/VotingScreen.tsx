@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { SkipForward, CheckCircle2 } from "lucide-react";
+import { VoteDotsPreview } from "./VoteDotsPreview";
 
 export const VotingScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -14,6 +15,14 @@ export const VotingScreen: React.FC = () => {
 
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const voteCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const votedForId of Object.values(votes)) {
+      counts[votedForId] = (counts[votedForId] || 0) + 1;
+    }
+    return counts;
+  }, [votes]);
 
   const me = players.find((p) => p.id === myId);
   const hasVoted = me?.hasVoted;
@@ -81,6 +90,12 @@ export const VotingScreen: React.FC = () => {
                     >
                       {player.name}
                     </span>
+
+                    <VoteDotsPreview
+                      count={voteCounts[player.id] || 0}
+                      testId={`vote-dot-${player.id}`}
+                      isSelected={selectedPlayer === player.id}
+                    />
                   </button>
                 ))}
             </div>
@@ -110,6 +125,12 @@ export const VotingScreen: React.FC = () => {
                 >
                   {t("voting.skipVote")}
                 </span>
+
+                <VoteDotsPreview
+                  count={voteCounts["skip"] || 0}
+                  testId="vote-dot-skip"
+                  isSelected={selectedPlayer === "skip"}
+                />
               </button>
               {!hasBeenEjected ? (
                 <button

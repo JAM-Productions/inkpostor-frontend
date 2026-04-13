@@ -178,4 +178,32 @@ describe("VotingScreen", () => {
     const otherPlayerBtn = screen.getByText("Player 2").closest("button");
     expect(otherPlayerBtn).toBeDisabled();
   });
+
+  it("shows anonymous vote preview dots based on received votes", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        votes: {
+          "socket-123": "socket-456", // Me voted for Player 2
+          "socket-789": "socket-456", // Player 3 voted for Player 2
+          "socket-abc": "skip", // Another player voted skip
+        },
+      };
+      return selector(state);
+    });
+
+    render(<VotingScreen />);
+
+    // Player 2 should have 2 vote dots
+    const player2Dots = screen.getAllByTestId("vote-dot-socket-456");
+    expect(player2Dots).toHaveLength(2);
+
+    // Skip vote should have 1 vote dot
+    const skipDots = screen.getAllByTestId("vote-dot-skip");
+    expect(skipDots).toHaveLength(1);
+
+    // Player 3 should have 0 vote dots
+    const player3Dots = screen.queryAllByTestId("vote-dot-socket-789");
+    expect(player3Dots).toHaveLength(0);
+  });
 });
