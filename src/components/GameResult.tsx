@@ -15,9 +15,11 @@ export const GameResult: React.FC = () => {
   const isHost = myId === hostId;
   const ejectedId = useGameStore((state) => state.ejectedId);
   const playersRemaining = players.filter((p) => !p.isEjected);
+  const gameEnded = useGameStore((state) => state.gameEnded);
 
   const impostorCaught = ejectedId === impostorId;
-  const isGameOver = impostorCaught || playersRemaining.length < MIN_PLAYERS;
+  const isGameOver =
+    impostorCaught || playersRemaining.length < MIN_PLAYERS || gameEnded;
   const impostorName =
     players.find((p) => p.id === impostorId)?.name || "Unknown";
   const ejectedName = players.find((p) => p.id === ejectedId)?.name;
@@ -63,20 +65,21 @@ export const GameResult: React.FC = () => {
           </h1>
 
           <div className="text-xl md:text-2xl text-stone-300 font-medium space-y-2">
-            {!ejectedId ? (
-              <p className="text-stone-400 italic">
-                {t("result.nobodyEjected")}
-              </p>
-            ) : (
-              <>
-                <p>{t("result.wasEjected", { name: ejectedName })}</p>
-                {!isGameOver && (
-                  <p className="text-stone-400 italic">
-                    {t("result.stillAmongUs")}
-                  </p>
-                )}
-              </>
-            )}
+            {!gameEnded &&
+              (!ejectedId ? (
+                <p className="text-stone-400 italic">
+                  {t("result.nobodyEjected")}
+                </p>
+              ) : (
+                <>
+                  <p>{t("result.wasEjected", { name: ejectedName })}</p>
+                  {!isGameOver && (
+                    <p className="text-stone-400 italic">
+                      {t("result.stillAmongUs")}
+                    </p>
+                  )}
+                </>
+              ))}
 
             {isGameOver && (
               <p className="">

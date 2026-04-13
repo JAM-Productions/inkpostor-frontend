@@ -289,6 +289,14 @@
         "description": "Dibuja lo suficiente para demostrar que conoces la palabra... pero no lo hagas demasiado obvio."
       },
       "gotIt": "¡ENTENDIDO!"
+    },
+    "endGame": {
+      "title": "¿Quieres terminar la partida?",
+      "description": "Si terminas la partida ahora, se revelará el impostor y se finalizará el juego para todos los jugadores.",
+      "close": "Cerrar",
+      "closeDialog": "Cerrar diálogo de fin de partida",
+      "endGame": "Terminar partida",
+      "open": "Abrir diálogo de fin de partida"
     }
   }
 }

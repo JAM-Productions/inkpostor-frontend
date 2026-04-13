@@ -272,6 +272,14 @@ describe("useGameStore", () => {
     expect(socket.emit).not.toHaveBeenCalledWith("vote", "target-player");
   });
 
+  it("should emit endGame when endGame action is called", () => {
+    const state = useGameStore.getState();
+
+    state.actions.endGame();
+
+    expect(socket.emit).toHaveBeenCalledWith("endGame");
+  });
+
   // -----------------------------------------------------------------------
   // UUID persistence tests
   // -----------------------------------------------------------------------

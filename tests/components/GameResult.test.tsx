@@ -133,4 +133,37 @@ describe("GameResult", () => {
       screen.getByText("Waiting for host to restart..."),
     ).toBeInTheDocument();
   });
+
+  it("shows nobody ejected message when gameEnded is false and no ejectedId", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        gameEnded: false,
+        ejectedId: null,
+      };
+      return selector(state);
+    });
+
+    render(<GameResult />);
+
+    expect(screen.getByText("Nobody was ejected...")).toBeInTheDocument();
+  });
+
+  it("shows was ejected message when gameEnded is false and ejectedId exists", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        gameEnded: false,
+        ejectedId: "socket-789",
+      };
+      return selector(state);
+    });
+
+    render(<GameResult />);
+
+    expect(screen.getByText("Player 3 was ejected.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Inkpostor is still among us..."),
+    ).toBeInTheDocument();
+  });
 });
