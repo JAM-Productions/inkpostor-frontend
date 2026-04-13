@@ -81,6 +81,27 @@ export const VotingScreen: React.FC = () => {
                     >
                       {player.name}
                     </span>
+
+                    {Object.values(votes).filter((vId) => vId === player.id)
+                      .length > 0 && (
+                      <div className="ml-auto flex gap-1.5 pr-2">
+                        {Array.from({
+                          length: Object.values(votes).filter(
+                            (vId) => vId === player.id,
+                          ).length,
+                        }).map((_, i) => (
+                          <div
+                            key={i}
+                            data-testid={`vote-dot-${player.id}`}
+                            className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${
+                              selectedPlayer === player.id
+                                ? "bg-white/80"
+                                : "bg-stone-500/70"
+                            } animate-pulse-fade-in`}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </button>
                 ))}
             </div>
@@ -110,6 +131,27 @@ export const VotingScreen: React.FC = () => {
                 >
                   {t("voting.skipVote")}
                 </span>
+
+                {Object.values(votes).filter((vId) => vId === "skip").length >
+                  0 && (
+                  <div className="ml-auto flex gap-1.5 pr-2">
+                    {Array.from({
+                      length: Object.values(votes).filter(
+                        (vId) => vId === "skip",
+                      ).length,
+                    }).map((_, i) => (
+                      <div
+                        key={i}
+                        data-testid="vote-dot-skip"
+                        className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${
+                          selectedPlayer === "skip"
+                            ? "bg-white/80"
+                            : "bg-stone-500/70"
+                        } animate-pulse-fade-in`}
+                      />
+                    ))}
+                  </div>
+                )}
               </button>
               {!hasBeenEjected ? (
                 <button
