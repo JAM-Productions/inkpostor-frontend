@@ -16,6 +16,12 @@ export const VotingScreen: React.FC = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const me = players.find((p) => p.id === myId);
+  const hasVoted = me?.hasVoted;
+  const hasBeenEjected = me?.isEjected;
+
+  const effectiveSelectedPlayer = hasVoted && myId ? votes[myId] : selectedPlayer;
+
   const voteCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const votedForId of Object.values(votes)) {
@@ -23,10 +29,6 @@ export const VotingScreen: React.FC = () => {
     }
     return counts;
   }, [votes]);
-
-  const me = players.find((p) => p.id === myId);
-  const hasVoted = me?.hasVoted;
-  const hasBeenEjected = me?.isEjected;
 
   const handleVote = () => {
     if (selectedPlayer && !hasVoted && !hasBeenEjected && !isSubmitting) {
@@ -57,127 +59,130 @@ export const VotingScreen: React.FC = () => {
           </p>
         </div>
 
-        {!hasVoted ? (
-          <div className="bg-stone-800 rounded-3xl p-6 border border-stone-700 shadow-xl ">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 overflow-y-auto px-2 py-2 max-h-[50vh] custom-scrollbar">
-              {players
-                .filter((p) => p.id !== myId)
-                .map((player, index) => (
-                  <button
-                    key={player.id}
-                    onClick={() => setSelectedPlayer(player.id)}
-                    disabled={player.isEjected || hasBeenEjected}
-                    className={`flex items-center gap-3 sm:p-4 p-3 rounded-xl border-2 transition-all duration-200 text-left animate-pulse-fade-in  ${
-                      player.isEjected
-                        ? "opacity-40 border-stone-700 bg-stone-900"
-                        : selectedPlayer === player.id
-                          ? "border-ink-primary bg-ink-primary/10 scale-[1.02] cursor-pointer "
-                          : "border-stone-700 bg-stone-900 hover:border-stone-500 cursor-pointer "
+        <div className="bg-stone-800 rounded-3xl p-6 border border-stone-700 shadow-xl ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 overflow-y-auto px-2 py-2 max-h-[50vh] custom-scrollbar">
+            {players
+              .filter((p) => p.id !== myId)
+              .map((player, index) => (
+                <button
+                  key={player.id}
+                  onClick={() => setSelectedPlayer(player.id)}
+                  disabled={player.isEjected || hasBeenEjected || hasVoted}
+                  className={`flex items-center gap-3 sm:p-4 p-3 rounded-xl border-2 transition-all duration-200 text-left animate-pulse-fade-in  ${
+                    player.isEjected
+                      ? "opacity-40 border-stone-700 bg-stone-900"
+                      : effectiveSelectedPlayer === player.id
+                        ? "border-ink-primary bg-ink-primary/10 scale-[1.02] "
+                        : "border-stone-700 bg-stone-900 hover:border-stone-500 cursor-pointer "
+                  }`}
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div
+                    className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${
+                      effectiveSelectedPlayer === player.id
+                        ? "bg-ink-primary text-white"
+                        : "bg-stone-800 text-stone-400"
                     }`}
-                    style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <div
-                      className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${
-                        selectedPlayer === player.id
-                          ? "bg-ink-primary text-white"
-                          : "bg-stone-800 text-stone-400"
-                      }`}
-                    >
-                      {player.name.charAt(0).toUpperCase()}
-                    </div>
-                    <span
-                      className={`text-sm sm:text-lg font-semibold ${selectedPlayer === player.id ? "text-white" : "text-stone-300"}`}
-                    >
-                      {player.name}
-                    </span>
+                    {player.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span
+                    className={`text-sm sm:text-lg font-semibold ${effectiveSelectedPlayer === player.id ? "text-white" : "text-stone-300"}`}
+                  >
+                    {player.name}
+                  </span>
 
-                    <VoteDotsPreview
-                      count={voteCounts[player.id] || 0}
-                      testId={`vote-dot-${player.id}`}
-                      isSelected={selectedPlayer === player.id}
-                    />
-                  </button>
-                ))}
-            </div>
+                  <VoteDotsPreview
+                    count={voteCounts[player.id] || 0}
+                    testId={`vote-dot-${player.id}`}
+                    isSelected={effectiveSelectedPlayer === player.id}
+                  />
+                </button>
+              ))}
+          </div>
 
-            <div className="mt-4 space-y-6">
-              <button
-                onClick={() => setSelectedPlayer("skip")}
-                className={` w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 text-left col-span-1 md:col-span-2 cursor-pointer ${
-                  hasBeenEjected
-                    ? "hidden"
-                    : selectedPlayer === "skip"
-                      ? "bg-white/10 border-white/40 scale-[1.02]"
-                      : "border-stone-700 bg-stone-900 hover:border-stone-500 "
+          <div className="mt-4 space-y-6">
+            <button
+              onClick={() => setSelectedPlayer("skip")}
+              disabled={hasVoted}
+              className={` w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 text-left col-span-1 md:col-span-2 ${
+                hasBeenEjected
+                  ? "hidden"
+                  : effectiveSelectedPlayer === "skip"
+                    ? "bg-white/10 border-white/40 scale-[1.02]"
+                    : "border-stone-700 bg-stone-900 hover:border-stone-500 cursor-pointer"
+              }`}
+            >
+              <div
+                className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-xl ${
+                  effectiveSelectedPlayer === "skip"
+                    ? "bg-white/30 text-white"
+                    : "bg-stone-800 text-stone-400"
                 }`}
               >
-                <div
-                  className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-xl ${
-                    selectedPlayer === "skip"
-                      ? "bg-white/30 text-white"
-                      : "bg-stone-800 text-stone-400"
-                  }`}
-                >
-                  <SkipForward className="sm:w-6 sm:h-6 w-4.5 h-4.5" />
-                </div>
-                <span
-                  className={`text-sm sm:text-lg font-semibold ${selectedPlayer === "skip" ? "text-white" : "text-stone-300"}`}
-                >
-                  {t("voting.skipVote")}
-                </span>
+                <SkipForward className="sm:w-6 sm:h-6 w-4.5 h-4.5" />
+              </div>
+              <span
+                className={`text-sm sm:text-lg font-semibold ${effectiveSelectedPlayer === "skip" ? "text-white" : "text-stone-300"}`}
+              >
+                {t("voting.skipVote")}
+              </span>
 
-                <VoteDotsPreview
-                  count={voteCounts["skip"] || 0}
-                  testId="vote-dot-skip"
-                  isSelected={selectedPlayer === "skip"}
-                />
+              <VoteDotsPreview
+                count={voteCounts["skip"] || 0}
+                testId="vote-dot-skip"
+                isSelected={effectiveSelectedPlayer === "skip"}
+              />
+            </button>
+            {!hasBeenEjected && !hasVoted ? (
+              <button
+                onClick={handleVote}
+                disabled={!selectedPlayer || isSubmitting}
+                className="w-full py-3 rounded-xl bg-ink-primary hover:bg-ink-primary-accent text-white sm:text-xl text-lg disabled:opacity-50 transition-all active:scale-95 cursor-pointer font-extrabold"
+              >
+                {t("voting.confirmVote")}
               </button>
-              {!hasBeenEjected ? (
-                <button
-                  onClick={handleVote}
-                  disabled={!selectedPlayer || isSubmitting}
-                  className="w-full py-3 rounded-xl bg-ink-primary hover:bg-ink-primary-accent text-white sm:text-xl text-lg disabled:opacity-50 transition-all active:scale-95 cursor-pointer font-extrabold"
-                >
-                  {t("voting.confirmVote")}
-                </button>
-              ) : (
-                <div className="w-full flex-col text-center flex items-center justify-center space-y-2">
-                  <p className="text-ink-primary-accent text-sm sm:text-base font-bold">
-                    {t("voting.ejected")}
-                  </p>
-                  <p className="text-stone-400 animate-pulse text-sm sm:text-base">
-                    {t("voting.waitingOthers")}
+            ) : hasVoted ? (
+              <div className="w-full flex-col text-center flex items-center justify-center space-y-4 py-4 bg-stone-900/50 rounded-2xl border border-stone-700/50">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                  <h2 className="text-xl font-bold text-white">
+                    {t("voting.voteCast")}
+                  </h2>
+                </div>
+                <p className="text-stone-400 animate-pulse text-sm sm:text-base">
+                  {t("voting.waitingOthers")}
+                </p>
+
+                <div className="flex flex-col items-center gap-3 w-full px-4">
+                  <div className="flex gap-2">
+                    {playersRemaining.map((p) => (
+                      <div
+                        key={p.id}
+                        className={`w-3 h-3 rounded-full transition-colors duration-500 ${p.hasVoted ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" : "bg-stone-700"}`}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-xs text-stone-500 font-medium">
+                    {t("voting.votesRecorded", {
+                      count: Object.keys(votes).length,
+                      total: playersRemaining.length,
+                    })}
                   </p>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="w-full flex-col text-center flex items-center justify-center space-y-2">
+                <p className="text-ink-primary-accent text-sm sm:text-base font-bold">
+                  {t("voting.ejected")}
+                </p>
+                <p className="text-stone-400 animate-pulse text-sm sm:text-base">
+                  {t("voting.waitingOthers")}
+                </p>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className=" bg-stone-800 rounded-3xl p-12 border border-stone-700 shadow-xl text-center flex flex-col items-center justify-center min-h-100">
-            <CheckCircle2 className="w-20 h-20 text-emerald-500 mb-6" />
-            <h2 className="text-2xl font-bold text-white mb-2">
-              {t("voting.voteCast")}
-            </h2>
-            <p className="text-stone-400 animate-pulse">
-              {t("voting.waitingOthers")}
-            </p>
-
-            <div className="mt-8 flex gap-2">
-              {playersRemaining.map((p) => (
-                <div
-                  key={p.id}
-                  className={`w-3 h-3 rounded-full ${p.hasVoted ? "bg-emerald-500" : "bg-stone-700"}`}
-                />
-              ))}
-            </div>
-            <p className="text-sm text-stone-500 mt-4">
-              {t("voting.votesRecorded", {
-                count: Object.keys(votes).length,
-                total: playersRemaining.length,
-              })}
-            </p>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
