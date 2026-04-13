@@ -217,8 +217,10 @@ socket.on("connect", () => {
 socket.on("gameStateUpdate", (newState) => {
   // Sync all service-provided state that exists on client state
   useGameStore.setState((state) => {
-    // If round has changed or we are going back to LOBBY/ROLE_REVEAL, reset local canvas.
-    // We only do this if we were already in a room and playing (to avoid clearing canvas on first join/refresh).
+    // Determine if we should clear the canvas based on round or phase transitions.
+    // If the server-provided strokes are already empty, it means the server has reset.
+    // If not, we might be in a transition where the server state hasn't caught up,
+    // so we optimistically clear locally to prevent seeing old strokes.
     const isMidGameRoundTransition =
       state.roomId !== null && newState.currentRound !== state.currentRound;
 
@@ -227,7 +229,12 @@ socket.on("gameStateUpdate", (newState) => {
       state.phase === "RESULTS" &&
       (newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL");
 
-    const shouldResetCanvas = isMidGameRoundTransition || isRestartTransition;
+    const isServerCanvasAlreadyReset = newState.canvasStrokes.length === 0;
+
+    const shouldResetCanvas =
+      isMidGameRoundTransition ||
+      isRestartTransition ||
+      isServerCanvasAlreadyReset;
 
     return {
       ...state,

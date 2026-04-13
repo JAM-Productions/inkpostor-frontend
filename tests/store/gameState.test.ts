@@ -392,4 +392,29 @@ describe("useGameStore", () => {
       expect(body.userId).toBe(firstUUID);
     });
   });
+
+  describe("Canvas Reset Actions", () => {
+    beforeEach(() => {
+      useGameStore.setState({
+        roomId: "room1",
+        canvasStrokes: [{ x: 1, y: 1, color: "black", isNewStroke: true }],
+        currentRound: 1,
+      });
+    });
+
+    it("should clear canvasStrokes when nextRound action is called", () => {
+      useGameStore.getState().actions.nextRound();
+      expect(useGameStore.getState().canvasStrokes).toEqual([]);
+    });
+
+    it("should clear canvasStrokes when playAgain action is called", () => {
+      useGameStore.getState().actions.playAgain();
+      expect(useGameStore.getState().canvasStrokes).toEqual([]);
+    });
+
+    it("should clear canvasStrokes when startGame action is called", () => {
+      useGameStore.getState().actions.startGame();
+      expect(useGameStore.getState().canvasStrokes).toEqual([]);
+    });
+  });
 });
