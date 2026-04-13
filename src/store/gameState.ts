@@ -150,6 +150,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     },
     startGame: () => {
       socket.emit("startGame");
+      set({ canvasStrokes: [] });
     },
     proceedToDrawing: () => {
       socket.emit("proceedToDrawing");
@@ -184,9 +185,11 @@ export const useGameStore = create<GameState>()((set, get) => ({
     },
     playAgain: () => {
       socket.emit("playAgain");
+      set({ canvasStrokes: [] });
     },
     nextRound: () => {
       socket.emit("nextRound");
+      set({ canvasStrokes: [] });
     },
     setError: (msg) => {
       set({ errorMessage: msg });
@@ -213,23 +216,37 @@ socket.on("connect", () => {
 
 socket.on("gameStateUpdate", (newState) => {
   // Sync all service-provided state that exists on client state
-  useGameStore.setState((state) => ({
-    ...state,
-    roomId: newState.roomId,
-    hostId: newState.hostId,
-    phase: newState.phase,
-    players: newState.players,
-    impostorId: newState.impostorId, // Usually null from service until RESULTS
-    secretWord: newState.secretWord, // Usually null from service unless RESULTS
-    secretCategory: newState.secretCategory,
-    currentTurnPlayerId: newState.currentTurnPlayerId,
-    turnOrder: newState.turnOrder,
-    turnIndex: newState.turnIndex,
-    votes: newState.votes,
-    canvasStrokes: newState.canvasStrokes,
-    currentRound: newState.currentRound,
-    ejectedId: newState.ejectedId,
-  }));
+  useGameStore.setState((state) => {
+    // If round has changed or we are going back to LOBBY/ROLE_REVEAL, reset local canvas.
+    // We only do this if we were already in a room and playing (to avoid clearing canvas on first join/refresh).
+    const isMidGameRoundTransition =
+      state.roomId !== null && newState.currentRound !== state.currentRound;
+
+    const isRestartTransition =
+      state.roomId !== null &&
+      state.phase === "RESULTS" &&
+      (newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL");
+
+    const shouldResetCanvas = isMidGameRoundTransition || isRestartTransition;
+
+    return {
+      ...state,
+      roomId: newState.roomId,
+      hostId: newState.hostId,
+      phase: newState.phase,
+      players: newState.players,
+      impostorId: newState.impostorId, // Usually null from service until RESULTS
+      secretWord: newState.secretWord, // Usually null from service unless RESULTS
+      secretCategory: newState.secretCategory,
+      currentTurnPlayerId: newState.currentTurnPlayerId,
+      turnOrder: newState.turnOrder,
+      turnIndex: newState.turnIndex,
+      votes: newState.votes,
+      canvasStrokes: shouldResetCanvas ? [] : newState.canvasStrokes,
+      currentRound: newState.currentRound,
+      ejectedId: newState.ejectedId,
+    };
+  });
 });
 
 socket.on(
