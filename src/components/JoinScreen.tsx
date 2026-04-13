@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
-import { Users } from "lucide-react";
+import { useModalStore } from "../store/modalStore";
+import { Users, HelpCircle } from "lucide-react";
 import { SERVICE_URL } from "../socket";
 
 export const JoinScreen: React.FC = () => {
@@ -11,6 +12,7 @@ export const JoinScreen: React.FC = () => {
   const [isCheckingHealth, setIsCheckingHealth] = useState(true);
   const [serviceOnline, setServiceOnline] = useState(false);
   const actions = useGameStore((state) => state.actions);
+  const modalActions = useModalStore((state) => state.actions);
   const errorMessage = useGameStore((state) => state.errorMessage);
 
   const handleCreate = (e: React.FormEvent) => {
@@ -52,12 +54,19 @@ export const JoinScreen: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-900">
       <div className="max-w-md w-full text-center space-y-8">
-        <div className="inline-flex items-center justify-center">
+        <div className="inline-flex items-center justify-center relative">
           <img
             src="/inkpostor-logo.webp"
             alt="Inkpostor Logo"
             className=" h-42 animate-zoom-in"
           />
+          <button
+            onClick={() => modalActions.openModal("RULES")}
+            className="absolute -right-8 top-0 p-2 text-stone-500 hover:text-ink-primary transition-colors cursor-pointer"
+            title={t("rules.title")}
+          >
+            <HelpCircle className="w-6 h-6" />
+          </button>
         </div>
 
         {errorMessage && (

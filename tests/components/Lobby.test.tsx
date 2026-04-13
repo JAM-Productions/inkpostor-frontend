@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Lobby } from "../../src/components/Lobby";
 import { useGameStore } from "../../src/store/gameState";
+import { ModalRenderer } from "../../src/components/modals/ModalRenderer";
 
 // Mock the store
 vi.mock("../../src/store/gameState", () => ({
@@ -151,7 +152,12 @@ describe("Lobby", () => {
       return selector(state);
     });
 
-    render(<Lobby />);
+    render(
+      <>
+        <Lobby />
+        <ModalRenderer />
+      </>,
+    );
 
     const howToPlayBtn = screen.getByTestId("how-to-play-btn");
     await user.click(howToPlayBtn);

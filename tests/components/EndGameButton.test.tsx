@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { EndGameButton } from "../../src/components/EndGameButton";
 import { useGameStore } from "../../src/store/gameState";
+import { ModalRenderer } from "../../src/components/modals/ModalRenderer";
 
 // Mock the store
 vi.mock("../../src/store/gameState", () => ({
@@ -26,7 +27,7 @@ describe("EndGameButton", () => {
   it("renders the button when user is host and phase is ROLE_REVEAL", () => {
     render(<EndGameButton />);
 
-    const button = screen.getByRole("button", { name: /end game/i });
+    const button = screen.getByRole("button", { name: /open/i });
     expect(button).toBeInTheDocument();
   });
 
@@ -38,7 +39,7 @@ describe("EndGameButton", () => {
 
     render(<EndGameButton />);
 
-    const button = screen.queryByRole("button", { name: /end game/i });
+    const button = screen.queryByRole("button", { name: /open/i });
     expect(button).not.toBeInTheDocument();
   });
 
@@ -50,14 +51,19 @@ describe("EndGameButton", () => {
 
     render(<EndGameButton />);
 
-    const button = screen.queryByRole("button", { name: /end game/i });
+    const button = screen.queryByRole("button", { name: /open/i });
     expect(button).not.toBeInTheDocument();
   });
 
   it("opens the modal when button is clicked", async () => {
-    render(<EndGameButton />);
+    render(
+      <>
+        <EndGameButton />
+        <ModalRenderer />
+      </>,
+    );
 
-    const button = screen.getByRole("button", { name: /end game/i });
+    const button = screen.getByRole("button", { name: /open/i });
     fireEvent.click(button);
 
     // Wait for the modal to appear

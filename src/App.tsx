@@ -7,6 +7,7 @@ import { VotingScreen } from "./components/VotingScreen";
 import { GameResult } from "./components/GameResult";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { EndGameButton } from "./components/EndGameButton";
+import { ModalRenderer } from "./components/modals/ModalRenderer";
 
 // App orchestrates the current phase of the game
 function App() {
@@ -47,6 +48,7 @@ function App() {
         <LanguageSwitcher />
       </div>
       {renderPhase()}
+      <ModalRenderer />
     </>
   );
 }
