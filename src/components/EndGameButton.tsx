@@ -21,11 +21,11 @@ export function EndGameButton() {
   return (
     <>
       <button
-        className="p-2.5 rounded-full bg-stone-800 hover:bg-stone-700 border border-stone-700 text-white transition-all cursor-pointer shadow-lg active:scale-95"
+        className="p-2 sm:p-2.5 rounded-full bg-stone-800 hover:bg-stone-700 border border-stone-700 text-white transition-all cursor-pointer shadow-lg active:scale-95"
         onClick={() => setIsEndGameModalOpen(true)}
         aria-label={t("endGame.open")}
       >
-        <Flag className="w-3.5 h-3.5 fill-white" />
+        <Flag className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-white" />
       </button>
       <EndGameModal
         isOpen={isEndGameModalOpen}
