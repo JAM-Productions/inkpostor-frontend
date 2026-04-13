@@ -58,6 +58,7 @@ export interface GameState {
   canvasStrokes: StrokeData[];
   currentRound: number;
   ejectedId: string | null;
+  gameEnded: boolean;
 
   // Local only state
   myId: string | null;
@@ -77,6 +78,7 @@ export interface GameState {
     vote: (votedForId: string) => void;
     playAgain: () => void;
     nextRound: () => void;
+    endGame: () => void;
     setError: (msg: string | null) => void;
   };
 }
@@ -97,7 +99,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
   canvasStrokes: [],
   currentRound: 1,
   ejectedId: null,
-
+  gameEnded: false,
   myId: null,
   myName: null,
   amIImpostor: null,
@@ -188,6 +190,9 @@ export const useGameStore = create<GameState>()((set, get) => ({
     nextRound: () => {
       socket.emit("nextRound");
     },
+    endGame: () => {
+      socket.emit("endGame");
+    },
     setError: (msg) => {
       set({ errorMessage: msg });
     },
@@ -229,6 +234,7 @@ socket.on("gameStateUpdate", (newState) => {
     canvasStrokes: newState.canvasStrokes,
     currentRound: newState.currentRound,
     ejectedId: newState.ejectedId,
+    gameEnded: newState.gameEnded,
   }));
 });
 

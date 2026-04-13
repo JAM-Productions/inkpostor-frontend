@@ -6,6 +6,7 @@ import { Canvas } from "./components/Canvas";
 import { VotingScreen } from "./components/VotingScreen";
 import { GameResult } from "./components/GameResult";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
+import { EndGameButton } from "./components/EndGameButton";
 
 // App orchestrates the current phase of the game
 function App() {
@@ -41,7 +42,8 @@ function App() {
 
   return (
     <>
-      <div className="fixed top-4 right-4 z-50">
+      <div className="fixed top-4 right-4 flex items-center justify-between gap-4 z-50">
+        <EndGameButton />
         <LanguageSwitcher />
       </div>
       {renderPhase()}

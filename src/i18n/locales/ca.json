@@ -289,6 +289,14 @@
         "description": "Dibuixa prou per demostrar que coneixes la paraula... però no ho facis massa obvi."
       },
       "gotIt": "ENTÈS!"
+    },
+    "endGame": {
+      "title": "Vols finalitzar la partida?",
+      "description": "Si finalitzes la partida ara, es revelarà l'impostor i el joc acabarà per a tots els jugadors.",
+      "close": "Tancar",
+      "closeDialog": "Tancar diàleg de final de partida",
+      "endGame": "Finalitzar partida",
+      "open": "Obrir diàleg de final de partida"
     }
   }
 }

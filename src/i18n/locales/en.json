@@ -289,6 +289,14 @@
         "description": "Draw enough to show you know the word… but don't make it too obvious"
       },
       "gotIt": "GOT IT!"
+    },
+    "endGame": {
+      "title": "Do you want to end the game?",
+      "description": "If you end the game now, the impostor will be revealed and the game will end for all players.",
+      "close": "Close",
+      "closeDialog": "Close end game dialog",
+      "endGame": "End Game",
+      "open": "Open end game dialog"
     }
   }
 }

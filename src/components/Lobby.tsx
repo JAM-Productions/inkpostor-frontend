@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { Users, Crown, Loader2, Copy, Check, HelpCircle } from "lucide-react";
 import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
-import { RulesModal } from "./RulesModal";
+import { RulesModal } from "./modals/RulesModal";
 
 export const Lobby: React.FC = () => {
   const { t } = useTranslation();
