@@ -157,6 +157,14 @@ export const useGameStore = create<GameState>()((set, get) => ({
     },
     proceedToDrawing: () => {
       socket.emit("proceedToDrawing");
+      // Optimistic update for better performance and feedback
+      set((state) => {
+        if (!state.myId) return state;
+        const newPlayers = state.players.map((p) =>
+          p.id === state.myId ? { ...p, hasRevealedRole: true } : p,
+        );
+        return { players: newPlayers };
+      })
     },
     drawStroke: (stroke) => {
       socket.emit("drawStroke", stroke);
@@ -191,6 +199,14 @@ export const useGameStore = create<GameState>()((set, get) => ({
     },
     nextRound: () => {
       socket.emit("nextRound");
+      // Optimistic update for better performance and feedback
+      set((state) => {
+        if (!state.myId) return state;
+        const newPlayers = state.players.map((p) =>
+          p.id === state.myId ? { ...p, hasConfirmedNewRound: true } : p,
+        );
+        return { players: newPlayers };
+      })
     },
     endGame: () => {
       socket.emit("endGame");

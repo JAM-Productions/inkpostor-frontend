@@ -124,7 +124,7 @@ export const GameResult: React.FC = () => {
               </div>
             </div>
           )
-        ) : !hasConfirmedNewRound ? (
+        ) : !hasConfirmedNewRound && !me?.isEjected ? (
           <button
             onClick={actions.nextRound}
             className="w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-secondary hover:bg-white text-black"
