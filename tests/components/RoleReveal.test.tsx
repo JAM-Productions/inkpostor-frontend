@@ -19,6 +19,10 @@ describe("RoleReveal", () => {
     secretCategory: "Animals",
     secretWord: "Elephant",
     actions: { proceedToDrawing: mockProceedToDrawing },
+    players: [
+      { id: "socket-123", name: "Player 1", hasRevealedRole: false },
+      { id: "socket-456", name: "Player 2", hasRevealedRole: false },
+    ],
   };
 
   beforeEach(() => {
@@ -37,8 +41,8 @@ describe("RoleReveal", () => {
     expect(screen.getByText("Your Secret Role")).toBeInTheDocument();
     expect(screen.getByText("Press and hold to reveal")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /start drawing/i }),
-    ).toBeInTheDocument();
+      screen.queryByRole("button", { name: /start drawing/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("reveals secret word for non-impostors when clicked", () => {
@@ -83,7 +87,7 @@ describe("RoleReveal", () => {
     expect(screen.getByText("Hint: Animals")).toBeInTheDocument();
   });
 
-  it("allows the host to start drawing", () => {
+  it("shows Start Drawing button after revealing and allows starting", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = { ...mockStateBase };
       return selector(state);
@@ -91,25 +95,37 @@ describe("RoleReveal", () => {
 
     render(<RoleReveal />);
 
+    // Reveal role to show the start button
+    const revealButton = screen
+      .getByText("Press and hold to reveal")
+      .closest("button");
+    fireEvent.mouseDown(revealButton!);
+
     const startButton = screen.getByRole("button", { name: /start drawing/i });
     fireEvent.click(startButton);
 
     expect(mockProceedToDrawing).toHaveBeenCalled();
   });
 
-  it("shows waiting message for non-hosts", () => {
+  it("shows waiting message if player has already revealed role", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase, myId: "socket-456" }; // Not host
+      const state = {
+        ...mockStateBase,
+        players: [
+          { id: "socket-123", name: "Player 1", hasRevealedRole: true },
+          { id: "socket-456", name: "Player 2", hasRevealedRole: false },
+        ],
+      };
       return selector(state);
     });
 
     render(<RoleReveal />);
 
     expect(
-      screen.queryByRole("button", { name: /start drawing!/i }),
+      screen.queryByRole("button", { name: /start drawing/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByText("Waiting for Host to begin..."),
+      screen.getByText("1 of 2 players have revealed their role"),
     ).toBeInTheDocument();
   });
 });

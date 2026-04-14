@@ -38,7 +38,8 @@
       "playAgain": "Volver a Jugar",
       "nextRound": "Siguiente Ronda",
       "waitingRestart": "Esperando al anfitrión para reiniciar...",
-      "waitingContinue": "Esperando al anfitrión para continuar..."
+      "waitingContinue": "Esperando al anfitrión para continuar...",
+      "waitingPlayers": "{{count}} de {{total}} jugadores han confirmado seguir"
     },
     "voting": {
       "title": "Tiempo de Votación",
@@ -246,7 +247,7 @@
       "pressHold": "Mantén presionado para revelar",
       "makeSure": "Asegúrate de que todos conozcan su rol antes de continuar.",
       "startDrawing": "Empezar a Dibujar",
-      "waitingHost": "Esperando al anfitrión..."
+      "waitingPlayers": "{{count}} de {{total}} jugadores han revelado su rol"
     },
     "rules": {
       "title": "Cómo Jugar Inkpostor",
