@@ -164,7 +164,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
           p.id === state.myId ? { ...p, hasRevealedRole: true } : p,
         );
         return { players: newPlayers };
-      })
+      });
     },
     drawStroke: (stroke) => {
       socket.emit("drawStroke", stroke);
@@ -206,7 +206,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
           p.id === state.myId ? { ...p, hasConfirmedNewRound: true } : p,
         );
         return { players: newPlayers };
-      })
+      });
     },
     endGame: () => {
       socket.emit("endGame");
