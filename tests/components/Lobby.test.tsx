@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Lobby } from "../../src/components/Lobby";
 import { useGameStore } from "../../src/store/gameState";
+import { useModalStore } from "../../src/store/modalStore";
 import { ModalRenderer } from "../../src/components/modals/ModalRenderer";
 
 // Mock the store
@@ -22,6 +23,8 @@ describe("Lobby", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset modal store
+    useModalStore.getState().actions.closeModal();
   });
 
   it("displays the room code", () => {

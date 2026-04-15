@@ -61,9 +61,11 @@ export const JoinScreen: React.FC = () => {
             className=" h-42 animate-zoom-in"
           />
           <button
+            type="button"
             onClick={() => modalActions.openModal("RULES")}
             className="absolute -right-8 top-0 p-2 text-stone-500 hover:text-ink-primary transition-colors cursor-pointer"
             title={t("rules.title")}
+            aria-label={t("rules.title")}
           >
             <HelpCircle className="w-6 h-6" />
           </button>

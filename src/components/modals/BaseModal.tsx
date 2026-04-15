@@ -52,11 +52,11 @@ export const BaseModal: React.FC<BaseModalProps> = ({
       aria-labelledby={`${id}-title`}
     >
       {/* Backdrop */}
-      <button
-        type="button"
+      <div
         className="absolute inset-0 bg-stone-950/80 backdrop-blur-sm w-full h-full cursor-default"
         onClick={onClose}
-        aria-label={closeLabel}
+        role="presentation"
+        aria-hidden="true"
         data-testid="close-modal-button-backdrop"
       />
 

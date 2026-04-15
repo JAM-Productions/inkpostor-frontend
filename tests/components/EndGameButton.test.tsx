@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { EndGameButton } from "../../src/components/EndGameButton";
 import { useGameStore } from "../../src/store/gameState";
+import { useModalStore } from "../../src/store/modalStore";
 import { ModalRenderer } from "../../src/components/modals/ModalRenderer";
 
 // Mock the store
@@ -22,6 +23,8 @@ describe("EndGameButton", () => {
       const state = { ...mockStateBase };
       return selector(state);
     });
+    // Reset modal store
+    useModalStore.getState().actions.closeModal();
   });
 
   it("renders the button when user is host and phase is ROLE_REVEAL", () => {

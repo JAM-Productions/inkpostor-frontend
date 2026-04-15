@@ -1,7 +1,6 @@
 import { Flag } from "lucide-react";
 import { useGameStore } from "../store/gameState";
 import { useModalStore } from "../store/modalStore";
-import React from "react";
 import { useTranslation } from "react-i18next";
 
 export function EndGameButton() {
