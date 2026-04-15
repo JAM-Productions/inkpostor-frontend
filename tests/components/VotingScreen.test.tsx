@@ -126,6 +126,53 @@ describe("VotingScreen", () => {
     expect(
       screen.queryByRole("button", { name: /confirm vote/i }),
     ).not.toBeInTheDocument();
+
+    // Player list should still be visible
+    expect(screen.getByText("Player 2")).toBeInTheDocument();
+
+    // Buttons should be disabled
+    const player2Btn = screen.getByText("Player 2").closest("button");
+    expect(player2Btn).toBeDisabled();
+
+    const skipBtn = screen.getByText("Skip Vote").closest("button");
+    expect(skipBtn).toBeDisabled();
+  });
+
+  it("keeps the voted option highlighted using fallback if votes[myId] is missing", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        players: [
+          { id: "socket-123", name: "Me", hasVoted: false },
+          { id: "socket-456", name: "Player 2", hasVoted: false },
+        ],
+        votes: {},
+      };
+      return selector(state);
+    });
+
+    const { rerender } = render(<VotingScreen />);
+
+    // Select Player 2
+    fireEvent.click(screen.getByText("Player 2"));
+
+    // Rerender as if voted but store hasn't updated votes map yet
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        players: [
+          { id: "socket-123", name: "Me", hasVoted: true },
+          { id: "socket-456", name: "Player 2", hasVoted: false },
+        ],
+        votes: {},
+      };
+      return selector(state);
+    });
+
+    rerender(<VotingScreen />);
+
+    const player2Btn = screen.getByText("Player 2").closest("button");
+    expect(player2Btn).toHaveClass("border-ink-primary");
   });
 
   it("disables voting on ejected players", () => {

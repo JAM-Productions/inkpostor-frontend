@@ -20,7 +20,8 @@ export const VotingScreen: React.FC = () => {
   const hasVoted = me?.hasVoted;
   const hasBeenEjected = me?.isEjected;
 
-  const effectiveSelectedPlayer = hasVoted && myId ? votes[myId] : selectedPlayer;
+  const effectiveSelectedPlayer =
+    hasVoted && myId ? (votes[myId] ?? selectedPlayer) : selectedPlayer;
 
   const voteCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -70,10 +71,12 @@ export const VotingScreen: React.FC = () => {
                   disabled={player.isEjected || hasBeenEjected || hasVoted}
                   className={`flex items-center gap-3 sm:p-4 p-3 rounded-xl border-2 transition-all duration-200 text-left animate-pulse-fade-in  ${
                     player.isEjected
-                      ? "opacity-40 border-stone-700 bg-stone-900"
+                      ? "opacity-40 border-stone-700 bg-stone-900 cursor-not-allowed"
                       : effectiveSelectedPlayer === player.id
                         ? "border-ink-primary bg-ink-primary/10 scale-[1.02] "
-                        : "border-stone-700 bg-stone-900 hover:border-stone-500 cursor-pointer "
+                        : hasVoted
+                          ? "border-stone-700 bg-stone-900 cursor-not-allowed"
+                          : "border-stone-700 bg-stone-900 hover:border-stone-500 cursor-pointer"
                   }`}
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
@@ -110,7 +113,9 @@ export const VotingScreen: React.FC = () => {
                   ? "hidden"
                   : effectiveSelectedPlayer === "skip"
                     ? "bg-white/10 border-white/40 scale-[1.02]"
-                    : "border-stone-700 bg-stone-900 hover:border-stone-500 cursor-pointer"
+                    : hasVoted
+                      ? "border-stone-700 bg-stone-900 opacity-50 cursor-not-allowed"
+                      : "border-stone-700 bg-stone-900 hover:border-stone-500 cursor-pointer"
               }`}
             >
               <div
