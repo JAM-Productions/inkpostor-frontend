@@ -9,6 +9,16 @@ function detectIsMobile(): boolean {
   );
 }
 
+export const PLAYER_NAME_KEY = "inkpostor_player_name";
+
+function getSavedPlayerName(): string | null {
+  try {
+    return localStorage.getItem(PLAYER_NAME_KEY);
+  } catch {
+    return null;
+  }
+}
+
 function getOrCreateUserId(): string {
   const key = "inkpostor_user_id";
   let id = localStorage.getItem(key);
@@ -101,7 +111,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
   ejectedId: null,
   gameEnded: false,
   myId: null,
-  myName: null,
+  myName: getSavedPlayerName(),
   amIImpostor: null,
   errorMessage: null,
 
@@ -123,6 +133,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         socket.auth = { token };
         socket.connect();
         socket.emit("createRoom", { roomId });
+        localStorage.setItem(PLAYER_NAME_KEY, playerName);
         set({ myName: playerName, myId: userId });
       } catch {
         set({ errorMessage: "Service connection error." });
@@ -145,6 +156,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         socket.auth = { token };
         socket.connect();
         socket.emit("joinRoom", { roomId });
+        localStorage.setItem(PLAYER_NAME_KEY, playerName);
         set({ myName: playerName, myId: userId });
       } catch {
         set({ errorMessage: "Service connection error." });
