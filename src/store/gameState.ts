@@ -10,6 +10,7 @@ function detectIsMobile(): boolean {
 }
 
 export const PLAYER_NAME_KEY = "inkpostor_player_name";
+const USER_ID_KEY = "inkpostor_user_id";
 
 function getSavedPlayerName(): string | null {
   try {
@@ -19,12 +20,29 @@ function getSavedPlayerName(): string | null {
   }
 }
 
+function savePlayerName(name: string): void {
+  try {
+    localStorage.setItem(PLAYER_NAME_KEY, name);
+  } catch (e) {
+    console.error("Error saving player name to localStorage:", e);
+  }
+}
+
 function getOrCreateUserId(): string {
-  const key = "inkpostor_user_id";
-  let id = localStorage.getItem(key);
+  let id = null;
+  try {
+    id = localStorage.getItem(USER_ID_KEY);
+  } catch (e) {
+    console.error("Error reading userId from localStorage:", e);
+  }
+
   if (!id) {
     id = crypto.randomUUID();
-    localStorage.setItem(key, id);
+    try {
+      localStorage.setItem(USER_ID_KEY, id);
+    } catch (e) {
+      console.error("Error saving userId to localStorage:", e);
+    }
   }
   return id;
 }
@@ -133,7 +151,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         socket.auth = { token };
         socket.connect();
         socket.emit("createRoom", { roomId });
-        localStorage.setItem(PLAYER_NAME_KEY, playerName);
+        savePlayerName(playerName);
         set({ myName: playerName, myId: userId });
       } catch {
         set({ errorMessage: "Service connection error." });
@@ -156,7 +174,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         socket.auth = { token };
         socket.connect();
         socket.emit("joinRoom", { roomId });
-        localStorage.setItem(PLAYER_NAME_KEY, playerName);
+        savePlayerName(playerName);
         set({ myName: playerName, myId: userId });
       } catch {
         set({ errorMessage: "Service connection error." });
