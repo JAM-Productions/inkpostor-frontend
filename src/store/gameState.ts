@@ -85,30 +85,48 @@ export interface GameState {
   };
 }
 
-export const useGameStore = create<GameState>()((set, get) => ({
-  roomId: null,
-  hostId: null,
-  isMobile: detectIsMobile(),
-  phase: "LOBBY",
-  players: [],
-  impostorId: null,
-  secretWord: null,
-  secretCategory: null,
-  currentTurnPlayerId: null,
-  turnOrder: [],
-  turnIndex: 0,
-  votes: {},
-  canvasStrokes: [],
-  currentRound: 1,
-  ejectedId: null,
-  gameEnded: false,
-  myId: null,
-  myName: null,
-  amIImpostor: null,
-  errorMessage: null,
+export const useGameStore = create<GameState>()((set, get) => {
+  const optimisticallyUpdateSelf = (
+    playerUpdates: Partial<Player>,
+    otherStateUpdates?: (state: GameState) => Partial<GameState>,
+  ) => {
+    set((state) => {
+      if (!state.myId) return state;
+      const newPlayers = state.players.map((p) =>
+        p.id === state.myId ? { ...p, ...playerUpdates } : p,
+      );
+      const baseUpdate = { players: newPlayers };
+      if (otherStateUpdates) {
+        return { ...baseUpdate, ...otherStateUpdates(state) };
+      }
+      return baseUpdate;
+    });
+  };
 
-  actions: {
-    connectAndCreate: async (roomId, playerName) => {
+  return {
+    roomId: null,
+    hostId: null,
+    isMobile: detectIsMobile(),
+    phase: "LOBBY",
+    players: [],
+    impostorId: null,
+    secretWord: null,
+    secretCategory: null,
+    currentTurnPlayerId: null,
+    turnOrder: [],
+    turnIndex: 0,
+    votes: {},
+    canvasStrokes: [],
+    currentRound: 1,
+    ejectedId: null,
+    gameEnded: false,
+    myId: null,
+    myName: null,
+    amIImpostor: null,
+    errorMessage: null,
+
+    actions: {
+      connectAndCreate: async (roomId, playerName) => {
       try {
         const userId = getOrCreateUserId();
         const res = await fetch(`${SERVICE_URL || ""}/auth`, {
@@ -158,13 +176,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     proceedToDrawing: () => {
       socket.emit("proceedToDrawing");
       // Optimistic update for better performance and deny multiple clicks to proceed
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasRevealedRole: true } : p,
-        );
-        return { players: newPlayers };
-      });
+      optimisticallyUpdateSelf({ hasRevealedRole: true });
     },
     drawStroke: (stroke) => {
       socket.emit("drawStroke", stroke);
@@ -185,14 +197,9 @@ export const useGameStore = create<GameState>()((set, get) => ({
 
       socket.emit("vote", votedForId);
       // Optimistic update for better performance and feedback
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasVoted: true } : p,
-        );
-        const newVotes = { ...state.votes, [state.myId]: votedForId };
-        return { players: newPlayers, votes: newVotes };
-      });
+      optimisticallyUpdateSelf({ hasVoted: true }, (state) => ({
+        votes: { ...state.votes, [state.myId!]: votedForId },
+      }));
     },
     playAgain: () => {
       socket.emit("playAgain");
@@ -200,13 +207,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     nextRound: () => {
       socket.emit("nextRound");
       // Optimistic update for better performance and to prevent multiple clicks to proceed
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasConfirmedNewRound: true } : p,
-        );
-        return { players: newPlayers };
-      });
+      optimisticallyUpdateSelf({ hasConfirmedNewRound: true });
     },
     endGame: () => {
       socket.emit("endGame");
@@ -214,8 +215,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
     setError: (msg) => {
       set({ errorMessage: msg });
     },
-  },
-}));
+  };
+});
 
 // Setup socket listeners
 socket.on("connect", () => {
