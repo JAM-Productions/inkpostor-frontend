@@ -10,20 +10,21 @@ vi.mock("../../src/store/gameState", () => ({
 
 describe("GameResult", () => {
   const mockPlayAgain = vi.fn();
+  const mockNextRound = vi.fn();
 
   const mockStateBase = {
     impostorId: "socket-456", // Player 2 is Impostor
     myId: "socket-123",
     hostId: "socket-123",
     players: [
-      { id: "socket-123", name: "Host" },
-      { id: "socket-456", name: "Impostor" },
-      { id: "socket-789", name: "Player 3" },
+      { id: "socket-123", name: "Host", hasConfirmedNewRound: false },
+      { id: "socket-456", name: "Impostor", hasConfirmedNewRound: false },
+      { id: "socket-789", name: "Player 3", hasConfirmedNewRound: false },
     ],
     secretWord: "Apple",
     secretCategory: "Food",
     votes: {}, // To be populated in tests
-    actions: { playAgain: mockPlayAgain },
+    actions: { playAgain: mockPlayAgain, nextRound: mockNextRound },
   };
 
   beforeEach(() => {
@@ -164,6 +165,85 @@ describe("GameResult", () => {
     expect(screen.getByText("Player 3 was ejected.")).toBeInTheDocument();
     expect(
       screen.getByText("Inkpostor is still among us..."),
+    ).toBeInTheDocument();
+  });
+
+  it("shows Next Round button when game is not over and player hasn't confirmed", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        gameEnded: false,
+        ejectedId: null,
+      };
+      return selector(state);
+    });
+
+    render(<GameResult />);
+
+    const nextRoundBtn = screen.getByRole("button", { name: /next round/i });
+    expect(nextRoundBtn).toBeInTheDocument();
+
+    fireEvent.click(nextRoundBtn);
+    expect(mockNextRound).toHaveBeenCalled();
+  });
+
+  it("hides Next Round button after nextRound is clicked", () => {
+    const mockState = {
+      ...mockStateBase,
+      gameEnded: false,
+      ejectedId: null,
+      players: mockStateBase.players.map((player) => ({ ...player })),
+    };
+
+    mockState.actions = {
+      ...mockState.actions,
+      nextRound: vi.fn(() => {
+        mockState.players = mockState.players.map((player) =>
+          player.id === mockState.myId
+            ? { ...player, hasConfirmedNewRound: true }
+            : player,
+        );
+      }),
+    };
+
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(mockState),
+    );
+
+    const { rerender } = render(<GameResult />);
+
+    const nextRoundBtn = screen.getByRole("button", { name: /next round/i });
+    fireEvent.click(nextRoundBtn);
+    rerender(<GameResult />);
+
+    expect(
+      screen.queryByRole("button", { name: /next round/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows waiting message when player has confirmed new round", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        gameEnded: false,
+        ejectedId: null,
+        players: [
+          { id: "socket-123", name: "Host", hasConfirmedNewRound: true },
+          { id: "socket-456", name: "Impostor", hasConfirmedNewRound: false },
+          { id: "socket-789", name: "Player 3", hasConfirmedNewRound: false },
+        ],
+      };
+      return selector(state);
+    });
+
+    render(<GameResult />);
+
+    expect(
+      screen.queryByRole("button", { name: /next round/i }),
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.getByText("1 of 3 players have confirmed to continue"),
     ).toBeInTheDocument();
   });
 });

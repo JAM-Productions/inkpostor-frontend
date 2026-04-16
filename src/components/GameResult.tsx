@@ -17,6 +17,9 @@ export const GameResult: React.FC = () => {
   const playersRemaining = players.filter((p) => !p.isEjected);
   const gameEnded = useGameStore((state) => state.gameEnded);
 
+  const me = players.find((p) => p.id === myId);
+  const hasConfirmedNewRound = me?.hasConfirmedNewRound;
+
   const impostorCaught = ejectedId === impostorId;
   const isGameOver =
     impostorCaught || playersRemaining.length < MIN_PLAYERS || gameEnded;
@@ -100,39 +103,56 @@ export const GameResult: React.FC = () => {
           </div>
         )}
 
-        {isHost ? (
+        {isGameOver ? (
+          isHost ? (
+            <button
+              onClick={actions.playAgain}
+              className="w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-primary hover:bg-ink-primary-accent "
+            >
+              <div
+                className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 `}
+              >
+                <span className="text-xl sm:text-2xl tracking-wide uppercase font-rubik-wet-paint font-extralight">
+                  {t("result.playAgain")}
+                </span>
+              </div>
+            </button>
+          ) : (
+            <div className="animate-fade-in animate-delay-2000 animate-duration-slower">
+              <div className="text-stone-500 animate-pulse mt-8 ">
+                {t("result.waitingRestart")}
+              </div>
+            </div>
+          )
+        ) : !hasConfirmedNewRound && !me?.isEjected ? (
           <button
-            onClick={isGameOver ? actions.playAgain : actions.nextRound}
-            className={`w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower ${
-              isGameOver
-                ? "bg-ink-primary hover:bg-ink-primary-accent"
-                : "bg-ink-secondary hover:bg-white text-black"
-            }`}
+            onClick={actions.nextRound}
+            className="w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-secondary hover:bg-white text-black"
           >
             <div
               className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 `}
             >
-              {isGameOver ? (
-                <span className="text-xl sm:text-2xl tracking-wide uppercase font-rubik-wet-paint font-extralight">
-                  {t("result.playAgain")}
-                </span>
-              ) : (
-                <>
-                  <Play className="fill-current w-5 h-5" />
-                  <span className="sm:text-xl text-lg font-extrabold uppercase">
-                    {t("result.nextRound")}
-                  </span>
-                </>
-              )}
+              <Play className="fill-current w-5 h-5" />
+              <span className="sm:text-xl text-lg font-extrabold uppercase">
+                {t("result.nextRound")}
+              </span>
             </div>
           </button>
         ) : (
-          <div className="animate-fade-in animate-delay-2000 animate-duration-slower">
-            <div className="text-stone-500 animate-pulse mt-8 ">
-              {isGameOver
-                ? t("result.waitingRestart")
-                : t("result.waitingContinue")}
-            </div>
+          <div
+            className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in"
+            style={{ minHeight: "3.5rem" }}
+          >
+            <span className="relative flex h-2 w-2 sm:h-3 sm:w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 sm:h-3 sm:w-3 bg-stone-500"></span>
+            </span>
+            {t("result.waitingPlayers", {
+              count: players.filter(
+                (p) => p.hasConfirmedNewRound && !p.isEjected,
+              ).length,
+              total: players.filter((p) => !p.isEjected).length,
+            })}
           </div>
         )}
       </div>

@@ -6,14 +6,21 @@ import { Brush, Eye } from "lucide-react";
 export const RoleReveal: React.FC = () => {
   const { t } = useTranslation();
   const [revealed, setRevealed] = useState(false);
+  const [isContinueButtonVisible, setIsContinueButtonVisible] = useState(false);
+  const players = useGameStore((state) => state.players);
   const amIImpostor = useGameStore((state) => state.amIImpostor);
   const secretCategory = useGameStore((state) => state.secretCategory);
   const secretWord = useGameStore((state) => state.secretWord);
   const myId = useGameStore((state) => state.myId);
-  const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
 
-  const isHost = myId === hostId;
+  const me = players.find((p) => p.id === myId);
+  const hasPlayerRevealedRoleAndContinued = me?.hasRevealedRole;
+
+  const handleReveal = () => {
+    setRevealed(true);
+    setIsContinueButtonVisible(true);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-950 relative overflow-hidden">
@@ -34,10 +41,10 @@ export const RoleReveal: React.FC = () => {
 
         <div className="relative">
           <button
-            onMouseDown={() => setRevealed(true)}
+            onMouseDown={() => handleReveal()}
             onMouseUp={() => setRevealed(false)}
             onMouseLeave={() => setRevealed(false)}
-            onTouchStart={() => setRevealed(true)}
+            onTouchStart={() => handleReveal()}
             onTouchEnd={() => setRevealed(false)}
             className={`w-full aspect-video rounded-3xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in
               ${
@@ -105,28 +112,29 @@ export const RoleReveal: React.FC = () => {
           </button>
         </div>
 
-        {isHost ? (
-          <div className="pt-8">
-            <p className="text-stone-500 text-sm mb-4">
-              {t("roleReveal.makeSure")}
-            </p>
-            <button
-              onClick={actions.proceedToDrawing}
-              className="flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-all hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
-            >
-              <Brush className="w-5 h-5" />
-              {t("roleReveal.startDrawing")}
-            </button>
-          </div>
-        ) : (
-          <div className=" text-stone-500 flex items-center justify-center gap-3">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-stone-500"></span>
-            </span>
-            {t("roleReveal.waitingHost")}
-          </div>
-        )}
+        <div className="pt-3" style={{ minHeight: "4rem" }}>
+          {(isContinueButtonVisible || hasPlayerRevealedRoleAndContinued) &&
+            (!hasPlayerRevealedRoleAndContinued ? (
+              <button
+                onClick={actions.proceedToDrawing}
+                className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-all hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
+              >
+                <Brush className="w-5 h-5" />
+                {t("roleReveal.startDrawing")}
+              </button>
+            ) : (
+              <div className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in">
+                <span className="relative flex h-2 w-2 sm:h-3 sm:w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 sm:h-3 sm:w-3 bg-stone-500"></span>
+                </span>
+                {t("roleReveal.waitingPlayers", {
+                  count: players.filter((p) => p.hasRevealedRole).length,
+                  total: players.length,
+                })}
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );

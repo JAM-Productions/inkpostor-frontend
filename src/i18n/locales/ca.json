@@ -38,7 +38,8 @@
       "playAgain": "Tornar a Jugar",
       "nextRound": "Següent Ronda",
       "waitingRestart": "Esperant a l'amfitrió per reiniciar...",
-      "waitingContinue": "Esperant a l'amfitrió per continuar..."
+      "waitingContinue": "Esperant a l'amfitrió per continuar...",
+      "waitingPlayers": "{{count}} de {{total}} jugadors han confirmat seguir"
     },
     "voting": {
       "title": "Temps de Votació",
@@ -246,7 +247,7 @@
       "pressHold": "Mantén premut per revelar",
       "makeSure": "Assegura't que tothom conegui el seu rol abans de continuar.",
       "startDrawing": "Començar a Dibuixar",
-      "waitingHost": "Esperant l'amfitrió..."
+      "waitingPlayers": "{{count}} de {{total}} jugadors han revelat el seu rol"
     },
     "rules": {
       "title": "Com Jugar Inkpostor",
