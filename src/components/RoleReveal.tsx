@@ -6,7 +6,7 @@ import { Brush, Eye } from "lucide-react";
 export const RoleReveal: React.FC = () => {
   const { t } = useTranslation();
   const [revealed, setRevealed] = useState(false);
-  const [revealedButton, setRevealedButton] = useState(false);
+  const [isContinueButtonVisible, setIsContinueButtonVisible] = useState(false);
   const players = useGameStore((state) => state.players);
   const amIImpostor = useGameStore((state) => state.amIImpostor);
   const secretCategory = useGameStore((state) => state.secretCategory);
@@ -15,11 +15,11 @@ export const RoleReveal: React.FC = () => {
   const actions = useGameStore((state) => state.actions);
 
   const me = players.find((p) => p.id === myId);
-  const hasRevealed = me?.hasRevealedRole;
+  const hasPlayerRevealedRoleAndContinued = me?.hasRevealedRole;
 
   const handleReveal = () => {
     setRevealed(true);
-    setRevealedButton(true);
+    setIsContinueButtonVisible(true);
   };
 
   return (
@@ -113,8 +113,8 @@ export const RoleReveal: React.FC = () => {
         </div>
 
         <div className="pt-3" style={{ minHeight: "4rem" }}>
-          {(revealedButton || hasRevealed) &&
-            (!hasRevealed ? (
+          {(isContinueButtonVisible || hasPlayerRevealedRoleAndContinued) &&
+            (!hasPlayerRevealedRoleAndContinued ? (
               <button
                 onClick={actions.proceedToDrawing}
                 className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-all hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"

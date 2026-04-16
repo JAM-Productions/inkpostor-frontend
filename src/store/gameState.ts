@@ -157,7 +157,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     },
     proceedToDrawing: () => {
       socket.emit("proceedToDrawing");
-      // Optimistic update for better performance and feedback
+      // Optimistic update for better performance and deny multiple clicks to proceed
       set((state) => {
         if (!state.myId) return state;
         const newPlayers = state.players.map((p) =>
@@ -199,7 +199,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     },
     nextRound: () => {
       socket.emit("nextRound");
-      // Optimistic update for better performance and feedback
+      // Optimistic update for better performance and to prevent multiple clicks to proceed
       set((state) => {
         if (!state.myId) return state;
         const newPlayers = state.players.map((p) =>

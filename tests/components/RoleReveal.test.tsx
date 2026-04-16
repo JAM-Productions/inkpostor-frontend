@@ -107,6 +107,42 @@ describe("RoleReveal", () => {
     expect(mockProceedToDrawing).toHaveBeenCalled();
   });
 
+  it("hides Start Drawing button after proceedToDrawing is clicked", () => {
+    const mockState = {
+      ...mockStateBase,
+      players: mockStateBase.players.map((player) => ({ ...player })),
+    };
+
+    mockState.actions = {
+      proceedToDrawing: vi.fn(() => {
+        mockState.players = mockState.players.map((player) =>
+          player.id === mockState.myId
+            ? { ...player, hasRevealedRole: true }
+            : player,
+        );
+      }),
+    };
+
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(mockState),
+    );
+
+    const { rerender } = render(<RoleReveal />);
+
+    const revealButton = screen
+      .getByText("Press and hold to reveal")
+      .closest("button");
+    fireEvent.mouseDown(revealButton!);
+
+    const startButton = screen.getByRole("button", { name: /start drawing/i });
+    fireEvent.click(startButton);
+    rerender(<RoleReveal />);
+
+    expect(
+      screen.queryByRole("button", { name: /start drawing/i }),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows waiting message if player has already revealed role", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {

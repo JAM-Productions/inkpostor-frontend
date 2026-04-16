@@ -187,6 +187,40 @@ describe("GameResult", () => {
     expect(mockNextRound).toHaveBeenCalled();
   });
 
+  it("hides Next Round button after nextRound is clicked", () => {
+    const mockState = {
+      ...mockStateBase,
+      gameEnded: false,
+      ejectedId: null,
+      players: mockStateBase.players.map((player) => ({ ...player })),
+    };
+
+    mockState.actions = {
+      ...mockState.actions,
+      nextRound: vi.fn(() => {
+        mockState.players = mockState.players.map((player) =>
+          player.id === mockState.myId
+            ? { ...player, hasConfirmedNewRound: true }
+            : player,
+        );
+      }),
+    };
+
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(mockState),
+    );
+
+    const { rerender } = render(<GameResult />);
+
+    const nextRoundBtn = screen.getByRole("button", { name: /next round/i });
+    fireEvent.click(nextRoundBtn);
+    rerender(<GameResult />);
+
+    expect(
+      screen.queryByRole("button", { name: /next round/i }),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows waiting message when player has confirmed new round", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
