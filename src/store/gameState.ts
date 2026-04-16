@@ -127,93 +127,94 @@ export const useGameStore = create<GameState>()((set, get) => {
 
     actions: {
       connectAndCreate: async (roomId, playerName) => {
-      try {
-        const userId = getOrCreateUserId();
-        const res = await fetch(`${SERVICE_URL || ""}/auth`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: playerName, userId }),
-        });
-        if (!res.ok) {
-          const data = await res.json();
-          set({ errorMessage: data.message || "Authentication failed" });
-          return;
+        try {
+          const userId = getOrCreateUserId();
+          const res = await fetch(`${SERVICE_URL || ""}/auth`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: playerName, userId }),
+          });
+          if (!res.ok) {
+            const data = await res.json();
+            set({ errorMessage: data.message || "Authentication failed" });
+            return;
+          }
+          const { token } = await res.json();
+          socket.auth = { token };
+          socket.connect();
+          socket.emit("createRoom", { roomId });
+          set({ myName: playerName, myId: userId });
+        } catch {
+          set({ errorMessage: "Service connection error." });
         }
-        const { token } = await res.json();
-        socket.auth = { token };
-        socket.connect();
-        socket.emit("createRoom", { roomId });
-        set({ myName: playerName, myId: userId });
-      } catch {
-        set({ errorMessage: "Service connection error." });
-      }
-    },
-    connectAndJoin: async (roomId, playerName) => {
-      try {
-        const userId = getOrCreateUserId();
-        const res = await fetch(`${SERVICE_URL || ""}/auth`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: playerName, userId }),
-        });
-        if (!res.ok) {
-          const data = await res.json();
-          set({ errorMessage: data.message || "Authentication failed" });
-          return;
+      },
+      connectAndJoin: async (roomId, playerName) => {
+        try {
+          const userId = getOrCreateUserId();
+          const res = await fetch(`${SERVICE_URL || ""}/auth`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: playerName, userId }),
+          });
+          if (!res.ok) {
+            const data = await res.json();
+            set({ errorMessage: data.message || "Authentication failed" });
+            return;
+          }
+          const { token } = await res.json();
+          socket.auth = { token };
+          socket.connect();
+          socket.emit("joinRoom", { roomId });
+          set({ myName: playerName, myId: userId });
+        } catch {
+          set({ errorMessage: "Service connection error." });
         }
-        const { token } = await res.json();
-        socket.auth = { token };
-        socket.connect();
-        socket.emit("joinRoom", { roomId });
-        set({ myName: playerName, myId: userId });
-      } catch {
-        set({ errorMessage: "Service connection error." });
-      }
-    },
-    startGame: () => {
-      socket.emit("startGame");
-    },
-    proceedToDrawing: () => {
-      socket.emit("proceedToDrawing");
-      // Optimistic update for better performance and deny multiple clicks to proceed
-      optimisticallyUpdateSelf({ hasRevealedRole: true });
-    },
-    drawStroke: (stroke) => {
-      socket.emit("drawStroke", stroke);
-      set((state) => ({ canvasStrokes: [...state.canvasStrokes, stroke] }));
-    },
-    undoStroke: () => {
-      socket.emit("undoStroke");
-    },
-    endTurn: () => {
-      socket.emit("endTurn");
-    },
-    vote: (votedForId) => {
-      const currentState = get();
-      if (!currentState.myId) return;
+      },
+      startGame: () => {
+        socket.emit("startGame");
+      },
+      proceedToDrawing: () => {
+        socket.emit("proceedToDrawing");
+        // Optimistic update for better performance and deny multiple clicks to proceed
+        optimisticallyUpdateSelf({ hasRevealedRole: true });
+      },
+      drawStroke: (stroke) => {
+        socket.emit("drawStroke", stroke);
+        set((state) => ({ canvasStrokes: [...state.canvasStrokes, stroke] }));
+      },
+      undoStroke: () => {
+        socket.emit("undoStroke");
+      },
+      endTurn: () => {
+        socket.emit("endTurn");
+      },
+      vote: (votedForId) => {
+        const currentState = get();
+        if (!currentState.myId) return;
 
-      const me = currentState.players.find((p) => p.id === currentState.myId);
-      if (!me || me.hasVoted || me.isEjected) return;
+        const me = currentState.players.find((p) => p.id === currentState.myId);
+        if (!me || me.hasVoted || me.isEjected) return;
 
-      socket.emit("vote", votedForId);
-      // Optimistic update for better performance and feedback
-      optimisticallyUpdateSelf({ hasVoted: true }, (state) => ({
-        votes: { ...state.votes, [state.myId!]: votedForId },
-      }));
-    },
-    playAgain: () => {
-      socket.emit("playAgain");
-    },
-    nextRound: () => {
-      socket.emit("nextRound");
-      // Optimistic update for better performance and to prevent multiple clicks to proceed
-      optimisticallyUpdateSelf({ hasConfirmedNewRound: true });
-    },
-    endGame: () => {
-      socket.emit("endGame");
-    },
-    setError: (msg) => {
-      set({ errorMessage: msg });
+        socket.emit("vote", votedForId);
+        // Optimistic update for better performance and feedback
+        optimisticallyUpdateSelf({ hasVoted: true }, (state) => ({
+          votes: { ...state.votes, [state.myId!]: votedForId },
+        }));
+      },
+      playAgain: () => {
+        socket.emit("playAgain");
+      },
+      nextRound: () => {
+        socket.emit("nextRound");
+        // Optimistic update for better performance and to prevent multiple clicks to proceed
+        optimisticallyUpdateSelf({ hasConfirmedNewRound: true });
+      },
+      endGame: () => {
+        socket.emit("endGame");
+      },
+      setError: (msg) => {
+        set({ errorMessage: msg });
+      },
     },
   };
 });
