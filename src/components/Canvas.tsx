@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { Undo, CheckSquare, Clock, Maximize2, Minimize2 } from "lucide-react";
 import { TURN_TIME_MS } from "../lib/constants";
+import { getPlayerColorClass } from "../lib/playerColors";
 
 export const Canvas: React.FC = () => {
   const { t } = useTranslation();
@@ -27,6 +28,7 @@ export const Canvas: React.FC = () => {
     (state) => state.currentTurnPlayerId,
   );
   const myId = useGameStore((state) => state.myId);
+  const hostId = useGameStore((state) => state.hostId);
   const players = useGameStore((state) => state.players);
   const actions = useGameStore((state) => state.actions);
 
@@ -261,7 +263,7 @@ export const Canvas: React.FC = () => {
         <div className="flex items-center justify-between bg-stone-800 p-3 sm:p-4 rounded-2xl border border-stone-700 shadow-xl">
           <div className="flex items-center gap-3">
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${isMyTurn ? "bg-ink-primary shadow-ink-primary/30" : "bg-stone-600"}`}
+              className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${getPlayerColorClass(currentTurnPlayerId, hostId, players)} ${isMyTurn ? "ring-4 ring-ink-primary/30" : ""}`}
             >
               {activePlayer?.name.charAt(0) || "?"}
             </div>
