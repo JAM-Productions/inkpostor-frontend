@@ -63,6 +63,7 @@ export interface Player {
   isEjected?: boolean;
   hasRevealedRole?: boolean;
   hasConfirmedNewRound?: boolean;
+  isSuspected?: boolean;
 }
 
 export interface StrokeData {
@@ -110,6 +111,7 @@ export interface GameState {
     nextRound: () => void;
     endGame: () => void;
     setError: (msg: string | null) => void;
+    toggleSus: (playerId: string) => void;
   };
 }
 
@@ -244,6 +246,13 @@ export const useGameStore = create<GameState>()((set, get) => ({
     setError: (msg) => {
       set({ errorMessage: msg });
     },
+    toggleSus: (playerId) => {
+      set((state) => ({
+        players: state.players.map((p) =>
+          p.id === playerId ? { ...p, isSuspected: !p.isSuspected } : p,
+        ),
+      }));
+    },
   },
 }));
 
@@ -265,13 +274,17 @@ socket.on("connect", () => {
 });
 
 socket.on("gameStateUpdate", (newState) => {
+  const prevState = useGameStore.getState();
+
   // Sync all service-provided state that exists on client state
-  useGameStore.setState((state) => ({
-    ...state,
+  useGameStore.setState({
     roomId: newState.roomId,
     hostId: newState.hostId,
     phase: newState.phase,
-    players: newState.players,
+    players: newState.players.map((p: any) => {
+      const prevPlayer = prevState.players.find((pp) => pp.id === p.id);
+      return { ...p, isSuspected: prevPlayer?.isSuspected };
+    }),
     impostorId: newState.impostorId, // Usually null from service until RESULTS
     secretWord: newState.secretWord, // Usually null from service unless RESULTS
     secretCategory: newState.secretCategory,
@@ -283,7 +296,7 @@ socket.on("gameStateUpdate", (newState) => {
     currentRound: newState.currentRound,
     ejectedId: newState.ejectedId,
     gameEnded: newState.gameEnded,
-  }));
+  });
 });
 
 socket.on(

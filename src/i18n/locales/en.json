@@ -63,6 +63,9 @@
       "undo": "Undo",
       "compress": "Compress toolbar",
       "expand": "Expand toolbar",
+      "markSus": "Mark as Sus",
+      "unmarkSus": "Unmark Sus",
+      "suspect": "Suspect",
       "secretWord": "Your secret word is: {{word}}",
       "youAreInkpostor": "You are the Inkpostor! Try to blend in."
     },

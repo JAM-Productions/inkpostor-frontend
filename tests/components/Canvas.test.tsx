@@ -12,19 +12,21 @@ describe("Canvas", () => {
   const mockEndTurn = vi.fn();
   const mockUndoStroke = vi.fn();
   const mockDrawStroke = vi.fn();
+  const mockToggleSus = vi.fn();
 
   const mockStateBase = {
     myId: "socket-123",
     currentTurnPlayerId: "socket-123", // I am the active player
     players: [
-      { id: "socket-123", name: "Host" },
-      { id: "socket-456", name: "Player 2" },
+      { id: "socket-123", name: "Host", isSuspected: false },
+      { id: "socket-456", name: "Player 2", isSuspected: false },
     ],
     canvasStrokes: [],
     actions: {
       endTurn: mockEndTurn,
       undoStroke: mockUndoStroke,
       drawStroke: mockDrawStroke,
+      toggleSus: mockToggleSus,
     },
   };
 
@@ -57,7 +59,7 @@ describe("Canvas", () => {
 
     // Header
     expect(screen.getByText("Your turn!")).toBeInTheDocument();
-    expect(screen.getByText("Host")).toBeInTheDocument();
+    expect(screen.getAllByText("Host").length).toBeGreaterThan(0);
 
     // Should display time
     expect(screen.getByText("20.0s")).toBeInTheDocument();
@@ -78,7 +80,7 @@ describe("Canvas", () => {
 
     // Header
     expect(screen.getByText("Now Drawing")).toBeInTheDocument();
-    expect(screen.getByText("Host")).toBeInTheDocument();
+    expect(screen.getAllByText("Host").length).toBeGreaterThan(0);
 
     // Shouldn't see tools
     expect(screen.queryByLabelText("Undo last stroke")).not.toBeInTheDocument();
@@ -154,6 +156,41 @@ describe("Canvas", () => {
     // Toggle back
     fireEvent.click(screen.getByLabelText("Expand toolbar"));
     expect(screen.getByLabelText("Compress toolbar")).toBeInTheDocument();
+  });
+
+  it("allows marking a player as suspicious from the player list", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase };
+      return selector(state);
+    });
+
+    render(<Canvas />);
+
+    // Find Player 2 in the list and click it
+    const player2Btn = screen.getByRole("button", { name: /player 2/i });
+    fireEvent.click(player2Btn);
+
+    expect(mockToggleSus).toHaveBeenCalledWith("socket-456");
+  });
+
+  it("allows marking the current drawer as sus from the header", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      // It's Player 2's turn, not mine
+      const state = {
+        ...mockStateBase,
+        myId: "socket-123",
+        currentTurnPlayerId: "socket-456",
+      };
+      return selector(state);
+    });
+
+    render(<Canvas />);
+
+    // Header should have a mark as sus button
+    const markSusBtn = screen.getByRole("button", { name: /mark as sus/i });
+    fireEvent.click(markSusBtn);
+
+    expect(mockToggleSus).toHaveBeenCalledWith("socket-456");
   });
 
   it("displays big Out of Ink message when ink is exhausted", () => {
