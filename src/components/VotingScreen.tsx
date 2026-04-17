@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
-import { SkipForward, CheckCircle2 } from "lucide-react";
+import { SkipForward, CheckCircle2, Search } from "lucide-react";
 import { VoteDotsPreview } from "./VoteDotsPreview";
 import { getPlayerColorClass } from "../lib/playerColors";
 
@@ -87,11 +87,19 @@ export const VotingScreen: React.FC = () => {
                   >
                     {player.name.charAt(0).toUpperCase()}
                   </div>
-                  <span
-                    className={`text-sm sm:text-lg font-semibold ${effectiveSelectedPlayer === player.id ? "text-white" : "text-stone-300"}`}
-                  >
-                    {player.name}
-                  </span>
+                  <div className="flex flex-col">
+                    <span
+                      className={`text-sm sm:text-lg font-semibold ${effectiveSelectedPlayer === player.id ? "text-white" : "text-stone-300"}`}
+                    >
+                      {player.name}
+                    </span>
+                    {player.isSuspected && (
+                      <span className="flex items-center gap-1 text-[10px] sm:text-xs font-bold text-red-400 uppercase tracking-tight">
+                        <Search className="w-3 h-3" />
+                        {t("canvas.suspect")}
+                      </span>
+                    )}
+                  </div>
 
                   <VoteDotsPreview
                     count={voteCounts[player.id] || 0}

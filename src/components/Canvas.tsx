@@ -1,7 +1,15 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
-import { Undo, CheckSquare, Clock, Maximize2, Minimize2 } from "lucide-react";
+import {
+  Undo,
+  CheckSquare,
+  Clock,
+  Maximize2,
+  Minimize2,
+  Search,
+  Users,
+} from "lucide-react";
 import { TURN_TIME_MS } from "../lib/constants";
 import { getPlayerColorClass } from "../lib/playerColors";
 
@@ -12,6 +20,7 @@ export const Canvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isCompressed, setIsCompressed] = useState(false);
+  const [isSusListOpen, setIsSusListOpen] = useState(false);
   const [color, setColor] = useState("#1a1a1a"); // Dark ink default
 
   // Limits
@@ -278,13 +287,84 @@ export const Canvas: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-6">
+            {!isMyTurn && (
+              <div className="relative">
+                <button
+                  onClick={() => setIsSusListOpen(!isSusListOpen)}
+                  className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-stone-900/50 cursor-pointer ${
+                    isSusListOpen
+                      ? "bg-stone-600 text-white border-2 border-stone-500"
+                      : "bg-surface text-stone-300 hover:bg-stone-700 hover:text-white border-2 border-transparent"
+                  }`}
+                  aria-label="Players list"
+                >
+                  <Users className="w-5 h-5" />
+                  <span className="hidden sm:inline">
+                    {t("canvas.players", "Players")}
+                  </span>
+                </button>
+
+                {isSusListOpen && (
+                  <div className="absolute top-full right-0 mt-3 p-3 bg-stone-800 rounded-2xl border border-stone-700 shadow-2xl flex flex-col gap-2 min-w-[200px] sm:min-w-[240px] animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-200 z-50">
+                    <div className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1 px-1">
+                      {t("canvas.suspects", "Suspects")}
+                    </div>
+                    {players.map((player) => (
+                      <button
+                        key={player.id}
+                        onClick={() => {
+                          if (player.id !== myId && !player.isEjected)
+                            actions.toggleSus(player.id);
+                        }}
+                        disabled={player.id === myId || player.isEjected}
+                        title={player.name}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all w-full text-left bg-stone-900/50 ${
+                          player.id === myId || player.isEjected
+                            ? "opacity-50 cursor-default"
+                            : player.isSuspected
+                              ? "bg-red-500/20 text-red-500 hover:bg-red-500/30 cursor-pointer"
+                              : "hover:bg-stone-700 text-stone-200 cursor-pointer"
+                        }`}
+                      >
+                        <div
+                          className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-bold uppercase shadow-sm ${
+                            player.id === currentTurnPlayerId
+                              ? "bg-ink-primary text-white"
+                              : "bg-stone-600 text-stone-300"
+                          }`}
+                        >
+                          {player.name.charAt(0)}
+                        </div>
+                        <span className="font-semibold flex-1 truncate text-sm">
+                          {player.name}
+                        </span>
+                        {player.id !== myId && !player.isEjected && (
+                          <div
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              player.isSuspected
+                                ? "border-red-500 bg-red-500/20 text-red-500"
+                                : "border-stone-600 text-transparent group-hover:border-stone-400"
+                            }`}
+                          >
+                            {player.isSuspected && (
+                              <Search className="w-3 h-3" />
+                            )}
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div
               className={`flex flex-col items-end ${isMyTurn ? "hidden sm:flex" : "block sm:flex"}`}
             >
               <p className="text-xs text-stone-400 font-semibold uppercase mb-1 flex items-center gap-1">
                 <Clock className="w-3 h-3" /> {t("canvas.time")}
               </p>
-              <div className="text-2xl font-black text-white px-3 py-1 bg-stone-900 rounded-lg">
+              <div className="text-2xl font-black text-white px-3 py-1 bg-stone-900 rounded-lg min-w-[80px] text-right tabular-nums">
                 {(timeLeft / 1000).toFixed(1)}s
               </div>
             </div>
@@ -332,7 +412,7 @@ export const Canvas: React.FC = () => {
             className={`absolute top-2.5 right-2.5 bg-stone-900/80 backdrop-blur-md rounded-xl p-2 border border-stone-700 shadow-xl pointer-events-none flex items-center gap-2 ${isMyTurn ? "sm:hidden" : "hidden"}`}
           >
             <Clock className="w-4 h-4 text-emerald-400" />
-            <span className="text-xl font-black text-white">
+            <span className="text-xl font-black text-white tabular-nums text-right min-w-[44px]">
               {(timeLeft / 1000).toFixed(1)}
             </span>
           </div>

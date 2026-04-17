@@ -63,6 +63,9 @@
       "undo": "Desfés",
       "compress": "Comprimeix la barra",
       "expand": "Expandeix la barra",
+      "markSus": "Marcar com a Sus",
+      "unmarkSus": "Desmarcar Sus",
+      "suspect": "Sospitós/osa",
       "secretWord": "La teva paraula secreta és: {{word}}",
       "youAreInkpostor": "Ets l'Inkpostor! Intenta passar desapercebut."
     },

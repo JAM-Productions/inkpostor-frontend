@@ -63,6 +63,9 @@
       "undo": "Deshacer",
       "compress": "Comprimir barra",
       "expand": "Expandir barra",
+      "markSus": "Marcar como Sus",
+      "unmarkSus": "Desmarcar Sus",
+      "suspect": "Sospechoso/a",
       "secretWord": "Tu palabra secreta es: {{word}}",
       "youAreInkpostor": "¡Eres el Inkpostor! Intenta pasar desapercibido."
     },
