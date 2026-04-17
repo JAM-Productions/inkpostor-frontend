@@ -1,4 +1,4 @@
-import { Player } from "../store/gameState";
+import type { Player } from "../store/gameState";
 
 const PLAYER_COLORS = [
   "bg-blue-500 text-white",

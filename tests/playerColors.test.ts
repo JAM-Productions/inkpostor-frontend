@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getPlayerColorClass } from "../src/lib/playerColors";
-import { Player } from "../src/store/gameState";
+import type { Player } from "../src/store/gameState";
 
 describe("getPlayerColorClass", () => {
   const players: Player[] = [
