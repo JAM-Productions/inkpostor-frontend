@@ -249,7 +249,9 @@ export const useGameStore = create<GameState>()((set, get) => ({
     toggleSus: (playerId) => {
       set((state) => ({
         players: state.players.map((p) =>
-          p.id === playerId ? { ...p, isSuspected: !p.isSuspected } : p,
+          p.id === playerId && !p.isEjected
+            ? { ...p, isSuspected: !p.isSuspected }
+            : p,
         ),
       }));
     },
@@ -287,7 +289,8 @@ socket.on("gameStateUpdate", (newState) => {
         newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL";
       return {
         ...p,
-        isSuspected: isNewGamePhase ? false : prevPlayer?.isSuspected,
+        isSuspected:
+          isNewGamePhase || p.isEjected ? false : prevPlayer?.isSuspected,
       };
     }),
     impostorId: newState.impostorId, // Usually null from service until RESULTS

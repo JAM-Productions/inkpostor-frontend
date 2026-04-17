@@ -317,6 +317,64 @@ describe("useGameStore", () => {
     expect(updatedPlayers[0].isSuspected).toBe(false);
   });
 
+  it("should not allow toggling sus on ejected players", () => {
+    useGameStore.setState({
+      players: [
+        {
+          id: "player1",
+          name: "EjectedPlayer",
+          isConnected: true,
+          score: 0,
+          isSuspected: false,
+          isEjected: true,
+        },
+      ],
+    });
+
+    const state = useGameStore.getState();
+    state.actions.toggleSus("player1");
+
+    expect(useGameStore.getState().players[0].isSuspected).toBe(false);
+  });
+
+  it("should clear isSuspected from a player if they become ejected in an update", () => {
+    useGameStore.setState({
+      players: [
+        {
+          id: "player1",
+          name: "SusPlayer",
+          isConnected: true,
+          score: 0,
+          isSuspected: true,
+          isEjected: false,
+        },
+      ],
+    });
+
+    const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+    gameStateUpdate({
+      phase: "DRAWING",
+      players: [
+        {
+          id: "player1",
+          name: "SusPlayer",
+          isConnected: true,
+          score: 0,
+          isEjected: true, // Became ejected
+        },
+      ],
+      votes: {},
+      canvasStrokes: [],
+      turnOrder: [],
+      turnIndex: 0,
+      currentRound: 1,
+    });
+
+    const updatedPlayers = useGameStore.getState().players;
+    expect(updatedPlayers[0].isSuspected).toBe(false);
+  });
+
   // -----------------------------------------------------------------------
   // Persistence tests
   // -----------------------------------------------------------------------

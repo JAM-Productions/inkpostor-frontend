@@ -311,12 +311,13 @@ export const Canvas: React.FC = () => {
                       <button
                         key={player.id}
                         onClick={() => {
-                          if (player.id !== myId) actions.toggleSus(player.id);
+                          if (player.id !== myId && !player.isEjected)
+                            actions.toggleSus(player.id);
                         }}
-                        disabled={player.id === myId}
+                        disabled={player.id === myId || player.isEjected}
                         title={player.name}
                         className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all w-full text-left bg-stone-900/50 ${
-                          player.id === myId
+                          player.id === myId || player.isEjected
                             ? "opacity-50 cursor-default"
                             : player.isSuspected
                               ? "bg-red-500/20 text-red-500 hover:bg-red-500/30 cursor-pointer"
@@ -335,7 +336,7 @@ export const Canvas: React.FC = () => {
                         <span className="font-semibold flex-1 truncate text-sm">
                           {player.name}
                         </span>
-                        {player.id !== myId && (
+                        {player.id !== myId && !player.isEjected && (
                           <div
                             className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
                               player.isSuspected
