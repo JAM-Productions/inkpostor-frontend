@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { SkipForward, CheckCircle2 } from "lucide-react";
 import { VoteDotsPreview } from "./VoteDotsPreview";
+import { getPlayerColorClass } from "../lib/playerColors";
 
 export const VotingScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -17,6 +18,7 @@ export const VotingScreen: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const me = players.find((p) => p.id === myId);
+  const hostId = useGameStore((state) => state.hostId);
   const hasVoted = me?.hasVoted;
   const hasBeenEjected = me?.isEjected;
 
@@ -81,11 +83,7 @@ export const VotingScreen: React.FC = () => {
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div
-                    className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${
-                      effectiveSelectedPlayer === player.id
-                        ? "bg-ink-primary text-white"
-                        : "bg-stone-800 text-stone-400"
-                    }`}
+                    className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerColorClass(player.id, hostId, players)}`}
                   >
                     {player.name.charAt(0).toUpperCase()}
                   </div>

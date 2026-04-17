@@ -4,6 +4,7 @@ import { useGameStore } from "../store/gameState";
 import { useModalStore } from "../store/modalStore";
 import { Users, Crown, Loader2, Copy, Check, HelpCircle } from "lucide-react";
 import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
+import { getPlayerColorClass } from "../lib/playerColors";
 
 export const Lobby: React.FC = () => {
   const { t } = useTranslation();
@@ -121,7 +122,7 @@ export const Lobby: React.FC = () => {
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${player.id === hostId ? "bg-linear-to-br from-amber-400 to-orange-500 text-white shadow-lg shadow-orange-500/20" : "bg-stone-700 text-stone-300"}`}
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerColorClass(player.id, hostId, players)}`}
                   >
                     {player.name.charAt(0).toUpperCase()}
                   </div>
