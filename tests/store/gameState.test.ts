@@ -280,6 +280,43 @@ describe("useGameStore", () => {
     expect(socket.emit).toHaveBeenCalledWith("endGame");
   });
 
+  it("should reset isSuspected when a new game starts (LOBBY or ROLE_REVEAL phase)", () => {
+    useGameStore.setState({
+      phase: "DRAWING",
+      players: [
+        {
+          id: "player1",
+          name: "SusPlayer",
+          isConnected: true,
+          score: 0,
+          isSuspected: true,
+        },
+      ],
+    });
+
+    const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+    gameStateUpdate({
+      phase: "LOBBY",
+      players: [
+        {
+          id: "player1",
+          name: "SusPlayer",
+          isConnected: true,
+          score: 0,
+        },
+      ],
+      votes: {},
+      canvasStrokes: [],
+      turnOrder: [],
+      turnIndex: 0,
+      currentRound: 1,
+    });
+
+    const updatedPlayers = useGameStore.getState().players;
+    expect(updatedPlayers[0].isSuspected).toBe(false);
+  });
+
   // -----------------------------------------------------------------------
   // Persistence tests
   // -----------------------------------------------------------------------

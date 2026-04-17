@@ -158,24 +158,9 @@ describe("Canvas", () => {
     expect(screen.getByLabelText("Compress toolbar")).toBeInTheDocument();
   });
 
-  it("allows marking a player as suspicious from the player list", () => {
+  it("allows marking a player as suspicious from the player list popover", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
-      return selector(state);
-    });
-
-    render(<Canvas />);
-
-    // Find Player 2 in the list and click it
-    const player2Btn = screen.getByRole("button", { name: /player 2/i });
-    fireEvent.click(player2Btn);
-
-    expect(mockToggleSus).toHaveBeenCalledWith("socket-456");
-  });
-
-  it("allows marking the current drawer as sus from the header", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      // It's Player 2's turn, not mine
+      // Not my turn so the Players button is visible
       const state = {
         ...mockStateBase,
         myId: "socket-123",
@@ -186,9 +171,13 @@ describe("Canvas", () => {
 
     render(<Canvas />);
 
-    // Header should have a mark as sus button
-    const markSusBtn = screen.getByRole("button", { name: /mark as sus/i });
-    fireEvent.click(markSusBtn);
+    // Open the players list popover
+    const playersBtn = screen.getByLabelText("Players list");
+    fireEvent.click(playersBtn);
+
+    // Find Player 2 in the list and click it
+    const player2Btn = screen.getByRole("button", { name: /player 2/i });
+    fireEvent.click(player2Btn);
 
     expect(mockToggleSus).toHaveBeenCalledWith("socket-456");
   });

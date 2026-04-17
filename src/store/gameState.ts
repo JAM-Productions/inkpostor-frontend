@@ -283,7 +283,12 @@ socket.on("gameStateUpdate", (newState) => {
     phase: newState.phase,
     players: newState.players.map((p: any) => {
       const prevPlayer = prevState.players.find((pp) => pp.id === p.id);
-      return { ...p, isSuspected: prevPlayer?.isSuspected };
+      const isNewGamePhase =
+        newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL";
+      return {
+        ...p,
+        isSuspected: isNewGamePhase ? false : prevPlayer?.isSuspected,
+      };
     }),
     impostorId: newState.impostorId, // Usually null from service until RESULTS
     secretWord: newState.secretWord, // Usually null from service unless RESULTS
