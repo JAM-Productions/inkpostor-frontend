@@ -6,11 +6,11 @@ const PLAYER_COLORS = [
   "bg-purple-500 text-white",
   "bg-rose-500 text-white",
   "bg-indigo-500 text-white",
-  "bg-cyan-500 text-white",
-  "bg-teal-500 text-white",
-  "bg-lime-500 text-white",
+  "bg-cyan-700 text-white",
+  "bg-teal-700 text-white",
+  "bg-lime-700 text-white",
   "bg-fuchsia-500 text-white",
-  "bg-sky-500 text-white",
+  "bg-sky-700 text-white",
 ];
 
 export const getPlayerColorClass = (
