@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
+import { useModalStore } from "../store/modalStore";
 import { Users, Crown, Loader2, Copy, Check, HelpCircle } from "lucide-react";
 import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
-import { RulesModal } from "./modals/RulesModal";
 
 export const Lobby: React.FC = () => {
   const { t } = useTranslation();
@@ -12,8 +12,8 @@ export const Lobby: React.FC = () => {
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
+  const modalActions = useModalStore((state) => state.actions);
   const [copied, setCopied] = useState(false);
-  const [isRulesOpen, setIsRulesOpen] = useState(false);
 
   const isHost = myId === hostId;
   const canStart = isHost && players.length >= MIN_PLAYERS;
@@ -92,7 +92,7 @@ export const Lobby: React.FC = () => {
             </h3>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setIsRulesOpen(true)}
+                onClick={() => modalActions.openModal("RULES")}
                 className="flex items-center gap-2 font-bold cursor-pointer"
                 data-testid="how-to-play-btn"
               >
@@ -175,8 +175,6 @@ export const Lobby: React.FC = () => {
           )}
         </div>
       </div>
-
-      <RulesModal isOpen={isRulesOpen} onClose={() => setIsRulesOpen(false)} />
     </div>
   );
 };
