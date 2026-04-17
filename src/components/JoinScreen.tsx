@@ -6,7 +6,8 @@ import { SERVICE_URL } from "../socket";
 
 export const JoinScreen: React.FC = () => {
   const { t } = useTranslation();
-  const [playerName, setPlayerName] = useState("");
+  const myName = useGameStore((state) => state.myName);
+  const [playerName, setPlayerName] = useState(myName || "");
   const [roomId, setRoomId] = useState("");
   const [isCheckingHealth, setIsCheckingHealth] = useState(true);
   const [serviceOnline, setServiceOnline] = useState(false);

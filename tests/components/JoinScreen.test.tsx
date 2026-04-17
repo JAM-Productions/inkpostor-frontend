@@ -28,6 +28,7 @@ describe("JoinScreen", () => {
           connectAndJoin: mockConnectAndJoin,
         },
         errorMessage: null,
+        myName: null,
       };
       return selector(state);
     });
@@ -208,6 +209,27 @@ describe("JoinScreen", () => {
     expect(
       screen.getByText("Test error connection failed"),
     ).toBeInTheDocument();
+  });
+
+  it("pre-fills the name if present in store", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        actions: {
+          connectAndCreate: mockConnectAndCreate,
+          connectAndJoin: mockConnectAndJoin,
+        },
+        errorMessage: null,
+        myName: "SavedName",
+      };
+      return selector(state);
+    });
+
+    render(<JoinScreen />);
+
+    const nameInput = screen.getByPlaceholderText(
+      "Enter your name",
+    ) as HTMLInputElement;
+    expect(nameInput.value).toBe("SavedName");
   });
 
   describe("Service Health Check", () => {

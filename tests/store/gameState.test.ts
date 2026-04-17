@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { useGameStore } from "../../src/store/gameState";
+import { useGameStore, PLAYER_NAME_KEY } from "../../src/store/gameState";
 import { socket } from "../../src/socket";
 
 const { socketListeners } = vi.hoisted(() => ({
@@ -281,8 +281,36 @@ describe("useGameStore", () => {
   });
 
   // -----------------------------------------------------------------------
-  // UUID persistence tests
+  // Persistence tests
   // -----------------------------------------------------------------------
+
+  describe("Player name persistence", () => {
+    afterEach(() => {
+      localStorage.removeItem(PLAYER_NAME_KEY);
+    });
+
+    it("connectAndCreate should persist playerName in localStorage", async () => {
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ token: "mock-token" }),
+      });
+
+      await useGameStore.getState().actions.connectAndCreate("room1", "Alice");
+
+      expect(localStorage.getItem(PLAYER_NAME_KEY)).toBe("Alice");
+    });
+
+    it("connectAndJoin should persist playerName in localStorage", async () => {
+      (global.fetch as any).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ token: "mock-token" }),
+      });
+
+      await useGameStore.getState().actions.connectAndJoin("room1", "Bob");
+
+      expect(localStorage.getItem(PLAYER_NAME_KEY)).toBe("Bob");
+    });
+  });
 
   describe("UUID persistence (getOrCreateUserId)", () => {
     afterEach(() => {
