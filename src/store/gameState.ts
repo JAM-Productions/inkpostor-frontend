@@ -293,28 +293,37 @@ socket.on("gameStateUpdate", (newState) => {
         isSuspected:
           isNewGamePhase || p.isEjected ? false : prevPlayer?.isSuspected,
         // Persist transient player state that might be omitted by the server during updates
-        hasVoted: p.hasVoted ?? prevPlayer?.hasVoted,
-        hasRevealedRole: p.hasRevealedRole ?? prevPlayer?.hasRevealedRole,
+        // Only persist if we're in the same phase to avoid state leakage between rounds
+        hasVoted:
+          newState.phase === prevState.phase
+            ? p.hasVoted ?? prevPlayer?.hasVoted
+            : p.hasVoted,
+        hasRevealedRole:
+          newState.phase === prevState.phase
+            ? p.hasRevealedRole ?? prevPlayer?.hasRevealedRole
+            : p.hasRevealedRole,
         hasConfirmedNewRound:
-          p.hasConfirmedNewRound ?? prevPlayer?.hasConfirmedNewRound,
+          newState.phase === prevState.phase
+            ? p.hasConfirmedNewRound ?? prevPlayer?.hasConfirmedNewRound
+            : p.hasConfirmedNewRound,
       };
     }),
     impostorId:
-      newState.phase === "LOBBY"
+      newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL"
         ? null
         : newState.impostorId ?? prevState.impostorId,
     // Only update secretWord/secretCategory/amIImpostor if they are provided,
     // to avoid clearing them during a game phase where the server doesn't re-send them.
     secretWord:
-      newState.phase === "LOBBY"
+      newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL"
         ? null
         : newState.secretWord ?? prevState.secretWord,
     secretCategory:
-      newState.phase === "LOBBY"
+      newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL"
         ? null
         : newState.secretCategory ?? prevState.secretCategory,
     amIImpostor:
-      newState.phase === "LOBBY"
+      newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL"
         ? null
         : newState.amIImpostor ?? prevState.amIImpostor,
     currentTurnPlayerId: newState.currentTurnPlayerId,
