@@ -289,13 +289,34 @@ socket.on("gameStateUpdate", (newState) => {
         newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL";
       return {
         ...p,
+        // Persist local-only suspected state
         isSuspected:
           isNewGamePhase || p.isEjected ? false : prevPlayer?.isSuspected,
+        // Persist transient player state that might be omitted by the server during updates
+        hasVoted: p.hasVoted ?? prevPlayer?.hasVoted,
+        hasRevealedRole: p.hasRevealedRole ?? prevPlayer?.hasRevealedRole,
+        hasConfirmedNewRound:
+          p.hasConfirmedNewRound ?? prevPlayer?.hasConfirmedNewRound,
       };
     }),
-    impostorId: newState.impostorId, // Usually null from service until RESULTS
-    secretWord: newState.secretWord, // Usually null from service unless RESULTS
-    secretCategory: newState.secretCategory,
+    impostorId:
+      newState.phase === "LOBBY"
+        ? null
+        : newState.impostorId ?? prevState.impostorId,
+    // Only update secretWord/secretCategory/amIImpostor if they are provided,
+    // to avoid clearing them during a game phase where the server doesn't re-send them.
+    secretWord:
+      newState.phase === "LOBBY"
+        ? null
+        : newState.secretWord ?? prevState.secretWord,
+    secretCategory:
+      newState.phase === "LOBBY"
+        ? null
+        : newState.secretCategory ?? prevState.secretCategory,
+    amIImpostor:
+      newState.phase === "LOBBY"
+        ? null
+        : newState.amIImpostor ?? prevState.amIImpostor,
     currentTurnPlayerId: newState.currentTurnPlayerId,
     turnOrder: newState.turnOrder,
     turnIndex: newState.turnIndex,
