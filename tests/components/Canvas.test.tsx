@@ -247,14 +247,14 @@ describe("Canvas", () => {
     fireEvent.click(alertButton);
 
     expect(
-      screen.getByText("Do you want to start an emergency votation?"),
+      screen.getByText("Do you want to start an emergency voting?"),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Confirm" })).toBeInTheDocument();
 
     fireEvent.mouseDown(document.body);
 
     expect(
-      screen.queryByText("Do you want to start an emergency votation?"),
+      screen.queryByText("Do you want to start an emergency voting?"),
     ).not.toBeInTheDocument();
   });
 
@@ -268,7 +268,7 @@ describe("Canvas", () => {
 
     expect(mockStartEmergencyVoting).toHaveBeenCalledTimes(1);
     expect(
-      screen.queryByText("Do you want to start an emergency votation?"),
+      screen.queryByText("Do you want to start an emergency voting?"),
     ).not.toBeInTheDocument();
   });
 
@@ -290,7 +290,7 @@ describe("Canvas", () => {
     fireEvent.click(alertButton);
 
     expect(
-      screen.queryByText("Do you want to start an emergency votation?"),
+      screen.queryByText("Do you want to start an emergency voting?"),
     ).not.toBeInTheDocument();
     expect(mockStartEmergencyVoting).not.toHaveBeenCalled();
   });

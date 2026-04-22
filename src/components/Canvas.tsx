@@ -384,7 +384,7 @@ export const Canvas: React.FC = () => {
                   {isAlertOpen && (
                     <div className="absolute top-full right-0 mt-3 p-3 bg-stone-800 rounded-2xl border border-stone-700 shadow-2xl flex flex-col gap-4 min-w-50 sm:min-w-60 animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-200 z-50">
                       <p className="text-sm text-white font-semibold text-center">
-                        {t("canvas.emergencyVotationPrompt")}
+                        {t("canvas.emergencyVotingPrompt")}
                       </p>
                       <button
                         onClick={() => {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 
 /**
  * Custom hook to handle clicks outside a specified element.

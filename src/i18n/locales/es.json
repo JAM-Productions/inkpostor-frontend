@@ -68,7 +68,7 @@
       "suspect": "Sospechoso/a",
       "secretWord": "Tu palabra secreta es: {{word}}",
       "youAreInkpostor": "¡Eres el Inkpostor! Intenta pasar desapercibido.",
-      "emergencyVotationPrompt": "¿Quieres iniciar una votación de emergencia?",
+      "emergencyVotingPrompt": "¿Quieres iniciar una votación de emergencia?",
       "confirm": "Confirmar"
     },
     "words": {
