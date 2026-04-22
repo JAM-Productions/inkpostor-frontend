@@ -13,13 +13,28 @@ describe("Canvas", () => {
   const mockUndoStroke = vi.fn();
   const mockDrawStroke = vi.fn();
   const mockToggleSus = vi.fn();
+  const mockStartEmergencyVoting = vi.fn();
 
   const mockStateBase = {
     myId: "socket-123",
     currentTurnPlayerId: "socket-123", // I am the active player
+    hostId: "socket-123",
+    isMobile: false,
     players: [
-      { id: "socket-123", name: "Host", isSuspected: false },
-      { id: "socket-456", name: "Player 2", isSuspected: false },
+      {
+        id: "socket-123",
+        name: "Host",
+        isSuspected: false,
+        isEjected: false,
+        hasStartedEmergencyVoting: false,
+      },
+      {
+        id: "socket-456",
+        name: "Player 2",
+        isSuspected: false,
+        isEjected: false,
+        hasStartedEmergencyVoting: false,
+      },
     ],
     canvasStrokes: [],
     actions: {
@@ -27,6 +42,7 @@ describe("Canvas", () => {
       undoStroke: mockUndoStroke,
       drawStroke: mockDrawStroke,
       toggleSus: mockToggleSus,
+      startEmergencyVoting: mockStartEmergencyVoting,
     },
   };
 
@@ -49,11 +65,18 @@ describe("Canvas", () => {
     vi.useRealTimers();
   });
 
-  it("renders my turn UI elements", () => {
+  const mockStore = (overrides = {}) => {
     (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
+      const state = {
+        ...mockStateBase,
+        ...overrides,
+      };
       return selector(state);
     });
+  };
+
+  it("renders my turn UI elements", () => {
+    mockStore();
 
     render(<Canvas />);
 
@@ -71,10 +94,7 @@ describe("Canvas", () => {
   });
 
   it("renders waiting UI for non-active players", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase, myId: "socket-456" }; // Not me
-      return selector(state);
-    });
+    mockStore({ myId: "socket-456" });
 
     render(<Canvas />);
 
@@ -91,10 +111,7 @@ describe("Canvas", () => {
   });
 
   it("timer decrements for non-active players too", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase, myId: "socket-456" }; // Not me
-      return selector(state);
-    });
+    mockStore({ myId: "socket-456" });
 
     render(<Canvas />);
 
@@ -111,10 +128,7 @@ describe("Canvas", () => {
   });
 
   it("allows active player to end turn manually", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
-      return selector(state);
-    });
+    mockStore();
 
     render(<Canvas />);
 
@@ -124,10 +138,7 @@ describe("Canvas", () => {
   });
 
   it("button is present", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
-      return selector(state);
-    });
+    mockStore();
 
     render(<Canvas />);
 
@@ -136,10 +147,7 @@ describe("Canvas", () => {
   });
 
   it("can toggle toolbar compression", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
-      return selector(state);
-    });
+    mockStore();
 
     render(<Canvas />);
 
@@ -159,14 +167,9 @@ describe("Canvas", () => {
   });
 
   it("allows marking a player as suspicious from the player list popover", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      // Not my turn so the Players button is visible
-      const state = {
-        ...mockStateBase,
-        myId: "socket-123",
-        currentTurnPlayerId: "socket-456",
-      };
-      return selector(state);
+    mockStore({
+      myId: "socket-123",
+      currentTurnPlayerId: "socket-456",
     });
 
     render(<Canvas />);
@@ -183,10 +186,7 @@ describe("Canvas", () => {
   });
 
   it("displays big Out of Ink message when ink is exhausted", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
-      return selector(state);
-    });
+    mockStore();
 
     const { container } = render(<Canvas />);
 
@@ -228,5 +228,70 @@ describe("Canvas", () => {
         el.className.includes("text-4xl") || el.className.includes("text-6xl"),
     );
     expect(bigIndicator).toBeInTheDocument();
+  });
+
+  it("shows the alert button only for non-active players", () => {
+    mockStore({ myId: "socket-456" });
+
+    render(<Canvas />);
+
+    expect(screen.getByLabelText("Alert")).toBeInTheDocument();
+  });
+
+  it("opens and closes the emergency voting alert dropdown", () => {
+    mockStore({ myId: "socket-456" });
+
+    render(<Canvas />);
+
+    const alertButton = screen.getByLabelText("Alert");
+    fireEvent.click(alertButton);
+
+    expect(
+      screen.getByText("Do you want to start an emergency votation?"),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeInTheDocument();
+
+    fireEvent.mouseDown(document.body);
+
+    expect(
+      screen.queryByText("Do you want to start an emergency votation?"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("starts emergency voting and closes the dropdown when confirmed", () => {
+    mockStore({ myId: "socket-456" });
+
+    render(<Canvas />);
+
+    fireEvent.click(screen.getByLabelText("Alert"));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+
+    expect(mockStartEmergencyVoting).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByText("Do you want to start an emergency votation?"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("disables the alert button when the player already started emergency voting", () => {
+    mockStore({
+      myId: "socket-456",
+      players: mockStateBase.players.map((player) =>
+        player.id === "socket-456"
+          ? { ...player, hasStartedEmergencyVoting: true }
+          : player,
+      ),
+    });
+
+    render(<Canvas />);
+
+    const alertButton = screen.getByLabelText("Alert");
+    expect(alertButton).toBeDisabled();
+
+    fireEvent.click(alertButton);
+
+    expect(
+      screen.queryByText("Do you want to start an emergency votation?"),
+    ).not.toBeInTheDocument();
+    expect(mockStartEmergencyVoting).not.toHaveBeenCalled();
   });
 });

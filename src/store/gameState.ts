@@ -64,6 +64,7 @@ export interface Player {
   hasRevealedRole?: boolean;
   hasConfirmedNewRound?: boolean;
   isSuspected?: boolean;
+  hasStartedEmergencyVoting: boolean;
 }
 
 export interface StrokeData {
@@ -110,6 +111,7 @@ export interface GameState {
     playAgain: () => void;
     nextRound: () => void;
     endGame: () => void;
+    startEmergencyVoting: () => void;
     setError: (msg: string | null) => void;
     toggleSus: (playerId: string) => void;
   };
@@ -242,6 +244,9 @@ export const useGameStore = create<GameState>()((set, get) => ({
     },
     endGame: () => {
       socket.emit("endGame");
+    },
+    startEmergencyVoting: () => {
+      socket.emit("startEmergencyVoting");
     },
     setError: (msg) => {
       set({ errorMessage: msg });
