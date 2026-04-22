@@ -188,6 +188,7 @@ describe("useGameStore", () => {
           isConnected: true,
           score: 0,
           hasVoted: false,
+          hasStartedEmergencyVoting: false,
         },
         {
           id: targetPlayerId,
@@ -195,6 +196,7 @@ describe("useGameStore", () => {
           isConnected: true,
           score: 0,
           hasVoted: false,
+          hasStartedEmergencyVoting: false,
         },
       ],
       votes: {},
@@ -238,6 +240,7 @@ describe("useGameStore", () => {
           isConnected: true,
           score: 0,
           hasVoted: true,
+          hasStartedEmergencyVoting: false,
         }, // Already voted
       ],
       votes: { [myId]: "some-player" },
@@ -261,6 +264,7 @@ describe("useGameStore", () => {
           score: 0,
           isEjected: true,
           hasVoted: false,
+          hasStartedEmergencyVoting: false,
         }, // Ejected
       ],
       votes: {},
@@ -290,6 +294,7 @@ describe("useGameStore", () => {
           isConnected: true,
           score: 0,
           isSuspected: true,
+          hasStartedEmergencyVoting: false,
         },
       ],
     });
@@ -327,6 +332,7 @@ describe("useGameStore", () => {
           score: 0,
           isSuspected: false,
           isEjected: true,
+          hasStartedEmergencyVoting: false,
         },
       ],
     });
@@ -347,6 +353,7 @@ describe("useGameStore", () => {
           score: 0,
           isSuspected: true,
           isEjected: false,
+          hasStartedEmergencyVoting: false,
         },
       ],
     });
