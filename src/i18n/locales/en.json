@@ -68,7 +68,7 @@
       "suspect": "Suspect",
       "secretWord": "Your secret word is: {{word}}",
       "youAreInkpostor": "You are the Inkpostor! Try to blend in.",
-      "emergencyVotationPrompt": "Do you want to start an emergency votation?",
+      "emergencyVotingPrompt": "Do you want to start emergency voting?",
       "confirm": "Confirm"
     },
     "words": {
