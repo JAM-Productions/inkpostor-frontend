@@ -309,23 +309,23 @@ socket.on("gameStateUpdate", (newState) => {
       };
     }),
     impostorId:
-      newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL"
-        ? null
-        : newState.impostorId ?? prevState.impostorId,
+      newState.phase === prevState.phase
+        ? newState.impostorId ?? prevState.impostorId
+        : newState.impostorId,
     // Only update secretWord/secretCategory/amIImpostor if they are provided,
     // to avoid clearing them during a game phase where the server doesn't re-send them.
     secretWord:
-      newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL"
-        ? null
-        : newState.secretWord ?? prevState.secretWord,
+      newState.phase === prevState.phase
+        ? newState.secretWord ?? prevState.secretWord
+        : newState.secretWord,
     secretCategory:
-      newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL"
-        ? null
-        : newState.secretCategory ?? prevState.secretCategory,
+      newState.phase === prevState.phase
+        ? newState.secretCategory ?? prevState.secretCategory
+        : newState.secretCategory,
     amIImpostor:
-      newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL"
-        ? null
-        : newState.amIImpostor ?? prevState.amIImpostor,
+      newState.phase === prevState.phase
+        ? newState.amIImpostor ?? prevState.amIImpostor
+        : newState.amIImpostor,
     currentTurnPlayerId: newState.currentTurnPlayerId,
     turnOrder: newState.turnOrder,
     turnIndex: newState.turnIndex,
