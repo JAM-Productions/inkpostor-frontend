@@ -67,7 +67,9 @@
       "unmarkSus": "Desmarcar Sus",
       "suspect": "Sospitós/osa",
       "secretWord": "La teva paraula secreta és: {{word}}",
-      "youAreInkpostor": "Ets l'Inkpostor! Intenta passar desapercebut."
+      "youAreInkpostor": "Ets l'Inkpostor! Intenta passar desapercebut.",
+      "emergencyVotingPrompt": "Vols iniciar una votació d'emergència?",
+      "confirm": "Confirmar"
     },
     "words": {
       "Dog": "Gos",

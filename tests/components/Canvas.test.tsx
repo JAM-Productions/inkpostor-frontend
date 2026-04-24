@@ -17,9 +17,23 @@ describe("Canvas", () => {
   const mockStateBase = {
     myId: "socket-123",
     currentTurnPlayerId: "socket-123", // I am the active player
+    hostId: "socket-123",
+    isMobile: false,
     players: [
-      { id: "socket-123", name: "Host", isSuspected: false },
-      { id: "socket-456", name: "Player 2", isSuspected: false },
+      {
+        id: "socket-123",
+        name: "Host",
+        isSuspected: false,
+        isEjected: false,
+        hasStartedEmergencyVoting: false,
+      },
+      {
+        id: "socket-456",
+        name: "Player 2",
+        isSuspected: false,
+        isEjected: false,
+        hasStartedEmergencyVoting: false,
+      },
     ],
     canvasStrokes: [],
     actions: {
@@ -27,6 +41,7 @@ describe("Canvas", () => {
       undoStroke: mockUndoStroke,
       drawStroke: mockDrawStroke,
       toggleSus: mockToggleSus,
+      startEmergencyVoting: vi.fn(),
     },
   };
 
@@ -49,11 +64,18 @@ describe("Canvas", () => {
     vi.useRealTimers();
   });
 
-  it("renders my turn UI elements", () => {
+  const mockStore = (overrides = {}) => {
     (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
+      const state = {
+        ...mockStateBase,
+        ...overrides,
+      };
       return selector(state);
     });
+  };
+
+  it("renders my turn UI elements", () => {
+    mockStore();
 
     render(<Canvas />);
 
@@ -71,10 +93,7 @@ describe("Canvas", () => {
   });
 
   it("renders waiting UI for non-active players", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase, myId: "socket-456" }; // Not me
-      return selector(state);
-    });
+    mockStore({ myId: "socket-456" });
 
     render(<Canvas />);
 
@@ -91,10 +110,7 @@ describe("Canvas", () => {
   });
 
   it("timer decrements for non-active players too", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase, myId: "socket-456" }; // Not me
-      return selector(state);
-    });
+    mockStore({ myId: "socket-456" });
 
     render(<Canvas />);
 
@@ -111,10 +127,7 @@ describe("Canvas", () => {
   });
 
   it("allows active player to end turn manually", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
-      return selector(state);
-    });
+    mockStore();
 
     render(<Canvas />);
 
@@ -124,10 +137,7 @@ describe("Canvas", () => {
   });
 
   it("button is present", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
-      return selector(state);
-    });
+    mockStore();
 
     render(<Canvas />);
 
@@ -136,10 +146,7 @@ describe("Canvas", () => {
   });
 
   it("can toggle toolbar compression", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
-      return selector(state);
-    });
+    mockStore();
 
     render(<Canvas />);
 
@@ -159,14 +166,9 @@ describe("Canvas", () => {
   });
 
   it("allows marking a player as suspicious from the player list popover", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      // Not my turn so the Players button is visible
-      const state = {
-        ...mockStateBase,
-        myId: "socket-123",
-        currentTurnPlayerId: "socket-456",
-      };
-      return selector(state);
+    mockStore({
+      myId: "socket-123",
+      currentTurnPlayerId: "socket-456",
     });
 
     render(<Canvas />);
@@ -183,10 +185,7 @@ describe("Canvas", () => {
   });
 
   it("displays big Out of Ink message when ink is exhausted", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase };
-      return selector(state);
-    });
+    mockStore();
 
     const { container } = render(<Canvas />);
 

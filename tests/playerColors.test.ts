@@ -8,6 +8,7 @@ describe("getPlayerColorClass", () => {
     name: `Player ${i + 1}`,
     isConnected: true,
     score: 0,
+    hasStartedEmergencyVoting: false,
   }));
 
   const hostId = "1";

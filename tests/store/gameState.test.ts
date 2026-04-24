@@ -188,6 +188,7 @@ describe("useGameStore", () => {
           isConnected: true,
           score: 0,
           hasVoted: false,
+          hasStartedEmergencyVoting: false,
         },
         {
           id: targetPlayerId,
@@ -195,6 +196,7 @@ describe("useGameStore", () => {
           isConnected: true,
           score: 0,
           hasVoted: false,
+          hasStartedEmergencyVoting: false,
         },
       ],
       votes: {},
@@ -238,6 +240,7 @@ describe("useGameStore", () => {
           isConnected: true,
           score: 0,
           hasVoted: true,
+          hasStartedEmergencyVoting: false,
         }, // Already voted
       ],
       votes: { [myId]: "some-player" },
@@ -261,6 +264,7 @@ describe("useGameStore", () => {
           score: 0,
           isEjected: true,
           hasVoted: false,
+          hasStartedEmergencyVoting: false,
         }, // Ejected
       ],
       votes: {},
@@ -280,6 +284,46 @@ describe("useGameStore", () => {
     expect(socket.emit).toHaveBeenCalledWith("endGame");
   });
 
+  it("should optimistically update local state on startEmergencyVoting action", () => {
+    const myId = "player-id";
+
+    useGameStore.setState({
+      myId,
+      players: [
+        {
+          id: myId,
+          name: "Player",
+          isConnected: true,
+          score: 0,
+          isEjected: false,
+          hasStartedEmergencyVoting: false,
+        },
+        {
+          id: "other-player",
+          name: "Other Player",
+          isConnected: true,
+          score: 0,
+          isEjected: false,
+          hasStartedEmergencyVoting: false,
+        },
+      ],
+    });
+
+    const state = useGameStore.getState();
+    state.actions.startEmergencyVoting();
+
+    expect(socket.emit).toHaveBeenCalledWith("startEmergencyVoting");
+
+    const updatedState = useGameStore.getState();
+    const me = updatedState.players.find((player) => player.id === myId);
+    const otherPlayer = updatedState.players.find(
+      (player) => player.id === "other-player",
+    );
+
+    expect(me?.hasStartedEmergencyVoting).toBe(true);
+    expect(otherPlayer?.hasStartedEmergencyVoting).toBe(false);
+  });
+
   it("should reset isSuspected when a new game starts (LOBBY or ROLE_REVEAL phase)", () => {
     useGameStore.setState({
       phase: "DRAWING",
@@ -290,6 +334,7 @@ describe("useGameStore", () => {
           isConnected: true,
           score: 0,
           isSuspected: true,
+          hasStartedEmergencyVoting: false,
         },
       ],
     });
@@ -327,6 +372,7 @@ describe("useGameStore", () => {
           score: 0,
           isSuspected: false,
           isEjected: true,
+          hasStartedEmergencyVoting: false,
         },
       ],
     });
@@ -347,6 +393,7 @@ describe("useGameStore", () => {
           score: 0,
           isSuspected: true,
           isEjected: false,
+          hasStartedEmergencyVoting: false,
         },
       ],
     });
