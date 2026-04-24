@@ -15,6 +15,9 @@ function App() {
   const roomId = useGameStore((state) => state.roomId);
   const myName = useGameStore((state) => state.myName);
 
+  const showLanguageSwitcher =
+    !roomId || phase === "LOBBY" || phase === "RESULTS";
+
   // Switch between game screens depending on current state of the room
   const renderPhase = () => {
     if (!roomId || !myName) {
@@ -45,7 +48,7 @@ function App() {
     <>
       <div className="fixed top-4 right-4 flex items-center justify-between gap-4 z-50">
         <EndGameButton />
-        <LanguageSwitcher />
+        {showLanguageSwitcher && <LanguageSwitcher />}
       </div>
       {renderPhase()}
       <ModalRenderer />
