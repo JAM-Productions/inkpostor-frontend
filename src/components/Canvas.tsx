@@ -9,11 +9,11 @@ import {
   Minimize2,
   Search,
   Users,
-  TriangleAlert,
 } from "lucide-react";
 import { TURN_TIME_MS } from "../lib/constants";
 import { getPlayerColorClass } from "../lib/playerColors";
 import { useClickOutside } from "../hooks/useClickOutside";
+import { EmergencyAlertButton } from "./EmergencyAlertButton";
 
 export const Canvas: React.FC = () => {
   const { t } = useTranslation();
@@ -24,7 +24,6 @@ export const Canvas: React.FC = () => {
   const [isCompressed, setIsCompressed] = useState(false);
   const [isSusListOpen, setIsSusListOpen] = useState(false);
   const [color, setColor] = useState("#1a1a1a"); // Dark ink default
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   // Limits
   const MAX_INK = 1000;
@@ -46,7 +45,6 @@ export const Canvas: React.FC = () => {
 
   const isMyTurn = currentTurnPlayerId === myId;
   const activePlayer = players.find((p) => p.id === currentTurnPlayerId);
-  const me = players.find((p) => p.id === myId);
 
   // Resize canvas to match CSS layout
   useEffect(() => {
@@ -232,10 +230,8 @@ export const Canvas: React.FC = () => {
   }, [isDrawing, draw]);
 
   // Close dropdowns when clicking outside
-  const alertRef = useRef<HTMLDivElement>(null);
   const suspectsRef = useRef<HTMLDivElement>(null);
 
-  useClickOutside(alertRef, isAlertOpen, setIsAlertOpen);
   useClickOutside(suspectsRef, isSusListOpen, setIsSusListOpen);
 
   const inkPercentage = Math.min((inkUsed / MAX_INK) * 100, 100);
@@ -370,36 +366,7 @@ export const Canvas: React.FC = () => {
                 </div>
               )}
               {/* Alert Dropdown */}
-              {!isMyTurn && (
-                <div className="relative" ref={alertRef}>
-                  <button
-                    onClick={() => setIsAlertOpen(!isAlertOpen)}
-                    className={`flex items-center px-4 py-2 sm:px-5 sm:py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-red-900/50 cursor-pointer  ${isAlertOpen ? "bg-ink-primary-accent" : "bg-ink-primary"} ${me?.hasStartedEmergencyVoting ? "opacity-50" : "hover:bg-ink-primary-accent"}`}
-                    aria-label="Alert"
-                    disabled={me?.hasStartedEmergencyVoting}
-                  >
-                    <TriangleAlert className="w-5 h-5" />
-                  </button>
-
-                  {isAlertOpen && (
-                    <div className="absolute top-full right-0 mt-3 p-3 bg-stone-800 rounded-2xl border border-stone-700 shadow-2xl flex flex-col gap-4 min-w-50 sm:min-w-60 animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-200 z-50">
-                      <p className="text-sm text-white font-semibold text-center">
-                        {t("canvas.emergencyVotingPrompt")}
-                      </p>
-                      <button
-                        onClick={() => {
-                          setIsAlertOpen(false);
-                          actions.startEmergencyVoting();
-                        }}
-                        disabled={me?.hasStartedEmergencyVoting}
-                        className="px-4 py-2 bg-ink-primary hover:bg-ink-primary-accent cursor-pointer text-white font-bold rounded-xl  transition-all"
-                      >
-                        {t("canvas.confirm")}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
+              {!isMyTurn && <EmergencyAlertButton />}
             </div>
             <div
               className={`flex flex-col items-end ${isMyTurn ? "hidden sm:flex" : "block sm:flex"}`}
