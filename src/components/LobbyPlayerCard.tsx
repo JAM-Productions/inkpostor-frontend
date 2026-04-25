@@ -8,7 +8,6 @@ import { useClickOutside } from "../hooks/useClickOutside";
 interface LobbyPlayerCardProps {
   player: Player;
   hostId: string | null;
-  players: Player[];
   myId: string | null;
   isHost: boolean;
 }
@@ -16,11 +15,11 @@ interface LobbyPlayerCardProps {
 export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
   player,
   hostId,
-  players,
   myId,
   isHost,
 }) => {
   const { t } = useTranslation();
+  const players = useGameStore((state) => state.players);
   const actions = useGameStore((state) => state.actions);
   const [isPendingKick, setIsPendingKick] = useState(false);
 
