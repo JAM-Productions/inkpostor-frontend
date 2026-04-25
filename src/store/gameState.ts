@@ -102,6 +102,7 @@ export interface GameState {
   actions: {
     connectAndJoin: (roomId: string, playerName: string) => void;
     connectAndCreate: (roomId: string, playerName: string) => void;
+    kickPlayer: (playerId: string) => void;
     startGame: () => void;
     proceedToDrawing: () => void;
     drawStroke: (stroke: StrokeData) => void;
@@ -185,6 +186,9 @@ export const useGameStore = create<GameState>()((set, get) => ({
       } catch {
         set({ errorMessage: "Service connection error." });
       }
+    },
+    kickPlayer: (playerId) => {
+      socket.emit("kickPlayer", playerId);
     },
     startGame: () => {
       socket.emit("startGame");
@@ -365,6 +369,33 @@ socket.on("strokeUndone", () => {
       return { canvasStrokes: [] };
     }
   });
+});
+
+socket.on("kicked", (msg: string) => {
+  useGameStore.setState((state) => ({
+    roomId: null,
+    hostId: null,
+    phase: "LOBBY",
+    players: [],
+    impostorId: null,
+    secretWord: null,
+    secretCategory: null,
+    currentTurnPlayerId: null,
+    turnOrder: [],
+    turnIndex: 0,
+    votes: {},
+    canvasStrokes: [],
+    currentRound: 1,
+    ejectedId: null,
+    gameEnded: false,
+    amIImpostor: null,
+    errorMessage: msg,
+    myName: state.myName,
+    myId: state.myId,
+    isMobile: state.isMobile,
+    actions: state.actions,
+  }));
+  socket.disconnect();
 });
 
 socket.on("error", (msg: string) => {
