@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Check, Crown, Minus, UserMinus, X } from "lucide-react";
 import { getPlayerColorClass } from "../lib/playerColors";
 import { useGameStore, type Player } from "../store/gameState";
+import { useClickOutside } from "../hooks/useClickOutside";
 
 interface LobbyPlayerCardProps {
   player: Player;
@@ -27,6 +28,10 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
     actions.kickPlayer(player.id);
     setIsPendingKick(false);
   };
+
+  const pendingKickRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(pendingKickRef, isPendingKick, setIsPendingKick);
 
   return (
     <div
@@ -55,7 +60,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
       )}
 
       {isHost && player.id !== hostId && (
-        <div className="ml-2">
+        <div className="ml-2" ref={pendingKickRef}>
           {isPendingKick ? (
             <div className="flex items-center gap-2">
               <button
