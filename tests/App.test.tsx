@@ -60,6 +60,13 @@ describe("App LanguageSwitcher Visibility", () => {
     expect(screen.getByTestId("join-screen")).toBeInTheDocument();
   });
 
+  it("shows LanguageSwitcher on Join Screen (no myName but has roomId)", () => {
+    mockStore("LOBBY", "ROOM123", null);
+    render(<App />);
+    expect(screen.getByTestId("language-switcher")).toBeInTheDocument();
+    expect(screen.getByTestId("join-screen")).toBeInTheDocument();
+  });
+
   it("shows LanguageSwitcher in LOBBY phase", () => {
     mockStore("LOBBY", "ROOM123");
     render(<App />);
