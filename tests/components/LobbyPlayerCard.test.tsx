@@ -46,8 +46,11 @@ describe("LobbyPlayerCard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useGameStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
-      (selector: (state: { actions: { kickPlayer: typeof mockKickPlayer } }) => unknown) =>
-        selector({ actions: { kickPlayer: mockKickPlayer } }),
+      (
+        selector: (state: {
+          actions: { kickPlayer: typeof mockKickPlayer };
+        }) => unknown,
+      ) => selector({ actions: { kickPlayer: mockKickPlayer } }),
     );
   });
 
