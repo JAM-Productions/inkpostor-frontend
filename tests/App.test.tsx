@@ -11,7 +11,9 @@ vi.mock("../src/components/Lobby", () => ({
   Lobby: () => <div data-testid="lobby-screen">Lobby Screen</div>,
 }));
 vi.mock("../src/components/RoleReveal", () => ({
-  RoleReveal: () => <div data-testid="role-reveal-screen">Role Reveal Screen</div>,
+  RoleReveal: () => (
+    <div data-testid="role-reveal-screen">Role Reveal Screen</div>
+  ),
 }));
 vi.mock("../src/components/Canvas", () => ({
   Canvas: () => <div data-testid="canvas-screen">Canvas Screen</div>,
@@ -20,10 +22,14 @@ vi.mock("../src/components/VotingScreen", () => ({
   VotingScreen: () => <div data-testid="voting-screen">Voting Screen</div>,
 }));
 vi.mock("../src/components/GameResult", () => ({
-  GameResult: () => <div data-testid="game-result-screen">Game Result Screen</div>,
+  GameResult: () => (
+    <div data-testid="game-result-screen">Game Result Screen</div>
+  ),
 }));
 vi.mock("../src/components/LanguageSwitcher", () => ({
-  LanguageSwitcher: () => <div data-testid="language-switcher">Language Switcher</div>,
+  LanguageSwitcher: () => (
+    <div data-testid="language-switcher">Language Switcher</div>
+  ),
 }));
 vi.mock("../src/components/EndGameButton", () => ({
   EndGameButton: () => <div data-testid="end-game-button">End Game Button</div>,
@@ -42,7 +48,11 @@ describe("App LanguageSwitcher Visibility", () => {
     vi.clearAllMocks();
   });
 
-  const mockStore = (phase: string, roomId: string | null, myName: string | null = "Player") => {
+  const mockStore = (
+    phase: string,
+    roomId: string | null,
+    myName: string | null = "Player",
+  ) => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         phase,
