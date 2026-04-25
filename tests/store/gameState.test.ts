@@ -175,6 +175,34 @@ describe("useGameStore", () => {
     expect(useGameStore.getState().errorMessage).toBe("Test error");
   });
 
+  it("should reset roomId and hostId to null when kicked is received", () => {
+    const kicked = getSocketListener("kicked");
+
+    useGameStore.setState({
+      roomId: "ROOM42",
+      hostId: "host-123",
+      myId: "player-456",
+      myName: "Alice",
+      players: [
+        {
+          id: "host-123",
+          name: "Host",
+          isConnected: true,
+          score: 0,
+          hasStartedEmergencyVoting: false,
+        },
+      ],
+    });
+
+    kicked("You were kicked from the room");
+
+    const state = useGameStore.getState();
+    expect(state.roomId).toBeNull();
+    expect(state.hostId).toBeNull();
+    expect(state.errorMessage).toBe("You were kicked from the room");
+    expect(socket.disconnect).toHaveBeenCalled();
+  });
+
   it("should optimistically update local state on vote action", () => {
     const myId = "voter-id";
     const targetPlayerId = "target-id";

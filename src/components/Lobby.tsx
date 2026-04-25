@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { useModalStore } from "../store/modalStore";
-import { Users, Crown, Loader2, Copy, Check, HelpCircle } from "lucide-react";
+import { Users, Loader2, Copy, Check, HelpCircle } from "lucide-react";
 import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
-import { getPlayerColorClass } from "../lib/playerColors";
+import { LobbyPlayerCard } from "./LobbyPlayerCard";
 
 export const Lobby: React.FC = () => {
   const { t } = useTranslation();
@@ -116,32 +116,14 @@ export const Lobby: React.FC = () => {
 
           <div className="space-y-2 sm:space-y-3 mb-8 overflow-y-auto flex-1 pr-2 custom-scrollbar">
             {players.map((player) => (
-              <div
+              <LobbyPlayerCard
                 key={player.id}
-                className={`flex items-center justify-between p-3 sm:p-4 rounded-xl border animate-fade-in-right ${player.id === myId ? "bg-white/20 border-white/40" : "bg-stone-900 border-stone-700/50"}`}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerColorClass(player.id, hostId, players)}`}
-                  >
-                    {player.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <span className="font-semibold text-white text-sm sm:text-lg">
-                      {player.name}
-                    </span>
-                  </div>
-                </div>
-
-                {player.id === hostId && (
-                  <div className="flex items-center text-amber-500 gap-1 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
-                    <Crown className="w-4 h-4" />
-                    <span className="text-xs font-bold uppercase tracking-wider">
-                      {t("lobby.host")}
-                    </span>
-                  </div>
-                )}
-              </div>
+                player={player}
+                hostId={hostId}
+                players={players} //TODO: optimize by passing only necessary data, player card does not need to know about all players.
+                myId={myId}
+                isHost={isHost}
+              />
             ))}
 
             {players.length < MIN_PLAYERS && (
