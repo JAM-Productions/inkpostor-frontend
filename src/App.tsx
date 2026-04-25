@@ -16,8 +16,7 @@ function App() {
   const myName = useGameStore((state) => state.myName);
 
   const isJoinScreen = !roomId || !myName;
-  const showLanguageSwitcher =
-    isJoinScreen || phase === "LOBBY" || phase === "RESULTS";
+  const showLanguageSwitcher = isJoinScreen || phase === "LOBBY";
 
   // Switch between game screens depending on current state of the room
   const renderPhase = () => {

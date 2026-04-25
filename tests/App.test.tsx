@@ -84,10 +84,10 @@ describe("App LanguageSwitcher Visibility", () => {
     expect(screen.getByTestId("lobby-screen")).toBeInTheDocument();
   });
 
-  it("shows LanguageSwitcher in RESULTS phase", () => {
+  it("hides LanguageSwitcher in RESULTS phase", () => {
     mockStore("RESULTS", "ROOM123");
     render(<App />);
-    expect(screen.getByTestId("language-switcher")).toBeInTheDocument();
+    expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
     expect(screen.getByTestId("game-result-screen")).toBeInTheDocument();
   });
 
