@@ -23,7 +23,6 @@ describe("LobbyPlayerCard", () => {
   const renderCard = ({
     player = createPlayer(),
     hostId = "host-1",
-    players = [createPlayer({ id: "host-1", name: "Host" }), player],
     myId = "host-1",
     isHost = true,
   }: {
@@ -37,7 +36,6 @@ describe("LobbyPlayerCard", () => {
       <LobbyPlayerCard
         player={player}
         hostId={hostId}
-        players={players}
         myId={myId}
         isHost={isHost}
       />,
@@ -49,8 +47,16 @@ describe("LobbyPlayerCard", () => {
       (
         selector: (state: {
           actions: { kickPlayer: typeof mockKickPlayer };
+          players: Player[];
         }) => unknown,
-      ) => selector({ actions: { kickPlayer: mockKickPlayer } }),
+      ) =>
+        selector({
+          actions: { kickPlayer: mockKickPlayer },
+          players: [
+            createPlayer({ id: "host-1", name: "Host" }),
+            createPlayer({ id: "player-2", name: "Bob" }),
+          ],
+        }),
     );
   });
 

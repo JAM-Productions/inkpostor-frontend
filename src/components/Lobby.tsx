@@ -120,7 +120,6 @@ export const Lobby: React.FC = () => {
                 key={player.id}
                 player={player}
                 hostId={hostId}
-                players={players} //TODO: optimize by passing only necessary data, player card does not need to know about all players.
                 myId={myId}
                 isHost={isHost}
               />
