@@ -28,6 +28,12 @@ export const JoinScreen: React.FC = () => {
   };
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomFromUrl = urlParams.get("room");
+    if (roomFromUrl) {
+      setRoomId(roomFromUrl.toUpperCase());
+    }
+
     const checkHealth = async () => {
       setIsCheckingHealth(true);
       try {
@@ -37,6 +43,9 @@ export const JoinScreen: React.FC = () => {
 
         if (res.ok) {
           setServiceOnline(true);
+          if (roomFromUrl && myName) {
+            actions.connectAndJoin(roomFromUrl.toUpperCase(), myName);
+          }
         } else {
           setServiceOnline(false);
         }
@@ -48,6 +57,7 @@ export const JoinScreen: React.FC = () => {
     };
 
     checkHealth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

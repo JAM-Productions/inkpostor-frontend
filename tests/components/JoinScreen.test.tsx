@@ -232,6 +232,72 @@ describe("JoinScreen", () => {
     expect(nameInput.value).toBe("SavedName");
   });
 
+  describe("URL room parameter", () => {
+    let originalLocation: Location;
+
+    beforeEach(() => {
+      originalLocation = window.location;
+      Object.defineProperty(window, "location", {
+        value: {
+          ...originalLocation,
+          search: "?room=AB12CD",
+        },
+        writable: true,
+      });
+    });
+
+    afterEach(() => {
+      Object.defineProperty(window, "location", {
+        value: originalLocation,
+        writable: true,
+      });
+    });
+
+    it("pre-fills the room code from URL parameter", async () => {
+      render(<JoinScreen />);
+
+      const roomInput = screen.getByPlaceholderText(
+        "E.g. X7K9A2",
+      ) as HTMLInputElement;
+      expect(roomInput.value).toBe("AB12CD");
+    });
+
+    it("auto-joins when myName is present and service is online", async () => {
+      (useGameStore as any).mockImplementation((selector: any) => {
+        const state = {
+          actions: {
+            connectAndCreate: mockConnectAndCreate,
+            connectAndJoin: mockConnectAndJoin,
+          },
+          errorMessage: null,
+          myName: "PlayerFromStore",
+        };
+        return selector(state);
+      });
+
+      render(<JoinScreen />);
+
+      await waitFor(() => {
+        expect(mockConnectAndJoin).toHaveBeenCalledWith(
+          "AB12CD",
+          "PlayerFromStore",
+        );
+      });
+    });
+
+    it("does not auto-join if myName is not present", async () => {
+      render(<JoinScreen />);
+
+      await waitFor(() => {
+        expect(
+          screen.queryByText("Checking the service status..."),
+        ).not.toBeInTheDocument();
+      });
+
+      expect(mockConnectAndJoin).not.toHaveBeenCalled();
+    });
+  });
+
   describe("Service Health Check", () => {
     it("shows 'Checking the service status...' on initial render", async () => {
       (global.fetch as any).mockImplementation(

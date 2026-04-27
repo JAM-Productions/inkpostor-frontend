@@ -14,6 +14,7 @@
     "lobby": {
       "roomCode": "Room Code",
       "clickToCopy": "Click to copy",
+      "copyLink": "Copy link",
       "waitingCode": "Waiting for room code...",
       "copied": "Copied!",
       "shareCode": "Share this code with your friends to let them join!",

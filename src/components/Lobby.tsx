@@ -5,6 +5,7 @@ import { useModalStore } from "../store/modalStore";
 import { Users, Loader2, Copy, Check, HelpCircle } from "lucide-react";
 import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
 import { LobbyPlayerCard } from "./LobbyPlayerCard";
+import { CopyLinkButton } from "./buttons/CopyLinkButton";
 
 export const Lobby: React.FC = () => {
   const { t } = useTranslation();
@@ -82,6 +83,13 @@ export const Lobby: React.FC = () => {
               )}
             </div>
           </button>
+
+          {hasRoomId && (
+            <div className="pt-1">
+              <CopyLinkButton roomId={roomId} />
+            </div>
+          )}
+
           <p className="text-stone-500 text-sm">{t("lobby.shareCode")}</p>
         </div>
 
