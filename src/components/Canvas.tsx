@@ -9,13 +9,12 @@ import {
   Minimize2,
   Search,
   Users,
-  UserMinus,
 } from "lucide-react";
+import { VoteKickButton } from "./buttons/VoteKickButton";
 import { TURN_TIME_MS } from "../lib/constants";
 import { getPlayerColorClass } from "../lib/playerColors";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { EmergencyAlertButton } from "./EmergencyAlertButton";
-import { useModalStore } from "../store/modalStore";
 
 export const Canvas: React.FC = () => {
   const { t } = useTranslation();
@@ -26,7 +25,6 @@ export const Canvas: React.FC = () => {
   const [isCompressed, setIsCompressed] = useState(false);
   const [isSusListOpen, setIsSusListOpen] = useState(false);
   const [color, setColor] = useState("#1a1a1a"); // Dark ink default
-  const openModal = useModalStore((state) => state.actions.openModal);
 
   // Limits
   const MAX_INK = 1000;
@@ -45,7 +43,6 @@ export const Canvas: React.FC = () => {
   const hostId = useGameStore((state) => state.hostId);
   const players = useGameStore((state) => state.players);
   const actions = useGameStore((state) => state.actions);
-  const kickVotes = useGameStore((state) => state.kickVotes);
 
   const activePlayersCount = players.filter(
     (p) => p.isConnected && !p.isEjected,
@@ -369,31 +366,11 @@ export const Canvas: React.FC = () => {
                               </div>
                             )}
                           </button>
-                          {player.id !== myId && !player.isEjected && (
-                            <button
-                              onClick={() => {
-                                setIsSusListOpen(false);
-                                openModal("KICK_PLAYER", {
-                                  playerId: player.id,
-                                });
-                              }}
-                              className={`flex shrink-0 items-center justify-center rounded-xl transition-colors cursor-pointer px-2 gap-1.5 ${
-                                kickVotes[player.id]?.includes(myId || "")
-                                  ? "bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500/30"
-                                  : "bg-stone-900/50 text-stone-400 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/30"
-                              }`}
-                              title={t("canvas.kickPlayerAria", {
-                                name: player.name,
-                                defaultValue: "Vote to Kick {{name}}",
-                              })}
-                            >
-                              <UserMinus className="w-4 h-4" />
-                              <span className="text-xs font-bold font-mono">
-                                {kickVotes[player.id]?.length || 0}/
-                                {requiredVotes}
-                              </span>
-                            </button>
-                          )}
+                          <VoteKickButton
+                            player={player}
+                            requiredVotes={requiredVotes}
+                            onAction={() => setIsSusListOpen(false)}
+                          />
                         </div>
                       ))}
                     </div>
