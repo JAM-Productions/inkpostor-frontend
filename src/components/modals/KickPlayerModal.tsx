@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { BaseModal } from "./BaseModal";
 import { useGameStore } from "../../store/gameState";
@@ -27,6 +27,12 @@ export const KickPlayerModal: React.FC<KickPlayerModalProps> = ({
     }
     onClose();
   };
+
+  useEffect(() => {
+    if (isOpen && !playerToKick) {
+      onClose();
+    }
+  }, [isOpen, playerToKick, onClose]);
 
   if (!playerToKick) {
     return null;

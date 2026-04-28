@@ -50,6 +50,10 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
         name: player.name,
         defaultValue: "Vote to Kick {{name}}",
       })}
+      aria-label={t("canvas.kickPlayerAria", {
+        name: player.name,
+        defaultValue: "Vote to Kick {{name}}",
+      })}
     >
       <UserMinus className="w-4 h-4" />
       <span className="text-xs font-bold font-mono">

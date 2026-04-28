@@ -315,6 +315,45 @@ describe("useGameStore", () => {
     expect(socket.emit).toHaveBeenCalledWith("endGame");
   });
 
+  it("should emit kickPlayer when kickPlayer action is called", () => {
+    const state = useGameStore.getState();
+
+    state.actions.kickPlayer("target-id");
+
+    expect(socket.emit).toHaveBeenCalledWith("kickPlayer", {
+      playerId: "target-id",
+    });
+  });
+
+  it("should emit voteKickPlayer when voteKickPlayer action is called", () => {
+    const state = useGameStore.getState();
+
+    state.actions.voteKickPlayer("target-id");
+
+    expect(socket.emit).toHaveBeenCalledWith("voteKickPlayer", {
+      targetId: "target-id",
+    });
+  });
+
+  it("should update kickVotes on gameStateUpdate", () => {
+    const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+    gameStateUpdate({
+      phase: "DRAWING",
+      players: [],
+      votes: {},
+      kickVotes: { "target-id": ["voter-1"] },
+      canvasStrokes: [],
+      turnOrder: [],
+      turnIndex: 0,
+      currentRound: 1,
+    });
+
+    expect(useGameStore.getState().kickVotes).toEqual({
+      "target-id": ["voter-1"],
+    });
+  });
+
   it("should optimistically update local state on startEmergencyVoting action", () => {
     const myId = "player-id";
 
