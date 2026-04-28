@@ -17,6 +17,9 @@ vi.mock("../../src/socket", () => ({
     disconnect: vi.fn(),
     id: "test-socket-id",
     auth: {},
+    io: {
+      reconnection: vi.fn(),
+    },
   },
   SERVICE_URL: "http://localhost:3000",
 }));

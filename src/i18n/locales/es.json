@@ -73,7 +73,12 @@
       "secretWord": "Tu palabra secreta es: {{word}}",
       "youAreInkpostor": "¡Eres el Inkpostor! Intenta pasar desapercibido.",
       "emergencyVotingPrompt": "¿Quieres iniciar una votación de emergencia?",
-      "confirm": "Confirmar"
+      "confirm": "Confirmar",
+      "kickPlayerAria": "Votar para Expulsar a {{name}}",
+      "kickTitle": "Votar para Expulsar Jugador",
+      "kickConfirmationText": "¿Estás seguro de que quieres votar para expulsar a {{name}}?",
+      "cancel": "Cancelar",
+      "kickConfirm": "Votar"
     },
     "words": {
       "Dog": "Perro",

@@ -36,6 +36,7 @@ describe("Canvas", () => {
       },
     ],
     canvasStrokes: [],
+    kickVotes: {},
     actions: {
       endTurn: mockEndTurn,
       undoStroke: mockUndoStroke,
