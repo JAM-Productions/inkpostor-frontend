@@ -98,6 +98,8 @@ export interface GameState {
   myName: string | null;
   amIImpostor: boolean | null;
   errorMessage: string | null;
+  isCheckingHealth: boolean;
+  serviceOnline: boolean;
 
   // Actions mapped to Socket
   actions: {
@@ -117,6 +119,7 @@ export interface GameState {
     startEmergencyVoting: () => void;
     setError: (msg: string | null) => void;
     toggleSus: (playerId: string) => void;
+    checkHealth: () => Promise<void>;
   };
 }
 
@@ -142,6 +145,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
   myName: getSavedPlayerName(),
   amIImpostor: null,
   errorMessage: null,
+  isCheckingHealth: true,
+  serviceOnline: false,
 
   actions: {
     connectAndCreate: async (roomId, playerName) => {
@@ -283,6 +288,30 @@ export const useGameStore = create<GameState>()((set, get) => ({
             : p,
         ),
       }));
+    },
+    checkHealth: async () => {
+      set({ isCheckingHealth: true });
+      try {
+        const res = await fetch(`${SERVICE_URL || ""}/health`, {
+          method: "GET",
+        });
+
+        if (res.ok) {
+          set({ serviceOnline: true });
+          const urlParams = new URLSearchParams(window.location.search);
+          const roomFromUrl = urlParams.get("room");
+          const { myName, actions } = get();
+          if (roomFromUrl && myName) {
+            actions.connectAndJoin(roomFromUrl.toUpperCase(), myName);
+          }
+        } else {
+          set({ serviceOnline: false });
+        }
+      } catch {
+        set({ serviceOnline: false });
+      } finally {
+        set({ isCheckingHealth: false });
+      }
     },
   },
 }));

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useGameStore } from "./store/gameState";
 import { JoinScreen } from "./components/JoinScreen";
 import { Lobby } from "./components/Lobby";
@@ -11,6 +12,12 @@ import { ModalRenderer } from "./components/modals/ModalRenderer";
 
 // App orchestrates the current phase of the game
 function App() {
+  const checkHealth = useGameStore((state) => state.actions.checkHealth);
+
+  useEffect(() => {
+    checkHealth();
+  }, [checkHealth]);
+
   const phase = useGameStore((state) => state.phase);
   const roomId = useGameStore((state) => state.roomId);
   const myName = useGameStore((state) => state.myName);

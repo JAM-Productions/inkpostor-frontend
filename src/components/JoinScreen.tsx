@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { Users } from "lucide-react";
-import { SERVICE_URL } from "../socket";
 
 export const JoinScreen: React.FC = () => {
   const { t } = useTranslation();
   const myName = useGameStore((state) => state.myName);
+  const isCheckingHealth = useGameStore((state) => state.isCheckingHealth);
+  const serviceOnline = useGameStore((state) => state.serviceOnline);
   const [playerName, setPlayerName] = useState(myName || "");
-  const [roomId, setRoomId] = useState("");
-  const [isCheckingHealth, setIsCheckingHealth] = useState(true);
-  const [serviceOnline, setServiceOnline] = useState(false);
+  const [roomId, setRoomId] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get("room")?.toUpperCase() || "";
+  });
   const actions = useGameStore((state) => state.actions);
   const errorMessage = useGameStore((state) => state.errorMessage);
 
@@ -26,39 +28,6 @@ export const JoinScreen: React.FC = () => {
     if (!playerName || !roomId || !serviceOnline) return;
     actions.connectAndJoin(roomId.toUpperCase(), playerName);
   };
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const roomFromUrl = urlParams.get("room");
-    if (roomFromUrl) {
-      setRoomId(roomFromUrl.toUpperCase());
-    }
-
-    const checkHealth = async () => {
-      setIsCheckingHealth(true);
-      try {
-        const res = await fetch(`${SERVICE_URL || ""}/health`, {
-          method: "GET",
-        });
-
-        if (res.ok) {
-          setServiceOnline(true);
-          if (roomFromUrl && myName) {
-            actions.connectAndJoin(roomFromUrl.toUpperCase(), myName);
-          }
-        } else {
-          setServiceOnline(false);
-        }
-      } catch {
-        setServiceOnline(false);
-      } finally {
-        setIsCheckingHealth(false);
-      }
-    };
-
-    checkHealth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-900">

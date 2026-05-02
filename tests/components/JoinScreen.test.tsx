@@ -29,6 +29,8 @@ describe("JoinScreen", () => {
         },
         errorMessage: null,
         myName: null,
+        isCheckingHealth: false,
+        serviceOnline: true,
       };
       return selector(state);
     });
@@ -61,20 +63,25 @@ describe("JoinScreen", () => {
   });
 
   it("disables inputs and buttons while checking service health", async () => {
-    (global.fetch as any).mockImplementation(
-      () =>
-        new Promise(() => {
-          // Never resolves to keep checking state
-        }),
-    );
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        actions: {
+          connectAndCreate: mockConnectAndCreate,
+          connectAndJoin: mockConnectAndJoin,
+        },
+        errorMessage: null,
+        myName: null,
+        isCheckingHealth: true,
+        serviceOnline: false,
+      };
+      return selector(state);
+    });
 
     render(<JoinScreen />);
 
-    await waitFor(() => {
-      expect(
-        screen.getByText("Checking the service status..."),
-      ).toBeInTheDocument();
-    });
+    expect(
+      screen.getByText("Checking the service status..."),
+    ).toBeInTheDocument();
 
     const nameInput = screen.getByPlaceholderText(
       "Enter your name",
@@ -122,17 +129,25 @@ describe("JoinScreen", () => {
   });
 
   it("disables create button even with name entered while service is offline", async () => {
-    (global.fetch as any).mockResolvedValueOnce({
-      ok: false,
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        actions: {
+          connectAndCreate: mockConnectAndCreate,
+          connectAndJoin: mockConnectAndJoin,
+        },
+        errorMessage: null,
+        myName: null,
+        isCheckingHealth: false,
+        serviceOnline: false,
+      };
+      return selector(state);
     });
 
     render(<JoinScreen />);
 
-    await waitFor(() => {
-      expect(
-        screen.getByText("The service is currently unavailable"),
-      ).toBeInTheDocument();
-    });
+    expect(
+      screen.getByText("The service is currently unavailable"),
+    ).toBeInTheDocument();
 
     // Form should not be visible when offline
     expect(
@@ -200,6 +215,8 @@ describe("JoinScreen", () => {
           connectAndJoin: mockConnectAndJoin,
         },
         errorMessage: "Test error connection failed",
+        isCheckingHealth: false,
+        serviceOnline: true,
       };
       return selector(state);
     });
@@ -220,6 +237,8 @@ describe("JoinScreen", () => {
         },
         errorMessage: null,
         myName: "SavedName",
+        isCheckingHealth: false,
+        serviceOnline: true,
       };
       return selector(state);
     });
@@ -262,7 +281,20 @@ describe("JoinScreen", () => {
       expect(roomInput.value).toBe("AB12CD");
     });
 
-    it("auto-joins when myName is present and service is online", async () => {
+
+    it("does not auto-join if myName is not present", async () => {
+      render(<JoinScreen />);
+
+      expect(
+        screen.queryByText("Checking the service status..."),
+      ).not.toBeInTheDocument();
+
+      expect(mockConnectAndJoin).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("Service Health Check", () => {
+    it("shows 'Checking the service status...' when isCheckingHealth is true", () => {
       (useGameStore as any).mockImplementation((selector: any) => {
         const state = {
           actions: {
@@ -270,42 +302,12 @@ describe("JoinScreen", () => {
             connectAndJoin: mockConnectAndJoin,
           },
           errorMessage: null,
-          myName: "PlayerFromStore",
+          myName: null,
+          isCheckingHealth: true,
+          serviceOnline: false,
         };
         return selector(state);
       });
-
-      render(<JoinScreen />);
-
-      await waitFor(() => {
-        expect(mockConnectAndJoin).toHaveBeenCalledWith(
-          "AB12CD",
-          "PlayerFromStore",
-        );
-      });
-    });
-
-    it("does not auto-join if myName is not present", async () => {
-      render(<JoinScreen />);
-
-      await waitFor(() => {
-        expect(
-          screen.queryByText("Checking the service status..."),
-        ).not.toBeInTheDocument();
-      });
-
-      expect(mockConnectAndJoin).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("Service Health Check", () => {
-    it("shows 'Checking the service status...' on initial render", async () => {
-      (global.fetch as any).mockImplementation(
-        () =>
-          new Promise(() => {
-            // Never resolves to keep checking state
-          }),
-      );
 
       render(<JoinScreen />);
 
@@ -314,18 +316,26 @@ describe("JoinScreen", () => {
       ).toBeInTheDocument();
     });
 
-    it("hides form and shows offline message when service check completes and service is offline", async () => {
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: false,
+    it("hides form and shows offline message when isCheckingHealth is false and serviceOnline is false", () => {
+      (useGameStore as any).mockImplementation((selector: any) => {
+        const state = {
+          actions: {
+            connectAndCreate: mockConnectAndCreate,
+            connectAndJoin: mockConnectAndJoin,
+          },
+          errorMessage: null,
+          myName: null,
+          isCheckingHealth: false,
+          serviceOnline: false,
+        };
+        return selector(state);
       });
 
       render(<JoinScreen />);
 
-      await waitFor(() => {
-        expect(
-          screen.getByText("The service is currently unavailable"),
-        ).toBeInTheDocument();
-      });
+      expect(
+        screen.getByText("The service is currently unavailable"),
+      ).toBeInTheDocument();
 
       // Form elements should not be visible
       expect(
@@ -334,47 +344,6 @@ describe("JoinScreen", () => {
       expect(
         screen.queryByPlaceholderText("E.g. X7K9A2"),
       ).not.toBeInTheDocument();
-    });
-
-    it("shows offline message when health check fails", async () => {
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: false,
-      });
-
-      render(<JoinScreen />);
-
-      await waitFor(() => {
-        expect(
-          screen.getByText("The service is currently unavailable"),
-        ).toBeInTheDocument();
-      });
-    });
-
-    it("shows offline message when health check throws error", async () => {
-      (global.fetch as any).mockRejectedValueOnce(new Error("Network error"));
-
-      render(<JoinScreen />);
-
-      await waitFor(() => {
-        expect(
-          screen.getByText("The service is currently unavailable"),
-        ).toBeInTheDocument();
-      });
-    });
-
-    it("calls health endpoint with correct URL", async () => {
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: true,
-      });
-
-      render(<JoinScreen />);
-
-      await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(
-          expect.stringContaining("/health"),
-          { method: "GET" },
-        );
-      });
     });
   });
 });

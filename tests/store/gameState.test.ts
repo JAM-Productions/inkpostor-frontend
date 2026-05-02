@@ -56,6 +56,8 @@ describe("useGameStore", () => {
       myName: null,
       amIImpostor: null,
       errorMessage: null,
+      isCheckingHealth: false,
+      serviceOnline: true,
     });
     vi.clearAllMocks();
   });
@@ -99,6 +101,28 @@ describe("useGameStore", () => {
 
     expect(useGameStore.getState().errorMessage).toBe("Auth failed custom");
     expect(socket.connect).not.toHaveBeenCalled();
+  });
+
+  it("should handle connectAndJoin success", async () => {
+    const mockToken = "mock-token-join";
+    (global.fetch as any).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ token: mockToken }),
+    });
+
+    const state = useGameStore.getState();
+    await state.actions.connectAndJoin("room-join", "Player Join");
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "http://localhost:3000/auth",
+      expect.any(Object),
+    );
+    expect(socket.auth).toEqual({ token: mockToken });
+    expect(socket.connect).toHaveBeenCalled();
+    expect(socket.emit).toHaveBeenCalledWith("joinRoom", {
+      roomId: "room-join",
+    });
+    expect(useGameStore.getState().myName).toBe("Player Join");
   });
 
   it("should update state to store strokes on drawStroke", () => {
@@ -492,11 +516,89 @@ describe("useGameStore", () => {
     expect(updatedPlayers[0].isSuspected).toBe(false);
   });
 
+  describe("checkHealth", () => {
+    beforeEach(() => {
+      // Clear fetch mocks before each health check test because it's called on module load
+      (global.fetch as any).mockClear();
+    });
+
+    it("should set serviceOnline to true on success", async () => {
+      (global.fetch as any).mockResolvedValueOnce({ ok: true });
+
+      const state = useGameStore.getState();
+      await state.actions.checkHealth();
+
+      expect(useGameStore.getState().serviceOnline).toBe(true);
+      expect(useGameStore.getState().isCheckingHealth).toBe(false);
+    });
+
+    it("should set serviceOnline to false on failure", async () => {
+      (global.fetch as any).mockResolvedValueOnce({ ok: false });
+
+      const state = useGameStore.getState();
+      await state.actions.checkHealth();
+
+      expect(useGameStore.getState().serviceOnline).toBe(false);
+      expect(useGameStore.getState().isCheckingHealth).toBe(false);
+    });
+
+    it("should set serviceOnline to false on network error", async () => {
+      (global.fetch as any).mockRejectedValueOnce(new Error("Network error"));
+
+      const state = useGameStore.getState();
+      await state.actions.checkHealth();
+
+      expect(useGameStore.getState().serviceOnline).toBe(false);
+      expect(useGameStore.getState().isCheckingHealth).toBe(false);
+    });
+
+    it("should auto-join if room is in URL and myName is present", async () => {
+      (global.fetch as any).mockResolvedValueOnce({ ok: true });
+      const mockConnectAndJoin = vi.fn();
+
+      // Mock URL parameter
+      const originalLocation = window.location;
+      Object.defineProperty(window, "location", {
+        value: {
+          ...originalLocation,
+          search: "?room=AUTOJOIN123",
+        },
+        writable: true,
+      });
+
+      useGameStore.setState({
+        myName: "AutoPlayer",
+        actions: {
+          ...useGameStore.getState().actions,
+          connectAndJoin: mockConnectAndJoin,
+        },
+      });
+
+      const state = useGameStore.getState();
+      await state.actions.checkHealth();
+
+      expect(mockConnectAndJoin).toHaveBeenCalledWith(
+        "AUTOJOIN123",
+        "AutoPlayer",
+      );
+
+      // Restore location
+      Object.defineProperty(window, "location", {
+        value: originalLocation,
+        writable: true,
+      });
+    });
+  });
+
   // -----------------------------------------------------------------------
   // Persistence tests
   // -----------------------------------------------------------------------
 
   describe("Player name persistence", () => {
+    beforeEach(() => {
+      (global.fetch as any).mockClear();
+    });
+
     afterEach(() => {
       localStorage.removeItem(PLAYER_NAME_KEY);
     });
@@ -525,6 +627,10 @@ describe("useGameStore", () => {
   });
 
   describe("UUID persistence (getOrCreateUserId)", () => {
+    beforeEach(() => {
+      (global.fetch as any).mockClear();
+    });
+
     afterEach(() => {
       localStorage.removeItem("inkpostor_user_id");
     });
