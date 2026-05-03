@@ -13,6 +13,7 @@ import {
 import { VoteKickButton } from "./buttons/VoteKickButton";
 import { TURN_TIME_MS } from "../lib/constants";
 import { getPlayerColorClass } from "../lib/playerColors";
+import { CANVAS_COLORS, DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { EmergencyAlertButton } from "./EmergencyAlertButton";
 
@@ -24,7 +25,7 @@ export const Canvas: React.FC = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isCompressed, setIsCompressed] = useState(false);
   const [isSusListOpen, setIsSusListOpen] = useState(false);
-  const [color, setColor] = useState("#1a1a1a"); // Dark ink default
+  const [color, setColor] = useState(DEFAULT_CANVAS_COLOR);
 
   // Limits
   const MAX_INK = 1000;
@@ -243,41 +244,6 @@ export const Canvas: React.FC = () => {
   const inkPercentage = Math.min((inkUsed / MAX_INK) * 100, 100);
   const OutOfInk = inkPercentage >= 100;
 
-  const colors = [
-    // Neutrals
-    "#1a1a1a", // black
-    "#ffffff", // white
-    "#6b7280", // gray
-
-    // Reds
-    "#991b1b", // dark red
-    "#ef4444", // medium red
-
-    // Oranges
-    "#92400e", // dark orange
-    "#f97316", // orange
-
-    // Yellows
-    "#ca8a04", // mustard
-    "#facc15", // light yellow
-
-    // Greens
-    "#166534", // dark green
-    "#22c55e", // green
-
-    // Blues
-    "#1e40af", // dark blue
-    "#3b82f6", // blue
-
-    // Purples
-    "#6b21a8", // dark purple
-    "#a855f7", // purple
-
-    // Pinks
-    "#9d174d", // dark pink
-    "#ec4899", // pink
-  ];
-
   return (
     <div className="flex flex-col items-center bg-stone-900 p-2 md:p-6 pb-24 sm:justify-center mt-12">
       <div className="w-full max-w-4xl space-y-4">
@@ -451,7 +417,7 @@ export const Canvas: React.FC = () => {
                 <div
                   className={`flex flex-1 min-w-0 gap-1 p-0.5 ${isMobile ? "overflow-x-auto no-scrollbar" : "overflow-x-auto custom-scrollbar pb-3"}`}
                 >
-                  {colors.map((c) => (
+                  {CANVAS_COLORS.map((c) => (
                     <button
                       key={c}
                       onClick={() => setColor(c)}
