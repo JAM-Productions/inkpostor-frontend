@@ -38,12 +38,12 @@ describe("KickPlayerModal", () => {
         isOpen={true}
         onClose={mockOnClose}
         playerId={mockPlayerId}
-      />
+      />,
     );
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: /vote to kick player/i })
+      screen.getByRole("heading", { name: /vote to kick player/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/player one/i)).toBeInTheDocument();
   });
@@ -54,7 +54,7 @@ describe("KickPlayerModal", () => {
         isOpen={false}
         onClose={mockOnClose}
         playerId={mockPlayerId}
-      />
+      />,
     );
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -67,7 +67,7 @@ describe("KickPlayerModal", () => {
         isOpen={true}
         onClose={mockOnClose}
         playerId={mockPlayerId}
-      />
+      />,
     );
 
     const closeButton = screen.getByTestId("close-modal-button");
@@ -83,7 +83,7 @@ describe("KickPlayerModal", () => {
         isOpen={true}
         onClose={mockOnClose}
         playerId={mockPlayerId}
-      />
+      />,
     );
 
     const cancelButton = screen.getByTestId("cancel-kick-button");
@@ -99,7 +99,7 @@ describe("KickPlayerModal", () => {
         isOpen={true}
         onClose={mockOnClose}
         playerId={mockPlayerId}
-      />
+      />,
     );
 
     const kickButton = screen.getByTestId("confirm-kick-button");
@@ -115,7 +115,7 @@ describe("KickPlayerModal", () => {
         isOpen={true}
         onClose={mockOnClose}
         playerId="non-existent"
-      />
+      />,
     );
 
     expect(mockOnClose).toHaveBeenCalled();
@@ -127,7 +127,7 @@ describe("KickPlayerModal", () => {
         isOpen={true}
         onClose={mockOnClose}
         playerId="non-existent"
-      />
+      />,
     );
 
     expect(container.firstChild).toBeNull();
