@@ -39,4 +39,4 @@ export const CANVAS_COLORS = [
 /**
  * Default color for the canvas brush.
  */
-export const DEFAULT_CANVAS_COLOR = "#1a1a1a";
+export const DEFAULT_CANVAS_COLOR = CANVAS_COLORS[0];
