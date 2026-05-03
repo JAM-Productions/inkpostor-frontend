@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { KickPlayerModal } from "../../../src/components/modals/KickPlayerModal";
 import { useGameStore } from "../../../src/store/gameState";
@@ -59,7 +60,8 @@ describe("KickPlayerModal", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("calls onClose when the cancel button is clicked", () => {
+  it("calls onClose when the close button (X) is clicked", async () => {
+    const user = userEvent.setup();
     render(
       <KickPlayerModal
         isOpen={true}
@@ -68,17 +70,14 @@ describe("KickPlayerModal", () => {
       />
     );
 
-    // There are two "Cancel" buttons/labels: one in the header (X) and one in the body.
-    // BaseModal uses "closeLabel" for the X button's aria-label.
-    // KickPlayerModal uses t("canvas.cancel", "Cancel") for both.
-
-    const cancelButtons = screen.getAllByText(/cancel/i);
-    fireEvent.click(cancelButtons[0]);
+    const closeButton = screen.getByTestId("close-modal-button");
+    await user.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it("calls voteKickPlayer and onClose when the kick button is clicked", () => {
+  it("calls onClose when the cancel button in the body is clicked", async () => {
+    const user = userEvent.setup();
     render(
       <KickPlayerModal
         isOpen={true}
@@ -87,8 +86,24 @@ describe("KickPlayerModal", () => {
       />
     );
 
-    const kickButton = screen.getByRole("button", { name: /vote to kick$/i });
-    fireEvent.click(kickButton);
+    const cancelButton = screen.getByTestId("cancel-kick-button");
+    await user.click(cancelButton);
+
+    expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it("calls voteKickPlayer and onClose when the kick button is clicked", async () => {
+    const user = userEvent.setup();
+    render(
+      <KickPlayerModal
+        isOpen={true}
+        onClose={mockOnClose}
+        playerId={mockPlayerId}
+      />
+    );
+
+    const kickButton = screen.getByTestId("confirm-kick-button");
+    await user.click(kickButton);
 
     expect(mockVoteKickPlayer).toHaveBeenCalledWith(mockPlayerId);
     expect(mockOnClose).toHaveBeenCalled();
