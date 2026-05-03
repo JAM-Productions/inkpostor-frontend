@@ -57,12 +57,14 @@ export const KickPlayerModal: React.FC<KickPlayerModalProps> = ({
 
         <div className="flex gap-4">
           <button
+            data-testid="cancel-kick-button"
             onClick={onClose}
             className="flex-1 px-4 py-3 rounded-xl font-bold bg-stone-700 text-stone-200 hover:bg-stone-600 transition-colors"
           >
             {t("canvas.cancel", "Cancel")}
           </button>
           <button
+            data-testid="confirm-kick-button"
             onClick={handleConfirm}
             className="flex-1 px-4 py-3 rounded-xl font-bold bg-red-500 text-white hover:bg-red-600 transition-colors"
           >
