@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import {
@@ -26,6 +32,7 @@ export const Canvas: React.FC = () => {
   const [isCompressed, setIsCompressed] = useState(false);
   const [isSusListOpen, setIsSusListOpen] = useState(false);
   const [color, setColor] = useState(DEFAULT_CANVAS_COLOR);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   // Limits
   const [inkUsed, setInkUsed] = useState(0);
@@ -52,13 +59,22 @@ export const Canvas: React.FC = () => {
   const activePlayer = players.find((p) => p.id === currentTurnPlayerId);
 
   // Resize canvas to match CSS layout
-  useEffect(() => {
-    const canvas = canvasRef.current;
+  useLayoutEffect(() => {
     const container = containerRef.current;
-    if (!canvas || !container) return;
+    const canvas = canvasRef.current;
+    if (!container || !canvas) return;
 
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        canvas.width = width;
+        canvas.height = height;
+        setDimensions({ width, height });
+      }
+    });
+
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
   }, []);
 
   // Timer logic for all players
@@ -85,7 +101,7 @@ export const Canvas: React.FC = () => {
     }
   }, [currentTurnPlayerId, isMyTurn, actions]);
 
-  // Redraw all strokes whenever they change
+  // Redraw all strokes whenever they change or canvas resizes
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -116,7 +132,7 @@ export const Canvas: React.FC = () => {
         currentPathStart = { x: stroke.x, y: stroke.y };
       }
     });
-  }, [canvasStrokes]);
+  }, [canvasStrokes, dimensions]);
 
   const getCoordinates = (
     e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent,
@@ -243,7 +259,7 @@ export const Canvas: React.FC = () => {
   const OutOfInk = inkPercentage >= 100;
 
   return (
-    <div className="flex flex-col items-center bg-stone-900 p-2 md:p-6 pb-24 sm:justify-center mt-12">
+    <div className="flex flex-col items-center bg-stone-900 p-2 md:p-6 pb-24 sm:justify-center mt-2">
       <div className="w-full max-w-4xl space-y-4">
         {/* Header Banner */}
         <div className="flex items-center justify-between bg-stone-800 p-3 sm:p-4 rounded-2xl border border-stone-700 shadow-xl">
@@ -371,7 +387,7 @@ export const Canvas: React.FC = () => {
         <div className="relative group">
           <div
             ref={containerRef}
-            className="w-full h-[70vh] sm:aspect-video sm:h-auto bg-[#E9DEB9] rounded-2xl overflow-hidden shadow-2xl relative"
+            className="w-full h-[65vh] sm:aspect-video sm:h-auto bg-[#E9DEB9] rounded-2xl overflow-hidden shadow-2xl relative"
           >
             <canvas
               ref={canvasRef}
