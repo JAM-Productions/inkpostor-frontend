@@ -102,7 +102,7 @@ export const Canvas: React.FC = () => {
   }, [currentTurnPlayerId, isMyTurn, actions]);
 
   // Redraw all strokes whenever they change or canvas resizes
-  useEffect(() => {
+  useLayoutEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
