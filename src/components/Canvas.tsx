@@ -61,21 +61,31 @@ export const Canvas: React.FC = () => {
   // Resize canvas to match CSS layout
   useLayoutEffect(() => {
     const container = containerRef.current;
-    const canvas = canvasRef.current;
-    if (!container || !canvas) return;
+    if (!container) return;
 
     const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
+      const entry = entries[0];
+      if (entry) {
         const { width, height } = entry.contentRect;
-        canvas.width = width;
-        canvas.height = height;
-        setDimensions({ width, height });
+        // Using requestAnimationFrame to avoid "ResizeObserver loop limit exceeded"
+        requestAnimationFrame(() => {
+          setDimensions({ width, height });
+        });
       }
     });
 
     resizeObserver.observe(container);
     return () => resizeObserver.disconnect();
   }, []);
+
+  // Sync canvas internal resolution with measured dimensions
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas && dimensions.width > 0 && dimensions.height > 0) {
+      canvas.width = dimensions.width;
+      canvas.height = dimensions.height;
+    }
+  }, [dimensions]);
 
   // Timer logic for all players
   useEffect(() => {
