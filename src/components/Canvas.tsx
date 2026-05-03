@@ -11,7 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import { VoteKickButton } from "./buttons/VoteKickButton";
-import { TURN_TIME_MS } from "../lib/constants";
+import { TURN_TIME_MS, MAX_INK, DOT_INK_COST } from "../lib/constants";
 import { getPlayerColorClass } from "../lib/playerColors";
 import { CANVAS_COLORS, DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
 import { useClickOutside } from "../hooks/useClickOutside";
@@ -28,8 +28,6 @@ export const Canvas: React.FC = () => {
   const [color, setColor] = useState(DEFAULT_CANVAS_COLOR);
 
   // Limits
-  const MAX_INK = 1000;
-  const DOT_INK_COST = 5;
   const [inkUsed, setInkUsed] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TURN_TIME_MS);
 
