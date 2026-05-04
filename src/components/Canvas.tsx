@@ -123,23 +123,22 @@ export const Canvas: React.FC = () => {
     ctx.lineJoin = "round";
     ctx.lineWidth = 4;
 
-    let currentPathStart: null | { x: number; y: number } = null;
+    if (canvasStrokes.length === 0) return;
 
-    canvasStrokes.forEach((stroke) => {
-      if (stroke.isNewStroke || !currentPathStart) {
+
+    canvasStrokes.forEach((stroke, index) => {
+      if (stroke.isNewStroke) {
         ctx.beginPath();
         ctx.strokeStyle = stroke.color;
         ctx.moveTo(stroke.x, stroke.y);
-        ctx.lineTo(stroke.x, stroke.y);
+      }
+
+      ctx.lineTo(stroke.x, stroke.y);
+
+      // Finalize path when a new stroke begins or at the end of the array
+      const nextStroke = canvasStrokes[index + 1];
+      if (!nextStroke || nextStroke.isNewStroke) {
         ctx.stroke();
-        currentPathStart = { x: stroke.x, y: stroke.y };
-      } else {
-        ctx.beginPath();
-        ctx.strokeStyle = stroke.color;
-        ctx.moveTo(currentPathStart.x, currentPathStart.y);
-        ctx.lineTo(stroke.x, stroke.y);
-        ctx.stroke();
-        currentPathStart = { x: stroke.x, y: stroke.y };
       }
     });
   }, [canvasStrokes, dimensions]);
