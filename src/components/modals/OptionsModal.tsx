@@ -1,15 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Check,
-  Clock3,
-  Droplets,
-  Eraser,
-  /* Minus,
-  Plus, */
-  Settings,
-  /* Users, */
-} from "lucide-react";
+import { Check, Clock3, Droplets, Eraser, Settings } from "lucide-react";
 import { BaseModal } from "./BaseModal";
 import { useGameStore } from "../../store/gameState";
 
