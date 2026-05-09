@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Check, Clock3, Droplets, Eraser, Settings } from "lucide-react";
 import { BaseModal } from "./BaseModal";
@@ -16,6 +16,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const { t } = useTranslation();
   const gameOptions = useGameStore((state) => state.gameOptions);
   const actions = useGameStore((state) => state.actions);
+  const phase = useGameStore((state) => state.phase);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
   const [roundTime, setRoundTime] = useState(gameOptions.roundTime);
@@ -43,6 +44,12 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const selectedRoundTime =
     drawingRoundOptions.find((option) => option.value === displayedRoundTime) ??
     drawingRoundOptions[0];
+
+  useEffect(() => {
+    if (isOpen && phase !== "LOBBY") {
+      onClose();
+    }
+  }, [phase, isOpen, onClose]);
 
   return (
     <BaseModal

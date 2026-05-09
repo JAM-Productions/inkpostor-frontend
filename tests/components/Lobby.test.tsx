@@ -19,6 +19,7 @@ describe("Lobby", () => {
     roomId: "TESTX9",
     myId: "socket-123",
     hostId: "socket-123",
+    phase: "LOBBY",
     gameOptions: {
       roundTime: 30,
       unlimitedInk: false,
@@ -205,5 +206,31 @@ describe("Lobby", () => {
     expect(screen.getByText("Options")).toBeInTheDocument();
     expect(screen.getByText("Drawing Time per Round")).toBeInTheDocument();
     expect(screen.getByText("Save Options")).toBeInTheDocument();
+  });
+
+  it("shows a badge with the number of non-default options", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        gameOptions: {
+          roundTime: 25,
+          unlimitedInk: true,
+          clearCanvasEachRound: false,
+        },
+        players: [],
+      };
+      return selector(state);
+    });
+
+    render(<Lobby />);
+
+    const optionsButton = screen.getByRole("button", {
+      name: /open options dialog/i,
+    });
+
+    // The visual indicator is an amber dot (aria-hidden) inside the button
+    const dot = optionsButton.querySelector('span[aria-hidden="true"]');
+    expect(dot).toBeInTheDocument();
+    expect(dot).toHaveClass("bg-amber-400");
   });
 });

@@ -10,7 +10,7 @@ import {
   HelpCircle,
   Settings,
 } from "lucide-react";
-import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
+import { DEFAULT_ROUND_TIME, MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
 import { LobbyPlayerCard } from "./LobbyPlayerCard";
 import { CopyLinkButton } from "./buttons/CopyLinkButton";
 
@@ -18,6 +18,7 @@ export const Lobby: React.FC = () => {
   const { t } = useTranslation();
   const roomId = useGameStore((state) => state.roomId);
   const players = useGameStore((state) => state.players);
+  const gameOptions = useGameStore((state) => state.gameOptions);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
@@ -27,6 +28,10 @@ export const Lobby: React.FC = () => {
   const isHost = myId === hostId;
   const canStart = isHost && players.length >= MIN_PLAYERS;
   const hasRoomId = !!roomId;
+  const optionsChangedCount =
+    Number(gameOptions.roundTime !== DEFAULT_ROUND_TIME) +
+    Number(gameOptions.unlimitedInk !== false) +
+    Number(gameOptions.clearCanvasEachRound !== true);
 
   const handleCopy = async () => {
     if (!roomId) return;
@@ -108,10 +113,21 @@ export const Lobby: React.FC = () => {
                 {t("lobby.players")}
               </h3>
               <button
-                aria-label={t("options.open")}
+                aria-label={
+                  optionsChangedCount > 0
+                    ? `${t("options.open")} (${optionsChangedCount})`
+                    : t("options.open")
+                }
                 onClick={() => modalActions.openModal("OPTIONS")}
+                className="relative"
               >
                 <Settings className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-stone-400 hover:text-stone-300 cursor-pointer" />
+                {optionsChangedCount > 0 && (
+                  <span
+                    className="absolute -right-0.5 -top-0.5 block h-1 w-1 rounded-full bg-amber-400 ring-1 ring-amber-300 shadow-sm shadow-amber-300/50"
+                    aria-hidden="true"
+                  />
+                )}
               </button>
             </div>
             <div className="flex items-center gap-2">
