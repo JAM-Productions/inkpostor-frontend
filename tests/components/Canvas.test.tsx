@@ -82,7 +82,9 @@ describe("Canvas", () => {
   };
 
   const mockStoreWithState = (state: any) => {
-    (useGameStore as any).mockImplementation((selector: any) => selector(state));
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(state),
+    );
   };
 
   it("renders my turn UI elements", () => {

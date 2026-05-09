@@ -45,7 +45,6 @@ describe("useGameStore", () => {
       hostId: null,
       phase: "LOBBY",
       gameOptions: {
-        numberOfInkpostors: 1,
         roundTime: DEFAULT_ROUND_TIME,
         unlimitedInk: false,
         clearCanvasEachRound: true,

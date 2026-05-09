@@ -73,11 +73,11 @@ describe("OptionsModal", () => {
     render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
 
     await user.click(screen.getByRole("radio", { name: /35 seconds/i }));
+    await user.click(screen.getByRole("switch", { name: /toggle ink limit/i }));
     await user.click(
-      screen.getByRole("switch", { name: /toggle ink limit/i }),
-    );
-    await user.click(
-      screen.getByRole("switch", { name: /toggle canvas clearing each round/i }),
+      screen.getByRole("switch", {
+        name: /toggle canvas clearing each round/i,
+      }),
     );
     await user.click(screen.getByTestId("confirm-options-button"));
 

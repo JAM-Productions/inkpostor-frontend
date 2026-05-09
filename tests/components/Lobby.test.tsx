@@ -203,9 +203,7 @@ describe("Lobby", () => {
     await user.click(optionsButton);
 
     expect(screen.getByText("Options")).toBeInTheDocument();
-    expect(
-      screen.getByText("Drawing Time per Round"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Drawing Time per Round")).toBeInTheDocument();
     expect(screen.getByText("Save Options")).toBeInTheDocument();
   });
 });
