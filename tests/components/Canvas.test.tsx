@@ -2,6 +2,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Canvas } from "../../src/components/Canvas";
 import { useGameStore } from "../../src/store/gameState";
+import type { StrokeData } from "../../src/store/gameState";
 import { DEFAULT_ROUND_TIME } from "../../src/lib/constants";
 
 // Mock the store
@@ -41,7 +42,7 @@ describe("Canvas", () => {
         hasStartedEmergencyVoting: false,
       },
     ],
-    canvasStrokes: [],
+    canvasStrokes: [] as StrokeData[],
     kickVotes: {},
     actions: {
       endTurn: mockEndTurn,
@@ -316,7 +317,7 @@ describe("Canvas", () => {
   it("returns the ink meter to 100% after undoing the last stroke", () => {
     const state = {
       ...mockStateBase,
-      canvasStrokes: [],
+      canvasStrokes: [] as StrokeData[],
     };
 
     mockStoreWithState(state);
