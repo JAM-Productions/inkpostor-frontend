@@ -2,8 +2,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Canvas } from "../../src/components/Canvas";
 import { useGameStore } from "../../src/store/gameState";
-import type { StrokeData } from "../../src/store/gameState";
-import { DEFAULT_ROUND_TIME } from "../../src/lib/constants";
+import { DEFAULT_CANVAS_COLOR } from "../../src/lib/canvasColors";
 
 // Mock the store
 vi.mock("../../src/store/gameState", () => ({
@@ -22,9 +21,9 @@ describe("Canvas", () => {
     hostId: "socket-123",
     isMobile: false,
     gameOptions: {
-      roundTime: DEFAULT_ROUND_TIME,
+      roundTime: 20,
       unlimitedInk: false,
-      clearCanvasEachRound: true,
+      clearCanvasEachRound: false,
     },
     players: [
       {
@@ -42,7 +41,7 @@ describe("Canvas", () => {
         hasStartedEmergencyVoting: false,
       },
     ],
-    canvasStrokes: [] as StrokeData[],
+    canvasStrokes: [],
     kickVotes: {},
     actions: {
       endTurn: mockEndTurn,
@@ -82,12 +81,6 @@ describe("Canvas", () => {
     });
   };
 
-  const mockStoreWithState = (state: any) => {
-    (useGameStore as any).mockImplementation((selector: any) =>
-      selector(state),
-    );
-  };
-
   it("renders my turn UI elements", () => {
     mockStore();
 
@@ -98,7 +91,7 @@ describe("Canvas", () => {
     expect(screen.getAllByText("Host").length).toBeGreaterThan(0);
 
     // Should display time
-    expect(screen.getByText(`${DEFAULT_ROUND_TIME}.0s`)).toBeInTheDocument();
+    expect(screen.getByText("20.0s")).toBeInTheDocument();
 
     // Tools
     expect(screen.getByLabelText("Undo last stroke")).toBeInTheDocument();
@@ -128,18 +121,16 @@ describe("Canvas", () => {
 
     render(<Canvas />);
 
-    // Initially ${DEFAULT_ROUND_TIME}.0s
-    expect(screen.getByText(`${DEFAULT_ROUND_TIME}.0s`)).toBeInTheDocument();
+    // Initially 20.0s
+    expect(screen.getByText("20.0s")).toBeInTheDocument();
 
     // Advance time by 1 second
     act(() => {
       vi.advanceTimersByTime(1000);
     });
 
-    // Should now show ${DEFAULT_ROUND_TIME - 1}.0s
-    expect(
-      screen.getByText(`${DEFAULT_ROUND_TIME - 1}.0s`),
-    ).toBeInTheDocument();
+    // Should now show 19.0s
+    expect(screen.getByText("19.0s")).toBeInTheDocument();
   });
 
   it("allows active player to end turn manually", () => {
@@ -161,42 +152,6 @@ describe("Canvas", () => {
     expect(undoBtn).toBeInTheDocument();
   });
 
-  it("does not allow undoing strokes that were already on the canvas before my turn", () => {
-    const previousStroke = { x: 10, y: 10, color: "black", isNewStroke: true };
-    mockStore({ canvasStrokes: [previousStroke] });
-
-    render(<Canvas />);
-
-    const undoBtn = screen.getByLabelText("Undo last stroke");
-    expect(undoBtn).toBeDisabled();
-
-    fireEvent.click(undoBtn);
-    expect(mockUndoStroke).not.toHaveBeenCalled();
-  });
-
-  it("allows undo only after I add a stroke during my turn", () => {
-    const previousStroke = { x: 10, y: 10, color: "black", isNewStroke: true };
-    const myStroke = { x: 20, y: 20, color: "red", isNewStroke: true };
-    const state = {
-      ...mockStateBase,
-      canvasStrokes: [previousStroke],
-    };
-
-    mockStoreWithState(state);
-    const { rerender } = render(<Canvas />);
-
-    expect(screen.getByLabelText("Undo last stroke")).toBeDisabled();
-
-    state.canvasStrokes = [previousStroke, myStroke];
-    rerender(<Canvas />);
-
-    const undoBtn = screen.getByLabelText("Undo last stroke");
-    expect(undoBtn).not.toBeDisabled();
-
-    fireEvent.click(undoBtn);
-    expect(mockUndoStroke).toHaveBeenCalledTimes(1);
-  });
-
   it("can toggle toolbar compression", () => {
     mockStore();
 
@@ -215,6 +170,21 @@ describe("Canvas", () => {
     // Toggle back
     fireEvent.click(screen.getByLabelText("Expand toolbar"));
     expect(screen.getByLabelText("Compress toolbar")).toBeInTheDocument();
+  });
+
+  it("hides the ink meter and compress button when unlimited ink is enabled", () => {
+    mockStore({
+      gameOptions: {
+        ...mockStateBase.gameOptions,
+        unlimitedInk: true,
+      },
+    });
+
+    render(<Canvas />);
+
+    expect(screen.queryByText("Ink Supply")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Compress toolbar")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Undo last stroke")).toBeInTheDocument();
   });
 
   it("allows marking a player as suspicious from the player list popover", () => {
@@ -281,12 +251,11 @@ describe("Canvas", () => {
     expect(bigIndicator).toBeInTheDocument();
   });
 
-  it("hides ink meter and allows drawing without running out of ink when unlimitedInk is enabled", () => {
+  it("does not run out of ink when unlimited ink is enabled", () => {
     mockStore({
       gameOptions: {
-        roundTime: DEFAULT_ROUND_TIME,
+        ...mockStateBase.gameOptions,
         unlimitedInk: true,
-        clearCanvasEachRound: true,
       },
     });
 
@@ -305,49 +274,21 @@ describe("Canvas", () => {
     Object.defineProperty(canvasElement, "width", { value: 800 });
     Object.defineProperty(canvasElement, "height", { value: 600 });
 
-    expect(screen.queryByText("Ink Supply")).not.toBeInTheDocument();
-
     fireEvent.mouseDown(canvasElement, { clientX: 0, clientY: 0 });
     fireEvent.mouseMove(canvasElement, { clientX: 800, clientY: 600 });
 
     expect(screen.queryByText("OUT OF INK!")).not.toBeInTheDocument();
-    expect(mockDrawStroke).toHaveBeenCalledTimes(2);
-  });
-
-  it("returns the ink meter to 100% after undoing the last stroke", () => {
-    const state = {
-      ...mockStateBase,
-      canvasStrokes: [] as StrokeData[],
-    };
-
-    mockStoreWithState(state);
-
-    const { container, rerender } = render(<Canvas />);
-    const canvasElement = container.querySelector("canvas")!;
-
-    canvasElement.getBoundingClientRect = vi.fn(() => ({
-      width: 800,
-      height: 600,
-      left: 0,
-      top: 0,
-      right: 800,
-      bottom: 600,
-    })) as any;
-
-    Object.defineProperty(canvasElement, "width", { value: 800 });
-    Object.defineProperty(canvasElement, "height", { value: 600 });
-
-    fireEvent.mouseDown(canvasElement, { clientX: 10, clientY: 10 });
-    fireEvent.mouseMove(canvasElement, { clientX: 11, clientY: 13 });
-
-    state.canvasStrokes = [
-      { x: 10, y: 10, color: "black", isNewStroke: true },
-      { x: 11, y: 13, color: "black", isNewStroke: false },
-    ];
-    rerender(<Canvas />);
-
-    fireEvent.click(screen.getByLabelText("Undo last stroke"));
-
-    expect(screen.getByText("100%")).toBeInTheDocument();
+    expect(mockDrawStroke).toHaveBeenNthCalledWith(1, {
+      x: 0,
+      y: 0,
+      color: DEFAULT_CANVAS_COLOR,
+      isNewStroke: true,
+    });
+    expect(mockDrawStroke).toHaveBeenNthCalledWith(2, {
+      x: 800,
+      y: 600,
+      color: DEFAULT_CANVAS_COLOR,
+      isNewStroke: false,
+    });
   });
 });

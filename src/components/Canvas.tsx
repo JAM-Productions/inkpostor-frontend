@@ -17,8 +17,6 @@ import { CANVAS_COLORS, DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { EmergencyAlertButton } from "./EmergencyAlertButton";
 
-const INK_EPSILON = 0.01;
-
 export const Canvas: React.FC = () => {
   const { t } = useTranslation();
   const isMobile = useGameStore((state) => state.isMobile);
@@ -28,17 +26,16 @@ export const Canvas: React.FC = () => {
   const [isCompressed, setIsCompressed] = useState(false);
   const [isSusListOpen, setIsSusListOpen] = useState(false);
   const [color, setColor] = useState(DEFAULT_CANVAS_COLOR);
-  const [turnStartStrokeCount, setTurnStartStrokeCount] = useState(0);
 
   // Limits
   const [inkUsed, setInkUsed] = useState(0);
   const gameOptions = useGameStore((state) => state.gameOptions);
+  const hasUnlimitedInk = gameOptions.unlimitedInk;
   const roundTimeMs = gameOptions.roundTime * 1000;
   const [timeLeft, setTimeLeft] = useState(roundTimeMs);
 
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
   const inkCosts = useRef<number[]>([]);
-  const previousTurnPlayerId = useRef<string | null>(null);
 
   const canvasStrokes = useGameStore((state) => state.canvasStrokes);
   const currentTurnPlayerId = useGameStore(
@@ -70,14 +67,10 @@ export const Canvas: React.FC = () => {
   // Timer logic for all players
   useEffect(() => {
     if (currentTurnPlayerId) {
-      const turnChanged = previousTurnPlayerId.current !== currentTurnPlayerId;
-
-      if (isMyTurn && turnChanged) {
+      if (isMyTurn) {
         setInkUsed(0);
         inkCosts.current = [];
-        setTurnStartStrokeCount(canvasStrokes.length);
       }
-      previousTurnPlayerId.current = currentTurnPlayerId;
       setTimeLeft(roundTimeMs);
       const interval = setInterval(() => {
         setTimeLeft((prev) => {
@@ -92,8 +85,6 @@ export const Canvas: React.FC = () => {
         });
       }, 100);
       return () => clearInterval(interval);
-    } else {
-      previousTurnPlayerId.current = null;
     }
   }, [currentTurnPlayerId, isMyTurn, actions, roundTimeMs]);
 
@@ -157,21 +148,21 @@ export const Canvas: React.FC = () => {
   };
 
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isMyTurn || (!gameOptions.unlimitedInk && inkUsed >= MAX_INK)) return;
+    if (!isMyTurn || (!hasUnlimitedInk && inkUsed >= MAX_INK)) return;
     e.preventDefault();
     setIsDrawing(true);
     const { x, y } = getCoordinates(e);
     lastPoint.current = { x, y };
 
-    if (!gameOptions.unlimitedInk) {
-      if (inkUsed + DOT_INK_COST >= MAX_INK) {
-        const addedCost = MAX_INK - inkUsed;
-        setInkUsed(MAX_INK);
-        inkCosts.current.push(addedCost);
-      } else {
-        setInkUsed((prev) => prev + DOT_INK_COST);
-        inkCosts.current.push(DOT_INK_COST);
-      }
+    if (hasUnlimitedInk) {
+      inkCosts.current.push(0);
+    } else if (inkUsed + DOT_INK_COST >= MAX_INK) {
+      const addedCost = MAX_INK - inkUsed;
+      setInkUsed(MAX_INK);
+      inkCosts.current.push(addedCost);
+    } else {
+      setInkUsed((prev) => prev + DOT_INK_COST);
+      inkCosts.current.push(DOT_INK_COST);
     }
 
     actions.drawStroke({ x, y, color, isNewStroke: true });
@@ -190,7 +181,7 @@ export const Canvas: React.FC = () => {
           Math.pow(y - lastPoint.current.y, 2),
       );
 
-      if (!gameOptions.unlimitedInk && inkUsed + distance > MAX_INK) {
+      if (!hasUnlimitedInk && inkUsed + distance > MAX_INK) {
         const allowedDistance = MAX_INK - inkUsed;
         inkCosts.current[inkCosts.current.length - 1] += allowedDistance;
         setInkUsed(MAX_INK);
@@ -199,7 +190,7 @@ export const Canvas: React.FC = () => {
         return;
       }
 
-      if (!gameOptions.unlimitedInk) {
+      if (!hasUnlimitedInk) {
         setInkUsed((prev) => prev + distance);
         inkCosts.current[inkCosts.current.length - 1] += distance;
       }
@@ -207,7 +198,7 @@ export const Canvas: React.FC = () => {
 
       actions.drawStroke({ x, y, color, isNewStroke: false });
     },
-    [isDrawing, isMyTurn, inkUsed, color, actions, gameOptions.unlimitedInk],
+    [isDrawing, isMyTurn, inkUsed, hasUnlimitedInk, color, actions],
   );
 
   const stopDrawing = () => {
@@ -216,17 +207,11 @@ export const Canvas: React.FC = () => {
   };
 
   const undoLastStroke = () => {
-    const hasOwnStrokeToUndo = canvasStrokes.length > turnStartStrokeCount;
-    if (!hasOwnStrokeToUndo) return;
-
-    if (!gameOptions.unlimitedInk && inkCosts.current.length > 0) {
+    if (inkCosts.current.length > 0) {
       const restoredInk = inkCosts.current.pop() || 0;
-      setInkUsed((prev) => {
-        const nextInkUsed = Math.max(0, prev - restoredInk);
-        return nextInkUsed <= INK_EPSILON ? 0 : nextInkUsed;
-      });
+      setInkUsed((prev) => Math.max(0, prev - restoredInk));
+      actions.undoStroke();
     }
-    actions.undoStroke();
   };
 
   // Attach global listeners for draw to prevent "sticking" if mouse leaves canvas
@@ -262,12 +247,7 @@ export const Canvas: React.FC = () => {
   useClickOutside(suspectsRef, isSusListOpen, setIsSusListOpen);
 
   const inkPercentage = Math.min((inkUsed / MAX_INK) * 100, 100);
-  const isOutOfInk = !gameOptions.unlimitedInk && inkPercentage >= 100;
-  const canUndoOwnStroke = canvasStrokes.length > turnStartStrokeCount;
-  const remainingInkPercentage = Math.max(
-    0,
-    Math.min(100, Math.round(100 - inkPercentage)),
-  );
+  const OutOfInk = !hasUnlimitedInk && inkPercentage >= 100;
 
   return (
     <div className="flex flex-col items-center bg-stone-900 p-2 md:p-6 pb-24 sm:justify-center mt-12">
@@ -403,7 +383,7 @@ export const Canvas: React.FC = () => {
             <canvas
               ref={canvasRef}
               className={`w-full h-full touch-none ${
-                isMyTurn && !isOutOfInk
+                isMyTurn && !OutOfInk
                   ? "cursor-crosshair"
                   : "cursor-not-allowed"
               }`}
@@ -411,7 +391,7 @@ export const Canvas: React.FC = () => {
               onTouchStart={startDrawing}
             />
 
-            {isMyTurn && isOutOfInk && (
+            {isMyTurn && OutOfInk && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                 <span className="text-red-500 animate-zoom-in text-4xl md:text-6xl uppercase drop-shadow-lg font-rubik-wet-paint font-extralight">
                   {t("canvas.outOfInk")}
@@ -460,19 +440,14 @@ export const Canvas: React.FC = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={undoLastStroke}
-                    disabled={!canUndoOwnStroke}
-                    className={`mt-0.5 w-10 h-10 rounded-xl shrink-0 flex items-center justify-center transition-colors active:scale-95 ${
-                      canUndoOwnStroke
-                        ? "cursor-pointer bg-stone-700 text-stone-300 hover:bg-stone-600"
-                        : "cursor-not-allowed bg-stone-800 text-stone-500"
-                    }`}
+                    className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                     title={t("canvas.undo")}
                     aria-label="Undo last stroke"
                   >
                     <Undo className="w-5 h-5" />
                   </button>
 
-                  {!gameOptions.unlimitedInk && (
+                  {!hasUnlimitedInk && (
                     <button
                       onClick={() => setIsCompressed(true)}
                       className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
@@ -488,29 +463,29 @@ export const Canvas: React.FC = () => {
 
             {/* Ink Meter & Compressed Mode Controls */}
             <div className="flex items-center gap-4">
-              {!gameOptions.unlimitedInk && (
+              {!hasUnlimitedInk && (
                 <div className="flex-1 space-y-1">
                   <div className="flex justify-between text-xs font-bold uppercase tracking-widest px-1">
                     <span
-                      className={isOutOfInk ? "text-red-400" : "text-stone-400"}
+                      className={OutOfInk ? "text-red-400" : "text-stone-400"}
                     >
                       {t("canvas.inkSupply")}
                     </span>
                     <span
                       className={
-                        isOutOfInk
+                        OutOfInk
                           ? "text-red-400 animate-pulse"
                           : "text-emerald-400"
                       }
                     >
-                      {isOutOfInk
+                      {OutOfInk
                         ? t("canvas.outOfInk")
-                        : `${remainingInkPercentage}%`}
+                        : `${Math.floor(100 - inkPercentage)}%`}
                     </span>
                   </div>
                   <div className="h-4 bg-stone-900 rounded-full overflow-hidden border border-stone-700 shadow-inner">
                     <div
-                      className={`h-full transition-all duration-100 ease-out ${isOutOfInk ? "bg-red-500" : "bg-linear-to-r from-emerald-400 to-teal-400"}`}
+                      className={`h-full transition-all duration-100 ease-out ${OutOfInk ? "bg-red-500" : "bg-linear-to-r from-emerald-400 to-teal-400"}`}
                       style={{ width: `${inkPercentage}%` }}
                     />
                   </div>
@@ -521,12 +496,7 @@ export const Canvas: React.FC = () => {
                 <div className="flex gap-2 shrink-0">
                   <button
                     onClick={undoLastStroke}
-                    disabled={!canUndoOwnStroke}
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors active:scale-95 ${
-                      canUndoOwnStroke
-                        ? "cursor-pointer bg-stone-700 text-stone-300 hover:bg-stone-600"
-                        : "cursor-not-allowed bg-stone-800 text-stone-500"
-                    }`}
+                    className="w-10 h-10 rounded-xl cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                     title={t("canvas.undo")}
                     aria-label="Undo last stroke"
                   >
