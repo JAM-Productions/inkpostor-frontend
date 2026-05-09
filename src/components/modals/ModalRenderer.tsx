@@ -2,6 +2,7 @@ import React from "react";
 import { useModalStore } from "../../store/modalStore";
 import { RulesModal } from "./RulesModal";
 import { EndGameModal } from "./EndGameModal";
+import { OptionsModal } from "./OptionsModal";
 
 export const ModalRenderer: React.FC = () => {
   const activeModal = useModalStore((state) => state.activeModal);
@@ -14,6 +15,8 @@ export const ModalRenderer: React.FC = () => {
       return <RulesModal isOpen={true} onClose={closeModal} />;
     case "END_GAME":
       return <EndGameModal isOpen={true} onClose={closeModal} />;
+    case "OPTIONS":
+      return <OptionsModal isOpen={true} onClose={closeModal} />;
     default:
       return null;
   }

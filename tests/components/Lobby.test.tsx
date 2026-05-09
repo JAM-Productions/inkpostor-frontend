@@ -13,12 +13,21 @@ vi.mock("../../src/store/gameState", () => ({
 
 describe("Lobby", () => {
   const mockStartGame = vi.fn();
+  const mockUpdateGameOptions = vi.fn();
 
   const mockStateBase = {
     roomId: "TESTX9",
     myId: "socket-123",
     hostId: "socket-123",
-    actions: { startGame: mockStartGame },
+    gameOptions: {
+      roundTime: 30,
+      unlimitedInk: false,
+      clearCanvasEachRound: false,
+    },
+    actions: {
+      startGame: mockStartGame,
+      updateGameOptions: mockUpdateGameOptions,
+    },
   };
 
   beforeEach(() => {
@@ -172,5 +181,31 @@ describe("Lobby", () => {
     await user.click(closeBtn);
 
     expect(screen.queryByText("How to Play Inkpostor")).not.toBeInTheDocument();
+  });
+
+  it("opens the options modal when the settings button is clicked", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase, players: [] };
+      return selector(state);
+    });
+
+    render(
+      <>
+        <Lobby />
+        <ModalRenderer />
+      </>,
+    );
+
+    const optionsButton = screen.getByRole("button", {
+      name: /open options dialog/i,
+    });
+    await user.click(optionsButton);
+
+    expect(screen.getByText("Options")).toBeInTheDocument();
+    expect(
+      screen.getByText("Drawing Time per Round"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Save Options")).toBeInTheDocument();
   });
 });

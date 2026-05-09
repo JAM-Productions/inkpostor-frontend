@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type ModalType = "RULES" | "END_GAME";
+export type ModalType = "RULES" | "END_GAME" | "OPTIONS";
 
 interface ModalState {
   activeModal: ModalType | null;

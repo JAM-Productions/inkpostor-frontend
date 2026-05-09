@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { useModalStore } from "../store/modalStore";
-import { Users, Loader2, Copy, Check, HelpCircle } from "lucide-react";
+import {
+  Users,
+  Loader2,
+  Copy,
+  Check,
+  HelpCircle,
+  Settings,
+} from "lucide-react";
 import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
 import { LobbyPlayerCard } from "./LobbyPlayerCard";
 import { CopyLinkButton } from "./buttons/CopyLinkButton";
@@ -95,10 +102,18 @@ export const Lobby: React.FC = () => {
 
         <div className="bg-stone-800 rounded-3xl p-6 shadow-xl border border-stone-700 flex flex-col max-h-[70vh]">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-              <Users className="text-ink-secondary w-5 h-5 sm:w-6 sm:h-6" />
-              {t("lobby.players")}
-            </h3>
+            <div className="flex justify-center items-center gap-4">
+              <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                <Users className="text-ink-secondary w-5 h-5 sm:w-6 sm:h-6" />
+                {t("lobby.players")}
+              </h3>
+              <button
+                aria-label={t("options.open")}
+                onClick={() => modalActions.openModal("OPTIONS")}
+              >
+                <Settings className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-stone-400 hover:text-stone-300 cursor-pointer" />
+              </button>
+            </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => modalActions.openModal("RULES")}

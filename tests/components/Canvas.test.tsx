@@ -2,6 +2,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Canvas } from "../../src/components/Canvas";
 import { useGameStore } from "../../src/store/gameState";
+import { DEFAULT_ROUND_TIME } from "../../src/lib/constants";
 
 // Mock the store
 vi.mock("../../src/store/gameState", () => ({
@@ -19,6 +20,8 @@ describe("Canvas", () => {
     currentTurnPlayerId: "socket-123", // I am the active player
     hostId: "socket-123",
     isMobile: false,
+    roundTime: DEFAULT_ROUND_TIME,
+    unlimitedInk: false,
     players: [
       {
         id: "socket-123",
@@ -84,7 +87,7 @@ describe("Canvas", () => {
     expect(screen.getAllByText("Host").length).toBeGreaterThan(0);
 
     // Should display time
-    expect(screen.getByText("20.0s")).toBeInTheDocument();
+    expect(screen.getByText(`${DEFAULT_ROUND_TIME}.0s`)).toBeInTheDocument();
 
     // Tools
     expect(screen.getByLabelText("Undo last stroke")).toBeInTheDocument();
@@ -114,16 +117,18 @@ describe("Canvas", () => {
 
     render(<Canvas />);
 
-    // Initially 20.0s
-    expect(screen.getByText("20.0s")).toBeInTheDocument();
+    // Initially ${DEFAULT_ROUND_TIME}.0s
+    expect(screen.getByText(`${DEFAULT_ROUND_TIME}.0s`)).toBeInTheDocument();
 
     // Advance time by 1 second
     act(() => {
       vi.advanceTimersByTime(1000);
     });
 
-    // Should now show 19.0s
-    expect(screen.getByText("19.0s")).toBeInTheDocument();
+    // Should now show ${DEFAULT_ROUND_TIME - 1}.0s
+    expect(
+      screen.getByText(`${DEFAULT_ROUND_TIME - 1}.0s`),
+    ).toBeInTheDocument();
   });
 
   it("allows active player to end turn manually", () => {
@@ -227,5 +232,32 @@ describe("Canvas", () => {
         el.className.includes("text-4xl") || el.className.includes("text-6xl"),
     );
     expect(bigIndicator).toBeInTheDocument();
+  });
+
+  it("hides ink meter and allows drawing without running out of ink when unlimitedInk is enabled", () => {
+    mockStore({ unlimitedInk: true });
+
+    const { container } = render(<Canvas />);
+    const canvasElement = container.querySelector("canvas")!;
+
+    canvasElement.getBoundingClientRect = vi.fn(() => ({
+      width: 800,
+      height: 600,
+      left: 0,
+      top: 0,
+      right: 800,
+      bottom: 600,
+    })) as any;
+
+    Object.defineProperty(canvasElement, "width", { value: 800 });
+    Object.defineProperty(canvasElement, "height", { value: 600 });
+
+    expect(screen.queryByText("Ink Supply")).not.toBeInTheDocument();
+
+    fireEvent.mouseDown(canvasElement, { clientX: 0, clientY: 0 });
+    fireEvent.mouseMove(canvasElement, { clientX: 800, clientY: 600 });
+
+    expect(screen.queryByText("OUT OF INK!")).not.toBeInTheDocument();
+    expect(mockDrawStroke).toHaveBeenCalledTimes(2);
   });
 });

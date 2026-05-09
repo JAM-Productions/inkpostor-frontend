@@ -307,6 +307,33 @@
       "closeDialog": "Close end game dialog",
       "endGame": "End Game",
       "open": "Open end game dialog"
+    },
+    "options": {
+      "title": "Options",
+      "closeDialog": "Close options dialog",
+      "time": {
+        "title": "Drawing Time per Round",
+        "description": "Set how long each drawing round lasts.",
+        "options": {
+          "20": "20 seconds",
+          "25": "25 seconds",
+          "30": "30 seconds",
+          "35": "35 seconds",
+          "40": "40 seconds"
+        }
+      },
+      "limitInk": {
+        "title": "Unlimited Ink",
+        "description": "Players will have unlimited ink for drawing.",
+        "toggle": "Toggle ink limit"
+      },
+      "clearCanvas": {
+        "title": "Clear Canvas Each Round",
+        "description": "Choose whether the canvas resets when a new round starts.",
+        "toggle": "Toggle canvas clearing each round"
+      },
+      "confirm": "Save Options",
+      "open": "Open options dialog"
     }
   }
 }

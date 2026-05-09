@@ -10,7 +10,6 @@ import {
   Search,
   Users,
 } from "lucide-react";
-import { TURN_TIME_MS } from "../lib/constants";
 import { getPlayerColorClass } from "../lib/playerColors";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { EmergencyAlertButton } from "./EmergencyAlertButton";
@@ -29,7 +28,9 @@ export const Canvas: React.FC = () => {
   const MAX_INK = 1000;
   const DOT_INK_COST = 5;
   const [inkUsed, setInkUsed] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(TURN_TIME_MS);
+  const gameOptions = useGameStore((state) => state.gameOptions);
+  const roundTimeMs = gameOptions.roundTime * 1000;
+  const [timeLeft, setTimeLeft] = useState(roundTimeMs);
 
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
   const inkCosts = useRef<number[]>([]);
@@ -63,7 +64,7 @@ export const Canvas: React.FC = () => {
         setInkUsed(0);
         inkCosts.current = [];
       }
-      setTimeLeft(TURN_TIME_MS);
+      setTimeLeft(roundTimeMs);
       const interval = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 100) {
@@ -78,7 +79,7 @@ export const Canvas: React.FC = () => {
       }, 100);
       return () => clearInterval(interval);
     }
-  }, [currentTurnPlayerId, isMyTurn, actions]);
+  }, [currentTurnPlayerId, isMyTurn, actions, roundTimeMs]);
 
   // Redraw all strokes whenever they change
   useEffect(() => {
@@ -140,19 +141,21 @@ export const Canvas: React.FC = () => {
   };
 
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isMyTurn || inkUsed >= MAX_INK) return;
+    if (!isMyTurn || (!gameOptions.unlimitedInk && inkUsed >= MAX_INK)) return;
     e.preventDefault();
     setIsDrawing(true);
     const { x, y } = getCoordinates(e);
     lastPoint.current = { x, y };
 
-    if (inkUsed + DOT_INK_COST >= MAX_INK) {
-      const addedCost = MAX_INK - inkUsed;
-      setInkUsed(MAX_INK);
-      inkCosts.current.push(addedCost);
-    } else {
-      setInkUsed((prev) => prev + DOT_INK_COST);
-      inkCosts.current.push(DOT_INK_COST);
+    if (!gameOptions.unlimitedInk) {
+      if (inkUsed + DOT_INK_COST >= MAX_INK) {
+        const addedCost = MAX_INK - inkUsed;
+        setInkUsed(MAX_INK);
+        inkCosts.current.push(addedCost);
+      } else {
+        setInkUsed((prev) => prev + DOT_INK_COST);
+        inkCosts.current.push(DOT_INK_COST);
+      }
     }
 
     actions.drawStroke({ x, y, color, isNewStroke: true });
@@ -171,7 +174,7 @@ export const Canvas: React.FC = () => {
           Math.pow(y - lastPoint.current.y, 2),
       );
 
-      if (inkUsed + distance > MAX_INK) {
+      if (!gameOptions.unlimitedInk && inkUsed + distance > MAX_INK) {
         const allowedDistance = MAX_INK - inkUsed;
         inkCosts.current[inkCosts.current.length - 1] += allowedDistance;
         setInkUsed(MAX_INK);
@@ -180,13 +183,15 @@ export const Canvas: React.FC = () => {
         return;
       }
 
-      setInkUsed((prev) => prev + distance);
-      inkCosts.current[inkCosts.current.length - 1] += distance;
+      if (!gameOptions.unlimitedInk) {
+        setInkUsed((prev) => prev + distance);
+        inkCosts.current[inkCosts.current.length - 1] += distance;
+      }
       lastPoint.current = { x, y };
 
       actions.drawStroke({ x, y, color, isNewStroke: false });
     },
-    [isDrawing, isMyTurn, inkUsed, color, actions],
+    [isDrawing, isMyTurn, inkUsed, color, actions, gameOptions.unlimitedInk],
   );
 
   const stopDrawing = () => {
@@ -195,11 +200,11 @@ export const Canvas: React.FC = () => {
   };
 
   const undoLastStroke = () => {
-    if (inkCosts.current.length > 0) {
+    if (!gameOptions.unlimitedInk && inkCosts.current.length > 0) {
       const restoredInk = inkCosts.current.pop() || 0;
       setInkUsed((prev) => Math.max(0, prev - restoredInk));
-      actions.undoStroke();
     }
+    actions.undoStroke();
   };
 
   // Attach global listeners for draw to prevent "sticking" if mouse leaves canvas
@@ -235,7 +240,7 @@ export const Canvas: React.FC = () => {
   useClickOutside(suspectsRef, isSusListOpen, setIsSusListOpen);
 
   const inkPercentage = Math.min((inkUsed / MAX_INK) * 100, 100);
-  const OutOfInk = inkPercentage >= 100;
+  const isOutOfInk = !gameOptions.unlimitedInk && inkPercentage >= 100;
 
   const colors = [
     // Neutrals
@@ -400,7 +405,7 @@ export const Canvas: React.FC = () => {
             <canvas
               ref={canvasRef}
               className={`w-full h-full touch-none ${
-                isMyTurn && !OutOfInk
+                isMyTurn && !isOutOfInk
                   ? "cursor-crosshair"
                   : "cursor-not-allowed"
               }`}
@@ -408,7 +413,7 @@ export const Canvas: React.FC = () => {
               onTouchStart={startDrawing}
             />
 
-            {isMyTurn && OutOfInk && (
+            {isMyTurn && isOutOfInk && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                 <span className="text-red-500 animate-zoom-in text-4xl md:text-6xl uppercase drop-shadow-lg font-rubik-wet-paint font-extralight">
                   {t("canvas.outOfInk")}
@@ -464,46 +469,50 @@ export const Canvas: React.FC = () => {
                     <Undo className="w-5 h-5" />
                   </button>
 
-                  <button
-                    onClick={() => setIsCompressed(true)}
-                    className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
-                    title={t("canvas.compress")}
-                    aria-label="Compress toolbar"
-                  >
-                    <Minimize2 className="w-5 h-5" />
-                  </button>
+                  {!gameOptions.unlimitedInk && (
+                    <button
+                      onClick={() => setIsCompressed(true)}
+                      className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
+                      title={t("canvas.compress")}
+                      aria-label="Compress toolbar"
+                    >
+                      <Minimize2 className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
               </div>
             )}
 
             {/* Ink Meter & Compressed Mode Controls */}
             <div className="flex items-center gap-4">
-              <div className="flex-1 space-y-1">
-                <div className="flex justify-between text-xs font-bold uppercase tracking-widest px-1">
-                  <span
-                    className={OutOfInk ? "text-red-400" : "text-stone-400"}
-                  >
-                    {t("canvas.inkSupply")}
-                  </span>
-                  <span
-                    className={
-                      OutOfInk
-                        ? "text-red-400 animate-pulse"
-                        : "text-emerald-400"
-                    }
-                  >
-                    {OutOfInk
-                      ? t("canvas.outOfInk")
-                      : `${Math.floor(100 - inkPercentage)}%`}
-                  </span>
+              {!gameOptions.unlimitedInk && (
+                <div className="flex-1 space-y-1">
+                  <div className="flex justify-between text-xs font-bold uppercase tracking-widest px-1">
+                    <span
+                      className={isOutOfInk ? "text-red-400" : "text-stone-400"}
+                    >
+                      {t("canvas.inkSupply")}
+                    </span>
+                    <span
+                      className={
+                        isOutOfInk
+                          ? "text-red-400 animate-pulse"
+                          : "text-emerald-400"
+                      }
+                    >
+                      {isOutOfInk
+                        ? t("canvas.outOfInk")
+                        : `${Math.floor(100 - inkPercentage)}%`}
+                    </span>
+                  </div>
+                  <div className="h-4 bg-stone-900 rounded-full overflow-hidden border border-stone-700 shadow-inner">
+                    <div
+                      className={`h-full transition-all duration-100 ease-out ${isOutOfInk ? "bg-red-500" : "bg-linear-to-r from-emerald-400 to-teal-400"}`}
+                      style={{ width: `${inkPercentage}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="h-4 bg-stone-900 rounded-full overflow-hidden border border-stone-700 shadow-inner">
-                  <div
-                    className={`h-full transition-all duration-100 ease-out ${OutOfInk ? "bg-red-500" : "bg-linear-to-r from-emerald-400 to-teal-400"}`}
-                    style={{ width: `${inkPercentage}%` }}
-                  />
-                </div>
-              </div>
+              )}
 
               {isCompressed && (
                 <div className="flex gap-2 shrink-0">

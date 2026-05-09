@@ -307,6 +307,33 @@
       "closeDialog": "Cerrar diálogo de fin de partida",
       "endGame": "Terminar partida",
       "open": "Abrir diálogo de fin de partida"
+    },
+    "options": {
+      "title": "Opciones",
+      "closeDialog": "Cerrar diálogo de opciones",
+      "time": {
+        "title": "Tiempo de dibujo por ronda",
+        "description": "Define cuánto dura cada ronda de dibujo.",
+        "options": {
+          "20": "20 segundos",
+          "25": "25 segundos",
+          "30": "30 segundos",
+          "35": "35 segundos",
+          "40": "40 segundos"
+        }
+      },
+      "limitInk": {
+        "title": "Tinta Ilimitada",
+        "description": "Los jugadores tendrán tinta ilimitada para dibujar.",
+        "toggle": "Alternar límite de tinta"
+      },
+      "clearCanvas": {
+        "title": "Limpiar lienzo cada ronda",
+        "description": "Elige si el lienzo se reinicia al comenzar una nueva ronda.",
+        "toggle": "Alternar limpieza del lienzo en cada ronda"
+      },
+      "confirm": "Guardar opciones",
+      "open": "Abrir diálogo de opciones"
     }
   }
 }
