@@ -73,7 +73,12 @@
       "secretWord": "Your secret word is: {{word}}",
       "youAreInkpostor": "You are the Inkpostor! Try to blend in.",
       "emergencyVotingPrompt": "Do you want to start an emergency voting?",
-      "confirm": "Confirm"
+      "confirm": "Confirm",
+      "kickPlayerAria": "Vote to Kick {{name}}",
+      "kickTitle": "Vote to Kick Player",
+      "kickConfirmationText": "Are you sure you want to vote to kick {{name}}?",
+      "cancel": "Cancel",
+      "kickConfirm": "Vote to Kick"
     },
     "words": {
       "Dog": "Dog",

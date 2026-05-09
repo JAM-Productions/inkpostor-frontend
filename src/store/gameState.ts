@@ -95,6 +95,7 @@ export interface GameState {
   turnOrder: string[];
   turnIndex: number;
   votes: Record<string, string>;
+  kickVotes: Record<string, string[]>;
   canvasStrokes: StrokeData[];
   currentRound: number;
   ejectedId: string | null;
@@ -111,6 +112,7 @@ export interface GameState {
     connectAndJoin: (roomId: string, playerName: string) => void;
     connectAndCreate: (roomId: string, playerName: string) => void;
     kickPlayer: (playerId: string) => void;
+    voteKickPlayer: (targetId: string) => void;
     startGame: () => void;
     proceedToDrawing: () => void;
     drawStroke: (stroke: StrokeData) => void;
@@ -145,6 +147,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
   turnOrder: [],
   turnIndex: 0,
   votes: {},
+  kickVotes: {},
   canvasStrokes: [],
   currentRound: 1,
   ejectedId: null,
@@ -170,6 +173,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         }
         const { token } = await res.json();
         socket.auth = { token };
+        socket.io.reconnection(true); // re-enable in case it was disabled after a kick
         socket.connect();
         socket.emit("createRoom", { roomId });
         savePlayerName(playerName);
@@ -193,6 +197,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         }
         const { token } = await res.json();
         socket.auth = { token };
+        socket.io.reconnection(true); // re-enable in case it was disabled after a kick
         socket.connect();
         socket.emit("joinRoom", { roomId });
         savePlayerName(playerName);
@@ -202,7 +207,10 @@ export const useGameStore = create<GameState>()((set, get) => ({
       }
     },
     kickPlayer: (playerId) => {
-      socket.emit("kickPlayer", playerId);
+      socket.emit("kickPlayer", { playerId });
+    },
+    voteKickPlayer: (targetId) => {
+      socket.emit("voteKickPlayer", { targetId });
     },
     startGame: () => {
       socket.emit("startGame");
@@ -342,6 +350,7 @@ socket.on("gameStateUpdate", (newState) => {
     turnOrder: newState.turnOrder,
     turnIndex: newState.turnIndex,
     votes: newState.votes,
+    kickVotes: newState.kickVotes || {},
     canvasStrokes: newState.canvasStrokes,
     currentRound: newState.currentRound,
     ejectedId: newState.ejectedId,
@@ -411,6 +420,7 @@ socket.on("kicked", (msg: string) => {
     turnOrder: [],
     turnIndex: 0,
     votes: {},
+    kickVotes: {},
     canvasStrokes: [],
     currentRound: 1,
     ejectedId: null,
@@ -422,6 +432,10 @@ socket.on("kicked", (msg: string) => {
     isMobile: state.isMobile,
     actions: state.actions,
   }));
+  // Disable auto-reconnect before disconnecting so Socket.io doesn't fire
+  // a 'connect' event before this 'kicked' handler finishes clearing state,
+  // which would cause the player to rejoin with a stale roomId (the flicker bug).
+  socket.io.reconnection(false);
   socket.disconnect();
 });
 

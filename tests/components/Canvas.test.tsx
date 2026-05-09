@@ -39,6 +39,7 @@ describe("Canvas", () => {
       },
     ],
     canvasStrokes: [],
+    kickVotes: {},
     actions: {
       endTurn: mockEndTurn,
       undoStroke: mockUndoStroke,
@@ -183,7 +184,7 @@ describe("Canvas", () => {
     fireEvent.click(playersBtn);
 
     // Find Player 2 in the list and click it
-    const player2Btn = screen.getByRole("button", { name: /player 2/i });
+    const player2Btn = screen.getByTitle("Player 2");
     fireEvent.click(player2Btn);
 
     expect(mockToggleSus).toHaveBeenCalledWith("socket-456");

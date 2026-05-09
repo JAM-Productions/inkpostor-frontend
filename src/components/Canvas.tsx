@@ -10,7 +10,10 @@ import {
   Search,
   Users,
 } from "lucide-react";
+import { VoteKickButton } from "./buttons/VoteKickButton";
+import { MAX_INK, DOT_INK_COST } from "../lib/constants";
 import { getPlayerColorClass } from "../lib/playerColors";
+import { CANVAS_COLORS, DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { EmergencyAlertButton } from "./EmergencyAlertButton";
 
@@ -22,11 +25,9 @@ export const Canvas: React.FC = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isCompressed, setIsCompressed] = useState(false);
   const [isSusListOpen, setIsSusListOpen] = useState(false);
-  const [color, setColor] = useState("#1a1a1a"); // Dark ink default
+  const [color, setColor] = useState(DEFAULT_CANVAS_COLOR);
 
   // Limits
-  const MAX_INK = 1000;
-  const DOT_INK_COST = 5;
   const [inkUsed, setInkUsed] = useState(0);
   const gameOptions = useGameStore((state) => state.gameOptions);
   const roundTimeMs = gameOptions.roundTime * 1000;
@@ -43,6 +44,11 @@ export const Canvas: React.FC = () => {
   const hostId = useGameStore((state) => state.hostId);
   const players = useGameStore((state) => state.players);
   const actions = useGameStore((state) => state.actions);
+
+  const activePlayersCount = players.filter(
+    (p) => p.isConnected && !p.isEjected,
+  ).length;
+  const requiredVotes = Math.max(1, activePlayersCount - 1);
 
   const isMyTurn = currentTurnPlayerId === myId;
   const activePlayer = players.find((p) => p.id === currentTurnPlayerId);
@@ -242,41 +248,6 @@ export const Canvas: React.FC = () => {
   const inkPercentage = Math.min((inkUsed / MAX_INK) * 100, 100);
   const isOutOfInk = !gameOptions.unlimitedInk && inkPercentage >= 100;
 
-  const colors = [
-    // Neutrals
-    "#1a1a1a", // black
-    "#ffffff", // white
-    "#6b7280", // gray
-
-    // Reds
-    "#991b1b", // dark red
-    "#ef4444", // medium red
-
-    // Oranges
-    "#92400e", // dark orange
-    "#f97316", // orange
-
-    // Yellows
-    "#ca8a04", // mustard
-    "#facc15", // light yellow
-
-    // Greens
-    "#166534", // dark green
-    "#22c55e", // green
-
-    // Blues
-    "#1e40af", // dark blue
-    "#3b82f6", // blue
-
-    // Purples
-    "#6b21a8", // dark purple
-    "#a855f7", // purple
-
-    // Pinks
-    "#9d174d", // dark pink
-    "#ec4899", // pink
-  ];
-
   return (
     <div className="flex flex-col items-center bg-stone-900 p-2 md:p-6 pb-24 sm:justify-center mt-12">
       <div className="w-full max-w-4xl space-y-4">
@@ -323,48 +294,54 @@ export const Canvas: React.FC = () => {
                         {t("canvas.suspects", "Suspects")}
                       </div>
                       {players.map((player) => (
-                        <button
-                          key={player.id}
-                          onClick={() => {
-                            if (player.id !== myId && !player.isEjected)
-                              actions.toggleSus(player.id);
-                          }}
-                          disabled={player.id === myId || player.isEjected}
-                          title={player.name}
-                          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all w-full text-left bg-stone-900/50 ${
-                            player.id === myId || player.isEjected
-                              ? "opacity-50 cursor-default"
-                              : player.isSuspected
-                                ? "bg-red-500/20 text-red-500 hover:bg-red-500/30 cursor-pointer"
-                                : "hover:bg-stone-700 text-stone-200 cursor-pointer"
-                          }`}
-                        >
-                          <div
-                            className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-bold uppercase shadow-sm ${
-                              player.id === currentTurnPlayerId
-                                ? "bg-ink-primary text-white"
-                                : "bg-stone-600 text-stone-300"
+                        <div key={player.id} className="flex gap-1 w-full">
+                          <button
+                            onClick={() => {
+                              if (player.id !== myId && !player.isEjected)
+                                actions.toggleSus(player.id);
+                            }}
+                            disabled={player.id === myId || player.isEjected}
+                            title={player.name}
+                            className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all flex-1 text-left bg-stone-900/50 ${
+                              player.id === myId || player.isEjected
+                                ? "opacity-50 cursor-default"
+                                : player.isSuspected
+                                  ? "bg-red-500/20 text-red-500 hover:bg-red-500/30 cursor-pointer"
+                                  : "hover:bg-stone-700 text-stone-200 cursor-pointer"
                             }`}
                           >
-                            {player.name.charAt(0)}
-                          </div>
-                          <span className="font-semibold flex-1 truncate text-sm">
-                            {player.name}
-                          </span>
-                          {player.id !== myId && !player.isEjected && (
                             <div
-                              className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                player.isSuspected
-                                  ? "border-red-500 bg-red-500/20 text-red-500"
-                                  : "border-stone-600 text-transparent group-hover:border-stone-400"
+                              className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-bold uppercase shadow-sm ${
+                                player.id === currentTurnPlayerId
+                                  ? "bg-ink-primary text-white"
+                                  : "bg-stone-600 text-stone-300"
                               }`}
                             >
-                              {player.isSuspected && (
-                                <Search className="w-3 h-3" />
-                              )}
+                              {player.name.charAt(0)}
                             </div>
-                          )}
-                        </button>
+                            <span className="font-semibold flex-1 truncate text-sm">
+                              {player.name}
+                            </span>
+                            {player.id !== myId && !player.isEjected && (
+                              <div
+                                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                  player.isSuspected
+                                    ? "border-red-500 bg-red-500/20 text-red-500"
+                                    : "border-stone-600 text-transparent group-hover:border-stone-400"
+                                }`}
+                              >
+                                {player.isSuspected && (
+                                  <Search className="w-3 h-3" />
+                                )}
+                              </div>
+                            )}
+                          </button>
+                          <VoteKickButton
+                            player={player}
+                            requiredVotes={requiredVotes}
+                            onAction={() => setIsSusListOpen(false)}
+                          />
+                        </div>
                       ))}
                     </div>
                   )}
@@ -444,7 +421,7 @@ export const Canvas: React.FC = () => {
                 <div
                   className={`flex flex-1 min-w-0 gap-1 p-0.5 ${isMobile ? "overflow-x-auto no-scrollbar" : "overflow-x-auto custom-scrollbar pb-3"}`}
                 >
-                  {colors.map((c) => (
+                  {CANVAS_COLORS.map((c) => (
                     <button
                       key={c}
                       onClick={() => setColor(c)}
