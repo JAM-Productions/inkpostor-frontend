@@ -322,9 +322,19 @@ socket.on("gameStateUpdate", (newState) => {
           isNewGamePhase || p.isEjected ? false : prevPlayer?.isSuspected,
       };
     }),
-    impostorId: newState.impostorId, // Usually null from service until RESULTS
-    secretWord: newState.secretWord, // Usually null from service unless RESULTS
-    secretCategory: newState.secretCategory,
+    impostorId: newState.impostorId,
+    secretWord:
+      newState.phase === "LOBBY"
+        ? null
+        : newState.secretWord !== null
+          ? newState.secretWord
+          : prevState.secretWord,
+    secretCategory:
+      newState.phase === "LOBBY"
+        ? null
+        : newState.secretCategory !== null
+          ? newState.secretCategory
+          : prevState.secretCategory,
     currentTurnPlayerId: newState.currentTurnPlayerId,
     turnOrder: newState.turnOrder,
     turnIndex: newState.turnIndex,
