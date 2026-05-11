@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { useModalStore } from "../store/modalStore";
-import { Users, Loader2, Copy, Check, HelpCircle } from "lucide-react";
-import { MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
+import {
+  Users,
+  Loader2,
+  Copy,
+  Check,
+  HelpCircle,
+  Settings,
+} from "lucide-react";
+import { DEFAULT_ROUND_TIME, MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
 import { LobbyPlayerCard } from "./LobbyPlayerCard";
 import { CopyLinkButton } from "./buttons/CopyLinkButton";
 
@@ -11,6 +18,7 @@ export const Lobby: React.FC = () => {
   const { t } = useTranslation();
   const roomId = useGameStore((state) => state.roomId);
   const players = useGameStore((state) => state.players);
+  const gameOptions = useGameStore((state) => state.gameOptions);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
@@ -20,6 +28,10 @@ export const Lobby: React.FC = () => {
   const isHost = myId === hostId;
   const canStart = isHost && players.length >= MIN_PLAYERS;
   const hasRoomId = !!roomId;
+  const optionsChangedCount =
+    Number(gameOptions.roundTime !== DEFAULT_ROUND_TIME) +
+    Number(gameOptions.unlimitedInk !== false) +
+    Number(gameOptions.clearCanvasEachRound !== true);
 
   const handleCopy = async () => {
     if (!roomId) return;
@@ -95,10 +107,29 @@ export const Lobby: React.FC = () => {
 
         <div className="bg-stone-800 rounded-3xl p-6 shadow-xl border border-stone-700 flex flex-col max-h-[70vh]">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-              <Users className="text-ink-secondary w-5 h-5 sm:w-6 sm:h-6" />
-              {t("lobby.players")}
-            </h3>
+            <div className="flex justify-center items-center gap-4">
+              <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                <Users className="text-ink-secondary w-5 h-5 sm:w-6 sm:h-6" />
+                {t("lobby.players")}
+              </h3>
+              <button
+                aria-label={
+                  optionsChangedCount > 0
+                    ? `${t("options.open")} (${optionsChangedCount})`
+                    : t("options.open")
+                }
+                onClick={() => modalActions.openModal("OPTIONS")}
+                className="relative"
+              >
+                <Settings className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-stone-400 hover:text-stone-300 cursor-pointer" />
+                {optionsChangedCount > 0 && (
+                  <span
+                    className="absolute -right-0.5 -top-0.5 block h-1 w-1 rounded-full bg-amber-400 ring-1 ring-amber-300 shadow-sm shadow-amber-300/50"
+                    aria-hidden="true"
+                  />
+                )}
+              </button>
+            </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => modalActions.openModal("RULES")}

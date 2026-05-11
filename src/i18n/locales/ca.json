@@ -312,6 +312,33 @@
       "closeDialog": "Tancar diàleg de final de partida",
       "endGame": "Finalitzar partida",
       "open": "Obrir diàleg de final de partida"
+    },
+    "options": {
+      "title": "Opcions",
+      "closeDialog": "Tancar diàleg de opcions",
+      "time": {
+        "title": "Temps de dibuix per ronda",
+        "description": "Defineix quant dura cada ronda de dibuix.",
+        "options": {
+          "20": "20 segons",
+          "25": "25 segons",
+          "30": "30 segons",
+          "35": "35 segons",
+          "40": "40 segons"
+        }
+      },
+      "limitInk": {
+        "title": "Tinta Ilimitada",
+        "description": "Els jugadors tindran tinta ilimitada per dibuixar.",
+        "toggle": "Alternar límit de tinta"
+      },
+      "clearCanvas": {
+        "title": "Netejar llenç cada ronda",
+        "description": "Tria si el llenç es reinicia en començar una ronda nova.",
+        "toggle": "Alternar neteja del llenç a cada ronda"
+      },
+      "confirm": "Guardar opcions",
+      "open": "Obrir diàleg de opcions"
     }
   }
 }

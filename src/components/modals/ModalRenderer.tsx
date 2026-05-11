@@ -2,6 +2,7 @@ import React from "react";
 import { useModalStore, type ModalPayloads } from "../../store/modalStore";
 import { RulesModal } from "./RulesModal";
 import { EndGameModal } from "./EndGameModal";
+import { OptionsModal } from "./OptionsModal";
 import { KickPlayerModal } from "./KickPlayerModal";
 
 export const ModalRenderer: React.FC = () => {
@@ -16,6 +17,8 @@ export const ModalRenderer: React.FC = () => {
       return <RulesModal isOpen={true} onClose={closeModal} />;
     case "END_GAME":
       return <EndGameModal isOpen={true} onClose={closeModal} />;
+    case "OPTIONS":
+      return <OptionsModal isOpen={true} onClose={closeModal} />;
     case "KICK_PLAYER": {
       const data = modalData as ModalPayloads["KICK_PLAYER"];
       if (!data?.playerId) {

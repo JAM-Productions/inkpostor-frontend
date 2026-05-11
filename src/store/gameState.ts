@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { socket, SERVICE_URL } from "../socket";
+import { DEFAULT_ROUND_TIME } from "../lib/constants";
 
 function detectIsMobile(): boolean {
   if (typeof navigator === "undefined") return false;
@@ -74,11 +75,18 @@ export interface StrokeData {
   isNewStroke: boolean; // True if it's the first point of a line
 }
 
+export interface GameOptions {
+  roundTime: number;
+  unlimitedInk: boolean;
+  clearCanvasEachRound: boolean;
+}
+
 export interface GameState {
   roomId: string | null;
   hostId: string | null;
   isMobile: boolean;
   phase: GamePhase;
+  gameOptions: GameOptions;
   players: Player[];
   impostorId: string | null; // Only available in RESULTS or to the impostor themselves locally
   secretWord: string | null; // Only available to non-impostors
@@ -115,6 +123,7 @@ export interface GameState {
     nextRound: () => void;
     endGame: () => void;
     startEmergencyVoting: () => void;
+    updateGameOptions: (options: GameOptions) => void;
     setError: (msg: string | null) => void;
     toggleSus: (playerId: string) => void;
   };
@@ -125,6 +134,11 @@ export const useGameStore = create<GameState>()((set, get) => ({
   hostId: null,
   isMobile: detectIsMobile(),
   phase: "LOBBY",
+  gameOptions: {
+    roundTime: DEFAULT_ROUND_TIME,
+    unlimitedInk: false,
+    clearCanvasEachRound: true,
+  },
   players: [],
   impostorId: null,
   secretWord: null,
@@ -272,6 +286,13 @@ export const useGameStore = create<GameState>()((set, get) => ({
         return { players: newPlayers };
       });
     },
+    updateGameOptions: (options) => {
+      socket.emit("updateGameOptions", options);
+      // Optimistic update for better performance
+      set((state) => ({
+        gameOptions: { ...state.gameOptions, ...options },
+      }));
+    },
     setError: (msg) => {
       set({ errorMessage: msg });
     },
@@ -334,6 +355,7 @@ socket.on("gameStateUpdate", (newState) => {
     currentRound: newState.currentRound,
     ejectedId: newState.ejectedId,
     gameEnded: newState.gameEnded,
+    gameOptions: newState.gameOptions,
   });
 });
 
@@ -385,6 +407,11 @@ socket.on("kicked", (msg: string) => {
     roomId: null,
     hostId: null,
     phase: "LOBBY",
+    gameOptions: {
+      roundTime: DEFAULT_ROUND_TIME,
+      unlimitedInk: false,
+      clearCanvasEachRound: true,
+    },
     players: [],
     impostorId: null,
     secretWord: null,

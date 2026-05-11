@@ -2,6 +2,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Canvas } from "../../src/components/Canvas";
 import { useGameStore } from "../../src/store/gameState";
+import { DEFAULT_CANVAS_COLOR } from "../../src/lib/canvasColors";
 
 // Mock the store
 vi.mock("../../src/store/gameState", () => ({
@@ -19,6 +20,11 @@ describe("Canvas", () => {
     currentTurnPlayerId: "socket-123", // I am the active player
     hostId: "socket-123",
     isMobile: false,
+    gameOptions: {
+      roundTime: 20,
+      unlimitedInk: false,
+      clearCanvasEachRound: false,
+    },
     players: [
       {
         id: "socket-123",
@@ -166,6 +172,21 @@ describe("Canvas", () => {
     expect(screen.getByLabelText("Compress toolbar")).toBeInTheDocument();
   });
 
+  it("hides the ink meter and compress button when unlimited ink is enabled", () => {
+    mockStore({
+      gameOptions: {
+        ...mockStateBase.gameOptions,
+        unlimitedInk: true,
+      },
+    });
+
+    render(<Canvas />);
+
+    expect(screen.queryByText("Ink Supply")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Compress toolbar")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Undo last stroke")).toBeInTheDocument();
+  });
+
   it("allows marking a player as suspicious from the player list popover", () => {
     mockStore({
       myId: "socket-123",
@@ -228,5 +249,46 @@ describe("Canvas", () => {
         el.className.includes("text-4xl") || el.className.includes("text-6xl"),
     );
     expect(bigIndicator).toBeInTheDocument();
+  });
+
+  it("does not run out of ink when unlimited ink is enabled", () => {
+    mockStore({
+      gameOptions: {
+        ...mockStateBase.gameOptions,
+        unlimitedInk: true,
+      },
+    });
+
+    const { container } = render(<Canvas />);
+    const canvasElement = container.querySelector("canvas")!;
+
+    canvasElement.getBoundingClientRect = vi.fn(() => ({
+      width: 800,
+      height: 600,
+      left: 0,
+      top: 0,
+      right: 800,
+      bottom: 600,
+    })) as any;
+
+    Object.defineProperty(canvasElement, "width", { value: 800 });
+    Object.defineProperty(canvasElement, "height", { value: 600 });
+
+    fireEvent.mouseDown(canvasElement, { clientX: 0, clientY: 0 });
+    fireEvent.mouseMove(canvasElement, { clientX: 800, clientY: 600 });
+
+    expect(screen.queryByText("OUT OF INK!")).not.toBeInTheDocument();
+    expect(mockDrawStroke).toHaveBeenNthCalledWith(1, {
+      x: 0,
+      y: 0,
+      color: DEFAULT_CANVAS_COLOR,
+      isNewStroke: true,
+    });
+    expect(mockDrawStroke).toHaveBeenNthCalledWith(2, {
+      x: 800,
+      y: 600,
+      color: DEFAULT_CANVAS_COLOR,
+      isNewStroke: false,
+    });
   });
 });

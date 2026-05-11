@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { useGameStore, PLAYER_NAME_KEY } from "../../src/store/gameState";
 import { socket } from "../../src/socket";
+import { DEFAULT_ROUND_TIME } from "../../src/lib/constants";
 
 const { socketListeners } = vi.hoisted(() => ({
   socketListeners: new Map<string, (...args: any[]) => void>(),
@@ -43,6 +44,11 @@ describe("useGameStore", () => {
       roomId: null,
       hostId: null,
       phase: "LOBBY",
+      gameOptions: {
+        roundTime: DEFAULT_ROUND_TIME,
+        unlimitedInk: false,
+        clearCanvasEachRound: true,
+      },
       players: [],
       impostorId: null,
       secretWord: null,
@@ -63,9 +69,63 @@ describe("useGameStore", () => {
   it("should have initial state", () => {
     const state = useGameStore.getState();
     expect(state.phase).toBe("LOBBY");
+    expect(state.gameOptions.roundTime).toBe(DEFAULT_ROUND_TIME);
+    expect(state.gameOptions.unlimitedInk).toBe(false);
+    expect(state.gameOptions.clearCanvasEachRound).toBe(true);
     expect(state.players).toEqual([]);
     expect(state.canvasStrokes).toEqual([]);
     expect(state.errorMessage).toBeNull();
+  });
+
+  it("should update roundTime in the store", () => {
+    const state = useGameStore.getState();
+
+    state.actions.updateGameOptions({
+      roundTime: 90,
+      unlimitedInk: false,
+      clearCanvasEachRound: true,
+    });
+
+    expect(useGameStore.getState().gameOptions.roundTime).toBe(90);
+  });
+
+  it("should update unlimitedInk in the store", () => {
+    const state = useGameStore.getState();
+
+    state.actions.updateGameOptions({
+      roundTime: DEFAULT_ROUND_TIME,
+      unlimitedInk: true,
+      clearCanvasEachRound: true,
+    });
+
+    expect(useGameStore.getState().gameOptions.unlimitedInk).toBe(true);
+  });
+
+  it("should update clearCanvasEachRound in the store", () => {
+    const state = useGameStore.getState();
+
+    state.actions.updateGameOptions({
+      roundTime: DEFAULT_ROUND_TIME,
+      unlimitedInk: false,
+      clearCanvasEachRound: false,
+    });
+
+    expect(useGameStore.getState().gameOptions.clearCanvasEachRound).toBe(
+      false,
+    );
+  });
+
+  it("should emit updateGameOptions with the provided values", () => {
+    const state = useGameStore.getState();
+    const nextOptions = {
+      roundTime: 40,
+      unlimitedInk: true,
+      clearCanvasEachRound: false,
+    };
+
+    state.actions.updateGameOptions(nextOptions);
+
+    expect(socket.emit).toHaveBeenCalledWith("updateGameOptions", nextOptions);
   });
 
   it("should handle connectAndCreate success", async () => {
@@ -432,6 +492,47 @@ describe("useGameStore", () => {
     expect(updatedPlayers[0].isSuspected).toBe(false);
   });
 
+  it("should sync gameOptions from gameStateUpdate", () => {
+    const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+    useGameStore.setState({
+      gameOptions: {
+        roundTime: DEFAULT_ROUND_TIME,
+        unlimitedInk: false,
+        clearCanvasEachRound: true,
+      },
+    });
+
+    gameStateUpdate({
+      roomId: "ROOM42",
+      hostId: "host-123",
+      phase: "DRAWING",
+      players: [],
+      impostorId: null,
+      secretWord: null,
+      secretCategory: null,
+      currentTurnPlayerId: null,
+      turnOrder: [],
+      turnIndex: 0,
+      votes: {},
+      canvasStrokes: [],
+      currentRound: 2,
+      ejectedId: null,
+      gameEnded: false,
+      gameOptions: {
+        roundTime: 40,
+        unlimitedInk: true,
+        clearCanvasEachRound: false,
+      },
+    });
+
+    expect(useGameStore.getState().gameOptions).toEqual({
+      roundTime: 40,
+      unlimitedInk: true,
+      clearCanvasEachRound: false,
+    });
+  });
+
   it("should not allow toggling sus on ejected players", () => {
     useGameStore.setState({
       players: [
@@ -490,6 +591,26 @@ describe("useGameStore", () => {
 
     const updatedPlayers = useGameStore.getState().players;
     expect(updatedPlayers[0].isSuspected).toBe(false);
+  });
+
+  it("should reset gameOptions to defaults when kicked is received", () => {
+    const kicked = getSocketListener("kicked");
+
+    useGameStore.setState({
+      gameOptions: {
+        roundTime: 40,
+        unlimitedInk: true,
+        clearCanvasEachRound: false,
+      },
+    });
+
+    kicked("You were kicked from the room");
+
+    expect(useGameStore.getState().gameOptions).toEqual({
+      roundTime: DEFAULT_ROUND_TIME,
+      unlimitedInk: false,
+      clearCanvasEachRound: true,
+    });
   });
 
   // -----------------------------------------------------------------------
