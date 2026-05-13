@@ -101,8 +101,6 @@ export const Lobby: React.FC = () => {
               <CopyLinkButton roomId={roomId} />
             </div>
           )}
-
-          <p className="text-stone-500 text-sm">{t("lobby.shareCode")}</p>
         </div>
 
         <div className="bg-stone-800 rounded-3xl p-6 shadow-xl border border-stone-700 flex flex-col max-h-[70vh]">
