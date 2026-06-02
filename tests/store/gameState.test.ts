@@ -614,6 +614,111 @@ describe("useGameStore", () => {
   });
 
   // -----------------------------------------------------------------------
+  // Secret-word race-condition tests (fix: gameStateUpdate must not clobber
+  // the secretWord that was already set by a roleAssignment event)
+  // -----------------------------------------------------------------------
+
+  describe("secretWord race-condition fix", () => {
+    it("should preserve secretWord when a sanitized gameStateUpdate (null) arrives after roleAssignment", () => {
+      const roleAssignment = getSocketListener("roleAssignment");
+      const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+      // 1. roleAssignment arrives first with the real word
+      roleAssignment({
+        isImpostor: false,
+        secretWord: "pizza",
+        secretCategory: "food",
+      });
+
+      expect(useGameStore.getState().secretWord).toBe("pizza");
+
+      // 2. gameStateUpdate arrives later with sanitized state (secretWord: null)
+      //    — this is the race condition that used to wipe the word
+      gameStateUpdate({
+        phase: "ROLE_REVEAL",
+        players: [],
+        votes: {},
+        kickVotes: {},
+        canvasStrokes: [],
+        turnOrder: [],
+        turnIndex: 0,
+        currentRound: 1,
+        secretWord: null, // sanitized
+        secretCategory: null, // sanitized
+        impostorId: null,
+      });
+
+      // The word must still be "pizza", not null
+      expect(useGameStore.getState().secretWord).toBe("pizza");
+      expect(useGameStore.getState().secretCategory).toBe("food");
+    });
+
+    it("should clear secretWord when a gameStateUpdate with LOBBY phase is received", () => {
+      const roleAssignment = getSocketListener("roleAssignment");
+      const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+      // Simulate a previous game where the player knew the word
+      roleAssignment({
+        isImpostor: false,
+        secretWord: "pizza",
+        secretCategory: "food",
+      });
+
+      expect(useGameStore.getState().secretWord).toBe("pizza");
+
+      // Host starts a new game → playAgain resets to LOBBY
+      gameStateUpdate({
+        phase: "LOBBY",
+        players: [],
+        votes: {},
+        kickVotes: {},
+        canvasStrokes: [],
+        turnOrder: [],
+        turnIndex: 0,
+        currentRound: 1,
+        secretWord: null,
+        secretCategory: null,
+        impostorId: null,
+      });
+
+      // Old secrets must be wiped, not carried into the new game
+      expect(useGameStore.getState().secretWord).toBeNull();
+      expect(useGameStore.getState().secretCategory).toBeNull();
+    });
+
+    it("should use the server secretWord from a RESULTS gameStateUpdate (full unsanitized state)", () => {
+      const roleAssignment = getSocketListener("roleAssignment");
+      const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+      // Player is the impostor and doesn't know the word locally
+      roleAssignment({
+        isImpostor: true,
+        secretWord: null,
+        secretCategory: "food",
+      });
+
+      expect(useGameStore.getState().secretWord).toBeNull();
+
+      // Voting ends → RESULTS: server reveals the full state including the real word
+      gameStateUpdate({
+        phase: "RESULTS",
+        players: [],
+        votes: {},
+        kickVotes: {},
+        canvasStrokes: [],
+        turnOrder: [],
+        turnIndex: 0,
+        currentRound: 1,
+        secretWord: "pizza", // real word revealed at end of game
+        secretCategory: "food",
+        impostorId: "impostor-id",
+      });
+
+      expect(useGameStore.getState().secretWord).toBe("pizza");
+    });
+  });
+
+  // -----------------------------------------------------------------------
   // Persistence tests
   // -----------------------------------------------------------------------
 
