@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { TriangleAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useClickOutside } from "../hooks/useClickOutside";
-import { useGameStore } from "../store/gameState";
+import { useClickOutside } from "../../hooks/useClickOutside";
+import { useGameStore } from "../../store/gameState";
 
 export const EmergencyAlertButton = () => {
   const { t } = useTranslation();

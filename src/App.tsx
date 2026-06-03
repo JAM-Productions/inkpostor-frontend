@@ -6,7 +6,7 @@ import { Canvas } from "./components/Canvas";
 import { VotingScreen } from "./components/VotingScreen";
 import { GameResult } from "./components/GameResult";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
-import { EndGameButton } from "./components/EndGameButton";
+import { EndGameButton } from "./components/buttons/EndGameButton";
 import { ModalRenderer } from "./components/modals/ModalRenderer";
 
 // App orchestrates the current phase of the game
