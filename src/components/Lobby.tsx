@@ -2,12 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { useModalStore } from "../store/modalStore";
-import {
-  Users,
-  Loader2,
-  HelpCircle,
-  Settings,
-} from "lucide-react";
+import { Users, Loader2, HelpCircle, Settings } from "lucide-react";
 import { DEFAULT_ROUND_TIME, MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
 import { LobbyPlayerCard } from "./LobbyPlayerCard";
 import { CopyLinkButton } from "./buttons/CopyLinkButton";
