@@ -1,9 +1,9 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { EmergencyAlertButton } from "../../src/components/EmergencyAlertButton";
-import { useGameStore } from "../../src/store/gameState";
+import { EmergencyAlertButton } from "../../../src/components/buttons/EmergencyAlertButton";
+import { useGameStore } from "../../../src/store/gameState";
 
-vi.mock("../../src/store/gameState", () => ({
+vi.mock("../../../src/store/gameState", () => ({
   useGameStore: vi.fn(),
 }));
 

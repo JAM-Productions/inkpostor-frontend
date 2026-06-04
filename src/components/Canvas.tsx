@@ -15,7 +15,7 @@ import { MAX_INK, DOT_INK_COST } from "../lib/constants";
 import { getPlayerColorClass } from "../lib/playerColors";
 import { CANVAS_COLORS, DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
 import { useClickOutside } from "../hooks/useClickOutside";
-import { EmergencyAlertButton } from "./EmergencyAlertButton";
+import { EmergencyAlertButton } from "./buttons/EmergencyAlertButton";
 
 export const Canvas: React.FC = () => {
   const { t } = useTranslation();

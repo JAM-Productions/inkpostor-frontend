@@ -1,12 +1,12 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { EndGameButton } from "../../src/components/EndGameButton";
-import { useGameStore } from "../../src/store/gameState";
-import { useModalStore } from "../../src/store/modalStore";
-import { ModalRenderer } from "../../src/components/modals/ModalRenderer";
+import { EndGameButton } from "../../../src/components/buttons/EndGameButton";
+import { useGameStore } from "../../../src/store/gameState";
+import { useModalStore } from "../../../src/store/modalStore";
+import { ModalRenderer } from "../../../src/components/modals/ModalRenderer";
 
 // Mock the store
-vi.mock("../../src/store/gameState", () => ({
+vi.mock("../../../src/store/gameState", () => ({
   useGameStore: vi.fn(),
 }));
 
