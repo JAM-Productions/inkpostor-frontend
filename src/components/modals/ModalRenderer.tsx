@@ -4,6 +4,7 @@ import { RulesModal } from "./RulesModal";
 import { EndGameModal } from "./EndGameModal";
 import { OptionsModal } from "./OptionsModal";
 import { KickPlayerModal } from "./KickPlayerModal";
+import { ExitGameModal } from "./ExitGameModal";
 
 export const ModalRenderer: React.FC = () => {
   const activeModal = useModalStore((state) => state.activeModal);
@@ -34,6 +35,8 @@ export const ModalRenderer: React.FC = () => {
         />
       );
     }
+    case "EXIT_GAME":
+      return <ExitGameModal isOpen={true} onClose={closeModal} />;
     default:
       return null;
   }

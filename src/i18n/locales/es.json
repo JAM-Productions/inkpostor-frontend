@@ -42,7 +42,8 @@
       "nextRound": "Siguiente Ronda",
       "waitingRestart": "Esperando al anfitrión para reiniciar...",
       "waitingContinue": "Esperando al anfitrión para continuar...",
-      "waitingPlayers": "{{count}} de {{total}} jugadores han confirmado seguir"
+      "waitingPlayers": "{{count}} de {{total}} jugadores han confirmado seguir",
+      "returnToHome": "Volver al inicio"
     },
     "voting": {
       "title": "Tiempo de Votación",
@@ -311,6 +312,14 @@
       "closeDialog": "Cerrar diálogo de fin de partida",
       "endGame": "Terminar partida",
       "open": "Abrir diálogo de fin de partida"
+    },
+    "exitGame": {
+      "title": "¿Quieres salir de la partida?",
+      "description": "Si sales ahora, perderás tu progreso y abandonarás la sala.",
+      "confirm": "Salir",
+      "cancel": "Cancelar",
+      "closeDialog": "Cerrar diálogo de salir de la partida",
+      "open": "Abrir diálogo de salir de la partida"
     },
     "options": {
       "title": "Opciones",

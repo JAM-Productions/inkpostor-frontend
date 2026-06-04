@@ -16,6 +16,7 @@ vi.mock("../../src/socket", () => ({
       socketListeners.set(event, callback);
     }),
     disconnect: vi.fn(),
+    connected: true,
     id: "test-socket-id",
     auth: {},
     io: {
@@ -864,6 +865,46 @@ describe("useGameStore", () => {
       const fetchCall = (global.fetch as any).mock.calls[0];
       const body = JSON.parse(fetchCall[1].body);
       expect(body.userId).toBe(firstUUID);
+    });
+  });
+
+  describe("exitGame action", () => {
+    it("should disconnect the socket, disable reconnection, and reset game state to defaults, preserving myId and myName", () => {
+      useGameStore.setState({
+        roomId: "ROOM123",
+        hostId: "host-id",
+        phase: "DRAWING",
+        players: [
+          {
+            id: "my-id",
+            name: "Alice",
+            isConnected: true,
+            score: 0,
+            hasStartedEmergencyVoting: false,
+          },
+        ],
+        impostorId: "host-id",
+        secretWord: "Apple",
+        secretCategory: "Food",
+        myId: "my-id",
+        myName: "Alice",
+      });
+
+      const state = useGameStore.getState();
+      state.actions.exitGame();
+
+      expect(socket.disconnect).toHaveBeenCalled();
+      expect(socket.io.reconnection).toHaveBeenCalledWith(false);
+
+      const updatedState = useGameStore.getState();
+      expect(updatedState.roomId).toBeNull();
+      expect(updatedState.hostId).toBeNull();
+      expect(updatedState.phase).toBe("LOBBY");
+      expect(updatedState.players).toEqual([]);
+      expect(updatedState.secretWord).toBeNull();
+      expect(updatedState.secretCategory).toBeNull();
+      expect(updatedState.myId).toBe("my-id");
+      expect(updatedState.myName).toBe("Alice");
     });
   });
 });

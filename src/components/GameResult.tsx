@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
-import { CircleQuestionMark, Play } from "lucide-react";
+import { CircleQuestionMark, Play, Home } from "lucide-react";
 import { MIN_PLAYERS } from "../lib/constants";
 
 export const GameResult: React.FC = () => {
@@ -155,6 +155,17 @@ export const GameResult: React.FC = () => {
             })}
           </div>
         )}
+
+        <button
+          type="button"
+          aria-label="Return to Home"
+          onClick={actions.exitGame}
+          className="mt-6 px-6 py-2.5 rounded-xl border border-stone-800 text-stone-400 hover:text-white hover:bg-stone-900 transition-all cursor-pointer font-semibold text-sm flex items-center justify-center gap-2 mx-auto shadow-sm active:scale-95"
+          data-testid="return-home-button"
+        >
+          <Home className="w-4 h-4 text-stone-400" />
+          {t("result.returnToHome")}
+        </button>
       </div>
     </div>
   );

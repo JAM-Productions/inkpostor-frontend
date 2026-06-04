@@ -42,7 +42,8 @@
       "nextRound": "Next Round",
       "waitingRestart": "Waiting for host to restart...",
       "waitingContinue": "Waiting for host to continue...",
-      "waitingPlayers": "{{count}} of {{total}} players have confirmed to continue"
+      "waitingPlayers": "{{count}} of {{total}} players have confirmed to continue",
+      "returnToHome": "Return to Home Screen"
     },
     "voting": {
       "title": "Voting Time",
@@ -311,6 +312,14 @@
       "closeDialog": "Close end game dialog",
       "endGame": "End Game",
       "open": "Open end game dialog"
+    },
+    "exitGame": {
+      "title": "Exit Game",
+      "description": "Are you sure you want to leave the room and exit the game? Your progress will be lost.",
+      "confirm": "Exit",
+      "cancel": "Cancel",
+      "closeDialog": "Close exit game dialog",
+      "open": "Open exit game dialog"
     },
     "options": {
       "title": "Options",

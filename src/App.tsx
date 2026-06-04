@@ -7,6 +7,7 @@ import { VotingScreen } from "./components/VotingScreen";
 import { GameResult } from "./components/GameResult";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { EndGameButton } from "./components/buttons/EndGameButton";
+import { ExitGameButton } from "./components/buttons/ExitGameButton";
 import { ModalRenderer } from "./components/modals/ModalRenderer";
 
 // App orchestrates the current phase of the game
@@ -46,6 +47,7 @@ function App() {
 
   return (
     <>
+      <ExitGameButton />
       <div className="fixed top-4 right-4 flex items-center justify-between gap-4 z-50">
         <EndGameButton />
         {showLanguageSwitcher && <LanguageSwitcher />}
