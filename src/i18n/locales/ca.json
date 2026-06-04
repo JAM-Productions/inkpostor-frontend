@@ -42,7 +42,8 @@
       "nextRound": "Següent Ronda",
       "waitingRestart": "Esperant a l'amfitrió per reiniciar...",
       "waitingContinue": "Esperant a l'amfitrió per continuar...",
-      "waitingPlayers": "{{count}} de {{total}} jugadors han confirmat seguir"
+      "waitingPlayers": "{{count}} de {{total}} jugadors han confirmat seguir",
+      "returnToHome": "Tornar a l'inici"
     },
     "voting": {
       "title": "Temps de Votació",
@@ -311,6 +312,14 @@
       "closeDialog": "Tancar diàleg de final de partida",
       "endGame": "Finalitzar partida",
       "open": "Obrir diàleg de final de partida"
+    },
+    "exitGame": {
+      "title": "Vols sortir de la partida?",
+      "description": "Si surts ara, perdràs el teu progrés i marxaràs de la sala.",
+      "confirm": "Sortir",
+      "cancel": "Cancel·lar",
+      "closeDialog": "Tancar diàleg de sortir de la partida",
+      "open": "Obrir diàleg de sortir de la partida"
     },
     "options": {
       "title": "Opcions",

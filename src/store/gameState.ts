@@ -48,6 +48,24 @@ function getOrCreateUserId(): string {
   return id;
 }
 
+function clearRoomUrlParam() {
+  try {
+    if (typeof window !== "undefined" && window.history) {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has("room")) {
+        url.searchParams.delete("room");
+        window.history.replaceState(
+          {},
+          document.title,
+          url.pathname + url.search,
+        );
+      }
+    }
+  } catch (e) {
+    console.error("Error clearing URL parameters:", e);
+  }
+}
+
 export type GamePhase =
   | "LOBBY"
   | "ROLE_REVEAL"
@@ -126,6 +144,7 @@ export interface GameState {
     updateGameOptions: (options: GameOptions) => void;
     setError: (msg: string | null) => void;
     toggleSus: (playerId: string) => void;
+    exitGame: () => void;
   };
 }
 
@@ -305,6 +324,31 @@ export const useGameStore = create<GameState>()((set, get) => ({
         ),
       }));
     },
+    exitGame: () => {
+      clearRoomUrlParam();
+      socket.disconnect();
+      socket.io.reconnection(false);
+      set({
+        roomId: null,
+        hostId: null,
+        phase: "LOBBY",
+        players: [],
+        impostorId: null,
+        secretWord: null,
+        secretCategory: null,
+        currentTurnPlayerId: null,
+        turnOrder: [],
+        turnIndex: 0,
+        votes: {},
+        kickVotes: {},
+        canvasStrokes: [],
+        currentRound: 1,
+        ejectedId: null,
+        gameEnded: false,
+        amIImpostor: null,
+        errorMessage: null,
+      });
+    },
   },
 }));
 
@@ -326,7 +370,17 @@ socket.on("connect", () => {
 });
 
 socket.on("gameStateUpdate", (newState) => {
+  if (!socket.connected) return;
+
   const prevState = useGameStore.getState();
+
+  if (
+    prevState.roomId &&
+    newState.roomId &&
+    newState.roomId !== prevState.roomId
+  ) {
+    return;
+  }
 
   // Sync all service-provided state that exists on client state
   useGameStore.setState({
@@ -376,6 +430,7 @@ socket.on(
     secretWord: string | null;
     secretCategory: string | null;
   }) => {
+    if (!socket.connected) return;
     useGameStore.setState({
       amIImpostor: roles.isImpostor,
       secretWord: roles.secretWord,
@@ -385,12 +440,14 @@ socket.on(
 );
 
 socket.on("strokeUpdate", (stroke: StrokeData) => {
+  if (!socket.connected) return;
   useGameStore.setState((state) => ({
     canvasStrokes: [...state.canvasStrokes, stroke],
   }));
 });
 
 socket.on("strokeUndone", () => {
+  if (!socket.connected) return;
   useGameStore.setState((state) => {
     if (state.canvasStrokes.length === 0) return state;
 
@@ -413,6 +470,7 @@ socket.on("strokeUndone", () => {
 });
 
 socket.on("kicked", (msg: string) => {
+  clearRoomUrlParam();
   useGameStore.setState((state) => ({
     roomId: null,
     hostId: null,

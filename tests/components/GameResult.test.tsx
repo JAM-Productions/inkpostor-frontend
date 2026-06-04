@@ -246,4 +246,29 @@ describe("GameResult", () => {
       screen.getByText("1 of 3 players have confirmed to continue"),
     ).toBeInTheDocument();
   });
+
+  it("renders Return to Home Screen button and clicking it triggers exitGame", () => {
+    const mockExitGame = vi.fn();
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        ejectedId: "socket-456",
+        votes: { "socket-123": "socket-456" },
+        actions: {
+          ...mockStateBase.actions,
+          exitGame: mockExitGame,
+        },
+      };
+      return selector(state);
+    });
+
+    render(<GameResult />);
+
+    const returnBtn = screen.getByTestId("return-home-button");
+    expect(returnBtn).toBeInTheDocument();
+    expect(screen.getByText("Return to Home Screen")).toBeInTheDocument();
+
+    fireEvent.click(returnBtn);
+    expect(mockExitGame).toHaveBeenCalled();
+  });
 });
