@@ -275,6 +275,7 @@ export const Canvas: React.FC = () => {
               {!isMyTurn && (
                 <div className="relative" ref={suspectsRef}>
                   <button
+                    type="button"
                     onClick={() => setIsSusListOpen(!isSusListOpen)}
                     className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-stone-900/50 cursor-pointer ${
                       isSusListOpen
@@ -297,6 +298,7 @@ export const Canvas: React.FC = () => {
                       {players.map((player) => (
                         <div key={player.id} className="flex gap-1 w-full">
                           <button
+                            type="button"
                             onClick={() => {
                               if (player.id !== myId && !player.isEjected)
                                 actions.toggleSus(player.id);
@@ -364,6 +366,7 @@ export const Canvas: React.FC = () => {
 
             {isMyTurn && (
               <button
+                type="button"
                 onClick={() => actions.endTurn()}
                 className="bg-ink-secondary hover:bg-white text-black px-5 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-ink-secondary/20 cursor-pointer flex items-center gap-2"
               >
@@ -424,6 +427,7 @@ export const Canvas: React.FC = () => {
                 >
                   {CANVAS_COLORS.map((c) => (
                     <button
+                      type="button"
                       key={c}
                       onClick={() => setColor(c)}
                       className={`w-10 h-10 shrink-0 rounded-full transition-transform border-[3px] ${color === c ? "scale-105 shadow-lg" : "scale-90 opacity-80 hover:opacity-100"} cursor-pointer active:scale-95`}
@@ -439,6 +443,7 @@ export const Canvas: React.FC = () => {
 
                 <div className="flex gap-2">
                   <button
+                    type="button"
                     onClick={undoLastStroke}
                     className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                     title={t("canvas.undo")}
@@ -449,6 +454,7 @@ export const Canvas: React.FC = () => {
 
                   {!hasUnlimitedInk && (
                     <button
+                      type="button"
                       onClick={() => setIsCompressed(true)}
                       className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                       title={t("canvas.compress")}
@@ -495,6 +501,7 @@ export const Canvas: React.FC = () => {
               {isCompressed && (
                 <div className="flex gap-2 shrink-0">
                   <button
+                    type="button"
                     onClick={undoLastStroke}
                     className="w-10 h-10 rounded-xl cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                     title={t("canvas.undo")}
@@ -504,6 +511,7 @@ export const Canvas: React.FC = () => {
                   </button>
 
                   <button
+                    type="button"
                     onClick={() => setIsCompressed(false)}
                     className="w-10 h-10 rounded-xl cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                     title={t("canvas.expand")}

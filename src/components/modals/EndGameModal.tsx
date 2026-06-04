@@ -26,6 +26,7 @@ export const EndGameModal: React.FC<EndGameModalProps> = ({
       icon={<HelpCircle className="w-6 h-6 text-ink-primary" />}
       footer={
         <button
+          type="button"
           data-testid="confirm-end-game-button"
           onClick={() => {
             actions.endGame();

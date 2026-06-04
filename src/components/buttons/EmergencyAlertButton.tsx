@@ -21,6 +21,7 @@ export const EmergencyAlertButton = () => {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className={`flex items-center px-4 py-2 sm:px-5 sm:py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-red-900/50 cursor-pointer ${isOpen ? "bg-ink-primary-accent" : "bg-ink-primary"} ${isDisabled ? "opacity-50" : "hover:bg-ink-primary-accent"}`}
         aria-label="Alert"
@@ -35,6 +36,7 @@ export const EmergencyAlertButton = () => {
             {t("canvas.emergencyVotingPrompt")}
           </p>
           <button
+            type="button"
             onClick={() => {
               setIsOpen(false);
               actions.startEmergencyVoting();
