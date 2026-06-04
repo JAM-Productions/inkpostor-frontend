@@ -78,6 +78,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
             </h2>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 hover:bg-stone-800 rounded-full transition-colors text-stone-400 hover:text-white cursor-pointer"
             aria-label={closeLabel}

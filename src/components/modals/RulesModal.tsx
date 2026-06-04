@@ -30,6 +30,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       icon={<HelpCircle className="size-6 text-ink-primary" />}
       footer={
         <button
+          type="button"
           onClick={onClose}
           className="w-full py-3 bg-stone-800 hover:bg-stone-700 text-white font-bold rounded-xl transition-all active:scale-[0.98] cursor-pointer"
         >

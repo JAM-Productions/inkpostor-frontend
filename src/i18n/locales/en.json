@@ -315,7 +315,7 @@
     },
     "exitGame": {
       "title": "Exit Game",
-      "description": "Are you sure you want to leave the room and exit the game? Your progress will be lost.",
+      "description": "Are you sure you want to leave the room and exit the game?",
       "confirm": "Exit",
       "cancel": "Cancel",
       "closeDialog": "Close exit game dialog",

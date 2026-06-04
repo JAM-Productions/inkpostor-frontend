@@ -22,7 +22,7 @@ export function ExitGameButton() {
       onClick={() => modalActions.openModal("EXIT_GAME")}
       aria-label={t("exitGame.open")}
     >
-      <LogOut className="size-3.5 sm:size-4 text-red-500" />
+      <LogOut className="size-3 sm:size-3.5 text-red-500" />
     </button>
   );
 }

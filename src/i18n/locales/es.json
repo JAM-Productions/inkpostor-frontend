@@ -315,7 +315,7 @@
     },
     "exitGame": {
       "title": "¿Quieres salir de la partida?",
-      "description": "Si sales ahora, perderás tu progreso y abandonarás la sala.",
+      "description": "Si sales ahora, abandonarás la sala.",
       "confirm": "Salir",
       "cancel": "Cancelar",
       "closeDialog": "Cerrar diálogo de salir de la partida",

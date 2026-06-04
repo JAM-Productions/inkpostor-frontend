@@ -40,6 +40,7 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       className={`flex shrink-0 items-center justify-center rounded-xl transition-colors cursor-pointer px-2 gap-1.5 ${
         hasVoted

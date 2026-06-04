@@ -38,6 +38,7 @@ export function LanguageSwitcher() {
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 text-xs sm:text-sm bg-stone-800 hover:bg-stone-700 px-3 py-1.5 rounded-full border border-stone-700 text-white transition-all cursor-pointer shadow-lg active:scale-95"
         aria-label="Select language"
@@ -61,6 +62,7 @@ export function LanguageSwitcher() {
           <div className="py-1">
             {languages.map((lang) => (
               <button
+                type="button"
                 key={lang.code}
                 onClick={() => changeLanguage(lang.code)}
                 className={`w-full text-left px-4 py-2.5 text-xs sm:text-sm transition-colors cursor-pointer flex items-center justify-between ${

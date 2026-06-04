@@ -27,12 +27,14 @@ export const ExitGameModal: React.FC<ExitGameModalProps> = ({
       footer={
         <div className="flex gap-4 w-full">
           <button
+            type="button"
             onClick={onClose}
             className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-white font-bold rounded-xl transition-all active:scale-[0.98] cursor-pointer"
           >
             {t("exitGame.cancel")}
           </button>
           <button
+            type="button"
             data-testid="confirm-exit-game-button"
             onClick={() => {
               actions.exitGame();

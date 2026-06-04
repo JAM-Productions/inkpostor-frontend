@@ -41,6 +41,7 @@ export const RoleReveal: React.FC = () => {
 
         <div className="relative">
           <button
+            type="button"
             onMouseDown={() => handleReveal()}
             onMouseUp={() => setRevealed(false)}
             onMouseLeave={() => setRevealed(false)}
@@ -116,6 +117,7 @@ export const RoleReveal: React.FC = () => {
           {(isContinueButtonVisible || hasPlayerRevealedRoleAndContinued) &&
             (!hasPlayerRevealedRoleAndContinued ? (
               <button
+                type="button"
                 onClick={actions.proceedToDrawing}
                 className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-all hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
               >

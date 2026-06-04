@@ -62,6 +62,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
       footer={
         isHost && (
           <button
+            type="button"
             data-testid="confirm-options-button"
             onClick={() => {
               actions.updateGameOptions({
