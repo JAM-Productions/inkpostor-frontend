@@ -264,7 +264,7 @@ export const Canvas: React.FC = () => {
               <p className="text-sm font-bold text-stone-400 uppercase tracking-widest">
                 {isMyTurn ? t("canvas.yourTurn") : t("canvas.nowDrawing")}
               </p>
-              <h2 className="text-lg font-bold text-white">
+              <h2 className="text-lg font-semibold text-white">
                 {activePlayer?.name || t("canvas.someone")}
               </h2>
             </div>

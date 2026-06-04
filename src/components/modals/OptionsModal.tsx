@@ -86,7 +86,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               <Clock3 className="size-5" />
             </div>
             <div className="w-full">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
                 {t("options.time.title")}
               </h3>
               <p className="mt-1 text-sm text-stone-400">
@@ -149,7 +149,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 <Droplets className="size-5" />
               </div>
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
                   {t("options.limitInk.title")}
                 </h3>
                 <p className="mt-1 text-sm text-stone-400">
@@ -187,7 +187,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 <Eraser className="size-5" />
               </div>
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
                   {t("options.clearCanvas.title")}
                 </h3>
                 <p className="mt-1 text-sm text-stone-400">
