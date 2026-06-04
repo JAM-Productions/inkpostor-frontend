@@ -31,7 +31,7 @@ describe("ExitGameModal", () => {
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText(/exit game/i)).toBeInTheDocument();
-    expect(screen.getByText(/progress will be lost/i)).toBeInTheDocument();
+    expect(screen.getByText(/leave the room/i)).toBeInTheDocument();
   });
 
   it("does not render the modal when isOpen is false", () => {

@@ -315,7 +315,7 @@
     },
     "exitGame": {
       "title": "Vols sortir de la partida?",
-      "description": "Si surts ara, perdràs el teu progrés i marxaràs de la sala.",
+      "description": "Si surts ara, marxaràs de la sala.",
       "confirm": "Sortir",
       "cancel": "Cancel·lar",
       "closeDialog": "Tancar diàleg de sortir de la partida",
