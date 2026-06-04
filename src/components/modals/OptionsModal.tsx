@@ -172,7 +172,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               aria-label={t("options.limitInk.toggle")}
             >
               <span
-              className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
+                className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
                   displayedUnlimitedInk ? "translate-x-7" : "translate-x-1"
                 }`}
               />
@@ -210,7 +210,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               aria-label={t("options.clearCanvas.toggle")}
             >
               <span
-              className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
+                className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
                   displayedClearCanvasEachRound
                     ? "translate-x-7"
                     : "translate-x-1"
