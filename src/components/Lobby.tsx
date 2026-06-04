@@ -50,6 +50,7 @@ export const Lobby: React.FC = () => {
                 {t("lobby.players")}
               </h3>
               <button
+                type="button"
                 aria-label={
                   optionsChangedCount > 0
                     ? `${t("options.open")} (${optionsChangedCount})`
@@ -69,6 +70,7 @@ export const Lobby: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => modalActions.openModal("RULES")}
                 className="flex items-center gap-2 font-bold cursor-pointer"
                 data-testid="how-to-play-btn"
@@ -114,6 +116,7 @@ export const Lobby: React.FC = () => {
 
           {isHost ? (
             <button
+              type="button"
               onClick={actions.startGame}
               disabled={!canStart}
               className="w-full shrink-0 group relative overflow-hidden rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer bg-ink-primary hover:bg-ink-primary-accent"
