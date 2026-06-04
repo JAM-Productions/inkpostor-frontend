@@ -23,7 +23,7 @@ export const ExitGameModal: React.FC<ExitGameModalProps> = ({
       id="exit-game"
       title={t("exitGame.title")}
       closeLabel={t("exitGame.closeDialog")}
-      icon={<LogOut className="w-6 h-6 text-red-500" />}
+      icon={<LogOut className="size-6 text-red-500" />}
       footer={
         <div className="flex gap-4 w-full">
           <button

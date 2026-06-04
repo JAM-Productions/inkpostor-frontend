@@ -83,7 +83,7 @@ export const VotingScreen: React.FC = () => {
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div
-                    className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerColorClass(player.id, hostId, players)}`}
+                    className={`size-9 sm:size-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerColorClass(player.id, hostId, players)}`}
                   >
                     {player.name.charAt(0).toUpperCase()}
                   </div>
@@ -95,7 +95,7 @@ export const VotingScreen: React.FC = () => {
                     </span>
                     {player.isSuspected && (
                       <span className="flex items-center gap-1 text-[10px] sm:text-xs font-bold text-red-400 uppercase tracking-tight">
-                        <Search className="w-3 h-3" />
+                        <Search className="size-3" />
                         {t("canvas.suspect")}
                       </span>
                     )}
@@ -125,13 +125,13 @@ export const VotingScreen: React.FC = () => {
               }`}
             >
               <div
-                className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-xl ${
+                className={`size-9 sm:size-12 rounded-full flex items-center justify-center font-bold text-xl ${
                   effectiveSelectedPlayer === "skip"
                     ? "bg-white/30 text-white"
                     : "bg-stone-800 text-stone-400"
                 }`}
               >
-                <SkipForward className="sm:w-6 sm:h-6 w-4.5 h-4.5" />
+                <SkipForward className="sm:size-6 size-4.5" />
               </div>
               <span
                 className={`text-sm sm:text-lg font-semibold ${effectiveSelectedPlayer === "skip" ? "text-white" : "text-stone-300"}`}
@@ -156,7 +156,7 @@ export const VotingScreen: React.FC = () => {
             ) : hasVoted ? (
               <div className="w-full flex-col text-center flex items-center justify-center space-y-4 py-4 bg-stone-900/50 rounded-2xl border border-stone-700/50">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                  <CheckCircle2 className="size-6 text-emerald-500" />
                   <h2 className="text-xl font-bold text-white">
                     {t("voting.voteCast")}
                   </h2>
@@ -170,7 +170,7 @@ export const VotingScreen: React.FC = () => {
                     {playersRemaining.map((p) => (
                       <div
                         key={p.id}
-                        className={`w-3 h-3 rounded-full transition-colors duration-500 ${p.hasVoted ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" : "bg-stone-700"}`}
+                        className={`size-3 rounded-full transition-colors duration-500 ${p.hasVoted ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" : "bg-stone-700"}`}
                       />
                     ))}
                   </div>

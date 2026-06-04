@@ -22,7 +22,7 @@ export function EndGameButton() {
       onClick={() => modalActions.openModal("END_GAME")}
       aria-label={t("endGame.open")}
     >
-      <Flag className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-white" />
+      <Flag className="size-3 sm:size-3.5 fill-white" />
     </button>
   );
 }

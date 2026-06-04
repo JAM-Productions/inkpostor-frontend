@@ -27,7 +27,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       id="rules"
       title={t("rules.title")}
       closeLabel={t("rules.closeDialog")}
-      icon={<HelpCircle className="w-6 h-6 text-ink-primary" />}
+      icon={<HelpCircle className="size-6 text-ink-primary" />}
       footer={
         <button
           onClick={onClose}
@@ -40,7 +40,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       {/* Objective */}
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-ink-primary">
-          <Target className="w-5 h-5" />
+          <Target className="size-5" />
           <h3 className="font-bold uppercase tracking-wider text-sm">
             {t("rules.objective.title")}
           </h3>
@@ -53,7 +53,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       {/* Setup */}
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-amber-500">
-          <Settings className="w-5 h-5" />
+          <Settings className="size-5" />
           <h3 className="font-bold uppercase tracking-wider text-sm">
             {t("rules.setup.title")}
           </h3>
@@ -77,7 +77,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       {/* Drawing Turns */}
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-blue-500">
-          <PenTool className="w-5 h-5" />
+          <PenTool className="size-5" />
           <h3 className="font-bold uppercase tracking-wider text-sm">
             {t("rules.drawing.title")}
           </h3>
@@ -101,7 +101,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       {/* Observe & Deduce */}
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-purple-500">
-          <Search className="w-5 h-5" />
+          <Search className="size-5" />
           <h3 className="font-bold uppercase tracking-wider text-sm">
             {t("rules.observe.title")}
           </h3>
@@ -121,7 +121,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       {/* Voting Phase */}
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-orange-500">
-          <Vote className="w-5 h-5" />
+          <Vote className="size-5" />
           <h3 className="font-bold uppercase tracking-wider text-sm">
             {t("rules.voting.title")}
           </h3>
@@ -144,7 +144,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       {/* End of the Game */}
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-green-500">
-          <Trophy className="w-5 h-5" />
+          <Trophy className="size-5" />
           <h3 className="font-bold uppercase tracking-wider text-sm">
             {t("rules.end.title")}
           </h3>
@@ -164,7 +164,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       {/* Tip */}
       <div className="bg-stone-800/50 rounded-2xl p-4 border border-stone-700/50 flex gap-4 items-center">
         <div className="shrink-0 p-2 bg-yellow-500/10 rounded-lg h-fit">
-          <Lightbulb className="w-5 h-5 text-yellow-500" />
+          <Lightbulb className="size-5 text-yellow-500" />
         </div>
         <div>
           <h4 className="font-bold text-white text-sm mb-1">

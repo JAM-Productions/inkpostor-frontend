@@ -46,7 +46,7 @@ export const Lobby: React.FC = () => {
           <div className="flex items-center justify-between mb-6">
             <div className="flex justify-center items-center gap-4">
               <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                <Users className="text-ink-secondary w-5 h-5 sm:w-6 sm:h-6" />
+                <Users className="text-ink-secondary size-5 sm:size-6" />
                 {t("lobby.players")}
               </h3>
               <button
@@ -58,10 +58,10 @@ export const Lobby: React.FC = () => {
                 onClick={() => modalActions.openModal("OPTIONS")}
                 className="relative"
               >
-                <Settings className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-stone-400 hover:text-stone-300 cursor-pointer" />
+                <Settings className="size-5 sm:size-5.5 text-stone-400 hover:text-stone-300 cursor-pointer" />
                 {optionsChangedCount > 0 && (
                   <span
-                    className="absolute -right-0.5 -top-0.5 block h-1 w-1 rounded-full bg-amber-400 ring-1 ring-amber-300 shadow-sm shadow-amber-300/50"
+                    className="absolute -right-0.5 -top-0.5 block size-1 rounded-full bg-amber-400 ring-1 ring-amber-300 shadow-sm shadow-amber-300/50"
                     aria-hidden="true"
                   />
                 )}
@@ -73,7 +73,7 @@ export const Lobby: React.FC = () => {
                 className="flex items-center gap-2 font-bold cursor-pointer"
                 data-testid="how-to-play-btn"
               >
-                <HelpCircle className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-ink-primary hover:text-ink-primary-accent" />
+                <HelpCircle className="size-5 sm:size-5.5 text-ink-primary hover:text-ink-primary-accent" />
               </button>
               <span className="bg-stone-700 text-stone-300 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full">
                 {players.length < MAX_PLAYERS ? (
@@ -103,7 +103,7 @@ export const Lobby: React.FC = () => {
 
             {players.length < MIN_PLAYERS && (
               <div className="p-4 rounded-xl border border-dashed border-stone-600 bg-stone-800/50 text-center flex flex-col items-center gap-2">
-                <Loader2 className="w-6 h-6 text-stone-500 animate-spin" />
+                <Loader2 className="size-6 text-stone-500 animate-spin" />
                 <p className="text-stone-400">{t("lobby.waitingPlayers")}</p>
                 <p className="text-xs text-stone-500">
                   {t("lobby.needMore", { min: MIN_PLAYERS })}

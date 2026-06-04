@@ -45,7 +45,7 @@ export const KickPlayerModal: React.FC<KickPlayerModalProps> = ({
       onClose={onClose}
       closeLabel={t("canvas.cancel", "Cancel")}
       title={t("canvas.kickTitle", "Vote to Kick Player")}
-      icon={<UserMinus className="w-5 h-5 text-red-400" />}
+      icon={<UserMinus className="size-5 text-red-400" />}
     >
       <div className="space-y-6">
         <p className="text-stone-300 text-lg">

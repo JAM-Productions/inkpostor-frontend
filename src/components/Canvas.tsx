@@ -256,7 +256,7 @@ export const Canvas: React.FC = () => {
         <div className="flex items-center justify-between bg-stone-800 p-3 sm:p-4 rounded-2xl border border-stone-700 shadow-xl">
           <div className="flex items-center gap-3">
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${getPlayerColorClass(currentTurnPlayerId, hostId, players)} ${isMyTurn ? "ring-4 ring-ink-primary/30" : ""}`}
+              className={`size-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${getPlayerColorClass(currentTurnPlayerId, hostId, players)} ${isMyTurn ? "ring-4 ring-ink-primary/30" : ""}`}
             >
               {activePlayer?.name.charAt(0) || "?"}
             </div>
@@ -283,7 +283,7 @@ export const Canvas: React.FC = () => {
                     }`}
                     aria-label="Players list"
                   >
-                    <Users className="w-5 h-5" />
+                    <Users className="size-5" />
                     <span className="hidden sm:inline">
                       {t("canvas.players", "Players")}
                     </span>
@@ -312,7 +312,7 @@ export const Canvas: React.FC = () => {
                             }`}
                           >
                             <div
-                              className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-bold uppercase shadow-sm ${
+                              className={`size-8 shrink-0 rounded-full flex items-center justify-center text-xs font-bold uppercase shadow-sm ${
                                 player.id === currentTurnPlayerId
                                   ? "bg-ink-primary text-white"
                                   : "bg-stone-600 text-stone-300"
@@ -325,14 +325,14 @@ export const Canvas: React.FC = () => {
                             </span>
                             {player.id !== myId && !player.isEjected && (
                               <div
-                                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                className={`size-6 rounded-full border-2 flex items-center justify-center transition-colors ${
                                   player.isSuspected
                                     ? "border-red-500 bg-red-500/20 text-red-500"
                                     : "border-stone-600 text-transparent group-hover:border-stone-400"
                                 }`}
                               >
                                 {player.isSuspected && (
-                                  <Search className="w-3 h-3" />
+                                  <Search className="size-3" />
                                 )}
                               </div>
                             )}
@@ -355,7 +355,7 @@ export const Canvas: React.FC = () => {
               className={`flex flex-col items-end ${isMyTurn ? "hidden sm:flex" : "block sm:flex"}`}
             >
               <p className="text-xs text-stone-400 font-semibold uppercase mb-1 flex items-center gap-1">
-                <Clock className="w-3 h-3" /> {t("canvas.time")}
+                <Clock className="size-3" /> {t("canvas.time")}
               </p>
               <div className="text-2xl font-black text-white px-3 py-1 bg-stone-900 rounded-lg min-w-[80px] text-right tabular-nums">
                 {(timeLeft / 1000).toFixed(1)}s
@@ -367,7 +367,7 @@ export const Canvas: React.FC = () => {
                 onClick={() => actions.endTurn()}
                 className="bg-ink-secondary hover:bg-white text-black px-5 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-ink-secondary/20 cursor-pointer flex items-center gap-2"
               >
-                <CheckSquare className="w-5 h-5" />
+                <CheckSquare className="size-5" />
                 <span>{t("canvas.done")}</span>
               </button>
             )}
@@ -404,7 +404,7 @@ export const Canvas: React.FC = () => {
           <div
             className={`absolute top-2.5 right-2.5 bg-stone-900/80 backdrop-blur-md rounded-xl p-2 border border-stone-700 shadow-xl pointer-events-none flex items-center gap-2 ${isMyTurn ? "sm:hidden" : "hidden"}`}
           >
-            <Clock className="w-4 h-4 text-emerald-400" />
+            <Clock className="size-4 text-emerald-400" />
             <span className="text-xl font-black text-white tabular-nums text-right min-w-[44px]">
               {(timeLeft / 1000).toFixed(1)}
             </span>
@@ -426,7 +426,7 @@ export const Canvas: React.FC = () => {
                     <button
                       key={c}
                       onClick={() => setColor(c)}
-                      className={`w-10 h-10 shrink-0 rounded-full transition-transform border-[3px] ${color === c ? "scale-105 shadow-lg" : "scale-90 opacity-80 hover:opacity-100"} cursor-pointer active:scale-95`}
+                      className={`size-10 shrink-0 rounded-full transition-transform border-[3px] ${color === c ? "scale-105 shadow-lg" : "scale-90 opacity-80 hover:opacity-100"} cursor-pointer active:scale-95`}
                       style={{
                         backgroundColor: c,
                         borderColor: color === c ? "white" : "transparent",
@@ -440,21 +440,21 @@ export const Canvas: React.FC = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={undoLastStroke}
-                    className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
+                    className="mt-0.5 size-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                     title={t("canvas.undo")}
                     aria-label="Undo last stroke"
                   >
-                    <Undo className="w-5 h-5" />
+                    <Undo className="size-5" />
                   </button>
 
                   {!hasUnlimitedInk && (
                     <button
                       onClick={() => setIsCompressed(true)}
-                      className="mt-0.5 w-10 h-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
+                      className="mt-0.5 size-10 rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                       title={t("canvas.compress")}
                       aria-label="Compress toolbar"
                     >
-                      <Minimize2 className="w-5 h-5" />
+                      <Minimize2 className="size-5" />
                     </button>
                   )}
                 </div>
@@ -496,20 +496,20 @@ export const Canvas: React.FC = () => {
                 <div className="flex gap-2 shrink-0">
                   <button
                     onClick={undoLastStroke}
-                    className="w-10 h-10 rounded-xl cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
+                    className="size-10 rounded-xl cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                     title={t("canvas.undo")}
                     aria-label="Undo last stroke"
                   >
-                    <Undo className="w-5 h-5" />
+                    <Undo className="size-5" />
                   </button>
 
                   <button
                     onClick={() => setIsCompressed(false)}
-                    className="w-10 h-10 rounded-xl cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
+                    className="size-10 rounded-xl cursor-pointer bg-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-600 transition-colors active:scale-95"
                     title={t("canvas.expand")}
                     aria-label="Expand toolbar"
                   >
-                    <Maximize2 className="w-5 h-5" />
+                    <Maximize2 className="size-5" />
                   </button>
                 </div>
               )}

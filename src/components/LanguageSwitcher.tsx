@@ -44,10 +44,10 @@ export function LanguageSwitcher() {
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
-        <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-ink-primary" />
+        <Globe className="size-3.5 sm:size-4 text-ink-primary" />
         <span className="font-medium">{currentLanguage.label}</span>
         <ChevronDown
-          className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-400 transition-transform duration-200 ${
+          className={`size-3.5 sm:size-4 text-stone-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
           }`}
         />
@@ -73,7 +73,7 @@ export function LanguageSwitcher() {
               >
                 <span>{lang.label}</span>
                 {i18n.language === lang.code && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-ink-primary" />
+                  <div className="size-1.5 rounded-full bg-ink-primary" />
                 )}
               </button>
             ))}

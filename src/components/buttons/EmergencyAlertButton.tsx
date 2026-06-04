@@ -26,7 +26,7 @@ export const EmergencyAlertButton = () => {
         aria-label="Alert"
         disabled={isDisabled}
       >
-        <TriangleAlert className="w-5 h-5" />
+        <TriangleAlert className="size-5" />
       </button>
 
       {isOpen && (

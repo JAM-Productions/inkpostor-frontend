@@ -26,7 +26,7 @@ export const RoleReveal: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-950 relative overflow-hidden">
       {/* Background ambient light */}
       <div
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 blur-[120px] rounded-full opacity-20 pointer-events-none transition-colors duration-1000 ${revealed ? (amIImpostor ? "bg-red-500" : "bg-emerald-500") : "bg-blue-500"}`}
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[120px] rounded-full opacity-20 pointer-events-none transition-colors duration-1000 ${revealed ? (amIImpostor ? "bg-red-500" : "bg-emerald-500") : "bg-blue-500"}`}
       />
 
       <div className="z-10 max-w-md w-full text-center space-y-8">
@@ -103,7 +103,7 @@ export const RoleReveal: React.FC = () => {
               </div>
             ) : (
               <div className="flex flex-col items-center text-stone-400 gap-4 transition-transform group-hover:scale-105">
-                <Eye className="w-12 h-12" />
+                <Eye className="size-12" />
                 <span className="text-lg font-medium">
                   {t("roleReveal.pressHold")}
                 </span>
@@ -119,14 +119,14 @@ export const RoleReveal: React.FC = () => {
                 onClick={actions.proceedToDrawing}
                 className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-all hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
               >
-                <Brush className="w-5 h-5" />
+                <Brush className="size-5" />
                 {t("roleReveal.startDrawing")}
               </button>
             ) : (
               <div className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in">
-                <span className="relative flex h-2 w-2 sm:h-3 sm:w-3">
+                <span className="relative flex size-2 sm:size-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 sm:h-3 sm:w-3 bg-stone-500"></span>
+                  <span className="relative inline-flex rounded-full size-2 sm:size-3 bg-stone-500"></span>
                 </span>
                 {t("roleReveal.waitingPlayers", {
                   count: players.filter((p) => p.hasRevealedRole).length,

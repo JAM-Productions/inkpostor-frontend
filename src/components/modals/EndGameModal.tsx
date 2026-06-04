@@ -23,7 +23,7 @@ export const EndGameModal: React.FC<EndGameModalProps> = ({
       id="end-game"
       title={t("endGame.title")}
       closeLabel={t("endGame.closeDialog")}
-      icon={<HelpCircle className="w-6 h-6 text-ink-primary" />}
+      icon={<HelpCircle className="size-6 text-ink-primary" />}
       footer={
         <button
           data-testid="confirm-end-game-button"

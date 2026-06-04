@@ -101,7 +101,7 @@ export const JoinScreen: React.FC = () => {
                   disabled={!playerName || isCheckingHealth}
                   className="w-full relative group overflow-hidden rounded-xl bg-ink-primary px-4 py-3 font-semibold text-white transition-all hover:bg-ink-primary-accent active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Users className="w-5 h-5" />
+                  <Users className="size-5" />
                   <span>{t("join.createGame")}</span>
                 </button>
               </div>
@@ -153,7 +153,7 @@ export const JoinScreen: React.FC = () => {
       <div className="flex items-center justify-center animate-fade-in animate-delay-600 min-h-10">
         {isCheckingHealth && (
           <div className="flex items-center gap-2 mt-2.5">
-            <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+            <div className="size-2 bg-yellow-400 rounded-full animate-pulse"></div>
             <span className="text-sm text-stone-400">
               {t("join.checkingService")}
             </span>

@@ -58,7 +58,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
       id="options"
       title={t("options.title")}
       closeLabel={t("options.closeDialog")}
-      icon={<Settings className="w-6 h-6 text-ink-primary" />}
+      icon={<Settings className="size-6 text-ink-primary" />}
       footer={
         isHost && (
           <button
@@ -82,7 +82,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
         <section className="rounded-2xl border border-stone-800 bg-stone-800/40 p-4 sm:p-5">
           <div className="flex gap-3">
             <div className="rounded-xl bg-blue-500/10 p-2 text-blue-400 h-fit">
-              <Clock3 className="h-5 w-5" />
+              <Clock3 className="size-5" />
             </div>
             <div className="w-full">
               <h3 className="text-sm font-bold uppercase tracking-wider text-white">
@@ -115,14 +115,14 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                       >
                         <span>{option.label}</span>
                         <span
-                          className={`flex h-5 w-5 items-center justify-center rounded-full border ${
+                          className={`flex size-5 items-center justify-center rounded-full border ${
                             isSelected
                               ? "border-ink-primary bg-ink-primary/20"
                               : "border-stone-600"
                           }`}
                         >
                           {isSelected && (
-                            <Check className="h-3.5 w-3.5 text-ink-primary" />
+                            <Check className="size-3.5 text-ink-primary" />
                           )}
                         </span>
                       </button>
@@ -132,8 +132,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               ) : (
                 <div className="mt-4 flex items-center justify-between rounded-2xl border border-stone-700 bg-stone-900 px-4 py-3 text-white">
                   <span>{selectedRoundTime.label}</span>
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full border border-ink-primary bg-ink-primary/20">
-                    <Check className="h-3.5 w-3.5 text-ink-primary" />
+                  <span className="flex size-5 items-center justify-center rounded-full border border-ink-primary bg-ink-primary/20">
+                    <Check className="size-3.5 text-ink-primary" />
                   </span>
                 </div>
               )}
@@ -145,7 +145,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
           <div className="flex items-center justify-between gap-4">
             <div className="flex gap-3 justify-center items-center">
               <div className="rounded-xl bg-emerald-500/10 p-2 text-emerald-400 h-fit">
-                <Droplets className="h-5 w-5" />
+                <Droplets className="size-5" />
               </div>
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-white">
@@ -171,7 +171,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               aria-label={t("options.limitInk.toggle")}
             >
               <span
-                className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-sm transition-transform ${
+              className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
                   displayedUnlimitedInk ? "translate-x-7" : "translate-x-1"
                 }`}
               />
@@ -183,7 +183,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
           <div className="flex items-center justify-between gap-4">
             <div className="flex gap-3 justify-center items-center">
               <div className="rounded-xl bg-amber-500/10 p-2 text-amber-400 h-fit">
-                <Eraser className="h-5 w-5" />
+                <Eraser className="size-5" />
               </div>
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-white">
@@ -209,7 +209,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               aria-label={t("options.clearCanvas.toggle")}
             >
               <span
-                className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-sm transition-transform ${
+              className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
                   displayedClearCanvasEachRound
                     ? "translate-x-7"
                     : "translate-x-1"
