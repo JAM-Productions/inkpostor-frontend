@@ -38,7 +38,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
     >
       <div className="flex items-center gap-3">
         <div
-          className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerColorClass(player.id, hostId, players)}`}
+          className={`size-8 sm:size-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerColorClass(player.id, hostId, players)}`}
         >
           {player.name.charAt(0).toUpperCase()}
         </div>
@@ -51,7 +51,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
 
       {player.id === hostId && (
         <div className="flex items-center text-amber-500 gap-1 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
-          <Crown className="w-4 h-4" />
+          <Crown className="size-4" />
           <span className="text-xs font-bold uppercase tracking-wider">
             {t("lobby.host")}
           </span>
@@ -65,35 +65,35 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
               <button
                 type="button"
                 onClick={handleKickConfirm}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-green-500/40 bg-green-500/10 text-green-400 transition-colors hover:bg-green-500/20 cursor-pointer animate-fade-in-left animate-duration-fast"
+                className="inline-flex size-8 items-center justify-center rounded-full border border-green-500/40 bg-green-500/10 text-green-400 transition-colors hover:bg-green-500/20 cursor-pointer animate-fade-in-left animate-duration-fast"
                 aria-label={t("lobby.confirmKickAria", {
                   name: player.name,
                 })}
               >
-                <Check className="w-4 h-4" />
+                <Check className="size-4" />
               </button>
               <button
                 type="button"
                 onClick={() => setIsPendingKick(false)}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-red-500/40 bg-red-500/10 text-red-400 transition-colors hover:bg-red-500/20 cursor-pointer"
+                className="inline-flex size-8 items-center justify-center rounded-full border border-red-500/40 bg-red-500/10 text-red-400 transition-colors hover:bg-red-500/20 cursor-pointer"
                 aria-label={t("lobby.cancelKickAria", {
                   name: player.name,
                 })}
               >
-                <X className="w-4 h-4" />
+                <X className="size-4" />
               </button>
             </div>
           ) : (
             <button
               type="button"
               onClick={() => setIsPendingKick(true)}
-              className="group relative inline-flex h-8 w-8 items-center justify-center rounded-full border border-stone-600 bg-stone-800 text-stone-400 transition-colors hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 cursor-pointer"
+              className="group relative inline-flex size-8 items-center justify-center rounded-full border border-stone-600 bg-stone-800 text-stone-400 transition-colors hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 cursor-pointer"
               aria-label={t("lobby.kickPlayerAria", {
                 name: player.name,
               })}
             >
-              <Minus className="h-3 w-3 transition-opacity group-hover:opacity-0" />
-              <UserMinus className="absolute h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
+              <Minus className="size-3 transition-opacity group-hover:opacity-0" />
+              <UserMinus className="absolute size-4 opacity-0 transition-opacity group-hover:opacity-100" />
             </button>
           )}
         </div>

@@ -84,7 +84,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
             aria-label={closeLabel}
             data-testid="close-modal-button"
           >
-            <X className="w-6 h-6" />
+            <X className="size-6" />
           </button>
         </div>
 

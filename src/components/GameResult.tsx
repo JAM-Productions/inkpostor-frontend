@@ -55,7 +55,7 @@ export const GameResult: React.FC = () => {
                 />
               )
             ) : (
-              <CircleQuestionMark className="sm:w-16 sm:h-16 w-14 h-14 text-stone-400" />
+              <CircleQuestionMark className="sm:size-16 size-14 text-stone-400" />
             )}
           </div>
 
@@ -134,7 +134,7 @@ export const GameResult: React.FC = () => {
             <div
               className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 `}
             >
-              <Play className="fill-current w-5 h-5" />
+              <Play className="fill-current size-5" />
               <span className="sm:text-xl text-lg font-extrabold uppercase">
                 {t("result.nextRound")}
               </span>
@@ -145,9 +145,9 @@ export const GameResult: React.FC = () => {
             className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in"
             style={{ minHeight: "3.5rem" }}
           >
-            <span className="relative flex h-2 w-2 sm:h-3 sm:w-3">
+            <span className="relative flex size-2 sm:size-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 sm:h-3 sm:w-3 bg-stone-500"></span>
+              <span className="relative inline-flex rounded-full size-2 sm:size-3 bg-stone-500"></span>
             </span>
             {t("result.waitingPlayers", {
               count: players.filter(
@@ -165,7 +165,7 @@ export const GameResult: React.FC = () => {
           className="mt-6 px-6 py-2.5 rounded-xl border border-stone-800 text-stone-400 hover:text-white hover:bg-stone-900 transition-all cursor-pointer font-semibold text-sm flex items-center justify-center gap-2 mx-auto shadow-sm active:scale-95"
           data-testid="return-home-button"
         >
-          <Home className="w-4 h-4 text-stone-400" />
+          <Home className="size-4 text-stone-400" />
           {t("result.returnToHome")}
         </button>
       </div>

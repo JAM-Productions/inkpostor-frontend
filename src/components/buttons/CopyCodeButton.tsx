@@ -41,13 +41,13 @@ export const CopyCodeButton: React.FC<CopyCodeButtonProps> = ({ roomId }) => {
       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider">
         {copied ? (
           <>
-            <Check className="w-3 h-3 text-green-400" />
+            <Check className="size-3 text-green-400" />
             <span className="text-green-400">{t("lobby.copied")}</span>
           </>
         ) : (
           <>
             <Copy
-              className={`w-3 h-3 ${
+              className={`size-3 ${
                 hasRoomId
                   ? "text-stone-500 group-hover:text-stone-400"
                   : "text-stone-600"

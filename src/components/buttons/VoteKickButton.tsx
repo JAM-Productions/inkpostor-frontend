@@ -56,7 +56,7 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
         defaultValue: "Vote to Kick {{name}}",
       })}
     >
-      <UserMinus className="w-4 h-4" />
+      <UserMinus className="size-4" />
       <span className="text-xs font-bold font-mono">
         {kickVotes[player.id]?.length || 0}/{requiredVotes}
       </span>

@@ -31,14 +31,14 @@ export const CopyLinkButton: React.FC<CopyLinkButtonProps> = ({ roomId }) => {
     >
       {copiedLink ? (
         <>
-          <Check className="w-4 h-4 text-green-400" />
+          <Check className="size-4 text-green-400" />
           <span className="text-green-400 text-xs font-semibold uppercase tracking-wider">
             {t("lobby.copied")}
           </span>
         </>
       ) : (
         <>
-          <LinkIcon className="w-4 h-4 text-stone-400 group-hover:text-stone-300" />
+          <LinkIcon className="size-4 text-stone-400 group-hover:text-stone-300" />
           <span className="text-stone-400 group-hover:text-stone-300 text-xs font-semibold uppercase tracking-wider">
             {t("lobby.copyLink")}
           </span>
