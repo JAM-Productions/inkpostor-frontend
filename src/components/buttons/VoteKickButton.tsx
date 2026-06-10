@@ -21,8 +21,8 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
   const actions = useGameStore((state) => state.actions);
   const openModal = useModalStore((state) => state.actions.openModal);
 
-  // If the player is ourselves or already ejected, don't show the button
-  if (player.id === myId || player.isEjected) return null;
+  // If the player is ourselves, don't show the button
+  if (player.id === myId) return null;
 
   const hasVoted = kickVotes[player.id]?.includes(myId || "");
 

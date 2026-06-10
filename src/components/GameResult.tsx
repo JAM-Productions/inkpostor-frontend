@@ -129,7 +129,7 @@ export const GameResult: React.FC = () => {
           <button
             type="button"
             onClick={actions.nextRound}
-            className="w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-secondary hover:bg-white text-black"
+            className="w-full min-h-14 cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-secondary hover:bg-white text-black"
           >
             <div
               className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 `}
@@ -143,7 +143,7 @@ export const GameResult: React.FC = () => {
         ) : (
           <div
             className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in"
-            style={{ minHeight: "3.5rem" }}
+            style={{ minHeight: "5rem" }}
           >
             <span className="relative flex size-2 sm:size-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
@@ -151,9 +151,9 @@ export const GameResult: React.FC = () => {
             </span>
             {t("result.waitingPlayers", {
               count: players.filter(
-                (p) => p.hasConfirmedNewRound && !p.isEjected,
+                (p) => p.hasConfirmedNewRound && !p.isEjected && p.isConnected,
               ).length,
-              total: players.filter((p) => !p.isEjected).length,
+              total: players.filter((p) => !p.isEjected && p.isConnected).length,
             })}
           </div>
         )}

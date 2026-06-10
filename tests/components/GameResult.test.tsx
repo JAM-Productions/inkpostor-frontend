@@ -228,9 +228,9 @@ describe("GameResult", () => {
         gameEnded: false,
         ejectedId: null,
         players: [
-          { id: "socket-123", name: "Host", hasConfirmedNewRound: true },
-          { id: "socket-456", name: "Impostor", hasConfirmedNewRound: false },
-          { id: "socket-789", name: "Player 3", hasConfirmedNewRound: false },
+          { id: "socket-123", name: "Host", hasConfirmedNewRound: true, isEjected: false, isConnected: true },
+          { id: "socket-456", name: "Impostor", hasConfirmedNewRound: false, isEjected: false, isConnected: true },
+          { id: "socket-789", name: "Player 3", hasConfirmedNewRound: false, isEjected: false, isConnected: true },
         ],
       };
       return selector(state);

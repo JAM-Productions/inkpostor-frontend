@@ -62,18 +62,6 @@ describe("VoteKickButton", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("does not render if player is ejected", () => {
-    const { container } = render(
-      <VoteKickButton
-        player={{ id: "target-id", name: "Target", isEjected: true }}
-        requiredVotes={3}
-      />,
-    );
-
-    // Should return null
-    expect(container.firstChild).toBeNull();
-  });
-
   it("opens the modal when clicking and not previously voted", () => {
     const mockOnAction = vi.fn();
     render(

@@ -17,6 +17,8 @@ export const EmergencyAlertButton = () => {
   const isDisabled = me?.hasStartedEmergencyVoting;
 
   useClickOutside(dropdownRef, isOpen, setIsOpen);
+  
+  if (me?.isEjected) return null;
 
   return (
     <div className="relative" ref={dropdownRef}>
