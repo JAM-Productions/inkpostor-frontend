@@ -112,4 +112,3 @@ export const getPlayerVotingCardColorClass = (
 
   return getPlayerStyle(playerIndex).voting;
 };
-

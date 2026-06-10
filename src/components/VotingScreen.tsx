@@ -3,7 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { SkipForward, CheckCircle2, Search, Skull } from "lucide-react";
 import { VoteDotsPreview } from "./VoteDotsPreview";
-import { getPlayerIconColorClass, getPlayerVotingCardColorClass } from "../lib/playerColors";
+import {
+  getPlayerIconColorClass,
+  getPlayerVotingCardColorClass,
+} from "../lib/playerColors";
 
 export const VotingScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -65,55 +68,64 @@ export const VotingScreen: React.FC = () => {
         <div className="bg-stone-800 rounded-3xl p-6 border border-stone-700 shadow-xl ">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 overflow-y-auto px-2 py-2 max-h-[50vh] custom-scrollbar">
             {players.map((player, index) => (
-                <button
-                  type="button"
-                  key={player.id}
-                  onClick={() => setSelectedPlayer(player.id)}
-                  disabled={player.isEjected || hasBeenEjected || hasVoted || player.id === myId}
-                  className={`flex items-center gap-3 sm:p-4 p-3 rounded-xl border-2 transition-all duration-200 text-left animate-pulse-fade-in  ${
-                    player.id === myId
-                      ? getPlayerVotingCardColorClass(player.id, hostId, players) + " cursor-not-allowed"
-                      : player.isEjected
-                        ? "border-stone-800 bg-stone-950/70 opacity-45 grayscale cursor-not-allowed"
+              <button
+                type="button"
+                key={player.id}
+                onClick={() => setSelectedPlayer(player.id)}
+                disabled={
+                  player.isEjected ||
+                  hasBeenEjected ||
+                  hasVoted ||
+                  player.id === myId
+                }
+                className={`flex items-center gap-3 sm:p-4 p-3 rounded-xl border-2 transition-all duration-200 text-left animate-pulse-fade-in  ${
+                  player.id === myId
+                    ? getPlayerVotingCardColorClass(
+                        player.id,
+                        hostId,
+                        players,
+                      ) + " cursor-not-allowed"
+                    : player.isEjected
+                      ? "border-stone-800 bg-stone-950/70 opacity-45 grayscale cursor-not-allowed"
                       : effectiveSelectedPlayer === player.id
                         ? `border-ink-primary bg-ink-primary/10 scale-[1.02] ${hasVoted ? "cursor-not-allowed" : "cursor-pointer"} `
                         : hasVoted
                           ? "border-stone-700 bg-stone-900 cursor-not-allowed"
                           : "border-stone-700 bg-stone-900 hover:border-stone-500 cursor-pointer"
-                  }`}
-                  style={{ animationDelay: `${index * 100}ms` }}
+                }`}
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div
+                  className={`size-9 sm:size-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerIconColorClass(player.id, hostId, players)} ${player.isEjected ? "opacity-60" : ""}`}
                 >
-                  <div
-                    className={`size-9 sm:size-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerIconColorClass(player.id, hostId, players)} ${player.isEjected ? "opacity-60" : ""}`}
+                  {player.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex flex-col">
+                  <span
+                    className={`text-sm sm:text-lg font-semibold ${player.isEjected ? "text-stone-500 line-through" : effectiveSelectedPlayer === player.id ? "text-white" : "text-stone-300"}`}
                   >
-                    {player.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex flex-col">
-                    <span
-                      className={`text-sm sm:text-lg font-semibold ${player.isEjected ? "text-stone-500 line-through" : effectiveSelectedPlayer === player.id ? "text-white" : "text-stone-300"}`}
-                    >
-                      {player.name}
-                    </span>
-                    {player.isSuspected && (
-                      <span className="flex items-center gap-1 text-[10px] sm:text-xs font-bold text-red-500/75 uppercase tracking-tight">
-                        <Search className="size-3" />
-                        {t("canvas.suspect")}
-                      </span>
-                    )}
-                  </div>
-
-                  {player.isEjected && (
-                    <span className="flex items-center gap-1 text-stone-500 ml-auto">
-                      <Skull className="size-5" />
+                    {player.name}
+                  </span>
+                  {player.isSuspected && (
+                    <span className="flex items-center gap-1 text-[10px] sm:text-xs font-bold text-red-500/75 uppercase tracking-tight">
+                      <Search className="size-3" />
+                      {t("canvas.suspect")}
                     </span>
                   )}
-                  <VoteDotsPreview
-                    count={voteCounts[player.id] || 0}
-                    testId={`vote-dot-${player.id}`}
-                    isSelected={effectiveSelectedPlayer === player.id}
-                  />
-                </button>
-              ))}
+                </div>
+
+                {player.isEjected && (
+                  <span className="flex items-center gap-1 text-stone-500 ml-auto">
+                    <Skull className="size-5" />
+                  </span>
+                )}
+                <VoteDotsPreview
+                  count={voteCounts[player.id] || 0}
+                  testId={`vote-dot-${player.id}`}
+                  isSelected={effectiveSelectedPlayer === player.id}
+                />
+              </button>
+            ))}
           </div>
 
           <div className="mt-4 space-y-6">

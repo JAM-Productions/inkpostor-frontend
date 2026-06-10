@@ -49,20 +49,20 @@ export const Canvas: React.FC = () => {
   const players = useGameStore((state) => state.players);
   const actions = useGameStore((state) => state.actions);
 
-  const suspectedPlayers = players.filter((p) => p.id !== myId );
+  const suspectedPlayers = players.filter((p) => p.id !== myId);
 
   const isMyTurn = currentTurnPlayerId === myId;
   const activePlayer = players.find((p) => p.id === currentTurnPlayerId);
 
   const getRequiredVotes = (targetPlayer: Player) => {
     const activePlayers = players.filter((p) => p.isConnected);
-    
+
     if (!targetPlayer.isConnected) {
-     return activePlayers.length;
+      return activePlayers.length;
     }
 
     return Math.max(1, activePlayers.length - 1);
-  }
+  };
 
   // Resize canvas to match CSS layout
   useEffect(() => {
@@ -335,9 +335,11 @@ export const Canvas: React.FC = () => {
                             }`}
                           >
                             <div
-                              className={`size-8 shrink-0 rounded-full flex items-center justify-center text-xs font-bold uppercase shadow-sm ${player.id === currentTurnPlayerId ? "animate-pulse" : ""} ${
-                                getPlayerIconColorClass(player.id, hostId, players)
-                              }`}
+                              className={`size-8 shrink-0 rounded-full flex items-center justify-center text-xs font-bold uppercase shadow-sm ${player.id === currentTurnPlayerId ? "animate-pulse" : ""} ${getPlayerIconColorClass(
+                                player.id,
+                                hostId,
+                                players,
+                              )}`}
                             >
                               {player.name.charAt(0)}
                             </div>

@@ -153,7 +153,8 @@ export const GameResult: React.FC = () => {
               count: players.filter(
                 (p) => p.hasConfirmedNewRound && !p.isEjected && p.isConnected,
               ).length,
-              total: players.filter((p) => !p.isEjected && p.isConnected).length,
+              total: players.filter((p) => !p.isEjected && p.isConnected)
+                .length,
             })}
           </div>
         )}
