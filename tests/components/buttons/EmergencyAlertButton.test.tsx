@@ -114,9 +114,7 @@ describe("EmergencyAlertButton", () => {
   it("does not render if the player is ejected", () => {
     mockStore({
       players: mockStateBase.players.map((player) =>
-        player.id === "socket-456"
-          ? { ...player, isEjected: true }
-          : player,
+        player.id === "socket-456" ? { ...player, isEjected: true } : player,
       ),
     });
 
