@@ -196,7 +196,9 @@ export const VotingScreen: React.FC = () => {
                   </div>
                   <p className="text-xs text-stone-500 font-medium">
                     {t("voting.votesRecorded", {
-                      count: Object.keys(votes).length,
+                      count: players.filter(
+                        (p) => p.hasVoted && !p.isEjected && p.isConnected,
+                      ).length,
                       total: playersRemaining.length,
                     })}
                   </p>

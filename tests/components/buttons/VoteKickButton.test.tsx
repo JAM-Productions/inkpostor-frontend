@@ -23,6 +23,11 @@ describe("VoteKickButton", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         myId: "my-id",
+        players: [
+          { id: "my-id", name: "Me", isConnected: true },
+          { id: "another-id", name: "Another", isConnected: true },
+          { id: "target-id", name: "Target", isConnected: true },
+        ],
         kickVotes: {},
         actions: {
           voteKickPlayer: mockVoteKickPlayer,
@@ -86,6 +91,11 @@ describe("VoteKickButton", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         myId: "my-id",
+        players: [
+          { id: "my-id", name: "Me", isConnected: true },
+          { id: "another-id", name: "Another", isConnected: true },
+          { id: "target-id", name: "Target", isConnected: true },
+        ],
         kickVotes: { "target-id": ["my-id", "another-id"] },
         actions: {
           voteKickPlayer: mockVoteKickPlayer,
@@ -111,5 +121,34 @@ describe("VoteKickButton", () => {
     expect(mockOnAction).toHaveBeenCalled();
     expect(mockVoteKickPlayer).toHaveBeenCalledWith("target-id");
     expect(mockOpenModal).not.toHaveBeenCalled();
+  });
+
+  it("only counts votes from connected players", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        myId: "my-id",
+        players: [
+          { id: "my-id", name: "Me", isConnected: true },
+          { id: "p2", name: "Player 2", isConnected: false },
+          { id: "p3", name: "Player 3", isConnected: true },
+          { id: "target-id", name: "Target", isConnected: true },
+        ],
+        kickVotes: { "target-id": ["p2", "p3"] },
+        actions: {
+          voteKickPlayer: mockVoteKickPlayer,
+        },
+      };
+      return selector(state);
+    });
+
+    render(
+      <VoteKickButton
+        player={{ id: "target-id", name: "Target" }}
+        requiredVotes={4}
+      />,
+    );
+
+    // Should show 1/4 votes since p2 is disconnected
+    expect(screen.getByText("1/4")).toBeInTheDocument();
   });
 });

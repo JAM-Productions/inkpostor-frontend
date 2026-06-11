@@ -20,11 +20,19 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
   const kickVotes = useGameStore((state) => state.kickVotes);
   const actions = useGameStore((state) => state.actions);
   const openModal = useModalStore((state) => state.actions.openModal);
+  const players = useGameStore((state) => state.players);
 
   // If the player is ourselves, don't show the button
   if (player.id === myId) return null;
 
   const hasVoted = kickVotes[player.id]?.includes(myId || "");
+
+  const activeKickVotesCount = (kickVotes[player.id] || []).filter(
+    (voterId) => {
+      const voter = players.find((p) => p.id === voterId);
+      return voter?.isConnected;
+    },
+  ).length;
 
   const handleClick = () => {
     if (onAction) onAction();
@@ -58,7 +66,7 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
     >
       <UserMinus className="size-4" />
       <span className="text-xs font-bold font-mono">
-        {kickVotes[player.id]?.length || 0}/{requiredVotes}
+        {activeKickVotesCount}/{requiredVotes}
       </span>
     </button>
   );
