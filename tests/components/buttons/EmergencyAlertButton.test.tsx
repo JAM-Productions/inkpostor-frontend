@@ -110,4 +110,18 @@ describe("EmergencyAlertButton", () => {
     ).not.toBeInTheDocument();
     expect(mockStartEmergencyVoting).not.toHaveBeenCalled();
   });
+
+  it("does not render if the player is ejected", () => {
+    mockStore({
+      players: mockStateBase.players.map((player) =>
+        player.id === "socket-456"
+          ? { ...player, isEjected: true }
+          : player,
+      ),
+    });
+
+    const { container } = render(<EmergencyAlertButton />);
+
+    expect(container.firstChild).toBeNull();
+  });
 });
