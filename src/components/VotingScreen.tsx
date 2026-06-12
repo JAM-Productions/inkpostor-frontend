@@ -177,7 +177,7 @@ export const VotingScreen: React.FC = () => {
               <div className="w-full flex-col text-center flex items-center justify-center space-y-4 py-4 bg-stone-900/50 rounded-2xl border border-stone-700/50">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="size-6 text-emerald-500" />
-                  <h2 className="text-xl font-bold text-white">
+                  <h2 className="text-xl font-semibold text-white">
                     {t("voting.voteCast")}
                   </h2>
                 </div>

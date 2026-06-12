@@ -42,7 +42,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-ink-primary">
           <Target className="size-5" />
-          <h3 className="font-bold uppercase tracking-wider text-sm">
+          <h3 className="font-semibold uppercase tracking-wider text-sm">
             {t("rules.objective.title")}
           </h3>
         </div>
@@ -55,7 +55,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-amber-500">
           <Settings className="size-5" />
-          <h3 className="font-bold uppercase tracking-wider text-sm">
+          <h3 className="font-semibold uppercase tracking-wider text-sm">
             {t("rules.setup.title")}
           </h3>
         </div>
@@ -79,7 +79,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-blue-500">
           <PenTool className="size-5" />
-          <h3 className="font-bold uppercase tracking-wider text-sm">
+          <h3 className="font-semibold uppercase tracking-wider text-sm">
             {t("rules.drawing.title")}
           </h3>
         </div>
@@ -103,7 +103,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-purple-500">
           <Search className="size-5" />
-          <h3 className="font-bold uppercase tracking-wider text-sm">
+          <h3 className="font-semibold uppercase tracking-wider text-sm">
             {t("rules.observe.title")}
           </h3>
         </div>
@@ -123,7 +123,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-orange-500">
           <Vote className="size-5" />
-          <h3 className="font-bold uppercase tracking-wider text-sm">
+          <h3 className="font-semibold uppercase tracking-wider text-sm">
             {t("rules.voting.title")}
           </h3>
         </div>
@@ -146,7 +146,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-green-500">
           <Trophy className="size-5" />
-          <h3 className="font-bold uppercase tracking-wider text-sm">
+          <h3 className="font-semibold uppercase tracking-wider text-sm">
             {t("rules.end.title")}
           </h3>
         </div>
@@ -168,7 +168,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           <Lightbulb className="size-5 text-yellow-500" />
         </div>
         <div>
-          <h4 className="font-bold text-white text-sm mb-1">
+          <h4 className="font-semibold text-white text-sm mb-1">
             {t("rules.tip.title")}
           </h4>
           <p className="text-stone-400 text-sm italic">

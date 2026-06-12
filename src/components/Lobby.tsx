@@ -45,7 +45,7 @@ export const Lobby: React.FC = () => {
         <div className="bg-stone-800 rounded-3xl p-6 shadow-xl border border-stone-700 flex flex-col max-h-[70vh]">
           <div className="flex items-center justify-between mb-6">
             <div className="flex justify-center items-center gap-4">
-              <h3 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
                 <Users className="text-ink-secondary size-5 sm:size-6" />
                 {t("lobby.players")}
               </h3>

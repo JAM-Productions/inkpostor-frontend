@@ -34,7 +34,7 @@ export const RoleReveal: React.FC = () => {
           <h2 className="text-xl font-medium text-stone-400">
             {t("roleReveal.phase1")}
           </h2>
-          <h1 className="text-4xl font-black text-white tracking-tight">
+          <h1 className="text-4xl font-semibold text-white tracking-tight">
             {t("roleReveal.yourSecretRole")}
           </h1>
         </div>
@@ -65,7 +65,7 @@ export const RoleReveal: React.FC = () => {
                       alt="Inkpostor Logo"
                       className="h-20"
                     />
-                    <h3 className="text-3xl font-black text-white tracking-widest uppercase">
+                    <h3 className="text-3xl font-semibold text-white tracking-widest uppercase">
                       {t("roleReveal.youAreInkpostor")} <br />
                       <span className="text-red-500">
                         {t("roleReveal.inkpostor")}
@@ -89,7 +89,7 @@ export const RoleReveal: React.FC = () => {
                     <p className="text-emerald-200/80 font-medium mb-0 uppercase tracking-widest text-sm">
                       {t("roleReveal.theWordIs")}
                     </p>
-                    <h3 className="text-4xl font-black text-white">
+                    <h3 className="text-4xl font-semibold text-white">
                       {secretWord ? t(`words.${secretWord}`) : ""}
                     </h3>
                     <p className="text-emerald-400  font-medium px-4 py-1 bg-emerald-900/50 rounded-full border border-emerald-500/30 text-sm">
