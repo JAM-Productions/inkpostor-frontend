@@ -1,8 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { getPlayerColorClass } from "../src/lib/playerColors";
+import {
+  getActivePlayerCardColorClass,
+  getPlayerIconColorClass,
+  getPlayerVotingCardColorClass,
+} from "../src/lib/playerColors";
 import type { Player } from "../src/store/gameState";
 
-describe("getPlayerColorClass", () => {
+describe("getPlayerIconColorClass", () => {
   const players: Player[] = Array.from({ length: 11 }, (_, i) => ({
     id: `${i + 1}`,
     name: `Player ${i + 1}`,
@@ -14,7 +18,7 @@ describe("getPlayerColorClass", () => {
   const hostId = "1";
 
   it("should return host color for the host", () => {
-    const color = getPlayerColorClass(hostId, hostId, players);
+    const color = getPlayerIconColorClass(hostId, hostId, players);
     expect(color).toContain("bg-linear-to-br from-amber-400 to-orange-500");
   });
 
@@ -22,7 +26,7 @@ describe("getPlayerColorClass", () => {
     const colors = new Set();
     // Host is at index 0 (id: "1"), so we check players from index 1 to 10
     for (let i = 1; i <= 10; i++) {
-      const color = getPlayerColorClass(players[i].id, hostId, players);
+      const color = getPlayerIconColorClass(players[i].id, hostId, players);
       expect(color).toContain("bg-");
       colors.add(color);
     }
@@ -36,18 +40,30 @@ describe("getPlayerColorClass", () => {
   });
 
   it("should return consistent color for the same player", () => {
-    const color1 = getPlayerColorClass("2", hostId, players);
-    const color2 = getPlayerColorClass("2", hostId, players);
+    const color1 = getPlayerIconColorClass("2", hostId, players);
+    const color2 = getPlayerIconColorClass("2", hostId, players);
     expect(color1).toBe(color2);
   });
 
   it("should handle null playerId", () => {
-    const color = getPlayerColorClass(null, hostId, players);
+    const color = getPlayerIconColorClass(null, hostId, players);
     expect(color).toBe("bg-stone-600 text-stone-300");
   });
 
   it("should handle player not in list", () => {
-    const color = getPlayerColorClass("99", hostId, players);
+    const color = getPlayerIconColorClass("99", hostId, players);
     expect(color).toBe("bg-stone-700 text-stone-300");
+  });
+
+  it("should return explicit border and background classes for active cards", () => {
+    const color = getActivePlayerCardColorClass("2", hostId, players);
+    expect(color).toContain("bg-emerald-500/20");
+    expect(color).toContain("border-emerald-500/40");
+  });
+
+  it("should return explicit border and background classes for voting cards", () => {
+    const color = getPlayerVotingCardColorClass("2", hostId, players);
+    expect(color).toContain("bg-emerald-500/20");
+    expect(color).toContain("border-emerald-500/40");
   });
 });

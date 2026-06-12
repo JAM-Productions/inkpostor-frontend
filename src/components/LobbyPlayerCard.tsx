@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Check, Crown, Minus, UserMinus, X } from "lucide-react";
-import { getPlayerColorClass } from "../lib/playerColors";
+import { getPlayerIconColorClass } from "../lib/playerColors";
 import { useGameStore, type Player } from "../store/gameState";
 import { useClickOutside } from "../hooks/useClickOutside";
 
@@ -38,7 +38,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
     >
       <div className="flex items-center gap-3">
         <div
-          className={`size-8 sm:size-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerColorClass(player.id, hostId, players)}`}
+          className={`size-8 sm:size-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerIconColorClass(player.id, hostId, players)}`}
         >
           {player.name.charAt(0).toUpperCase()}
         </div>

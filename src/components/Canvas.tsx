@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useGameStore } from "../store/gameState";
+import { useGameStore, type Player } from "../store/gameState";
 import {
   Undo,
   CheckSquare,
@@ -12,7 +12,10 @@ import {
 } from "lucide-react";
 import { VoteKickButton } from "./buttons/VoteKickButton";
 import { MAX_INK, DOT_INK_COST } from "../lib/constants";
-import { getPlayerColorClass } from "../lib/playerColors";
+import {
+  getActivePlayerCardColorClass,
+  getPlayerIconColorClass,
+} from "../lib/playerColors";
 import { CANVAS_COLORS, DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { EmergencyAlertButton } from "./buttons/EmergencyAlertButton";
@@ -46,13 +49,20 @@ export const Canvas: React.FC = () => {
   const players = useGameStore((state) => state.players);
   const actions = useGameStore((state) => state.actions);
 
-  const activePlayersCount = players.filter(
-    (p) => p.isConnected && !p.isEjected,
-  ).length;
-  const requiredVotes = Math.max(1, activePlayersCount - 1);
+  const suspectedPlayers = players.filter((p) => p.id !== myId);
 
   const isMyTurn = currentTurnPlayerId === myId;
   const activePlayer = players.find((p) => p.id === currentTurnPlayerId);
+
+  const getRequiredVotes = (targetPlayer: Player) => {
+    const activePlayers = players.filter((p) => p.isConnected);
+
+    if (!targetPlayer.isConnected) {
+      return activePlayers.length;
+    }
+
+    return Math.max(1, activePlayers.length - 1);
+  };
 
   // Resize canvas to match CSS layout
   useEffect(() => {
@@ -253,21 +263,32 @@ export const Canvas: React.FC = () => {
     <div className="flex flex-col items-center bg-stone-900 p-2 md:p-6 pb-24 sm:justify-center mt-12">
       <div className="w-full max-w-4xl space-y-4">
         {/* Header Banner */}
-        <div className="flex items-center justify-between bg-stone-800 p-3 sm:p-4 rounded-2xl border border-stone-700 shadow-xl">
+        <div
+          className={`flex items-center justify-between p-3 sm:p-4 rounded-2xl shadow-xl ${getActivePlayerCardColorClass(isMyTurn ? myId : null, hostId, players)}`}
+        >
           <div className="flex items-center gap-3">
             <div
-              className={`size-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${getPlayerColorClass(currentTurnPlayerId, hostId, players)} ${isMyTurn ? "ring-4 ring-ink-primary/30" : ""}`}
+              className={`size-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${getPlayerIconColorClass(currentTurnPlayerId, hostId, players)} ${isMyTurn ? "animate-pulse" : ""}`}
             >
               {activePlayer?.name.charAt(0) || "?"}
             </div>
-            <div>
-              <p className="text-sm font-bold text-stone-400 uppercase tracking-widest">
-                {isMyTurn ? t("canvas.yourTurn") : t("canvas.nowDrawing")}
-              </p>
-              <h2 className="text-lg font-bold text-white">
-                {activePlayer?.name || t("canvas.someone")}
-              </h2>
-            </div>
+
+            {isMyTurn ? (
+              <div className="animate-pulse">
+                <p className="text-lg sm:text-2xl font-extrabold text-white uppercase tracking-wider">
+                  {t("canvas.yourTurn")}
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-sm font-bold text-stone-400 uppercase tracking-widest">
+                  {t("canvas.nowDrawing")}
+                </p>
+                <h2 className="text-lg font-bold text-white">
+                  {activePlayer?.name || t("canvas.someone")}
+                </h2>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-4 sm:gap-6">
@@ -295,7 +316,7 @@ export const Canvas: React.FC = () => {
                       <div className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1 px-1">
                         {t("canvas.suspects", "Suspects")}
                       </div>
-                      {players.map((player) => (
+                      {suspectedPlayers.map((player) => (
                         <div key={player.id} className="flex gap-1 w-full">
                           <button
                             type="button"
@@ -305,20 +326,20 @@ export const Canvas: React.FC = () => {
                             }}
                             disabled={player.id === myId || player.isEjected}
                             title={player.name}
-                            className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all flex-1 text-left bg-stone-900/50 ${
-                              player.id === myId || player.isEjected
-                                ? "opacity-50 cursor-default"
+                            className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all flex-1 text-left ${
+                              player.isEjected
+                                ? "bg-stone-900/50 opacity-50 cursor-default"
                                 : player.isSuspected
                                   ? "bg-red-500/20 text-red-500 hover:bg-red-500/30 cursor-pointer"
-                                  : "hover:bg-stone-700 text-stone-200 cursor-pointer"
+                                  : "bg-stone-900/50 hover:bg-stone-700 text-stone-200 cursor-pointer"
                             }`}
                           >
                             <div
-                              className={`size-8 shrink-0 rounded-full flex items-center justify-center text-xs font-bold uppercase shadow-sm ${
-                                player.id === currentTurnPlayerId
-                                  ? "bg-ink-primary text-white"
-                                  : "bg-stone-600 text-stone-300"
-                              }`}
+                              className={`size-8 shrink-0 rounded-full flex items-center justify-center text-xs font-bold uppercase shadow-sm ${player.id === currentTurnPlayerId ? "animate-pulse" : ""} ${getPlayerIconColorClass(
+                                player.id,
+                                hostId,
+                                players,
+                              )}`}
                             >
                               {player.name.charAt(0)}
                             </div>
@@ -341,7 +362,7 @@ export const Canvas: React.FC = () => {
                           </button>
                           <VoteKickButton
                             player={player}
-                            requiredVotes={requiredVotes}
+                            requiredVotes={getRequiredVotes(player)}
                             onAction={() => setIsSusListOpen(false)}
                           />
                         </div>

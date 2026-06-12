@@ -88,7 +88,6 @@ describe("Canvas", () => {
 
     // Header
     expect(screen.getByText("Your turn!")).toBeInTheDocument();
-    expect(screen.getAllByText("Host").length).toBeGreaterThan(0);
 
     // Should display time
     expect(screen.getByText("20.0s")).toBeInTheDocument();
