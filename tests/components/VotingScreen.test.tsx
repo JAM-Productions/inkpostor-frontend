@@ -26,7 +26,7 @@ describe("VotingScreen", () => {
     vi.clearAllMocks();
   });
 
-  it("renders players to vote for, excluding current player", () => {
+  it("renders players to vote for, adding current player", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = { ...mockStateBase };
       return selector(state);
@@ -34,8 +34,8 @@ describe("VotingScreen", () => {
 
     render(<VotingScreen />);
 
-    // Should not see "Me"
-    expect(screen.queryByText("Me")).not.toBeInTheDocument();
+    // Should see "Me"
+    expect(screen.getByText("Me")).toBeInTheDocument();
 
     // Should see other players
     expect(screen.getByText("Player 2")).toBeInTheDocument();
