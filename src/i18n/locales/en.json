@@ -78,7 +78,8 @@
       "kickTitle": "Vote to Kick Player",
       "kickConfirmationText": "Are you sure you want to vote to kick {{name}}?",
       "cancel": "Cancel",
-      "kickConfirm": "Vote to Kick"
+      "kickConfirm": "Vote to Kick",
+      "notConnected": "Offline"
     },
     "words": {
       "Dog": "Dog",

@@ -78,7 +78,8 @@
       "kickTitle": "Votar per Expulsar Jugador",
       "kickConfirmationText": "Estàs segur que vols votar per expulsar a {{name}}?",
       "cancel": "Cancel·lar",
-      "kickConfirm": "Votar"
+      "kickConfirm": "Votar",
+      "notConnected": "Desconnectat"
     },
     "words": {
       "Dog": "Gos",

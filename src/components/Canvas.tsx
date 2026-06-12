@@ -9,6 +9,7 @@ import {
   Minimize2,
   Search,
   Users,
+  LoaderCircle,
 } from "lucide-react";
 import { VoteKickButton } from "./buttons/VoteKickButton";
 import { MAX_INK, DOT_INK_COST } from "../lib/constants";
@@ -267,12 +268,20 @@ export const Canvas: React.FC = () => {
           className={`flex items-center justify-between p-3 sm:p-4 rounded-2xl shadow-xl ${getActivePlayerCardColorClass(isMyTurn ? myId : null, hostId, players)}`}
         >
           <div className="flex items-center gap-3">
-            <div
-              className={`size-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${getPlayerIconColorClass(currentTurnPlayerId, hostId, players)} ${isMyTurn ? "animate-pulse" : ""}`}
-            >
-              {activePlayer?.name.charAt(0) || "?"}
+            <div className="relative">
+              <div
+                className={`size-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${getPlayerIconColorClass(currentTurnPlayerId, hostId, players)} ${isMyTurn ? "animate-pulse" : ""}`}
+              >
+                {activePlayer?.isConnected !== false
+                  ? activePlayer?.name.charAt(0) || "?"
+                  : null}
+              </div>
+              {activePlayer?.isConnected === false && (
+                <div className="absolute inset-0 size-12 rounded-full bg-black/50 flex items-center justify-center">
+                  <LoaderCircle className="size-6 text-white animate-spin opacity-60" />
+                </div>
+              )}
             </div>
-
             {isMyTurn ? (
               <div className="animate-pulse">
                 <p className="text-lg sm:text-2xl font-extrabold text-white uppercase tracking-wider">
@@ -281,8 +290,12 @@ export const Canvas: React.FC = () => {
               </div>
             ) : (
               <div>
-                <p className="text-sm font-bold text-stone-400 uppercase tracking-widest">
-                  {t("canvas.nowDrawing")}
+                <p
+                  className={`text-sm font-bold text-stone-400 uppercase tracking-widest ${activePlayer?.isConnected ? "" : "animate-pulse"}`}
+                >
+                  {activePlayer?.isConnected
+                    ? t("canvas.nowDrawing")
+                    : t("canvas.notConnected")}
                 </p>
                 <h2 className="text-lg font-semibold text-white">
                   {activePlayer?.name || t("canvas.someone")}

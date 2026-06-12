@@ -32,6 +32,7 @@ describe("Canvas", () => {
         isSuspected: false,
         isEjected: false,
         hasStartedEmergencyVoting: false,
+        isConnected: true,
       },
       {
         id: "socket-456",
@@ -39,6 +40,7 @@ describe("Canvas", () => {
         isSuspected: false,
         isEjected: false,
         hasStartedEmergencyVoting: false,
+        isConnected: true,
       },
     ],
     canvasStrokes: [],
@@ -288,6 +290,156 @@ describe("Canvas", () => {
       y: 600,
       color: DEFAULT_CANVAS_COLOR,
       isNewStroke: false,
+    });
+  });
+
+  describe("active player connection status", () => {
+    it("displays active player's initial letter and 'Now Drawing' when active player is connected (not my turn)", () => {
+      mockStore({
+        myId: "socket-123",
+        currentTurnPlayerId: "socket-456",
+        players: [
+          {
+            id: "socket-123",
+            name: "Host",
+            isSuspected: false,
+            isEjected: false,
+            hasStartedEmergencyVoting: false,
+            isConnected: true,
+          },
+          {
+            id: "socket-456",
+            name: "Player 2",
+            isSuspected: false,
+            isEjected: false,
+            hasStartedEmergencyVoting: false,
+            isConnected: true,
+          },
+        ],
+      });
+
+      const { container } = render(<Canvas />);
+
+      // Active player is Player 2. Since they are connected, their name's initial "P" is rendered.
+      expect(screen.getByText("P")).toBeInTheDocument();
+
+      // The status text should display "Now Drawing".
+      const statusText = screen.getByText("Now Drawing");
+      expect(statusText).toBeInTheDocument();
+      expect(statusText).not.toHaveClass("animate-pulse");
+
+      // No spinner loader should be visible.
+      expect(container.querySelector(".animate-spin")).not.toBeInTheDocument();
+    });
+
+    it("displays loader spinner and 'Offline' status with pulse animation when active player is disconnected (not my turn)", () => {
+      mockStore({
+        myId: "socket-123",
+        currentTurnPlayerId: "socket-456",
+        players: [
+          {
+            id: "socket-123",
+            name: "Host",
+            isSuspected: false,
+            isEjected: false,
+            hasStartedEmergencyVoting: false,
+            isConnected: true,
+          },
+          {
+            id: "socket-456",
+            name: "Player 2",
+            isSuspected: false,
+            isEjected: false,
+            hasStartedEmergencyVoting: false,
+            isConnected: false, // Disconnected player
+          },
+        ],
+      });
+
+      const { container } = render(<Canvas />);
+
+      // Since Player 2 is disconnected, their initial letter "P" should NOT be rendered.
+      expect(screen.queryByText("P")).not.toBeInTheDocument();
+
+      // The status text should display "Offline" (canvas.notConnected).
+      const statusText = screen.getByText("Offline");
+      expect(statusText).toBeInTheDocument();
+      expect(statusText).toHaveClass("animate-pulse");
+
+      // Spinner loader overlay should be visible.
+      expect(container.querySelector(".animate-spin")).toBeInTheDocument();
+    });
+
+    it("displays 'Your turn!' and correct UI when active player is connected (my turn)", () => {
+      mockStore({
+        myId: "socket-123",
+        currentTurnPlayerId: "socket-123",
+        players: [
+          {
+            id: "socket-123",
+            name: "Host",
+            isSuspected: false,
+            isEjected: false,
+            hasStartedEmergencyVoting: false,
+            isConnected: true,
+          },
+          {
+            id: "socket-456",
+            name: "Player 2",
+            isSuspected: false,
+            isEjected: false,
+            hasStartedEmergencyVoting: false,
+            isConnected: true,
+          },
+        ],
+      });
+
+      const { container } = render(<Canvas />);
+
+      // Since it's my turn and I'm connected, my initial letter "H" should be rendered.
+      expect(screen.getByText("H")).toBeInTheDocument();
+
+      // My turn status should show "Your turn!"
+      expect(screen.getByText("Your turn!")).toBeInTheDocument();
+
+      // No spinner loader should be visible.
+      expect(container.querySelector(".animate-spin")).not.toBeInTheDocument();
+    });
+
+    it("displays 'Your turn!' but overlays spinner when my turn and I am disconnected", () => {
+      mockStore({
+        myId: "socket-123",
+        currentTurnPlayerId: "socket-123",
+        players: [
+          {
+            id: "socket-123",
+            name: "Host",
+            isSuspected: false,
+            isEjected: false,
+            hasStartedEmergencyVoting: false,
+            isConnected: false, // I am disconnected
+          },
+          {
+            id: "socket-456",
+            name: "Player 2",
+            isSuspected: false,
+            isEjected: false,
+            hasStartedEmergencyVoting: false,
+            isConnected: true,
+          },
+        ],
+      });
+
+      const { container } = render(<Canvas />);
+
+      // Since I'm disconnected, my initial letter "H" should NOT be rendered.
+      expect(screen.queryByText("H")).not.toBeInTheDocument();
+
+      // My turn status should still show "Your turn!"
+      expect(screen.getByText("Your turn!")).toBeInTheDocument();
+
+      // Spinner loader overlay should be visible.
+      expect(container.querySelector(".animate-spin")).toBeInTheDocument();
     });
   });
 });
