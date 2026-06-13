@@ -50,13 +50,19 @@ describe("ModalRenderer", () => {
   };
 
   it("renders nothing when no modal is active", () => {
-    setupMocks({ activeModal: null, modalData: null }, { players: [], phase: "LOBBY" });
+    setupMocks(
+      { activeModal: null, modalData: null },
+      { players: [], phase: "LOBBY" },
+    );
     const { container } = render(<ModalRenderer />);
     expect(container.firstChild).toBeNull();
   });
 
   it("renders RulesModal when activeModal is RULES", () => {
-    setupMocks({ activeModal: "RULES", modalData: null }, { players: [], phase: "LOBBY" });
+    setupMocks(
+      { activeModal: "RULES", modalData: null },
+      { players: [], phase: "LOBBY" },
+    );
     const { getByTestId } = render(<ModalRenderer />);
     expect(getByTestId("rules-modal")).toBeInTheDocument();
   });
@@ -64,7 +70,7 @@ describe("ModalRenderer", () => {
   it("closes KICK_PLAYER modal if player no longer exists", () => {
     setupMocks(
       { activeModal: "KICK_PLAYER", modalData: { playerId: "player-1" } },
-      { players: [{ id: "player-2" }], phase: "LOBBY" }
+      { players: [{ id: "player-2" }], phase: "LOBBY" },
     );
     render(<ModalRenderer />);
     expect(mockCloseModal).toHaveBeenCalled();
@@ -73,7 +79,7 @@ describe("ModalRenderer", () => {
   it("does not render KICK_PLAYER modal if player no longer exists", () => {
     setupMocks(
       { activeModal: "KICK_PLAYER", modalData: { playerId: "player-1" } },
-      { players: [{ id: "player-2" }], phase: "LOBBY" }
+      { players: [{ id: "player-2" }], phase: "LOBBY" },
     );
     const { queryByTestId } = render(<ModalRenderer />);
     expect(queryByTestId("kick-player-modal")).not.toBeInTheDocument();
@@ -82,7 +88,7 @@ describe("ModalRenderer", () => {
   it("renders KICK_PLAYER modal if player exists", () => {
     setupMocks(
       { activeModal: "KICK_PLAYER", modalData: { playerId: "player-1" } },
-      { players: [{ id: "player-1" }], phase: "LOBBY" }
+      { players: [{ id: "player-1" }], phase: "LOBBY" },
     );
     const { getByTestId } = render(<ModalRenderer />);
     expect(getByTestId("kick-player-modal")).toBeInTheDocument();
@@ -91,7 +97,7 @@ describe("ModalRenderer", () => {
   it("closes OPTIONS modal if phase is not LOBBY", () => {
     setupMocks(
       { activeModal: "OPTIONS", modalData: null },
-      { players: [], phase: "DRAWING" }
+      { players: [], phase: "DRAWING" },
     );
     render(<ModalRenderer />);
     expect(mockCloseModal).toHaveBeenCalled();
@@ -100,7 +106,7 @@ describe("ModalRenderer", () => {
   it("does not render OPTIONS modal if phase is not LOBBY", () => {
     setupMocks(
       { activeModal: "OPTIONS", modalData: null },
-      { players: [], phase: "DRAWING" }
+      { players: [], phase: "DRAWING" },
     );
     const { queryByTestId } = render(<ModalRenderer />);
     expect(queryByTestId("options-modal")).not.toBeInTheDocument();
@@ -109,7 +115,7 @@ describe("ModalRenderer", () => {
   it("renders OPTIONS modal if phase is LOBBY", () => {
     setupMocks(
       { activeModal: "OPTIONS", modalData: null },
-      { players: [], phase: "LOBBY" }
+      { players: [], phase: "LOBBY" },
     );
     const { getByTestId } = render(<ModalRenderer />);
     expect(getByTestId("options-modal")).toBeInTheDocument();

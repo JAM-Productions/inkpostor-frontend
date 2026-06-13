@@ -109,7 +109,6 @@ describe("KickPlayerModal", () => {
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-
   it("returns null and does not render if player is not found", () => {
     const { container } = render(
       <KickPlayerModal

@@ -18,7 +18,7 @@ export const ModalRenderer: React.FC = () => {
     if (activeModal === "KICK_PLAYER") {
       const data = modalData as ModalPayloads["KICK_PLAYER"];
       const playerExists = players.some((p) => p.id === data?.playerId);
-      if (!playerExists) {
+      if (!playerExists || phase !== "DRAWING") {
         closeModal();
       }
     } else if (activeModal === "OPTIONS" && phase !== "LOBBY") {
