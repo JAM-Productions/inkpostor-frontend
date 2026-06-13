@@ -57,6 +57,25 @@
       "votesRecorded": "{{count}} / {{total}} votos registrados"
     },
     "canvas": {
+      "colors": {
+        "#1a1a1a": "Negro",
+        "#ffffff": "Blanco",
+        "#6b7280": "Gris",
+        "#991b1b": "Rojo oscuro",
+        "#ef4444": "Rojo",
+        "#92400e": "Naranja oscuro",
+        "#f97316": "Naranja",
+        "#ca8a04": "Mostaza",
+        "#facc15": "Amarillo",
+        "#166534": "Verde oscuro",
+        "#22c55e": "Verde",
+        "#1e40af": "Azul oscuro",
+        "#3b82f6": "Azul",
+        "#6b21a8": "Morado oscuro",
+        "#a855f7": "Morado",
+        "#9d174d": "Rosa oscuro",
+        "#ec4899": "Rosa"
+      },
       "yourTurn": "¡Tu turno!",
       "nowDrawing": "Dibujando",
       "someone": "Alguien",
