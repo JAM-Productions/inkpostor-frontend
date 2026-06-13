@@ -174,7 +174,7 @@ export const VotingScreen: React.FC = () => {
                 {t("voting.confirmVote")}
               </button>
             ) : hasVoted ? (
-              <div className="w-full flex-col text-center flex items-center justify-center space-y-4 py-4 bg-stone-900/50 rounded-2xl border border-stone-700/50">
+              <div className="w-full flex-col text-center flex items-center justify-center gap-y-4 py-4 bg-stone-900/50 rounded-2xl border border-stone-700/50">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="size-6 text-emerald-500" />
                   <h2 className="text-xl font-semibold text-white">
@@ -205,7 +205,7 @@ export const VotingScreen: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="w-full flex-col text-center flex items-center justify-center space-y-2">
+              <div className="w-full flex-col text-center flex items-center justify-center gap-y-2">
                 <p className="text-ink-primary-accent text-sm sm:text-base font-bold">
                   {t("voting.ejected")}
                 </p>
