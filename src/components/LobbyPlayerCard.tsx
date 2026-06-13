@@ -87,7 +87,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
             <button
               type="button"
               onClick={() => setIsPendingKick(true)}
-              className="group relative inline-flex size-8 items-center justify-center rounded-full border border-stone-600 bg-stone-800 text-stone-400 transition-colors hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 cursor-pointer"
+              className="group relative inline-flex size-8 items-center justify-center rounded-full border border-stone-600 bg-stone-800 text-stone-300 transition-colors hover:border-red-500/40 hover:bg-red-500/10 hover:text-white cursor-pointer"
               aria-label={t("lobby.kickPlayerAria", {
                 name: player.name,
               })}
