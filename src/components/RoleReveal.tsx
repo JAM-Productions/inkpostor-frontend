@@ -57,7 +57,7 @@ export const RoleReveal: React.FC = () => {
               }`}
           >
             {revealed ? (
-              <div className="animate-in zoom-in-95 duration-200 fade-in flex flex-col items-center space-y-4 my-4">
+              <div className="animate-in zoom-in-95 duration-200 fade-in flex flex-col items-center gap-y-4 my-4">
                 {amIImpostor ? (
                   <>
                     <img
