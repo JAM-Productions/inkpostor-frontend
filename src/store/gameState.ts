@@ -124,11 +124,14 @@ export interface GameState {
   myName: string | null;
   amIImpostor: boolean | null;
   errorMessage: string | null;
+  serviceOnline: boolean;
+  isCheckingHealth: boolean;
 
   // Actions mapped to Socket
   actions: {
     connectAndJoin: (roomId: string, playerName: string) => void;
     connectAndCreate: (roomId: string, playerName: string) => void;
+    checkHealth: () => Promise<void>;
     kickPlayer: (playerId: string) => void;
     voteKickPlayer: (targetId: string) => void;
     startGame: () => void;
@@ -175,6 +178,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
   myName: getSavedPlayerName(),
   amIImpostor: null,
   errorMessage: null,
+  serviceOnline: false,
+  isCheckingHealth: true,
 
   actions: {
     connectAndCreate: async (roomId, playerName) => {
@@ -199,6 +204,19 @@ export const useGameStore = create<GameState>()((set, get) => ({
         set({ myName: playerName, myId: userId });
       } catch {
         set({ errorMessage: "Service connection error." });
+      }
+    },
+    checkHealth: async () => {
+      set({ isCheckingHealth: true });
+      try {
+        const res = await fetch(`${SERVICE_URL || ""}/health`, {
+          method: "GET",
+        });
+        set({ serviceOnline: res.ok });
+      } catch {
+        set({ serviceOnline: false });
+      } finally {
+        set({ isCheckingHealth: false });
       }
     },
     connectAndJoin: async (roomId, playerName) => {

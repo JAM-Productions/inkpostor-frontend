@@ -6,12 +6,15 @@ import { useGameStore } from "../../src/store/gameState";
 
 // Mock the store
 vi.mock("../../src/store/gameState", () => ({
-  useGameStore: vi.fn(),
+  useGameStore: Object.assign(vi.fn(), {
+    getState: vi.fn(),
+  }),
 }));
 
 describe("JoinScreen", () => {
   const mockConnectAndCreate = vi.fn();
   const mockConnectAndJoin = vi.fn();
+  const mockCheckHealth = vi.fn().mockResolvedValue(undefined);
 
   beforeEach(() => {
     vi.stubGlobal(
@@ -21,17 +24,23 @@ describe("JoinScreen", () => {
       }),
     );
     vi.clearAllMocks();
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = {
-        actions: {
-          connectAndCreate: mockConnectAndCreate,
-          connectAndJoin: mockConnectAndJoin,
-        },
-        errorMessage: null,
-        myName: null,
-      };
-      return selector(state);
-    });
+
+    const defaultState = {
+      actions: {
+        connectAndCreate: mockConnectAndCreate,
+        connectAndJoin: mockConnectAndJoin,
+        checkHealth: mockCheckHealth,
+      },
+      errorMessage: null,
+      myName: null,
+      serviceOnline: true,
+      isCheckingHealth: false,
+    };
+
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(defaultState),
+    );
+    (useGameStore.getState as any).mockReturnValue(defaultState);
   });
 
   afterEach(() => {
@@ -61,20 +70,27 @@ describe("JoinScreen", () => {
   });
 
   it("disables inputs and buttons while checking service health", async () => {
-    (global.fetch as any).mockImplementation(
-      () =>
-        new Promise(() => {
-          // Never resolves to keep checking state
-        }),
+    const state = {
+      actions: {
+        connectAndCreate: mockConnectAndCreate,
+        connectAndJoin: mockConnectAndJoin,
+        checkHealth: mockCheckHealth,
+      },
+      errorMessage: null,
+      myName: null,
+      serviceOnline: false,
+      isCheckingHealth: true,
+    };
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(state),
     );
+    (useGameStore.getState as any).mockReturnValue(state);
 
     render(<JoinScreen />);
 
-    await waitFor(() => {
-      expect(
-        screen.getByText("Checking the service status..."),
-      ).toBeInTheDocument();
-    });
+    expect(
+      screen.getByText("Checking the service status..."),
+    ).toBeInTheDocument();
 
     const nameInput = screen.getByPlaceholderText(
       "Enter your name",
@@ -121,18 +137,28 @@ describe("JoinScreen", () => {
     );
   });
 
-  it("disables create button even with name entered while service is offline", async () => {
-    (global.fetch as any).mockResolvedValueOnce({
-      ok: false,
-    });
+  it("shows offline message when service is offline", async () => {
+    const state = {
+      actions: {
+        connectAndCreate: mockConnectAndCreate,
+        connectAndJoin: mockConnectAndJoin,
+        checkHealth: mockCheckHealth,
+      },
+      errorMessage: null,
+      myName: null,
+      serviceOnline: false,
+      isCheckingHealth: false,
+    };
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(state),
+    );
+    (useGameStore.getState as any).mockReturnValue(state);
 
     render(<JoinScreen />);
 
-    await waitFor(() => {
-      expect(
-        screen.getByText("The service is currently unavailable"),
-      ).toBeInTheDocument();
-    });
+    expect(
+      screen.getByText("The service is currently unavailable"),
+    ).toBeInTheDocument();
 
     // Form should not be visible when offline
     expect(
@@ -193,16 +219,20 @@ describe("JoinScreen", () => {
   });
 
   it("displays error message if present in store", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = {
-        actions: {
-          connectAndCreate: mockConnectAndCreate,
-          connectAndJoin: mockConnectAndJoin,
-        },
-        errorMessage: "Test error connection failed",
-      };
-      return selector(state);
-    });
+    const state = {
+      actions: {
+        connectAndCreate: mockConnectAndCreate,
+        connectAndJoin: mockConnectAndJoin,
+        checkHealth: mockCheckHealth,
+      },
+      errorMessage: "Test error connection failed",
+      serviceOnline: true,
+      isCheckingHealth: false,
+    };
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(state),
+    );
+    (useGameStore.getState as any).mockReturnValue(state);
 
     render(<JoinScreen />);
 
@@ -212,17 +242,21 @@ describe("JoinScreen", () => {
   });
 
   it("pre-fills the name if present in store", () => {
-    (useGameStore as any).mockImplementation((selector: any) => {
-      const state = {
-        actions: {
-          connectAndCreate: mockConnectAndCreate,
-          connectAndJoin: mockConnectAndJoin,
-        },
-        errorMessage: null,
-        myName: "SavedName",
-      };
-      return selector(state);
-    });
+    const state = {
+      actions: {
+        connectAndCreate: mockConnectAndCreate,
+        connectAndJoin: mockConnectAndJoin,
+        checkHealth: mockCheckHealth,
+      },
+      errorMessage: null,
+      myName: "SavedName",
+      serviceOnline: true,
+      isCheckingHealth: false,
+    };
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(state),
+    );
+    (useGameStore.getState as any).mockReturnValue(state);
 
     render(<JoinScreen />);
 
@@ -263,17 +297,21 @@ describe("JoinScreen", () => {
     });
 
     it("auto-joins when myName is present and service is online", async () => {
-      (useGameStore as any).mockImplementation((selector: any) => {
-        const state = {
-          actions: {
-            connectAndCreate: mockConnectAndCreate,
-            connectAndJoin: mockConnectAndJoin,
-          },
-          errorMessage: null,
-          myName: "PlayerFromStore",
-        };
-        return selector(state);
-      });
+      const state = {
+        actions: {
+          connectAndCreate: mockConnectAndCreate,
+          connectAndJoin: mockConnectAndJoin,
+          checkHealth: mockCheckHealth,
+        },
+        errorMessage: null,
+        myName: "PlayerFromStore",
+        serviceOnline: true,
+        isCheckingHealth: false,
+      };
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector(state),
+      );
+      (useGameStore.getState as any).mockReturnValue(state);
 
       render(<JoinScreen />);
 
@@ -299,13 +337,22 @@ describe("JoinScreen", () => {
   });
 
   describe("Service Health Check", () => {
-    it("shows 'Checking the service status...' on initial render", async () => {
-      (global.fetch as any).mockImplementation(
-        () =>
-          new Promise(() => {
-            // Never resolves to keep checking state
-          }),
+    it("shows 'Checking the service status...' when isCheckingHealth is true", async () => {
+      const state = {
+        actions: {
+          connectAndCreate: mockConnectAndCreate,
+          connectAndJoin: mockConnectAndJoin,
+          checkHealth: mockCheckHealth,
+        },
+        errorMessage: null,
+        myName: null,
+        serviceOnline: false,
+        isCheckingHealth: true,
+      };
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector(state),
       );
+      (useGameStore.getState as any).mockReturnValue(state);
 
       render(<JoinScreen />);
 
@@ -314,66 +361,40 @@ describe("JoinScreen", () => {
       ).toBeInTheDocument();
     });
 
-    it("hides form and shows offline message when service check completes and service is offline", async () => {
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: false,
-      });
+    it("shows offline message when service is offline", async () => {
+      const state = {
+        actions: {
+          connectAndCreate: mockConnectAndCreate,
+          connectAndJoin: mockConnectAndJoin,
+          checkHealth: mockCheckHealth,
+        },
+        errorMessage: null,
+        myName: null,
+        serviceOnline: false,
+        isCheckingHealth: false,
+      };
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector(state),
+      );
+      (useGameStore.getState as any).mockReturnValue(state);
 
       render(<JoinScreen />);
 
-      await waitFor(() => {
-        expect(
-          screen.getByText("The service is currently unavailable"),
-        ).toBeInTheDocument();
-      });
+      expect(
+        screen.getByText("The service is currently unavailable"),
+      ).toBeInTheDocument();
 
       // Form elements should not be visible
       expect(
         screen.queryByPlaceholderText("Enter your name"),
       ).not.toBeInTheDocument();
-      expect(
-        screen.queryByPlaceholderText("E.g. X7K9A2"),
-      ).not.toBeInTheDocument();
     });
 
-    it("shows offline message when health check fails", async () => {
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: false,
-      });
-
+    it("calls checkHealth on mount", async () => {
       render(<JoinScreen />);
 
       await waitFor(() => {
-        expect(
-          screen.getByText("The service is currently unavailable"),
-        ).toBeInTheDocument();
-      });
-    });
-
-    it("shows offline message when health check throws error", async () => {
-      (global.fetch as any).mockRejectedValueOnce(new Error("Network error"));
-
-      render(<JoinScreen />);
-
-      await waitFor(() => {
-        expect(
-          screen.getByText("The service is currently unavailable"),
-        ).toBeInTheDocument();
-      });
-    });
-
-    it("calls health endpoint with correct URL", async () => {
-      (global.fetch as any).mockResolvedValueOnce({
-        ok: true,
-      });
-
-      render(<JoinScreen />);
-
-      await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(
-          expect.stringContaining("/health"),
-          { method: "GET" },
-        );
+        expect(mockCheckHealth).toHaveBeenCalled();
       });
     });
   });

@@ -9,8 +9,8 @@ export const JoinScreen: React.FC = () => {
   const myName = useGameStore((state) => state.myName);
   const [playerName, setPlayerName] = useState(myName || "");
   const [roomId, setRoomId] = useState("");
-  const [isCheckingHealth, setIsCheckingHealth] = useState(true);
-  const [serviceOnline, setServiceOnline] = useState(false);
+  const isCheckingHealth = useGameStore((state) => state.isCheckingHealth);
+  const serviceOnline = useGameStore((state) => state.serviceOnline);
   const actions = useGameStore((state) => state.actions);
   const errorMessage = useGameStore((state) => state.errorMessage);
   const hasInitialized = useRef(false);
@@ -38,29 +38,15 @@ export const JoinScreen: React.FC = () => {
       setRoomId(roomFromUrl.toUpperCase());
     }
 
-    const checkHealth = async () => {
-      setIsCheckingHealth(true);
-      try {
-        const res = await fetch(`${SERVICE_URL || ""}/health`, {
-          method: "GET",
-        });
-
-        if (res.ok) {
-          setServiceOnline(true);
-          if (roomFromUrl && myName) {
-            actions.connectAndJoin(roomFromUrl.toUpperCase(), myName);
-          }
-        } else {
-          setServiceOnline(false);
-        }
-      } catch {
-        setServiceOnline(false);
-      } finally {
-        setIsCheckingHealth(false);
+    const init = async () => {
+      await actions.checkHealth();
+      const currentState = useGameStore.getState();
+      if (currentState.serviceOnline && roomFromUrl && myName) {
+        actions.connectAndJoin(roomFromUrl.toUpperCase(), myName);
       }
     };
 
-    checkHealth();
+    init();
   }, [myName, actions]);
 
   return (
