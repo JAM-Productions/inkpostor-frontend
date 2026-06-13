@@ -52,8 +52,8 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
       onClick={handleClick}
       className={`flex shrink-0 items-center justify-center rounded-xl transition-colors cursor-pointer px-2 gap-1.5 ${
         hasVoted
-          ? "bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500/30"
-          : "bg-stone-900/50 text-stone-400 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/30"
+          ? "bg-red-500/20 text-white border border-red-500/50 hover:bg-red-500/30"
+          : "bg-stone-900/50 text-stone-300 hover:bg-red-500/20 hover:text-white border border-transparent hover:border-red-500/30"
       }`}
       title={t("canvas.kickPlayerAria", {
         name: player.name,
