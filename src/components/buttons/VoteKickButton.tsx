@@ -34,7 +34,7 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
     },
   ).length;
 
-  const handleClick = () => {
+  const handleVoteKick = () => {
     if (onAction) onAction();
 
     if (hasVoted) {
@@ -49,7 +49,7 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
   return (
     <button
       type="button"
-      onClick={handleClick}
+      onClick={handleVoteKick}
       className={`flex shrink-0 items-center justify-center rounded-xl transition-colors cursor-pointer px-2 gap-1.5 ${
         hasVoted
           ? "bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500/30"
