@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useModalStore, type ModalPayloads } from "../../store/modalStore";
+import { useGameStore } from "../../store/gameState";
 import { RulesModal } from "./RulesModal";
 import { EndGameModal } from "./EndGameModal";
 import { OptionsModal } from "./OptionsModal";
@@ -10,6 +11,20 @@ export const ModalRenderer: React.FC = () => {
   const activeModal = useModalStore((state) => state.activeModal);
   const modalData = useModalStore((state) => state.modalData);
   const closeModal = useModalStore((state) => state.actions.closeModal);
+  const players = useGameStore((state) => state.players);
+  const phase = useGameStore((state) => state.phase);
+
+  useEffect(() => {
+    if (activeModal === "KICK_PLAYER") {
+      const data = modalData as ModalPayloads["KICK_PLAYER"];
+      const playerExists = players.some((p) => p.id === data?.playerId);
+      if (!playerExists) {
+        closeModal();
+      }
+    } else if (activeModal === "OPTIONS" && phase !== "LOBBY") {
+      closeModal();
+    }
+  }, [activeModal, modalData, players, phase, closeModal]);
 
   if (!activeModal) return null;
 
@@ -19,14 +34,16 @@ export const ModalRenderer: React.FC = () => {
     case "END_GAME":
       return <EndGameModal isOpen={true} onClose={closeModal} />;
     case "OPTIONS":
+      if (phase !== "LOBBY") return null;
       return <OptionsModal isOpen={true} onClose={closeModal} />;
     case "KICK_PLAYER": {
       const data = modalData as ModalPayloads["KICK_PLAYER"];
-      if (!data?.playerId) {
-        // Queue modal close if opened with invalid data
-        setTimeout(closeModal, 0);
+      const playerToKick = players.find((p) => p.id === data?.playerId);
+
+      if (!playerToKick) {
         return null;
       }
+
       return (
         <KickPlayerModal
           isOpen={true}
