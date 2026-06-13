@@ -464,6 +464,7 @@ export const Canvas: React.FC = () => {
                       type="button"
                       key={c}
                       onClick={() => setColor(c)}
+                      aria-label={t(`canvas.colors.${c}`)}
                       className={`size-10 shrink-0 rounded-full transition-transform border-[3px] ${color === c ? "scale-105 shadow-lg" : "scale-90 opacity-80 hover:opacity-100"} cursor-pointer active:scale-95`}
                       style={{
                         backgroundColor: c,

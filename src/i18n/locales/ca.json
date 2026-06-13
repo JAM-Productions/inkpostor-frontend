@@ -57,6 +57,25 @@
       "votesRecorded": "{{count}} / {{total}} vots registrats"
     },
     "canvas": {
+      "colors": {
+        "#1a1a1a": "Negre",
+        "#ffffff": "Blanc",
+        "#6b7280": "Gris",
+        "#991b1b": "Vermell fosc",
+        "#ef4444": "Vermell",
+        "#92400e": "Taronja fosc",
+        "#f97316": "Taronja",
+        "#ca8a04": "Mostassa",
+        "#facc15": "Groc",
+        "#166534": "Verd fosc",
+        "#22c55e": "Verd",
+        "#1e40af": "Blau fosc",
+        "#3b82f6": "Blau",
+        "#6b21a8": "Lila fosc",
+        "#a855f7": "Lila",
+        "#9d174d": "Rosa fosc",
+        "#ec4899": "Rosa"
+      },
       "yourTurn": "El teu torn!",
       "nowDrawing": "Dibuixant",
       "someone": "Algú",

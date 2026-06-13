@@ -81,10 +81,14 @@ export const JoinScreen: React.FC = () => {
           <div className="bg-stone-800 p-6 rounded-2xl shadow-xl border border-stone-700 space-y-6 animate-fade-in-up">
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-stone-400 mb-1 text-left">
+                <label
+                  htmlFor="player-name"
+                  className="block text-sm font-medium text-stone-400 mb-1 text-left"
+                >
                   {t("join.yourName")}
                 </label>
                 <input
+                  id="player-name"
                   type="text"
                   placeholder={t("join.enterName")}
                   className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-ink-primary focus:border-transparent transition-all outline-none text-white placeholder-stone-500 disabled:opacity-50"
@@ -121,10 +125,14 @@ export const JoinScreen: React.FC = () => {
 
             <form onSubmit={handleJoin} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-stone-400 mb-1 text-left">
+                <label
+                  htmlFor="room-code"
+                  className="block text-sm font-medium text-stone-400 mb-1 text-left"
+                >
                   {t("join.roomCode")}
                 </label>
                 <input
+                  id="room-code"
                   type="text"
                   placeholder={t("join.roomCodePlaceholder")}
                   className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-ink-secondary focus:border-transparent transition-all outline-none text-center uppercase tracking-widest text-white placeholder-stone-600 disabled:opacity-50"
