@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { Users } from "lucide-react";
@@ -13,6 +13,7 @@ export const JoinScreen: React.FC = () => {
   const [serviceOnline, setServiceOnline] = useState(false);
   const actions = useGameStore((state) => state.actions);
   const errorMessage = useGameStore((state) => state.errorMessage);
+  const hasInitialized = useRef(false);
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +29,9 @@ export const JoinScreen: React.FC = () => {
   };
 
   useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
     const urlParams = new URLSearchParams(window.location.search);
     const roomFromUrl = urlParams.get("room");
     if (roomFromUrl) {
@@ -57,8 +61,7 @@ export const JoinScreen: React.FC = () => {
     };
 
     checkHealth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [myName, actions]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-900">
