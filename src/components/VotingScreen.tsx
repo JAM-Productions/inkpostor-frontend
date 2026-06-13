@@ -66,7 +66,7 @@ export const VotingScreen: React.FC = () => {
         </div>
 
         <div className="bg-stone-800 rounded-3xl p-6 border border-stone-700 shadow-xl ">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 overflow-y-auto px-2 py-2 max-h-[50vh] custom-scrollbar">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 overflow-y-auto p-2 max-h-[50vh] custom-scrollbar">
             {players.map((player, index) => (
               <button
                 type="button"
