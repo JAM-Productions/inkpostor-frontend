@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { socket, SERVICE_URL } from "../socket";
-import { DEFAULT_ROUND_TIME } from "../lib/constants";
+import { DEFAULT_ROUND_TIME, DEFAULT_IMPOSTOR_GUESSES } from "../lib/constants";
 
 function detectIsMobile(): boolean {
   if (typeof navigator === "undefined") return false;
@@ -71,6 +71,7 @@ export type GamePhase =
   | "ROLE_REVEAL"
   | "DRAWING"
   | "VOTING"
+  | "IMPOSTOR_GUESS"
   | "RESULTS";
 
 export interface Player {
@@ -97,6 +98,8 @@ export interface GameOptions {
   roundTime: number;
   unlimitedInk: boolean;
   clearCanvasEachRound: boolean;
+  impostorGuessEnabled: boolean;
+  impostorGuessAttempts: number;
 }
 
 export interface GameState {
@@ -118,6 +121,10 @@ export interface GameState {
   currentRound: number;
   ejectedId: string | null;
   gameEnded: boolean;
+
+  // Impostor guess feature
+  impostorGuessesUsed: number;
+  impostorGuessedCorrectly: boolean;
 
   // Local only state
   myId: string | null;
@@ -141,6 +148,8 @@ export interface GameState {
     nextRound: () => void;
     endGame: () => void;
     startEmergencyVoting: () => void;
+    submitImpostorGuess: (guess: string, language: string) => void;
+    skipImpostorGuess: () => void;
     updateGameOptions: (options: GameOptions) => void;
     setError: (msg: string | null) => void;
     toggleSus: (playerId: string) => void;
@@ -157,6 +166,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
     roundTime: DEFAULT_ROUND_TIME,
     unlimitedInk: false,
     clearCanvasEachRound: true,
+    impostorGuessEnabled: false,
+    impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
   },
   players: [],
   impostorId: null,
@@ -171,6 +182,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
   currentRound: 1,
   ejectedId: null,
   gameEnded: false,
+  impostorGuessesUsed: 0,
+  impostorGuessedCorrectly: false,
   myId: null,
   myName: getSavedPlayerName(),
   amIImpostor: null,
@@ -305,6 +318,14 @@ export const useGameStore = create<GameState>()((set, get) => ({
         return { players: newPlayers };
       });
     },
+    submitImpostorGuess: (guess, language) => {
+      const trimmed = guess.trim();
+      if (!trimmed) return;
+      socket.emit("submitImpostorGuess", { guess: trimmed, language });
+    },
+    skipImpostorGuess: () => {
+      socket.emit("skipImpostorGuess");
+    },
     updateGameOptions: (options) => {
       socket.emit("updateGameOptions", options);
       // Optimistic update for better performance
@@ -345,6 +366,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
         currentRound: 1,
         ejectedId: null,
         gameEnded: false,
+        impostorGuessesUsed: 0,
+        impostorGuessedCorrectly: false,
         amIImpostor: null,
         errorMessage: null,
       });
@@ -420,6 +443,8 @@ socket.on("gameStateUpdate", (newState) => {
     ejectedId: newState.ejectedId,
     gameEnded: newState.gameEnded,
     gameOptions: newState.gameOptions,
+    impostorGuessesUsed: newState.impostorGuessesUsed ?? 0,
+    impostorGuessedCorrectly: newState.impostorGuessedCorrectly ?? false,
   });
 });
 
@@ -479,6 +504,8 @@ socket.on("kicked", (msg: string) => {
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: false,
       clearCanvasEachRound: true,
+      impostorGuessEnabled: false,
+      impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
     },
     players: [],
     impostorId: null,
@@ -493,6 +520,8 @@ socket.on("kicked", (msg: string) => {
     currentRound: 1,
     ejectedId: null,
     gameEnded: false,
+    impostorGuessesUsed: 0,
+    impostorGuessedCorrectly: false,
     amIImpostor: null,
     errorMessage: msg,
     myName: state.myName,

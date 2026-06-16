@@ -1,8 +1,21 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Check, Clock3, Droplets, Eraser, Settings } from "lucide-react";
+import {
+  Check,
+  Clock3,
+  Droplets,
+  Eraser,
+  PenLine,
+  Minus,
+  Plus,
+  Settings,
+} from "lucide-react";
 import { BaseModal } from "./BaseModal";
 import { useGameStore } from "../../store/gameState";
+import {
+  MAX_IMPOSTOR_GUESSES,
+  MIN_IMPOSTOR_GUESSES,
+} from "../../lib/constants";
 
 interface OptionsModalProps {
   isOpen: boolean;
@@ -23,6 +36,12 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const [clearCanvasEachRound, setClearCanvasEachRound] = useState(
     gameOptions.clearCanvasEachRound,
   );
+  const [impostorGuessEnabled, setImpostorGuessEnabled] = useState(
+    gameOptions.impostorGuessEnabled,
+  );
+  const [impostorGuessAttempts, setImpostorGuessAttempts] = useState(
+    gameOptions.impostorGuessAttempts,
+  );
 
   const isHost = myId === hostId;
   const displayedRoundTime = isHost ? roundTime : gameOptions.roundTime;
@@ -32,6 +51,21 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const displayedClearCanvasEachRound = isHost
     ? clearCanvasEachRound
     : gameOptions.clearCanvasEachRound;
+  const displayedImpostorGuessEnabled = isHost
+    ? impostorGuessEnabled
+    : gameOptions.impostorGuessEnabled;
+  const displayedImpostorGuessAttempts = isHost
+    ? impostorGuessAttempts
+    : gameOptions.impostorGuessAttempts;
+
+  const changeImpostorGuessAttempts = (delta: number) => {
+    setImpostorGuessAttempts((prev) =>
+      Math.min(
+        MAX_IMPOSTOR_GUESSES,
+        Math.max(MIN_IMPOSTOR_GUESSES, prev + delta),
+      ),
+    );
+  };
 
   const drawingRoundOptions = [
     { value: 20, label: t("options.time.options.20") },
@@ -62,6 +96,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 roundTime,
                 unlimitedInk,
                 clearCanvasEachRound,
+                impostorGuessEnabled,
+                impostorGuessAttempts,
               });
               onClose();
             }}
@@ -211,6 +247,86 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               />
             </button>
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-stone-800 bg-stone-800/40 p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex gap-3 justify-center items-center">
+              <div className="rounded-xl bg-purple-500/10 p-2 text-purple-400 h-fit">
+                <PenLine className="size-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+                  {t("options.impostorGuess.title")}
+                </h3>
+                <p className="mt-1 text-sm text-stone-400">
+                  {t("options.impostorGuess.description")}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              role="switch"
+              disabled={!isHost}
+              aria-checked={displayedImpostorGuessEnabled}
+              onClick={() => setImpostorGuessEnabled(!impostorGuessEnabled)}
+              className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border transition-colors ${
+                displayedImpostorGuessEnabled
+                  ? "border-purple-400/50 bg-purple-500"
+                  : "border-stone-700 bg-stone-700"
+              } ${isHost ? "cursor-pointer" : "cursor-default opacity-80"}`}
+              aria-label={t("options.impostorGuess.toggle")}
+            >
+              <span
+                className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
+                  displayedImpostorGuessEnabled
+                    ? "translate-x-7"
+                    : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
+
+          {displayedImpostorGuessEnabled && (
+            <div className="mt-4 flex items-center justify-between gap-4 rounded-2xl border border-stone-700 bg-stone-900 px-4 py-3 animate-in fade-in slide-in-from-top-2 duration-200">
+              <span className="text-sm font-semibold text-stone-300">
+                {t("options.impostorGuess.attempts")}
+              </span>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  disabled={
+                    !isHost ||
+                    displayedImpostorGuessAttempts <= MIN_IMPOSTOR_GUESSES
+                  }
+                  onClick={() => changeImpostorGuessAttempts(-1)}
+                  className="flex size-8 items-center justify-center rounded-lg border border-stone-600 bg-stone-800 text-white transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+                  aria-label={t("options.impostorGuess.decrease")}
+                >
+                  <Minus className="size-4" />
+                </button>
+                <span
+                  className="w-6 text-center text-lg font-bold tabular-nums text-white"
+                  aria-live="polite"
+                >
+                  {displayedImpostorGuessAttempts}
+                </span>
+                <button
+                  type="button"
+                  disabled={
+                    !isHost ||
+                    displayedImpostorGuessAttempts >= MAX_IMPOSTOR_GUESSES
+                  }
+                  onClick={() => changeImpostorGuessAttempts(1)}
+                  className="flex size-8 items-center justify-center rounded-lg border border-stone-600 bg-stone-800 text-white transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+                  aria-label={t("options.impostorGuess.increase")}
+                >
+                  <Plus className="size-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </section>
       </div>
     </BaseModal>

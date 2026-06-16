@@ -49,6 +49,8 @@ describe("useGameStore", () => {
         roundTime: DEFAULT_ROUND_TIME,
         unlimitedInk: false,
         clearCanvasEachRound: true,
+        impostorGuessEnabled: false,
+        impostorGuessAttempts: 3,
       },
       players: [],
       impostorId: null,
@@ -85,6 +87,8 @@ describe("useGameStore", () => {
       roundTime: 90,
       unlimitedInk: false,
       clearCanvasEachRound: true,
+      impostorGuessEnabled: false,
+      impostorGuessAttempts: 3,
     });
 
     expect(useGameStore.getState().gameOptions.roundTime).toBe(90);
@@ -97,6 +101,8 @@ describe("useGameStore", () => {
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: true,
       clearCanvasEachRound: true,
+      impostorGuessEnabled: false,
+      impostorGuessAttempts: 3,
     });
 
     expect(useGameStore.getState().gameOptions.unlimitedInk).toBe(true);
@@ -109,6 +115,8 @@ describe("useGameStore", () => {
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: false,
       clearCanvasEachRound: false,
+      impostorGuessEnabled: false,
+      impostorGuessAttempts: 3,
     });
 
     expect(useGameStore.getState().gameOptions.clearCanvasEachRound).toBe(
@@ -122,6 +130,8 @@ describe("useGameStore", () => {
       roundTime: 40,
       unlimitedInk: true,
       clearCanvasEachRound: false,
+      impostorGuessEnabled: false,
+      impostorGuessAttempts: 3,
     };
 
     state.actions.updateGameOptions(nextOptions);
@@ -501,6 +511,8 @@ describe("useGameStore", () => {
         roundTime: DEFAULT_ROUND_TIME,
         unlimitedInk: false,
         clearCanvasEachRound: true,
+        impostorGuessEnabled: false,
+        impostorGuessAttempts: 3,
       },
     });
 
@@ -602,6 +614,8 @@ describe("useGameStore", () => {
         roundTime: 40,
         unlimitedInk: true,
         clearCanvasEachRound: false,
+        impostorGuessEnabled: false,
+        impostorGuessAttempts: 3,
       },
     });
 
@@ -611,6 +625,8 @@ describe("useGameStore", () => {
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: false,
       clearCanvasEachRound: true,
+      impostorGuessEnabled: false,
+      impostorGuessAttempts: 3,
     });
   });
 

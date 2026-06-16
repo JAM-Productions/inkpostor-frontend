@@ -16,11 +16,15 @@ export const GameResult: React.FC = () => {
   const ejectedId = useGameStore((state) => state.ejectedId);
   const playersRemaining = players.filter((p) => !p.isEjected);
   const gameEnded = useGameStore((state) => state.gameEnded);
+  const impostorGuessedCorrectly = useGameStore(
+    (state) => state.impostorGuessedCorrectly,
+  );
 
   const me = players.find((p) => p.id === myId);
   const hasConfirmedNewRound = me?.hasConfirmedNewRound;
 
-  const impostorCaught = ejectedId === impostorId;
+  // If the impostor guessed the word they win, even if they were ejected.
+  const impostorCaught = ejectedId === impostorId && !impostorGuessedCorrectly;
   const isGameOver =
     impostorCaught || playersRemaining.length < MIN_PLAYERS || gameEnded;
   const impostorName =
@@ -87,6 +91,12 @@ export const GameResult: React.FC = () => {
             {isGameOver && (
               <p className="">
                 {t("result.wasImpostor", { name: impostorName })}
+              </p>
+            )}
+
+            {impostorGuessedCorrectly && (
+              <p className="text-purple-300 font-semibold">
+                {t("result.impostorGuessedWord", { name: impostorName })}
               </p>
             )}
           </div>

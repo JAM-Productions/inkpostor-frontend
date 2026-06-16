@@ -20,6 +20,15 @@ describe("VotingScreen", () => {
     ],
     votes: { "socket-789": "socket-123" },
     actions: { vote: mockVote },
+    amIImpostor: null,
+    impostorGuessesUsed: 0,
+    gameOptions: {
+      roundTime: 20,
+      unlimitedInk: false,
+      clearCanvasEachRound: true,
+      impostorGuessEnabled: false,
+      impostorGuessAttempts: 3,
+    },
   };
 
   beforeEach(() => {
@@ -252,5 +261,55 @@ describe("VotingScreen", () => {
     // Player 3 should have 0 vote dots
     const player3Dots = screen.queryAllByTestId("vote-dot-socket-789");
     expect(player3Dots).toHaveLength(0);
+  });
+
+  it("shows the impostor guess form when the impostor can still guess", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        amIImpostor: true,
+        gameOptions: {
+          ...mockStateBase.gameOptions,
+          impostorGuessEnabled: true,
+        },
+        actions: { ...mockStateBase.actions, submitImpostorGuess: vi.fn() },
+      };
+      return selector(state);
+    });
+
+    render(<VotingScreen />);
+
+    expect(screen.getByText("Guess the secret word")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Type the secret word..."),
+    ).toBeInTheDocument();
+  });
+
+  it("hides the impostor guess form for non-impostors", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({ ...mockStateBase }),
+    );
+
+    render(<VotingScreen />);
+
+    expect(screen.queryByText("Guess the secret word")).not.toBeInTheDocument();
+  });
+
+  it("hides the impostor guess form once attempts are exhausted", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        amIImpostor: true,
+        impostorGuessesUsed: 3,
+        gameOptions: {
+          ...mockStateBase.gameOptions,
+          impostorGuessEnabled: true,
+        },
+      }),
+    );
+
+    render(<VotingScreen />);
+
+    expect(screen.queryByText("Guess the secret word")).not.toBeInTheDocument();
   });
 });

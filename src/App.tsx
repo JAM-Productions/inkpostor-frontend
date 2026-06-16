@@ -4,6 +4,7 @@ import { Lobby } from "./components/Lobby";
 import { RoleReveal } from "./components/RoleReveal";
 import { Canvas } from "./components/Canvas";
 import { VotingScreen } from "./components/VotingScreen";
+import { ImpostorFinalGuess } from "./components/ImpostorFinalGuess";
 import { GameResult } from "./components/GameResult";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { EndGameButton } from "./components/buttons/EndGameButton";
@@ -34,6 +35,8 @@ function App() {
         return <Canvas />;
       case "VOTING":
         return <VotingScreen />;
+      case "IMPOSTOR_GUESS":
+        return <ImpostorFinalGuess />;
       case "RESULTS":
         return <GameResult />;
       default:

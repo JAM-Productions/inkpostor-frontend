@@ -100,6 +100,38 @@ describe("Canvas", () => {
     expect(screen.getByRole("button", { name: /done/i })).toBeInTheDocument();
   });
 
+  it("toggles the impostor guess panel and closes it when clicking outside", () => {
+    mockStore({
+      myId: "socket-456",
+      amIImpostor: true,
+      impostorGuessesUsed: 0,
+      gameOptions: {
+        ...mockStateBase.gameOptions,
+        impostorGuessEnabled: true,
+        impostorGuessAttempts: 3,
+      },
+      actions: { ...mockStateBase.actions, submitImpostorGuess: vi.fn() },
+    });
+
+    render(<Canvas />);
+
+    const guessButton = screen.getByRole("button", { name: /guess word/i });
+
+    // Opens on click
+    fireEvent.click(guessButton);
+    expect(screen.getByText("Guess the secret word")).toBeInTheDocument();
+
+    // Closes when clicking elsewhere inside the banner (e.g. the active player label)
+    fireEvent.mouseDown(screen.getByText("Now Drawing"));
+    expect(screen.queryByText("Guess the secret word")).not.toBeInTheDocument();
+
+    // Reopen, then close by clicking fully outside the banner
+    fireEvent.click(guessButton);
+    expect(screen.getByText("Guess the secret word")).toBeInTheDocument();
+    fireEvent.mouseDown(document.body);
+    expect(screen.queryByText("Guess the secret word")).not.toBeInTheDocument();
+  });
+
   it("renders waiting UI for non-active players", () => {
     mockStore({ myId: "socket-456" });
 
@@ -197,7 +229,7 @@ describe("Canvas", () => {
     render(<Canvas />);
 
     // Open the players list popover
-    const playersBtn = screen.getByLabelText("Players list");
+    const playersBtn = screen.getByLabelText("Players");
     fireEvent.click(playersBtn);
 
     // Find Player 2 in the list and click it

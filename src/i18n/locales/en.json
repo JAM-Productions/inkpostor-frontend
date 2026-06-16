@@ -37,6 +37,7 @@
       "wasEjected": "{{name}} was ejected.",
       "stillAmongUs": "Inkpostor is still among us...",
       "wasImpostor": "{{name}} was the Inkpostor!",
+      "impostorGuessedWord": "{{name}} guessed the word!",
       "secretWord": "The secret word was",
       "playAgain": "Play Again",
       "nextRound": "Next Round",
@@ -55,6 +56,17 @@
       "waitingOthers": "Waiting for other players to vote...",
       "voteCast": "Vote Cast!",
       "votesRecorded": "{{count}} / {{total}} votes recorded"
+    },
+    "impostorGuess": {
+      "title": "Guess the secret word",
+      "guessWord": "Guess Word",
+      "placeholder": "Type the secret word...",
+      "submit": "Guess",
+      "skip": "Skip",
+      "attemptsLeft": "Attempts left: {{count}}",
+      "eliminatedTitle": "You've been eliminated",
+      "lastChance": "One last chance: guess the word to win, or skip to give up.",
+      "waitingFinalGuess": "The Inkpostor was eliminated and is making a final guess..."
     },
     "canvas": {
       "colors": {
@@ -98,7 +110,9 @@
       "kickConfirmationText": "Are you sure you want to vote to kick {{name}}?",
       "cancel": "Cancel",
       "kickConfirm": "Vote to Kick",
-      "notConnected": "Offline"
+      "notConnected": "Offline",
+      "players": "Players",
+      "suspects": "Suspects"
     },
     "words": {
       "Dog": "Dog",
@@ -364,6 +378,14 @@
         "title": "Clear Canvas Each Round",
         "description": "Choose whether the canvas resets when a new round starts.",
         "toggle": "Toggle canvas clearing each round"
+      },
+      "impostorGuess": {
+        "title": "Impostor Can Guess",
+        "description": "Let the impostor try to guess the secret word to win.",
+        "toggle": "Toggle impostor guessing",
+        "attempts": "Number of attempts",
+        "increase": "Increase attempts",
+        "decrease": "Decrease attempts"
       },
       "confirm": "Save Options",
       "open": "Open options dialog"
