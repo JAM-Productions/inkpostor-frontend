@@ -320,9 +320,6 @@ describe("GameResult", () => {
 
     render(<GameResult />);
 
-    expect(
-      screen.queryByTestId("return-home-button"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("return-home-button")).not.toBeInTheDocument();
   });
-
 });
