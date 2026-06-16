@@ -17,6 +17,8 @@ describe("OptionsModal", () => {
       roundTime: 30,
       unlimitedInk: false,
       clearCanvasEachRound: true,
+      impostorGuessEnabled: false,
+      impostorGuessAttempts: 3,
     },
     myId: "player-1",
     hostId: "player-1",
@@ -85,8 +87,46 @@ describe("OptionsModal", () => {
       roundTime: 35,
       unlimitedInk: true,
       clearCanvasEachRound: false,
+      impostorGuessEnabled: false,
+      impostorGuessAttempts: 3,
     });
     expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it("reveals the attempts stepper only when impostor guessing is enabled and saves the chosen count", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState()),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    // Stepper hidden while the feature is off
+    expect(screen.queryByText("Number of attempts")).not.toBeInTheDocument();
+
+    // Enable the feature -> stepper appears (default 3)
+    await user.click(
+      screen.getByRole("switch", { name: /toggle impostor guessing/i }),
+    );
+    expect(screen.getByText("Number of attempts")).toBeInTheDocument();
+    expect(screen.getByText("3")).toBeInTheDocument();
+
+    // Decrease twice (3 -> 2 -> 1) and confirm it clamps at the minimum
+    const decrease = screen.getByRole("button", { name: /decrease attempts/i });
+    await user.click(decrease);
+    await user.click(decrease);
+    expect(screen.getByText("1")).toBeInTheDocument();
+    expect(decrease).toBeDisabled();
+
+    await user.click(screen.getByTestId("confirm-options-button"));
+
+    expect(mockUpdateGameOptions).toHaveBeenCalledWith({
+      roundTime: 30,
+      unlimitedInk: false,
+      clearCanvasEachRound: true,
+      impostorGuessEnabled: true,
+      impostorGuessAttempts: 1,
+    });
   });
 
   it("shows read-only options for non-hosts", () => {

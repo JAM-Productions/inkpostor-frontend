@@ -80,6 +80,24 @@ describe("GameResult", () => {
     expect(screen.getByText("Impostor was the Inkpostor!")).toBeInTheDocument();
   });
 
+  it("shows Impostor Won when the impostor guessed the word, even after being ejected", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        gameEnded: true,
+        ejectedId: "socket-456", // impostor was ejected...
+        impostorGuessedCorrectly: true, // ...but guessed the word
+      };
+      return selector(state);
+    });
+
+    render(<GameResult />);
+
+    expect(screen.getByText("Inkpostor Won")).toBeInTheDocument();
+    expect(screen.queryByText("Inkpostor Defeated")).not.toBeInTheDocument();
+    expect(screen.getByText("Impostor guessed the word!")).toBeInTheDocument();
+  });
+
   it("shows tie state if vote is tied", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {

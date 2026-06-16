@@ -37,6 +37,7 @@
       "wasEjected": "{{name}} ha sido expulsado/a.",
       "stillAmongUs": "El Inkpostor sigue entre nosotros...",
       "wasImpostor": "¡{{name}} era el Inkpostor!",
+      "impostorGuessedWord": "¡{{name}} adivinó la palabra!",
       "secretWord": "La palabra secreta era",
       "playAgain": "Volver a Jugar",
       "nextRound": "Siguiente Ronda",
@@ -55,6 +56,17 @@
       "waitingOthers": "Esperando a que otros voten...",
       "voteCast": "¡Voto Enviado!",
       "votesRecorded": "{{count}} / {{total}} votos registrados"
+    },
+    "impostorGuess": {
+      "title": "Adivina la palabra secreta",
+      "guessWord": "Adivinar",
+      "placeholder": "Escribe la palabra secreta...",
+      "submit": "Adivinar",
+      "skip": "Pasar",
+      "attemptsLeft": "Intentos restantes: {{count}}",
+      "eliminatedTitle": "Has sido eliminado",
+      "lastChance": "Última oportunidad: adivina la palabra para ganar, o pasa para rendirte.",
+      "waitingFinalGuess": "El Inkpostor fue eliminado y está haciendo su último intento..."
     },
     "canvas": {
       "colors": {
@@ -98,7 +110,9 @@
       "kickConfirmationText": "¿Estás seguro de que quieres votar para expulsar a {{name}}?",
       "cancel": "Cancelar",
       "kickConfirm": "Votar",
-      "notConnected": "Desconectado"
+      "notConnected": "Desconectado",
+      "players": "Jugadores",
+      "suspects": "Sospechosos"
     },
     "words": {
       "Dog": "Perro",
@@ -364,6 +378,14 @@
         "title": "Limpiar lienzo cada ronda",
         "description": "Elige si el lienzo se reinicia al comenzar una nueva ronda.",
         "toggle": "Alternar limpieza del lienzo en cada ronda"
+      },
+      "impostorGuess": {
+        "title": "El impostor puede adivinar",
+        "description": "Permite que el impostor intente adivinar la palabra secreta para ganar.",
+        "toggle": "Alternar adivinanza del impostor",
+        "attempts": "Número de intentos",
+        "increase": "Aumentar intentos",
+        "decrease": "Disminuir intentos"
       },
       "confirm": "Guardar opciones",
       "open": "Abrir diálogo de opciones"

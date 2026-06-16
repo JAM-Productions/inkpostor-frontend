@@ -37,6 +37,7 @@
       "wasEjected": "{{name}} ha estat expulsat/da.",
       "stillAmongUs": "L'Inkpostor segueix entre nosaltres...",
       "wasImpostor": "{{name}} era l'Inkpostor!",
+      "impostorGuessedWord": "{{name}} ha encertat la paraula!",
       "secretWord": "La paraula secreta era",
       "playAgain": "Tornar a Jugar",
       "nextRound": "Següent Ronda",
@@ -55,6 +56,17 @@
       "waitingOthers": "Esperant que altres votin...",
       "voteCast": "Vot Enviat!",
       "votesRecorded": "{{count}} / {{total}} vots registrats"
+    },
+    "impostorGuess": {
+      "title": "Endevina la paraula secreta",
+      "guessWord": "Endevinar",
+      "placeholder": "Escriu la paraula secreta...",
+      "submit": "Endevinar",
+      "skip": "Passar",
+      "attemptsLeft": "Intents restants: {{count}}",
+      "eliminatedTitle": "Has estat eliminat",
+      "lastChance": "Última oportunitat: endevina la paraula per guanyar, o passa per rendir-te.",
+      "waitingFinalGuess": "L'Inkpostor ha estat eliminat i està fent el seu últim intent..."
     },
     "canvas": {
       "colors": {
@@ -98,7 +110,9 @@
       "kickConfirmationText": "Estàs segur que vols votar per expulsar a {{name}}?",
       "cancel": "Cancel·lar",
       "kickConfirm": "Votar",
-      "notConnected": "Desconnectat"
+      "notConnected": "Desconnectat",
+      "players": "Jugadors",
+      "suspects": "Sospitosos"
     },
     "words": {
       "Dog": "Gos",
@@ -364,6 +378,14 @@
         "title": "Netejar llenç cada ronda",
         "description": "Tria si el llenç es reinicia en començar una ronda nova.",
         "toggle": "Alternar neteja del llenç a cada ronda"
+      },
+      "impostorGuess": {
+        "title": "L'impostor pot endevinar",
+        "description": "Permet que l'impostor intenti endevinar la paraula secreta per guanyar.",
+        "toggle": "Alternar endevinació de l'impostor",
+        "attempts": "Nombre d'intents",
+        "increase": "Augmentar intents",
+        "decrease": "Disminuir intents"
       },
       "confirm": "Guardar opcions",
       "open": "Obrir diàleg de opcions"

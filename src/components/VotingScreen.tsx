@@ -1,8 +1,15 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
-import { SkipForward, CheckCircle2, Search, Skull } from "lucide-react";
+import {
+  SkipForward,
+  CheckCircle2,
+  Search,
+  Skull,
+  PenLine,
+} from "lucide-react";
 import { VoteDotsPreview } from "./VoteDotsPreview";
+import { ImpostorGuessForm } from "./ImpostorGuessForm";
 import {
   getPlayerIconColorClass,
   getPlayerVotingCardColorClass,
@@ -16,6 +23,11 @@ export const VotingScreen: React.FC = () => {
   const votes = useGameStore((state) => state.votes);
   const actions = useGameStore((state) => state.actions);
   const currentRound = useGameStore((state) => state.currentRound);
+  const amIImpostor = useGameStore((state) => state.amIImpostor);
+  const gameOptions = useGameStore((state) => state.gameOptions);
+  const impostorGuessesUsed = useGameStore(
+    (state) => state.impostorGuessesUsed,
+  );
 
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,6 +36,13 @@ export const VotingScreen: React.FC = () => {
   const hostId = useGameStore((state) => state.hostId);
   const hasVoted = me?.hasVoted;
   const hasBeenEjected = me?.isEjected;
+
+  const attemptsLeft = gameOptions.impostorGuessAttempts - impostorGuessesUsed;
+  const canGuess =
+    !!amIImpostor &&
+    gameOptions.impostorGuessEnabled &&
+    attemptsLeft > 0 &&
+    !hasBeenEjected;
 
   const effectiveSelectedPlayer =
     hasVoted && myId ? (votes[myId] ?? selectedPlayer) : selectedPlayer;
@@ -164,6 +183,15 @@ export const VotingScreen: React.FC = () => {
                 isSelected={effectiveSelectedPlayer === "skip"}
               />
             </button>
+            {canGuess && (
+              <div className="rounded-2xl border border-purple-500/40 bg-purple-950/20 p-4">
+                <div className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-purple-300">
+                  <PenLine className="size-4" />
+                  {t("impostorGuess.title")}
+                </div>
+                <ImpostorGuessForm attemptsLeft={attemptsLeft} />
+              </div>
+            )}
             {!hasBeenEjected && !hasVoted ? (
               <button
                 type="button"

@@ -24,7 +24,8 @@ export const Lobby: React.FC = () => {
   const optionsChangedCount =
     Number(gameOptions.roundTime !== DEFAULT_ROUND_TIME) +
     Number(gameOptions.unlimitedInk !== false) +
-    Number(gameOptions.clearCanvasEachRound !== true);
+    Number(gameOptions.clearCanvasEachRound !== true) +
+    Number(gameOptions.impostorGuessEnabled !== false);
 
   return (
     <div className="flex flex-col items-center justify-center max-h-screen p-4 pb-12 pt-20 bg-stone-900">
