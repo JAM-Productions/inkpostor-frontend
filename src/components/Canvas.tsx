@@ -278,10 +278,10 @@ export const Canvas: React.FC = () => {
       <div className="w-full max-w-4xl space-y-4">
         {/* Header Banner */}
         <div
-          className={`relative flex items-center justify-between p-3 sm:p-4 rounded-2xl shadow-xl ${getActivePlayerCardColorClass(isMyTurn ? myId : null, hostId, players)}`}
+          className={`relative flex items-center justify-between p-3 sm:p-4 min-h-21.5 rounded-2xl shadow-xl ${getActivePlayerCardColorClass(isMyTurn ? myId : null, hostId, players)}`}
         >
-          <div className="flex items-center gap-3">
-            <div className="relative">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="relative shrink-0">
               <div
                 className={`size-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${getPlayerIconColorClass(currentTurnPlayerId, hostId, players)} ${isMyTurn ? "animate-pulse" : ""}`}
               >
@@ -302,29 +302,29 @@ export const Canvas: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <div>
+              <div className="min-w-0">
                 <p
-                  className={`text-sm font-bold text-stone-400 uppercase tracking-widest ${activePlayer?.isConnected ? "" : "animate-pulse"}`}
+                  className={`text-sm font-bold text-stone-400 uppercase tracking-widest truncate ${activePlayer?.isConnected ? "" : "animate-pulse"}`}
                 >
                   {activePlayer?.isConnected
                     ? t("canvas.nowDrawing")
                     : t("canvas.notConnected")}
                 </p>
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-white truncate">
                   {activePlayer?.name || t("canvas.someone")}
                 </h2>
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-4 sm:gap-6">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1">
+          <div className="flex items-center gap-2 sm:gap-6 shrink-0">
+            <div className="flex items-center gap-1">
               {canGuess && !isMyTurn && (
-                <div ref={guessRef}>
+                <div className="md:relative" ref={guessRef}>
                   <button
                     type="button"
                     onClick={() => setIsGuessOpen(!isGuessOpen)}
-                    className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-stone-900/50 cursor-pointer ${
+                    className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-stone-900/50 cursor-pointer ${
                       isGuessOpen
                         ? "bg-stone-600 text-white border-2 border-stone-500"
                         : "bg-surface text-stone-300 hover:bg-stone-700 hover:text-white border-2 border-transparent"
@@ -332,13 +332,13 @@ export const Canvas: React.FC = () => {
                     aria-label={t("impostorGuess.guessWord")}
                   >
                     <PenLine className="size-5" />
-                    <span className="hidden sm:inline">
+                    <span className="hidden md:inline">
                       {t("impostorGuess.guessWord")}
                     </span>
                   </button>
 
                   {isGuessOpen && (
-                    <div className="absolute top-full inset-x-0 mt-3 p-4 bg-stone-800 rounded-2xl border border-stone-700 shadow-xl flex flex-col gap-2 z-50">
+                    <div className="absolute top-full inset-x-0 md:inset-x-auto md:left-auto md:right-0 md:min-w-87.5 mt-3 p-4 bg-stone-800 rounded-2xl border border-stone-700 shadow-xl flex flex-col gap-2 z-50">
                       <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-purple-300">
                         <PenLine className="size-4" />
                         {t("impostorGuess.title")}
@@ -349,11 +349,11 @@ export const Canvas: React.FC = () => {
                 </div>
               )}
               {!isMyTurn && (
-                <div className="relative" ref={suspectsRef}>
+                <div className="sm:relative" ref={suspectsRef}>
                   <button
                     type="button"
                     onClick={() => setIsSusListOpen(!isSusListOpen)}
-                    className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-stone-900/50 cursor-pointer ${
+                    className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-stone-900/50 cursor-pointer ${
                       isSusListOpen
                         ? "bg-stone-600 text-white border-2 border-stone-500"
                         : "bg-surface text-stone-300 hover:bg-stone-700 hover:text-white border-2 border-transparent"
@@ -361,13 +361,13 @@ export const Canvas: React.FC = () => {
                     aria-label={t("canvas.players")}
                   >
                     <Users className="size-5" />
-                    <span className="hidden sm:inline">
+                    <span className="hidden md:inline">
                       {t("canvas.players")}
                     </span>
                   </button>
 
                   {isSusListOpen && (
-                    <div className="absolute top-full right-0 mt-3 p-3 bg-stone-800 rounded-2xl border border-stone-700 shadow-2xl flex flex-col gap-2 min-w-[200px] sm:min-w-[240px] animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-200 z-50">
+                    <div className="absolute top-full inset-x-0 sm:inset-x-auto sm:left-auto sm:right-0 mt-3 p-3 bg-stone-800 rounded-2xl border border-stone-700 shadow-2xl flex flex-col gap-2 sm:min-w-[240px] animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-200 z-50">
                       <div className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1 px-1">
                         {t("canvas.suspects")}
                       </div>
@@ -435,7 +435,7 @@ export const Canvas: React.FC = () => {
               <p className="text-xs text-stone-400 font-semibold uppercase mb-1 flex items-center gap-1">
                 <Clock className="size-3" /> {t("canvas.time")}
               </p>
-              <div className="text-2xl font-black text-white px-3 py-1 bg-stone-900 rounded-lg min-w-[80px] text-right tabular-nums">
+              <div className="text-2xl font-black text-white px-3 py-1 bg-stone-900 rounded-lg min-w-[86px] text-right tabular-nums">
                 {(timeLeft / 1000).toFixed(1)}s
               </div>
             </div>
