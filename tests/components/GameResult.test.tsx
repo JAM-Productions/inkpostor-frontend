@@ -307,4 +307,19 @@ describe("GameResult", () => {
     fireEvent.click(returnBtn);
     expect(mockExitGame).toHaveBeenCalled();
   });
+
+  it("does not render Return to Home button when game is not over (non-terminal RESULTS)", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        gameEnded: false,
+        ejectedId: "socket-789", // crewmate ejected, game continues
+      };
+      return selector(state);
+    });
+
+    render(<GameResult />);
+
+    expect(screen.queryByTestId("return-home-button")).not.toBeInTheDocument();
+  });
 });

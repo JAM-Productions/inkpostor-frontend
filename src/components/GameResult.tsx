@@ -151,10 +151,7 @@ export const GameResult: React.FC = () => {
             </div>
           </button>
         ) : (
-          <div
-            className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in"
-            style={{ minHeight: "5rem" }}
-          >
+          <div className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in min-h-14">
             <span className="relative flex size-2 sm:size-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full size-2 sm:size-3 bg-stone-500"></span>
@@ -168,17 +165,18 @@ export const GameResult: React.FC = () => {
             })}
           </div>
         )}
-
-        <button
-          type="button"
-          aria-label="Return to Home"
-          onClick={actions.exitGame}
-          className="mt-6 px-6 py-2.5 rounded-xl border border-stone-800 text-stone-400 hover:text-white hover:bg-stone-900 transition-all cursor-pointer font-semibold text-sm flex items-center justify-center gap-2 mx-auto shadow-sm active:scale-95"
-          data-testid="return-home-button"
-        >
-          <Home className="size-4 text-stone-400" />
-          {t("result.returnToHome")}
-        </button>
+        {isGameOver && (
+          <button
+            type="button"
+            aria-label="Return to Home"
+            onClick={actions.exitGame}
+            className="mt-6 px-6 py-2.5 rounded-xl border border-stone-800 text-stone-400 hover:text-white hover:bg-stone-900 transition-all cursor-pointer font-semibold text-sm flex items-center justify-center gap-2 mx-auto shadow-sm active:scale-95"
+            data-testid="return-home-button"
+          >
+            <Home className="size-4 text-stone-400" />
+            {t("result.returnToHome")}
+          </button>
+        )}
       </div>
     </div>
   );

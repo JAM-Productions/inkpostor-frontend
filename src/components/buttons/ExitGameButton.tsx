@@ -7,10 +7,10 @@ export function ExitGameButton() {
   const { t } = useTranslation();
   const roomId = useGameStore((state) => state.roomId);
   const myName = useGameStore((state) => state.myName);
-  const phase = useGameStore((state) => state.phase);
+  const gameEnded = useGameStore((state) => state.gameEnded);
   const modalActions = useModalStore((state) => state.actions);
 
-  if (!roomId || !myName || phase === "RESULTS") {
+  if (!roomId || !myName || gameEnded) {
     return null;
   }
 

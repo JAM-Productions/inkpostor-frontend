@@ -15,6 +15,7 @@ describe("ExitGameButton", () => {
     roomId: "ROOM123",
     myName: "Alice",
     phase: "LOBBY",
+    gameEnded: false,
   };
 
   beforeEach(() => {
@@ -44,15 +45,26 @@ describe("ExitGameButton", () => {
     expect(button).not.toBeInTheDocument();
   });
 
-  it("does not render when phase is RESULTS", () => {
+  it("does not render when gameEnded is true", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
-      const state = { ...mockStateBase, phase: "RESULTS" };
+      const state = { ...mockStateBase, phase: "RESULTS", gameEnded: true };
       return selector(state);
     });
 
     render(<ExitGameButton />);
     const button = screen.queryByTestId("exit-game-button");
     expect(button).not.toBeInTheDocument();
+  });
+
+  it("renders in RESULTS phase when game has not ended (non-terminal round)", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase, phase: "RESULTS", gameEnded: false };
+      return selector(state);
+    });
+
+    render(<ExitGameButton />);
+    const button = screen.getByTestId("exit-game-button");
+    expect(button).toBeInTheDocument();
   });
 
   it("opens the exit game confirmation modal when clicked", async () => {
