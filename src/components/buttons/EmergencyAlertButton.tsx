@@ -21,11 +21,11 @@ export const EmergencyAlertButton = () => {
   if (me?.isEjected) return null;
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="sm:relative" ref={dropdownRef}>
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`flex items-center px-4 py-2 sm:px-5 sm:py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-red-900/50 cursor-pointer ${isOpen ? "bg-ink-primary-accent" : "bg-ink-primary"} ${isDisabled ? "opacity-50" : "hover:bg-ink-primary-accent"}`}
+        className={`flex items-center justify-center size-11 sm:h-12 sm:w-16 md:h-13 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-red-900/50 cursor-pointer ${isOpen ? "bg-ink-primary-accent" : "bg-ink-primary"} ${isDisabled ? "opacity-50" : "hover:bg-ink-primary-accent"}`}
         aria-label="Alert"
         disabled={isDisabled}
       >
@@ -33,7 +33,7 @@ export const EmergencyAlertButton = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-3 p-3 bg-stone-800 rounded-2xl border border-stone-700 shadow-2xl flex flex-col gap-4 min-w-50 sm:min-w-60 animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-200 z-50">
+        <div className="absolute top-full inset-x-0 sm:inset-x-auto sm:left-auto sm:right-0 mt-3 p-3 bg-stone-800 rounded-2xl border border-stone-700 shadow-2xl flex flex-col gap-4 sm:min-w-60 animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-200 z-50">
           <p className="text-sm text-white font-semibold text-center">
             {t("canvas.emergencyVotingPrompt")}
           </p>
