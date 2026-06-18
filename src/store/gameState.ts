@@ -157,6 +157,20 @@ export interface GameState {
   };
 }
 
+/**
+ * Returns a partial state that applies `patch` to the local player (`myId`)
+ * inside the `players` array. Used for optimistic updates that flip a flag on
+ * the current player. Returns the unchanged state if there is no local id.
+ */
+function patchMyPlayer(state: GameState, patch: Partial<Player>): Partial<GameState> {
+  if (!state.myId) return state;
+  return {
+    players: state.players.map((p) =>
+      p.id === state.myId ? { ...p, ...patch } : p,
+    ),
+  };
+}
+
 export const useGameStore = create<GameState>()((set, get) => ({
   roomId: null,
   hostId: null,
@@ -250,13 +264,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     proceedToDrawing: () => {
       socket.emit("proceedToDrawing");
       // Optimistic update for better performance and deny multiple clicks to proceed
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasRevealedRole: true } : p,
-        );
-        return { players: newPlayers };
-      });
+      set((state) => patchMyPlayer(state, { hasRevealedRole: true }));
     },
     drawStroke: (stroke) => {
       socket.emit("drawStroke", stroke);
@@ -277,14 +285,10 @@ export const useGameStore = create<GameState>()((set, get) => ({
 
       socket.emit("vote", votedForId);
       // Optimistic update for better performance and feedback
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasVoted: true } : p,
-        );
-        const newVotes = { ...state.votes, [state.myId]: votedForId };
-        return { players: newPlayers, votes: newVotes };
-      });
+      set((state) => ({
+        ...patchMyPlayer(state, { hasVoted: true }),
+        votes: { ...state.votes, [state.myId!]: votedForId },
+      }));
     },
     playAgain: () => {
       socket.emit("playAgain");
@@ -292,13 +296,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     nextRound: () => {
       socket.emit("nextRound");
       // Optimistic update for better performance and to prevent multiple clicks to proceed
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasConfirmedNewRound: true } : p,
-        );
-        return { players: newPlayers };
-      });
+      set((state) => patchMyPlayer(state, { hasConfirmedNewRound: true }));
     },
     endGame: () => {
       socket.emit("endGame");
@@ -310,13 +308,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
       if (!me || me.hasStartedEmergencyVoting || me.isEjected) return;
       socket.emit("startEmergencyVoting");
       // Optimistic update for better performance and to prevent multiple clicks to alert
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasStartedEmergencyVoting: true } : p,
-        );
-        return { players: newPlayers };
-      });
+      set((state) => patchMyPlayer(state, { hasStartedEmergencyVoting: true }));
     },
     submitImpostorGuess: (guess, language) => {
       const trimmed = guess.trim();
