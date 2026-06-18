@@ -162,7 +162,10 @@ export interface GameState {
  * inside the `players` array. Used for optimistic updates that flip a flag on
  * the current player. Returns the unchanged state if there is no local id.
  */
-function patchMyPlayer(state: GameState, patch: Partial<Player>): Partial<GameState> {
+function patchMyPlayer(
+  state: GameState,
+  patch: Partial<Player>,
+): Partial<GameState> {
   if (!state.myId) return state;
   return {
     players: state.players.map((p) =>
