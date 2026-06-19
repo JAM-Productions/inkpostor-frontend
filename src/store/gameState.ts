@@ -1,70 +1,14 @@
 import { create } from "zustand";
 import { socket, SERVICE_URL } from "../socket";
 import { DEFAULT_ROUND_TIME, DEFAULT_IMPOSTOR_GUESSES } from "../lib/constants";
-
-function detectIsMobile(): boolean {
-  if (typeof navigator === "undefined") return false;
-  const userAgent = navigator.userAgent || "";
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    userAgent,
-  );
-}
-
-export const PLAYER_NAME_KEY = "inkpostor_player_name";
-const USER_ID_KEY = "inkpostor_user_id";
-
-function getSavedPlayerName(): string | null {
-  try {
-    return localStorage.getItem(PLAYER_NAME_KEY);
-  } catch {
-    return null;
-  }
-}
-
-function savePlayerName(name: string): void {
-  try {
-    localStorage.setItem(PLAYER_NAME_KEY, name);
-  } catch (e) {
-    console.error("Error saving player name to localStorage:", e);
-  }
-}
-
-function getOrCreateUserId(): string {
-  let id = null;
-  try {
-    id = localStorage.getItem(USER_ID_KEY);
-  } catch (e) {
-    console.error("Error reading userId from localStorage:", e);
-  }
-
-  if (!id) {
-    id = crypto.randomUUID();
-    try {
-      localStorage.setItem(USER_ID_KEY, id);
-    } catch (e) {
-      console.error("Error saving userId to localStorage:", e);
-    }
-  }
-  return id;
-}
-
-function clearRoomUrlParam() {
-  try {
-    if (typeof window !== "undefined" && window.history) {
-      const url = new URL(window.location.href);
-      if (url.searchParams.has("room")) {
-        url.searchParams.delete("room");
-        window.history.replaceState(
-          {},
-          document.title,
-          url.pathname + url.search,
-        );
-      }
-    }
-  } catch (e) {
-    console.error("Error clearing URL parameters:", e);
-  }
-}
+import {
+  detectIsMobile,
+  getSavedPlayerName,
+  savePlayerName,
+  getOrCreateUserId,
+  clearRoomUrlParam,
+  patchMyPlayer,
+} from "../lib/gameStateUtils";
 
 export type GamePhase =
   | "LOBBY"
@@ -250,13 +194,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     proceedToDrawing: () => {
       socket.emit("proceedToDrawing");
       // Optimistic update for better performance and deny multiple clicks to proceed
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasRevealedRole: true } : p,
-        );
-        return { players: newPlayers };
-      });
+      set((state) => patchMyPlayer(state, { hasRevealedRole: true }));
     },
     drawStroke: (stroke) => {
       socket.emit("drawStroke", stroke);
@@ -277,14 +215,10 @@ export const useGameStore = create<GameState>()((set, get) => ({
 
       socket.emit("vote", votedForId);
       // Optimistic update for better performance and feedback
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasVoted: true } : p,
-        );
-        const newVotes = { ...state.votes, [state.myId]: votedForId };
-        return { players: newPlayers, votes: newVotes };
-      });
+      set((state) => ({
+        ...patchMyPlayer(state, { hasVoted: true }),
+        votes: { ...state.votes, [state.myId!]: votedForId },
+      }));
     },
     playAgain: () => {
       socket.emit("playAgain");
@@ -292,13 +226,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     nextRound: () => {
       socket.emit("nextRound");
       // Optimistic update for better performance and to prevent multiple clicks to proceed
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasConfirmedNewRound: true } : p,
-        );
-        return { players: newPlayers };
-      });
+      set((state) => patchMyPlayer(state, { hasConfirmedNewRound: true }));
     },
     endGame: () => {
       socket.emit("endGame");
@@ -310,13 +238,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
       if (!me || me.hasStartedEmergencyVoting || me.isEjected) return;
       socket.emit("startEmergencyVoting");
       // Optimistic update for better performance and to prevent multiple clicks to alert
-      set((state) => {
-        if (!state.myId) return state;
-        const newPlayers = state.players.map((p) =>
-          p.id === state.myId ? { ...p, hasStartedEmergencyVoting: true } : p,
-        );
-        return { players: newPlayers };
-      });
+      set((state) => patchMyPlayer(state, { hasStartedEmergencyVoting: true }));
     },
     submitImpostorGuess: (guess, language) => {
       const trimmed = guess.trim();

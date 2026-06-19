@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { useGameStore, PLAYER_NAME_KEY } from "../../src/store/gameState";
+import { useGameStore } from "../../src/store/gameState";
+import { PLAYER_NAME_KEY } from "../../src/lib/gameStateUtils";
 import { socket } from "../../src/socket";
 import { DEFAULT_ROUND_TIME } from "../../src/lib/constants";
 

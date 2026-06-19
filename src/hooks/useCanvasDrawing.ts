@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useGameStore } from "../store/gameState";
 import { MAX_INK, DOT_INK_COST } from "../lib/constants";
 import { DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
@@ -46,7 +52,7 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
   const isMyTurn = currentTurnPlayerId === myId;
 
   // Resize canvas to match CSS layout
-  useEffect(() => {
+  useLayoutEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
