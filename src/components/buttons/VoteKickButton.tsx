@@ -17,6 +17,7 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
 }) => {
   const { t } = useTranslation();
   const myId = useGameStore((state) => state.myId);
+  const hostId = useGameStore((state) => state.hostId);
   const kickVotes = useGameStore((state) => state.kickVotes);
   const actions = useGameStore((state) => state.actions);
   const openModal = useModalStore((state) => state.actions.openModal);
@@ -24,6 +25,9 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
 
   // If the player is ourselves, don't show the button
   if (player.id === myId) return null;
+
+  // If the player is the host, they can't be voted out
+  if (player.id === hostId) return null;
 
   const hasVoted = kickVotes[player.id]?.includes(myId || "");
 

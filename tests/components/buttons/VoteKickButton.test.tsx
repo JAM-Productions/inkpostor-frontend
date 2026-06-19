@@ -23,8 +23,10 @@ describe("VoteKickButton", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         myId: "my-id",
+        hostId: "host-id",
         players: [
           { id: "my-id", name: "Me", isConnected: true },
+          { id: "host-id", name: "Host", isConnected: true },
           { id: "another-id", name: "Another", isConnected: true },
           { id: "target-id", name: "Target", isConnected: true },
         ],
@@ -61,6 +63,18 @@ describe("VoteKickButton", () => {
   it("does not render if player is me", () => {
     const { container } = render(
       <VoteKickButton player={{ id: "my-id", name: "Me" }} requiredVotes={3} />,
+    );
+
+    // Should return null
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("does not render if player is the host", () => {
+    const { container } = render(
+      <VoteKickButton
+        player={{ id: "host-id", name: "Host" }}
+        requiredVotes={3}
+      />,
     );
 
     // Should return null
