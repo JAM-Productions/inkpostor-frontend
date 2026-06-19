@@ -1,70 +1,14 @@
 import { create } from "zustand";
 import { socket, SERVICE_URL } from "../socket";
 import { DEFAULT_ROUND_TIME, DEFAULT_IMPOSTOR_GUESSES } from "../lib/constants";
-
-function detectIsMobile(): boolean {
-  if (typeof navigator === "undefined") return false;
-  const userAgent = navigator.userAgent || "";
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    userAgent,
-  );
-}
-
-export const PLAYER_NAME_KEY = "inkpostor_player_name";
-const USER_ID_KEY = "inkpostor_user_id";
-
-function getSavedPlayerName(): string | null {
-  try {
-    return localStorage.getItem(PLAYER_NAME_KEY);
-  } catch {
-    return null;
-  }
-}
-
-function savePlayerName(name: string): void {
-  try {
-    localStorage.setItem(PLAYER_NAME_KEY, name);
-  } catch (e) {
-    console.error("Error saving player name to localStorage:", e);
-  }
-}
-
-function getOrCreateUserId(): string {
-  let id = null;
-  try {
-    id = localStorage.getItem(USER_ID_KEY);
-  } catch (e) {
-    console.error("Error reading userId from localStorage:", e);
-  }
-
-  if (!id) {
-    id = crypto.randomUUID();
-    try {
-      localStorage.setItem(USER_ID_KEY, id);
-    } catch (e) {
-      console.error("Error saving userId to localStorage:", e);
-    }
-  }
-  return id;
-}
-
-function clearRoomUrlParam() {
-  try {
-    if (typeof window !== "undefined" && window.history) {
-      const url = new URL(window.location.href);
-      if (url.searchParams.has("room")) {
-        url.searchParams.delete("room");
-        window.history.replaceState(
-          {},
-          document.title,
-          url.pathname + url.search,
-        );
-      }
-    }
-  } catch (e) {
-    console.error("Error clearing URL parameters:", e);
-  }
-}
+import {
+  detectIsMobile,
+  getSavedPlayerName,
+  savePlayerName,
+  getOrCreateUserId,
+  clearRoomUrlParam,
+  patchMyPlayer,
+} from "../lib/gameStateUtils";
 
 export type GamePhase =
   | "LOBBY"
@@ -154,23 +98,6 @@ export interface GameState {
     setError: (msg: string | null) => void;
     toggleSus: (playerId: string) => void;
     exitGame: () => void;
-  };
-}
-
-/**
- * Returns a partial state that applies `patch` to the local player (`myId`)
- * inside the `players` array. Used for optimistic updates that flip a flag on
- * the current player. Returns the unchanged state if there is no local id.
- */
-function patchMyPlayer(
-  state: GameState,
-  patch: Partial<Player>,
-): Partial<GameState> {
-  if (!state.myId) return state;
-  return {
-    players: state.players.map((p) =>
-      p.id === state.myId ? { ...p, ...patch } : p,
-    ),
   };
 }
 
