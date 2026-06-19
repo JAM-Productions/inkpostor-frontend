@@ -21,33 +21,33 @@ Inkpostor is a creative social deduction game. Players are given a secret word a
 1. **Install Dependencies:**
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 2. **Start the Development Server:**
 
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 3. **Running the Tests:**
 
    ```bash
    # Run tests once
-   npm run test
+   pnpm test
 
    # Run tests with coverage
-   npm run test:coverage
+   pnpm test:coverage
    ```
 
 4. **Linting and Formatting:**
 
    ```bash
    # Run ESLint
-   npm run lint
+   pnpm lint
 
    # Format code with Prettier
-   npm run format
+   pnpm format
    ```
 
 ## Production Build
@@ -55,6 +55,6 @@ Inkpostor is a creative social deduction game. Players are given a secret word a
 To preview the production build locally:
 
 ```bash
-npm run build
-npm run preview
+pnpm build
+pnpm preview
 ```
