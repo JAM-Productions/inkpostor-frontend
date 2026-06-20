@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import {
   Check,
   Crown,
-  GlobeOff,
   LoaderCircle,
   Minus,
   Unplug,
