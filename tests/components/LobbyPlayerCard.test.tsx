@@ -137,4 +137,33 @@ describe("LobbyPlayerCard", () => {
       screen.getByRole("button", { name: /kick alice/i }),
     ).toBeInTheDocument();
   });
+
+  it("shows the player initial and no disconnected icon when connected", () => {
+    renderCard({
+      player: createPlayer({
+        id: "player-1",
+        name: "Alice",
+        isConnected: true,
+      }),
+    });
+
+    expect(screen.getByText("A")).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/alice is disconnected/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("hides the initial and shows the disconnected icon when not connected", () => {
+    renderCard({
+      player: createPlayer({
+        id: "player-1",
+        name: "Alice",
+        isConnected: false,
+      }),
+    });
+
+    // The initial letter is replaced by the loader spinner.
+    expect(screen.queryByText("A")).not.toBeInTheDocument();
+    expect(screen.getByLabelText(/alice is disconnected/i)).toBeInTheDocument();
+  });
 });

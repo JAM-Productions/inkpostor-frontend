@@ -24,6 +24,7 @@
       "kickPlayerAria": "Kick {{name}}",
       "confirmKickAria": "Confirm kick {{name}}",
       "cancelKickAria": "Cancel kick {{name}}",
+      "disconnectedAria": "{{name}} is disconnected",
       "waitingPlayers": "Waiting for more players...",
       "needMore": "Need at least {{min}} players to start",
       "startGame": "START GAME",

@@ -1,6 +1,15 @@
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Check, Crown, Minus, UserMinus, X } from "lucide-react";
+import {
+  Check,
+  Crown,
+  GlobeOff,
+  LoaderCircle,
+  Minus,
+  Unplug,
+  UserMinus,
+  X,
+} from "lucide-react";
 import { getPlayerIconColorClass } from "../lib/playerColors";
 import { useGameStore, type Player } from "../store/gameState";
 import { useClickOutside } from "../hooks/useClickOutside";
@@ -40,12 +49,24 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
         <div
           className={`size-8 sm:size-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerIconColorClass(player.id, hostId, players)}`}
         >
-          {player.name.charAt(0).toUpperCase()}
+          {player.isConnected === false ? (
+            <LoaderCircle className="size-4 sm:size-5 text-white animate-spin opacity-60" />
+          ) : (
+            player.name.charAt(0).toUpperCase()
+          )}
         </div>
-        <div>
+        <div
+          className={`flex items-center gap-2 ${player.isConnected === false ? "animate-pulse" : ""}`}
+        >
           <span className="font-semibold text-white text-sm sm:text-lg">
             {player.name}
           </span>
+          {player.isConnected === false && (
+            <Unplug
+              className="size-4 text-white/80"
+              aria-label={t("lobby.disconnectedAria", { name: player.name })}
+            />
+          )}
         </div>
       </div>
 

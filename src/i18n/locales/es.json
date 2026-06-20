@@ -24,6 +24,7 @@
       "kickPlayerAria": "Expulsar a {{name}}",
       "confirmKickAria": "Confirmar expulsión de {{name}}",
       "cancelKickAria": "Cancelar expulsión de {{name}}",
+      "disconnectedAria": "{{name}} se ha desconectado",
       "waitingPlayers": "Esperando más jugadores...",
       "needMore": "Se necesitan al menos {{min}} jugadores para empezar",
       "startGame": "EMPEZAR PARTIDA",
