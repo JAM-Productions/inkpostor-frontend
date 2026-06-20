@@ -9,10 +9,11 @@ export function EndGameButton() {
   const hostId = useGameStore((state) => state.hostId);
   const myId = useGameStore((state) => state.myId);
   const modalActions = useModalStore((state) => state.actions);
+  const gameEnded = useGameStore((state) => state.gameEnded);
 
   const isHost = myId === hostId;
 
-  if (!isHost || phase === "LOBBY" || phase === "RESULTS") {
+  if (!isHost || phase === "LOBBY" || gameEnded) {
     return null;
   }
 

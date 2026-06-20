@@ -15,6 +15,7 @@ describe("EndGameButton", () => {
     myId: "socket-123",
     hostId: "socket-123",
     phase: "ROLE_REVEAL",
+    gameEnded: false,
   };
 
   beforeEach(() => {
@@ -56,6 +57,30 @@ describe("EndGameButton", () => {
 
     const button = screen.queryByRole("button", { name: /open/i });
     expect(button).not.toBeInTheDocument();
+  });
+
+  it("does not render the button when the game has ended", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase, gameEnded: true };
+      return selector(state);
+    });
+
+    render(<EndGameButton />);
+
+    const button = screen.queryByRole("button", { name: /open/i });
+    expect(button).not.toBeInTheDocument();
+  });
+
+  it("still renders the button during RESULTS while the game has not ended", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = { ...mockStateBase, phase: "RESULTS", gameEnded: false };
+      return selector(state);
+    });
+
+    render(<EndGameButton />);
+
+    const button = screen.getByRole("button", { name: /open/i });
+    expect(button).toBeInTheDocument();
   });
 
   it("opens the modal when button is clicked", async () => {
