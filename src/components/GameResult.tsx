@@ -108,7 +108,7 @@ export const GameResult: React.FC = () => {
               {t("result.secretWord")}
             </p>
             <div className="text-3xl font-black text-white">
-              {secretWord ? t(`words.${secretWord}`) : ""}
+              {secretWord || ""}
             </div>
           </div>
         )}
