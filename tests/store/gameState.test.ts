@@ -156,7 +156,10 @@ describe("useGameStore", () => {
     );
     expect(socket.auth).toEqual({ token: mockToken });
     expect(socket.connect).toHaveBeenCalled();
-    expect(socket.emit).toHaveBeenCalledWith("createRoom", { roomId: "room1" });
+    expect(socket.emit).toHaveBeenCalledWith("createRoom", {
+      roomId: "room1",
+      language: "en",
+    });
     expect(useGameStore.getState().myName).toBe("Player 1");
   });
 

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { socket, SERVICE_URL } from "../socket";
+import i18n from "../i18n";
 import { DEFAULT_ROUND_TIME, DEFAULT_IMPOSTOR_GUESSES } from "../lib/constants";
 import {
   detectIsMobile,
@@ -151,7 +152,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         socket.auth = { token };
         socket.io.reconnection(true); // re-enable in case it was disabled after a kick
         socket.connect();
-        socket.emit("createRoom", { roomId });
+        socket.emit("createRoom", { roomId, language: i18n.language });
         savePlayerName(playerName);
         set({ myName: playerName, myId: userId });
       } catch {
@@ -175,7 +176,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         socket.auth = { token };
         socket.io.reconnection(true); // re-enable in case it was disabled after a kick
         socket.connect();
-        socket.emit("joinRoom", { roomId });
+        socket.emit("joinRoom", { roomId, language: i18n.language });
         savePlayerName(playerName);
         set({ myName: playerName, myId: userId });
       } catch {
@@ -310,7 +311,7 @@ socket.on("connect", () => {
     if (process.env.NODE_ENV !== "production") {
       console.log("Reconnecting to room:", state.roomId);
     }
-    socket.emit("joinRoom", { roomId: state.roomId });
+    socket.emit("joinRoom", { roomId: state.roomId, language: i18n.language });
   }
 });
 
@@ -461,4 +462,10 @@ socket.on("kicked", (msg: string) => {
 socket.on("error", (msg: string) => {
   useGameStore.setState({ errorMessage: msg });
   socket.disconnect();
+});
+
+i18n.on("languageChanged", (lng) => {
+  if (socket.connected) {
+    socket.emit("setLanguage", { language: lng });
+  }
 });

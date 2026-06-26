@@ -73,9 +73,7 @@ export const RoleReveal: React.FC = () => {
                     </h3>
                     <p className="text-red-500 font-medium px-4 py-1 bg-red-900/50 rounded-full border border-red-500/30 text-sm ">
                       {t("roleReveal.hint", {
-                        category: secretCategory
-                          ? t(`words.${secretCategory}`)
-                          : "",
+                        category: secretCategory || "",
                       })}
                     </p>
                   </>
@@ -90,13 +88,11 @@ export const RoleReveal: React.FC = () => {
                       {t("roleReveal.theWordIs")}
                     </p>
                     <h3 className="text-4xl font-semibold text-white">
-                      {secretWord ? t(`words.${secretWord}`) : ""}
+                      {secretWord || ""}
                     </h3>
                     <p className="text-emerald-400  font-medium px-4 py-1 bg-emerald-900/50 rounded-full border border-emerald-500/30 text-sm">
                       {t("roleReveal.category", {
-                        category: secretCategory
-                          ? t(`words.${secretCategory}`)
-                          : "",
+                        category: secretCategory || "",
                       })}
                     </p>
                   </>
