@@ -1,29 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronLeft, ChevronRight, Dices, PartyPopper } from "lucide-react";
-import { useGameStore, type GameMode } from "../../store/gameState";
-
-interface GameModeDefinition {
-  id: GameMode;
-  nameKey: string;
-  descriptionKey: string;
-  icon: React.ReactNode;
-}
-
-const GAME_MODES: GameModeDefinition[] = [
-  {
-    id: "CLASSIC",
-    nameKey: "options.gameMode.classic.name",
-    descriptionKey: "options.gameMode.classic.description",
-    icon: <Dices className="size-5" />,
-  },
-  {
-    id: "CUSTOM_WORD",
-    nameKey: "options.gameMode.customWord.name",
-    descriptionKey: "options.gameMode.customWord.description",
-    icon: <PartyPopper className="size-5" />,
-  },
-];
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useGameStore } from "../../store/gameState";
+import { GAME_MODES } from "../../lib/gameModes";
 
 interface GameModeCarouselProps {
   isHost: boolean;

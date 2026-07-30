@@ -202,6 +202,45 @@ describe("OptionsModal", () => {
     );
   });
 
+  it("locks the canvas clearing on while the hot word mode is selected", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(
+        createState({
+          gameMode: "HOT_WORD",
+          gameOptions: {
+            roundTime: 30,
+            unlimitedInk: false,
+            // Even if the server still reported it off, the mode wins
+            clearCanvasEachRound: false,
+            impostorGuessEnabled: false,
+            impostorGuessAttempts: 3,
+          },
+        }),
+      ),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    expect(
+      screen.queryByRole("switch", { name: /toggle canvas clearing/i }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("clear-canvas-locked")).toBeInTheDocument();
+    expect(screen.getByTestId("clear-canvas-locked-notice")).toHaveTextContent(
+      /hot word/i,
+    );
+    // This mode does allow the impostor to guess
+    expect(
+      screen.getByRole("switch", { name: /toggle impostor guessing/i }),
+    ).toBeEnabled();
+
+    await user.click(screen.getByTestId("confirm-options-button"));
+
+    expect(mockUpdateGameOptions).toHaveBeenCalledWith(
+      expect.objectContaining({ clearCanvasEachRound: true }),
+    );
+  });
+
   it("keeps the impostor guess available in the classic mode", () => {
     (useGameStore as any).mockImplementation((selector: any) =>
       selector(createState()),
@@ -218,6 +257,8 @@ describe("OptionsModal", () => {
     expect(
       screen.queryByTestId("impostor-guess-unavailable"),
     ).not.toBeInTheDocument();
+    // Nothing is locked in the classic mode
+    expect(screen.queryByTestId("clear-canvas-locked")).not.toBeInTheDocument();
   });
 
   it("shows read-only options for non-hosts", () => {

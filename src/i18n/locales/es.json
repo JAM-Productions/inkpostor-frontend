@@ -138,6 +138,17 @@
       "startDrawing": "Empezar a Dibujar",
       "waitingPlayers": "{{count}} de {{total}} jugadores han revelado su rol"
     },
+    "wordReveal": {
+      "round": "Ronda {{round}}",
+      "title": "Palabra nueva",
+      "pressHold": "Mantén presionado para revelar",
+      "theWordIs": "La nueva palabra es",
+      "category": "Categoría: {{category}}",
+      "hint": "Pista: {{category}}",
+      "impostorNoWord": "Sigues sin conocer la palabra",
+      "startDrawing": "Empezar a Dibujar",
+      "waitingPlayers": "{{count}} de {{total}} jugadores han visto la nueva palabra"
+    },
     "rules": {
       "title": "Cómo Jugar Inkpostor",
       "close": "Cerrar reglas",
@@ -213,6 +224,10 @@
         "customWord": {
           "name": "Caos",
           "description": "Cada jugador escribe una palabra antes de empezar y una de ellas será la palabra secreta."
+        },
+        "hotWord": {
+          "name": "Palabra caliente",
+          "description": "Una palabra nueva en cada ronda, sacada de la lista de Inkpostor. El impostor sigue siendo el mismo."
         }
       },
       "time": {
@@ -234,12 +249,13 @@
       "clearCanvas": {
         "title": "Limpiar lienzo cada ronda",
         "description": "Elige si el lienzo se reinicia al comenzar una nueva ronda.",
-        "toggle": "Alternar limpieza del lienzo en cada ronda"
+        "toggle": "Alternar limpieza del lienzo en cada ronda",
+        "alwaysOnInMode": "Siempre activo en el modo \"{{mode}}\"."
       },
       "impostorGuess": {
         "title": "El impostor puede adivinar",
         "description": "Permite que el impostor intente adivinar la palabra secreta para ganar.",
-        "unavailableInMode": "No disponible en el modo \"Caos\".",
+        "unavailableInMode": "No disponible en el modo \"{{mode}}\".",
         "toggle": "Alternar adivinanza del impostor",
         "attempts": "Número de intentos",
         "increase": "Aumentar intentos",

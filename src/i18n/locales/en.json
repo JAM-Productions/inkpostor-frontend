@@ -116,7 +116,6 @@
       "players": "Players",
       "suspects": "Suspects"
     },
-
     "wordSelection": {
       "title": "Write Your Word",
       "description": "One of the words written by the players will be the secret word. Choose something drawable!",
@@ -138,6 +137,17 @@
       "makeSure": "Make sure everyone knows their role before continuing.",
       "startDrawing": "Start Drawing",
       "waitingPlayers": "{{count}} of {{total}} players have revealed their role"
+    },
+    "wordReveal": {
+      "round": "Round {{round}}",
+      "title": "New Word",
+      "pressHold": "Press and hold to reveal",
+      "theWordIs": "The new word is",
+      "category": "Category: {{category}}",
+      "hint": "Hint: {{category}}",
+      "impostorNoWord": "You still don't get the word",
+      "startDrawing": "Start Drawing",
+      "waitingPlayers": "{{count}} of {{total}} players have seen the new word"
     },
     "rules": {
       "title": "How to Play Inkpostor",
@@ -214,6 +224,10 @@
         "customWord": {
           "name": "Chaos",
           "description": "Every player writes a word before the game starts and one of them becomes the secret word."
+        },
+        "hotWord": {
+          "name": "Hot Word",
+          "description": "A new word every round, drawn from the Inkpostor word list. The Inkpostor stays the same."
         }
       },
       "time": {
@@ -235,12 +249,13 @@
       "clearCanvas": {
         "title": "Clear Canvas Each Round",
         "description": "Choose whether the canvas resets when a new round starts.",
-        "toggle": "Toggle canvas clearing each round"
+        "toggle": "Toggle canvas clearing each round",
+        "alwaysOnInMode": "Always on in the \"{{mode}}\" mode."
       },
       "impostorGuess": {
         "title": "Impostor Can Guess",
         "description": "Let the impostor try to guess the secret word to win.",
-        "unavailableInMode": "Not available in the \"Chaos\" mode.",
+        "unavailableInMode": "Not available in the \"{{mode}}\" mode.",
         "toggle": "Toggle impostor guessing",
         "attempts": "Number of attempts",
         "increase": "Increase attempts",

@@ -138,6 +138,17 @@
       "startDrawing": "Començar a Dibuixar",
       "waitingPlayers": "{{count}} de {{total}} jugadors han revelat el seu rol"
     },
+    "wordReveal": {
+      "round": "Ronda {{round}}",
+      "title": "Paraula nova",
+      "pressHold": "Mantén premut per revelar",
+      "theWordIs": "La nova paraula és",
+      "category": "Categoria: {{category}}",
+      "hint": "Pista: {{category}}",
+      "impostorNoWord": "Segueixes sense conèixer la paraula",
+      "startDrawing": "Començar a Dibuixar",
+      "waitingPlayers": "{{count}} de {{total}} jugadors han vist la nova paraula"
+    },
     "rules": {
       "title": "Com Jugar Inkpostor",
       "close": "Tancar regles",
@@ -213,6 +224,10 @@
         "customWord": {
           "name": "Caos",
           "description": "Cada jugador escriu una paraula abans de començar i una d'elles serà la paraula secreta."
+        },
+        "hotWord": {
+          "name": "Paraula calenta",
+          "description": "Una paraula nova a cada ronda, treta de la llista d'Inkpostor. L'impostor segueix sent el mateix."
         }
       },
       "time": {
@@ -234,12 +249,13 @@
       "clearCanvas": {
         "title": "Netejar llenç cada ronda",
         "description": "Tria si el llenç es reinicia en començar una ronda nova.",
-        "toggle": "Alternar neteja del llenç a cada ronda"
+        "toggle": "Alternar neteja del llenç a cada ronda",
+        "alwaysOnInMode": "Sempre actiu en el mode \"{{mode}}\"."
       },
       "impostorGuess": {
         "title": "L'impostor pot endevinar",
         "description": "Permet que l'impostor intenti endevinar la paraula secreta per guanyar.",
-        "unavailableInMode": "No disponible en el mode \"Caos\".",
+        "unavailableInMode": "No disponible en el mode \"{{mode}}\".",
         "toggle": "Alternar endevinació de l'impostor",
         "attempts": "Nombre d'intents",
         "increase": "Augmentar intents",

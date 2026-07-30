@@ -3,6 +3,7 @@ import { JoinScreen } from "./components/JoinScreen";
 import { Lobby } from "./components/Lobby";
 import { WordSelection } from "./components/WordSelection";
 import { RoleReveal } from "./components/RoleReveal";
+import { WordReveal } from "./components/WordReveal";
 import { Canvas } from "./components/Canvas";
 import { VotingScreen } from "./components/VotingScreen";
 import { ImpostorFinalGuess } from "./components/ImpostorFinalGuess";
@@ -34,6 +35,8 @@ function App() {
         return <WordSelection />;
       case "ROLE_REVEAL":
         return <RoleReveal />;
+      case "WORD_REVEAL":
+        return <WordReveal />;
       case "DRAWING":
         return <Canvas />;
       case "VOTING":

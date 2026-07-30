@@ -17,12 +17,27 @@ import { useGameStore } from "../../store/gameState";
 import {
   MAX_IMPOSTOR_GUESSES,
   MIN_IMPOSTOR_GUESSES,
+  MODE_LOCKED_OPTIONS,
 } from "../../lib/constants";
+import { GAME_MODES } from "../../lib/gameModes";
 
 interface OptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+// Takes the place of a switch the current mode has taken over. Same footprint,
+// so swapping modes doesn't shift the row. Decorative: the reason is spelled out
+// in the text next to it.
+const ModeLockIndicator: React.FC<{ testId: string }> = ({ testId }) => (
+  <div
+    className="flex h-8 w-14 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 text-stone-500"
+    data-testid={testId}
+    aria-hidden="true"
+  >
+    <Lock className="size-4" />
+  </div>
+);
 
 export const OptionsModal: React.FC<OptionsModalProps> = ({
   isOpen,
@@ -47,23 +62,29 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   );
 
   const isHost = myId === hostId;
+  // A mode can take an option over: its value is forced and the host cannot
+  // change it while the mode is selected. The server enforces the same table.
+  // Defaults to no locks so a mode this client doesn't know yet (server deployed
+  // first) renders the plain options instead of blowing up the modal.
+  const lockedOptions = MODE_LOCKED_OPTIONS[gameMode] ?? {};
+  const modeName = t(
+    GAME_MODES.find((mode) => mode.id === gameMode)?.nameKey ?? "",
+  );
   const displayedRoundTime = isHost ? roundTime : gameOptions.roundTime;
   const displayedUnlimitedInk = isHost
     ? unlimitedInk
     : gameOptions.unlimitedInk;
-  const displayedClearCanvasEachRound = isHost
-    ? clearCanvasEachRound
-    : gameOptions.clearCanvasEachRound;
-  // The impostor guess is meaningless when the players write the word
-  // themselves, so that mode forces the option off and locks it. The server
-  // enforces the same rule.
-  const supportsImpostorGuess = gameMode !== "CUSTOM_WORD";
+  const displayedClearCanvasEachRound =
+    lockedOptions.clearCanvasEachRound ??
+    (isHost ? clearCanvasEachRound : gameOptions.clearCanvasEachRound);
   const displayedImpostorGuessEnabled =
-    supportsImpostorGuess &&
+    lockedOptions.impostorGuessEnabled ??
     (isHost ? impostorGuessEnabled : gameOptions.impostorGuessEnabled);
   const displayedImpostorGuessAttempts = isHost
     ? impostorGuessAttempts
     : gameOptions.impostorGuessAttempts;
+  const isClearCanvasLocked = "clearCanvasEachRound" in lockedOptions;
+  const isImpostorGuessLocked = "impostorGuessEnabled" in lockedOptions;
 
   const changeImpostorGuessAttempts = (delta: number) => {
     setImpostorGuessAttempts((prev) =>
@@ -99,10 +120,12 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
             type="button"
             data-testid="confirm-options-button"
             onClick={() => {
+              // The displayed values already carry whatever the mode forces,
+              // which matters because the carousel lives in this same modal.
               actions.updateGameOptions({
                 roundTime,
                 unlimitedInk,
-                clearCanvasEachRound,
+                clearCanvasEachRound: displayedClearCanvasEachRound,
                 impostorGuessEnabled: displayedImpostorGuessEnabled,
                 impostorGuessAttempts,
               });
@@ -231,30 +254,44 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 <p className="mt-1 text-sm text-stone-400">
                   {t("options.clearCanvas.description")}
                 </p>
+                {isClearCanvasLocked && (
+                  <p
+                    className="mt-2 text-sm font-medium text-amber-400/90"
+                    data-testid="clear-canvas-locked-notice"
+                  >
+                    {t("options.clearCanvas.alwaysOnInMode", {
+                      mode: modeName,
+                    })}
+                  </p>
+                )}
               </div>
             </div>
 
-            <button
-              type="button"
-              role="switch"
-              disabled={!isHost}
-              aria-checked={displayedClearCanvasEachRound}
-              onClick={() => setClearCanvasEachRound(!clearCanvasEachRound)}
-              className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border transition-colors ${
-                displayedClearCanvasEachRound
-                  ? "border-amber-400/50 bg-amber-500"
-                  : "border-stone-700 bg-stone-700"
-              } ${isHost ? "cursor-pointer" : "cursor-default opacity-80"}`}
-              aria-label={t("options.clearCanvas.toggle")}
-            >
-              <span
-                className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
+            {isClearCanvasLocked ? (
+              <ModeLockIndicator testId="clear-canvas-locked" />
+            ) : (
+              <button
+                type="button"
+                role="switch"
+                disabled={!isHost}
+                aria-checked={displayedClearCanvasEachRound}
+                onClick={() => setClearCanvasEachRound(!clearCanvasEachRound)}
+                className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border transition-colors ${
                   displayedClearCanvasEachRound
-                    ? "translate-x-7"
-                    : "translate-x-1"
-                }`}
-              />
-            </button>
+                    ? "border-amber-400/50 bg-amber-500"
+                    : "border-stone-700 bg-stone-700"
+                } ${isHost ? "cursor-pointer" : "cursor-default opacity-80"}`}
+                aria-label={t("options.clearCanvas.toggle")}
+              >
+                <span
+                  className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
+                    displayedClearCanvasEachRound
+                      ? "translate-x-7"
+                      : "translate-x-1"
+                  }`}
+                />
+              </button>
+            )}
           </div>
         </section>
 
@@ -271,18 +308,20 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 <p className="mt-1 text-sm text-stone-400">
                   {t("options.impostorGuess.description")}
                 </p>
-                {!supportsImpostorGuess && (
+                {isImpostorGuessLocked && (
                   <p
                     className="mt-2 text-sm font-medium text-amber-400/90"
                     data-testid="impostor-guess-unavailable"
                   >
-                    {t("options.impostorGuess.unavailableInMode")}
+                    {t("options.impostorGuess.unavailableInMode", {
+                      mode: modeName,
+                    })}
                   </p>
                 )}
               </div>
             </div>
 
-            {supportsImpostorGuess ? (
+            {!isImpostorGuessLocked ? (
               <button
                 type="button"
                 role="switch"
@@ -305,15 +344,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 />
               </button>
             ) : (
-              /* Same footprint as the switch so swapping modes doesn't shift
-                 the row. The reason is spelled out in the text next to it. */
-              <div
-                className="flex h-8 w-14 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 text-stone-500"
-                data-testid="impostor-guess-locked"
-                aria-hidden="true"
-              >
-                <Lock className="size-4" />
-              </div>
+              <ModeLockIndicator testId="impostor-guess-locked" />
             )}
           </div>
 

@@ -15,12 +15,13 @@ export type GamePhase =
   | "LOBBY"
   | "WORD_SELECTION"
   | "ROLE_REVEAL"
+  | "WORD_REVEAL"
   | "DRAWING"
   | "VOTING"
   | "IMPOSTOR_GUESS"
   | "RESULTS";
 
-export type GameMode = "CLASSIC" | "CUSTOM_WORD";
+export type GameMode = "CLASSIC" | "CUSTOM_WORD" | "HOT_WORD";
 
 export interface Player {
   id: string;
@@ -34,6 +35,7 @@ export interface Player {
   isSuspected?: boolean;
   hasStartedEmergencyVoting: boolean;
   hasSubmittedWord?: boolean;
+  hasRevealedNewWord?: boolean;
 }
 
 export interface StrokeData {
@@ -94,6 +96,7 @@ export interface GameState {
     setGameMode: (mode: GameMode) => void;
     submitCustomWord: (word: string) => void;
     proceedToDrawing: () => void;
+    confirmNewWord: () => void;
     drawStroke: (stroke: StrokeData) => void;
     undoStroke: () => void;
     endTurn: () => void;
@@ -218,6 +221,11 @@ export const useGameStore = create<GameState>()((set, get) => ({
       socket.emit("proceedToDrawing");
       // Optimistic update for better performance and deny multiple clicks to proceed
       set((state) => patchMyPlayer(state, { hasRevealedRole: true }));
+    },
+    confirmNewWord: () => {
+      socket.emit("confirmNewWord");
+      // Optimistic update to prevent multiple clicks to proceed
+      set((state) => patchMyPlayer(state, { hasRevealedNewWord: true }));
     },
     drawStroke: (stroke) => {
       socket.emit("drawStroke", stroke);

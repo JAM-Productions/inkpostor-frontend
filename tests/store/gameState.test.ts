@@ -653,6 +653,26 @@ describe("useGameStore", () => {
       expect(useGameStore.getState().secretCategory).toBeNull();
     });
 
+    it("should emit confirmNewWord and mark the player as done", () => {
+      useGameStore.setState({
+        myId: "player1",
+        players: [
+          {
+            id: "player1",
+            name: "Alice",
+            isConnected: true,
+            score: 0,
+            hasStartedEmergencyVoting: false,
+          },
+        ],
+      });
+
+      useGameStore.getState().actions.confirmNewWord();
+
+      expect(socket.emit).toHaveBeenCalledWith("confirmNewWord");
+      expect(useGameStore.getState().players[0].hasRevealedNewWord).toBe(true);
+    });
+
     it("should reset gameMode when kicked is received", () => {
       useGameStore.setState({ gameMode: "CUSTOM_WORD" });
       const kicked = getSocketListener("kicked");

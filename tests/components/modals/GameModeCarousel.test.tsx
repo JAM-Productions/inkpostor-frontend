@@ -51,7 +51,22 @@ describe("GameModeCarousel", () => {
       screen.getByRole("button", { name: /previous game mode/i }),
     );
 
-    expect(mockSetGameMode).toHaveBeenCalledWith("CUSTOM_WORD");
+    // Going back from the first mode lands on the last one
+    expect(mockSetGameMode).toHaveBeenCalledWith("HOT_WORD");
+  });
+
+  it("offers the hot word mode", async () => {
+    const user = userEvent.setup();
+    mockStore("CUSTOM_WORD");
+
+    render(<GameModeCarousel isHost={true} />);
+
+    await user.click(screen.getByRole("button", { name: /next game mode/i }));
+    expect(mockSetGameMode).toHaveBeenCalledWith("HOT_WORD");
+
+    mockStore("HOT_WORD");
+    render(<GameModeCarousel isHost={true} />);
+    expect(screen.getAllByText("Hot Word").length).toBeGreaterThan(0);
   });
 
   it("selects a mode from its dot", async () => {
