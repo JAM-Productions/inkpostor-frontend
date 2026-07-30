@@ -92,7 +92,7 @@ export const WordReveal: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="flex flex-col items-center text-stone-400 gap-4 transition-transform group-hover:scale-105">
+              <div className="flex flex-col items-center text-stone-400 gap-4 transition-transform hover:scale-105">
                 <Eye className="size-12" />
                 <span className="text-lg font-medium">
                   {t("wordReveal.pressHold")}
