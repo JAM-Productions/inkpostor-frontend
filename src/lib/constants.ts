@@ -8,3 +8,6 @@ export const DOT_INK_COST = 5;
 export const MIN_IMPOSTOR_GUESSES = 1;
 export const MAX_IMPOSTOR_GUESSES = 3;
 export const DEFAULT_IMPOSTOR_GUESSES = 3;
+// Word players write in CUSTOM_WORD mode. Must match the server-side bounds.
+export const MIN_CUSTOM_WORD_LENGTH = 2;
+export const MAX_CUSTOM_WORD_LENGTH = 40;

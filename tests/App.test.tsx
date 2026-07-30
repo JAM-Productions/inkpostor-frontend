@@ -10,6 +10,11 @@ vi.mock("../src/components/JoinScreen", () => ({
 vi.mock("../src/components/Lobby", () => ({
   Lobby: () => <div data-testid="lobby-screen">Lobby Screen</div>,
 }));
+vi.mock("../src/components/WordSelection", () => ({
+  WordSelection: () => (
+    <div data-testid="word-selection-screen">Word Selection Screen</div>
+  ),
+}));
 vi.mock("../src/components/RoleReveal", () => ({
   RoleReveal: () => (
     <div data-testid="role-reveal-screen">Role Reveal Screen</div>
@@ -89,6 +94,13 @@ describe("App LanguageSwitcher Visibility", () => {
     render(<App />);
     expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
     expect(screen.getByTestId("game-result-screen")).toBeInTheDocument();
+  });
+
+  it("renders WordSelection and hides LanguageSwitcher in WORD_SELECTION phase", () => {
+    mockStore("WORD_SELECTION", "ROOM123");
+    render(<App />);
+    expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
+    expect(screen.getByTestId("word-selection-screen")).toBeInTheDocument();
   });
 
   it("hides LanguageSwitcher in ROLE_REVEAL phase", () => {

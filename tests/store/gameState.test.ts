@@ -39,6 +39,32 @@ function getSocketListener(eventName: string) {
   return listener;
 }
 
+// Minimal server payload shape for gameStateUpdate assertions
+const baseServerState = {
+  roomId: "ROOM42",
+  hostId: "host-123",
+  phase: "LOBBY",
+  players: [],
+  impostorId: null,
+  secretWord: null,
+  secretCategory: null,
+  currentTurnPlayerId: null,
+  turnOrder: [],
+  turnIndex: 0,
+  votes: {},
+  canvasStrokes: [],
+  currentRound: 1,
+  ejectedId: null,
+  gameEnded: false,
+  gameOptions: {
+    roundTime: DEFAULT_ROUND_TIME,
+    unlimitedInk: false,
+    clearCanvasEachRound: true,
+    impostorGuessEnabled: false,
+    impostorGuessAttempts: 3,
+  },
+};
+
 describe("useGameStore", () => {
   beforeEach(() => {
     // Reset store state before each test
@@ -53,6 +79,7 @@ describe("useGameStore", () => {
         impostorGuessEnabled: false,
         impostorGuessAttempts: 3,
       },
+      gameMode: "CLASSIC",
       players: [],
       impostorId: null,
       secretWord: null,
@@ -547,6 +574,92 @@ describe("useGameStore", () => {
       roundTime: 40,
       unlimitedInk: true,
       clearCanvasEachRound: false,
+    });
+  });
+
+  describe("game mode & custom word", () => {
+    it("should emit setGameMode and apply it optimistically", () => {
+      useGameStore.getState().actions.setGameMode("CUSTOM_WORD");
+
+      expect(socket.emit).toHaveBeenCalledWith("setGameMode", {
+        gameMode: "CUSTOM_WORD",
+      });
+      expect(useGameStore.getState().gameMode).toBe("CUSTOM_WORD");
+    });
+
+    it("should sync gameMode from gameStateUpdate", () => {
+      const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+      gameStateUpdate({
+        ...baseServerState,
+        phase: "LOBBY",
+        gameMode: "CUSTOM_WORD",
+      });
+
+      expect(useGameStore.getState().gameMode).toBe("CUSTOM_WORD");
+    });
+
+    it("should default gameMode to CLASSIC when the server omits it", () => {
+      useGameStore.setState({ gameMode: "CUSTOM_WORD" });
+      const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+      gameStateUpdate({ ...baseServerState, phase: "LOBBY" });
+
+      expect(useGameStore.getState().gameMode).toBe("CLASSIC");
+    });
+
+    it("should emit submitCustomWord trimmed and mark the player as submitted", () => {
+      useGameStore.setState({
+        myId: "player1",
+        players: [
+          {
+            id: "player1",
+            name: "Alice",
+            isConnected: true,
+            score: 0,
+            hasStartedEmergencyVoting: false,
+          },
+        ],
+      });
+
+      useGameStore.getState().actions.submitCustomWord("  Lighthouse  ");
+
+      expect(socket.emit).toHaveBeenCalledWith("submitCustomWord", {
+        word: "Lighthouse",
+      });
+      expect(useGameStore.getState().players[0].hasSubmittedWord).toBe(true);
+    });
+
+    it("should ignore an empty custom word", () => {
+      useGameStore.getState().actions.submitCustomWord("   ");
+
+      expect(socket.emit).not.toHaveBeenCalled();
+    });
+
+    it("should clear the previous secret word when entering WORD_SELECTION", () => {
+      useGameStore.setState({
+        secretWord: "Elephant",
+        secretCategory: "Animals",
+      });
+      const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+      gameStateUpdate({
+        ...baseServerState,
+        phase: "WORD_SELECTION",
+        gameMode: "CUSTOM_WORD",
+      });
+
+      expect(useGameStore.getState().secretWord).toBeNull();
+      expect(useGameStore.getState().secretCategory).toBeNull();
+    });
+
+    it("should reset gameMode when kicked is received", () => {
+      useGameStore.setState({ gameMode: "CUSTOM_WORD" });
+      const kicked = getSocketListener("kicked");
+
+      kicked("You were kicked");
+
+      expect(useGameStore.getState().gameMode).toBe("CLASSIC");
     });
   });
 

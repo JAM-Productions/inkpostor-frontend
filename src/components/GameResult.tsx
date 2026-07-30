@@ -104,12 +104,24 @@ export const GameResult: React.FC = () => {
 
         {isGameOver && (
           <div className="bg-stone-800 rounded-2xl p-6 border border-stone-700 shadow-xl animate-fade-in animate-delay-1000 animate-duration-slower">
-            <p className="text-stone-400 mb-2 uppercase tracking-wider text-sm font-semibold">
-              {t("result.secretWord")}
-            </p>
-            <div className="text-3xl font-black text-white">
-              {secretWord || ""}
-            </div>
+           
+            {secretWord ? (
+              <>
+                <p className="text-stone-400 mb-2 uppercase tracking-wider text-sm font-semibold">
+                  {t("result.secretWord")}
+                </p>
+                <div className="text-3xl font-black text-white">{secretWord}</div>
+              </>
+            ) : (
+              /* The game can end before a word exists — e.g. the host ends it
+                 while the players are still writing theirs. */
+              <div
+                className="flex items-center justify-center gap-2 text-xl font-semibold text-stone-500"
+                data-testid="no-secret-word"
+              >
+                {t("result.noSecretWord")}
+              </div>
+            )}
           </div>
         )}
 

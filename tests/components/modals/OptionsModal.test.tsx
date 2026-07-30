@@ -11,6 +11,7 @@ vi.mock("../../../src/store/gameState", () => ({
 describe("OptionsModal", () => {
   const mockOnClose = vi.fn();
   const mockUpdateGameOptions = vi.fn();
+  const mockSetGameMode = vi.fn();
 
   const createState = (overrides = {}) => ({
     gameOptions: {
@@ -20,10 +21,12 @@ describe("OptionsModal", () => {
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
     },
+    gameMode: "CLASSIC",
     myId: "player-1",
     hostId: "player-1",
     actions: {
       updateGameOptions: mockUpdateGameOptions,
+      setGameMode: mockSetGameMode,
     },
     ...overrides,
   });
@@ -127,6 +130,94 @@ describe("OptionsModal", () => {
       impostorGuessEnabled: true,
       impostorGuessAttempts: 1,
     });
+  });
+
+  it("renders the game mode carousel as the first section", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState()),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    const sections = screen.getByRole("dialog").querySelectorAll("section");
+    expect(sections[0]).toBe(screen.getByTestId("game-mode-carousel"));
+  });
+
+  it("applies the game mode instantly and leaves it out of the saved options", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState()),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    await user.click(screen.getByRole("button", { name: /next game mode/i }));
+    expect(mockSetGameMode).toHaveBeenCalledWith("CUSTOM_WORD");
+
+    await user.click(screen.getByTestId("confirm-options-button"));
+    expect(mockUpdateGameOptions).toHaveBeenCalledWith({
+      roundTime: 30,
+      unlimitedInk: false,
+      clearCanvasEachRound: true,
+      impostorGuessEnabled: false,
+      impostorGuessAttempts: 3,
+    });
+  });
+
+  it("locks the impostor guess off while the custom word mode is selected", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(
+        createState({
+          gameMode: "CUSTOM_WORD",
+          gameOptions: {
+            roundTime: 30,
+            unlimitedInk: false,
+            clearCanvasEachRound: true,
+            // Even if the server still reported it on, the mode wins
+            impostorGuessEnabled: true,
+            impostorGuessAttempts: 3,
+          },
+        }),
+      ),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    // The toggle is replaced by a padlock, so there is nothing to click
+    expect(
+      screen.queryByRole("switch", { name: /toggle impostor guessing/i }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("impostor-guess-locked")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("impostor-guess-unavailable"),
+    ).toBeInTheDocument();
+    // The attempts stepper follows the disabled option
+    expect(screen.queryByText("Number of attempts")).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId("confirm-options-button"));
+
+    expect(mockUpdateGameOptions).toHaveBeenCalledWith(
+      expect.objectContaining({ impostorGuessEnabled: false }),
+    );
+  });
+
+  it("keeps the impostor guess available in the classic mode", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState()),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    expect(
+      screen.getByRole("switch", { name: /toggle impostor guessing/i }),
+    ).toBeEnabled();
+    expect(
+      screen.queryByTestId("impostor-guess-locked"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("impostor-guess-unavailable"),
+    ).not.toBeInTheDocument();
   });
 
   it("shows read-only options for non-hosts", () => {

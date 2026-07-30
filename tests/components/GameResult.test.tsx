@@ -115,6 +115,43 @@ describe("GameResult", () => {
     expect(screen.getByText("Nobody was ejected...")).toBeInTheDocument();
   });
 
+  it("tells the players no word was chosen when the game ended before one existed", () => {
+    // The host ended the game while everyone was still writing their word.
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        secretWord: null,
+        secretCategory: null,
+        ejectedId: null,
+        gameEnded: true,
+      }),
+    );
+
+    render(<GameResult />);
+
+    expect(screen.getByTestId("no-secret-word")).toHaveTextContent(
+      "No word was chosen",
+    );
+    // The "the secret word was" label only makes sense when there is one
+    expect(screen.queryByText("The secret word was")).not.toBeInTheDocument();
+    expect(screen.queryByText("Apple")).not.toBeInTheDocument();
+  });
+
+  it("shows the secret word when there is one", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        ejectedId: "socket-456",
+        gameEnded: true,
+      }),
+    );
+
+    render(<GameResult />);
+
+    expect(screen.getByText("Apple")).toBeInTheDocument();
+    expect(screen.queryByTestId("no-secret-word")).not.toBeInTheDocument();
+  });
+
   it("allows host to play again", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {

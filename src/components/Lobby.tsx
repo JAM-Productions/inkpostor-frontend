@@ -13,6 +13,7 @@ export const Lobby: React.FC = () => {
   const roomId = useGameStore((state) => state.roomId);
   const players = useGameStore((state) => state.players);
   const gameOptions = useGameStore((state) => state.gameOptions);
+  const gameMode = useGameStore((state) => state.gameMode);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
@@ -22,6 +23,7 @@ export const Lobby: React.FC = () => {
   const canStart = isHost && players.length >= MIN_PLAYERS;
   const hasRoomId = !!roomId;
   const optionsChangedCount =
+    Number(gameMode !== "CLASSIC") +
     Number(gameOptions.roundTime !== DEFAULT_ROUND_TIME) +
     Number(gameOptions.unlimitedInk !== false) +
     Number(gameOptions.clearCanvasEachRound !== true) +

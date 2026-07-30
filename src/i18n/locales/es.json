@@ -40,6 +40,7 @@
       "wasImpostor": "¡{{name}} era el Inkpostor!",
       "impostorGuessedWord": "¡{{name}} adivinó la palabra!",
       "secretWord": "La palabra secreta era",
+      "noSecretWord": "No se llegó a elegir palabra",
       "playAgain": "Volver a Jugar",
       "nextRound": "Siguiente Ronda",
       "waitingRestart": "Esperando al anfitrión para reiniciar...",
@@ -115,6 +116,15 @@
       "players": "Jugadores",
       "suspects": "Sospechosos"
     },
+    "wordSelection": {
+      "title": "Escribe tu palabra",
+      "description": "Una de las palabras escritas por los jugadores será la palabra secreta. ¡Elige algo que se pueda dibujar!",
+      "placeholder": "Tu palabra secreta",
+      "submit": "Confirmar palabra",
+      "submitted": "Tu palabra está confirmada",
+      "hint": "Una vez confirmada no podrás cambiarla.",
+      "waitingPlayers": "{{count}} de {{total}} jugadores han escrito su palabra"
+    },
     "roleReveal": {
       "phase1": "Fase 1",
       "yourSecretRole": "Tu Rol Secreto",
@@ -189,6 +199,22 @@
     "options": {
       "title": "Opciones",
       "closeDialog": "Cerrar diálogo de opciones",
+      "gameMode": {
+        "title": "Modo de juego",
+        "description": "Desliza para elegir cómo se escoge la palabra secreta. Se aplica al instante.",
+        "previous": "Modo de juego anterior",
+        "next": "Modo de juego siguiente",
+        "select": "Seleccionar el modo {{mode}}",
+        "current": "Modo seleccionado",
+        "classic": {
+          "name": "Clásico",
+          "description": "La palabra se escoge al azar de la lista de palabras de Inkpostor."
+        },
+        "customWord": {
+          "name": "Caos",
+          "description": "Cada jugador escribe una palabra antes de empezar y una de ellas será la palabra secreta."
+        }
+      },
       "time": {
         "title": "Tiempo de dibujo por ronda",
         "description": "Define cuánto dura cada ronda de dibujo.",
@@ -213,6 +239,7 @@
       "impostorGuess": {
         "title": "El impostor puede adivinar",
         "description": "Permite que el impostor intente adivinar la palabra secreta para ganar.",
+        "unavailableInMode": "No disponible en el modo \"Caos\".",
         "toggle": "Alternar adivinanza del impostor",
         "attempts": "Número de intentos",
         "increase": "Aumentar intentos",

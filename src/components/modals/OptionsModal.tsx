@@ -5,12 +5,14 @@ import {
   Clock3,
   Droplets,
   Eraser,
+  Lock,
   PenLine,
   Minus,
   Plus,
   Settings,
 } from "lucide-react";
 import { BaseModal } from "./BaseModal";
+import { GameModeCarousel } from "./GameModeCarousel";
 import { useGameStore } from "../../store/gameState";
 import {
   MAX_IMPOSTOR_GUESSES,
@@ -28,6 +30,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const gameOptions = useGameStore((state) => state.gameOptions);
+  const gameMode = useGameStore((state) => state.gameMode);
   const actions = useGameStore((state) => state.actions);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
@@ -51,9 +54,13 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const displayedClearCanvasEachRound = isHost
     ? clearCanvasEachRound
     : gameOptions.clearCanvasEachRound;
-  const displayedImpostorGuessEnabled = isHost
-    ? impostorGuessEnabled
-    : gameOptions.impostorGuessEnabled;
+  // The impostor guess is meaningless when the players write the word
+  // themselves, so that mode forces the option off and locks it. The server
+  // enforces the same rule.
+  const supportsImpostorGuess = gameMode !== "CUSTOM_WORD";
+  const displayedImpostorGuessEnabled =
+    supportsImpostorGuess &&
+    (isHost ? impostorGuessEnabled : gameOptions.impostorGuessEnabled);
   const displayedImpostorGuessAttempts = isHost
     ? impostorGuessAttempts
     : gameOptions.impostorGuessAttempts;
@@ -96,7 +103,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 roundTime,
                 unlimitedInk,
                 clearCanvasEachRound,
-                impostorGuessEnabled,
+                impostorGuessEnabled: displayedImpostorGuessEnabled,
                 impostorGuessAttempts,
               });
               onClose();
@@ -109,6 +116,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
       }
     >
       <div className="space-y-4">
+        <GameModeCarousel isHost={isHost} />
+
         <section className="rounded-2xl border border-stone-800 bg-stone-800/40 p-4 sm:p-5">
           <div className="flex gap-3">
             <div className="rounded-xl bg-blue-500/10 p-2 text-blue-400 h-fit">
@@ -262,30 +271,50 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 <p className="mt-1 text-sm text-stone-400">
                   {t("options.impostorGuess.description")}
                 </p>
+                {!supportsImpostorGuess && (
+                  <p
+                    className="mt-2 text-sm font-medium text-amber-400/90"
+                    data-testid="impostor-guess-unavailable"
+                  >
+                    {t("options.impostorGuess.unavailableInMode")}
+                  </p>
+                )}
               </div>
             </div>
 
-            <button
-              type="button"
-              role="switch"
-              disabled={!isHost}
-              aria-checked={displayedImpostorGuessEnabled}
-              onClick={() => setImpostorGuessEnabled(!impostorGuessEnabled)}
-              className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border transition-colors ${
-                displayedImpostorGuessEnabled
-                  ? "border-purple-400/50 bg-purple-500"
-                  : "border-stone-700 bg-stone-700"
-              } ${isHost ? "cursor-pointer" : "cursor-default opacity-80"}`}
-              aria-label={t("options.impostorGuess.toggle")}
-            >
-              <span
-                className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
+            {supportsImpostorGuess ? (
+              <button
+                type="button"
+                role="switch"
+                disabled={!isHost}
+                aria-checked={displayedImpostorGuessEnabled}
+                onClick={() => setImpostorGuessEnabled(!impostorGuessEnabled)}
+                className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border transition-colors ${
                   displayedImpostorGuessEnabled
-                    ? "translate-x-7"
-                    : "translate-x-1"
-                }`}
-              />
-            </button>
+                    ? "border-purple-400/50 bg-purple-500"
+                    : "border-stone-700 bg-stone-700"
+                } ${isHost ? "cursor-pointer" : "cursor-default opacity-80"}`}
+                aria-label={t("options.impostorGuess.toggle")}
+              >
+                <span
+                  className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
+                    displayedImpostorGuessEnabled
+                      ? "translate-x-7"
+                      : "translate-x-1"
+                  }`}
+                />
+              </button>
+            ) : (
+              /* Same footprint as the switch so swapping modes doesn't shift
+                 the row. The reason is spelled out in the text next to it. */
+              <div
+                className="flex h-8 w-14 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 text-stone-500"
+                data-testid="impostor-guess-locked"
+                aria-hidden="true"
+              >
+                <Lock className="size-4" />
+              </div>
+            )}
           </div>
 
           {displayedImpostorGuessEnabled && (
