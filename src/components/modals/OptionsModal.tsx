@@ -131,7 +131,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               });
               onClose();
             }}
-            className="w-full py-3 bg-ink-primary hover:bg-ink-primary-accent text-white font-bold rounded-xl transition-all active:scale-[0.98] cursor-pointer uppercase"
+            className="w-full py-3 bg-ink-primary hover:bg-ink-primary-accent text-white font-bold rounded-xl transition-[background-color,scale] active:scale-[0.98] cursor-pointer uppercase"
           >
             {t("options.confirm")}
           </button>

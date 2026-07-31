@@ -54,7 +54,7 @@ export const WordSelection: React.FC = () => {
             <button
               type="submit"
               disabled={!isValid}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-ink-secondary px-8 py-3 text-lg font-bold text-stone-900 shadow-lg shadow-white/10 transition-all hover:bg-white active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-ink-secondary px-8 py-3 text-lg font-bold text-stone-900 shadow-lg shadow-white/10 transition-[background-color,scale,opacity] hover:bg-white active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
             >
               {t("wordSelection.submit")}
             </button>
