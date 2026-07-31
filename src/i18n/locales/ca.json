@@ -151,6 +151,7 @@
     },
     "rules": {
       "title": "Com Jugar Inkpostor",
+      "open": "Obrir diàleg de com jugar",
       "close": "Tancar regles",
       "closeDialog": "Tancar diàleg de regles",
       "objective": {

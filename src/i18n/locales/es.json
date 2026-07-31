@@ -151,6 +151,7 @@
     },
     "rules": {
       "title": "Cómo Jugar Inkpostor",
+      "open": "Abrir diálogo de cómo jugar",
       "close": "Cerrar reglas",
       "closeDialog": "Cerrar diálogo de reglas",
       "objective": {
