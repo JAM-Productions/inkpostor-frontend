@@ -13,6 +13,7 @@ export const Lobby: React.FC = () => {
   const roomId = useGameStore((state) => state.roomId);
   const players = useGameStore((state) => state.players);
   const gameOptions = useGameStore((state) => state.gameOptions);
+  const gameMode = useGameStore((state) => state.gameMode);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
@@ -22,6 +23,7 @@ export const Lobby: React.FC = () => {
   const canStart = isHost && players.length >= MIN_PLAYERS;
   const hasRoomId = !!roomId;
   const optionsChangedCount =
+    Number(gameMode !== "CLASSIC") +
     Number(gameOptions.roundTime !== DEFAULT_ROUND_TIME) +
     Number(gameOptions.unlimitedInk !== false) +
     Number(gameOptions.clearCanvasEachRound !== true) +
@@ -72,6 +74,7 @@ export const Lobby: React.FC = () => {
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                aria-label={t("rules.open")}
                 onClick={() => modalActions.openModal("RULES")}
                 className="flex items-center gap-2 font-bold cursor-pointer"
                 data-testid="how-to-play-btn"
@@ -122,7 +125,7 @@ export const Lobby: React.FC = () => {
               disabled={!canStart}
               className="w-full shrink-0 group relative overflow-hidden rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer bg-ink-primary hover:bg-ink-primary-accent"
             >
-              <div className="flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 font-bold text-white transition-all group-hover:bg-opacity-0">
+              <div className="flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 font-bold text-white">
                 <span className="text-xl sm:text-2xl tracking-wide font-rubik-wet-paint font-extralight">
                   {t("lobby.startGame")}
                 </span>

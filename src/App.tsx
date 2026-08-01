@@ -1,7 +1,9 @@
 import { useGameStore } from "./store/gameState";
 import { JoinScreen } from "./components/JoinScreen";
 import { Lobby } from "./components/Lobby";
+import { WordSelection } from "./components/WordSelection";
 import { RoleReveal } from "./components/RoleReveal";
+import { WordReveal } from "./components/WordReveal";
 import { Canvas } from "./components/Canvas";
 import { VotingScreen } from "./components/VotingScreen";
 import { ImpostorFinalGuess } from "./components/ImpostorFinalGuess";
@@ -29,8 +31,12 @@ function App() {
     switch (phase) {
       case "LOBBY":
         return <Lobby />;
+      case "WORD_SELECTION":
+        return <WordSelection />;
       case "ROLE_REVEAL":
         return <RoleReveal />;
+      case "WORD_REVEAL":
+        return <WordReveal />;
       case "DRAWING":
         return <Canvas />;
       case "VOTING":

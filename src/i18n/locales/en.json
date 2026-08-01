@@ -40,6 +40,7 @@
       "wasImpostor": "{{name}} was the Inkpostor!",
       "impostorGuessedWord": "{{name}} guessed the word!",
       "secretWord": "The secret word was",
+      "noSecretWord": "No word was chosen",
       "playAgain": "Play Again",
       "nextRound": "Next Round",
       "waitingRestart": "Waiting for host to restart...",
@@ -115,7 +116,15 @@
       "players": "Players",
       "suspects": "Suspects"
     },
-
+    "wordSelection": {
+      "title": "Write Your Word",
+      "description": "One of the words written by the players will be the secret word. Choose something drawable!",
+      "placeholder": "Your secret word",
+      "submit": "Confirm Word",
+      "submitted": "Your word is locked in",
+      "hint": "Once confirmed you cannot change it.",
+      "waitingPlayers": "{{count}} of {{total}} players have written their word"
+    },
     "roleReveal": {
       "phase1": "Phase 1",
       "yourSecretRole": "Your Secret Role",
@@ -129,8 +138,20 @@
       "startDrawing": "Start Drawing",
       "waitingPlayers": "{{count}} of {{total}} players have revealed their role"
     },
+    "wordReveal": {
+      "round": "Round {{round}}",
+      "title": "New Word",
+      "pressHold": "Press and hold to reveal",
+      "theWordIs": "The new word is",
+      "category": "Category: {{category}}",
+      "hint": "Hint: {{category}}",
+      "impostorNoWord": "You still don't get the word",
+      "startDrawing": "Start Drawing",
+      "waitingPlayers": "{{count}} of {{total}} players have seen the new word"
+    },
     "rules": {
       "title": "How to Play Inkpostor",
+      "open": "Open how to play dialog",
       "close": "Close rules",
       "closeDialog": "Close rules dialog",
       "objective": {
@@ -190,6 +211,26 @@
     "options": {
       "title": "Options",
       "closeDialog": "Close options dialog",
+      "gameMode": {
+        "title": "Game Mode",
+        "description": "Swipe to choose how the secret word is picked. Applied instantly.",
+        "previous": "Previous game mode",
+        "next": "Next game mode",
+        "select": "Select {{mode}} mode",
+        "current": "Selected mode",
+        "classic": {
+          "name": "Classic",
+          "description": "The word is drawn at random from the Inkpostor word list."
+        },
+        "customWord": {
+          "name": "Chaos",
+          "description": "Every player writes a word before the game starts and one of them becomes the secret word."
+        },
+        "hotWord": {
+          "name": "Hot Word",
+          "description": "A new word every round, drawn from the Inkpostor word list. The Inkpostor stays the same."
+        }
+      },
       "time": {
         "title": "Drawing Time per Round",
         "description": "Set how long each drawing round lasts.",
@@ -209,11 +250,13 @@
       "clearCanvas": {
         "title": "Clear Canvas Each Round",
         "description": "Choose whether the canvas resets when a new round starts.",
-        "toggle": "Toggle canvas clearing each round"
+        "toggle": "Toggle canvas clearing each round",
+        "alwaysOnInMode": "Always on in the \"{{mode}}\" mode."
       },
       "impostorGuess": {
         "title": "Impostor Can Guess",
         "description": "Let the impostor try to guess the secret word to win.",
+        "unavailableInMode": "Not available in the \"{{mode}}\" mode.",
         "toggle": "Toggle impostor guessing",
         "attempts": "Number of attempts",
         "increase": "Increase attempts",

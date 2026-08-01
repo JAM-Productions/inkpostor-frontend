@@ -13,11 +13,15 @@ import {
 
 export type GamePhase =
   | "LOBBY"
+  | "WORD_SELECTION"
   | "ROLE_REVEAL"
+  | "WORD_REVEAL"
   | "DRAWING"
   | "VOTING"
   | "IMPOSTOR_GUESS"
   | "RESULTS";
+
+export type GameMode = "CLASSIC" | "CUSTOM_WORD" | "HOT_WORD";
 
 export interface Player {
   id: string;
@@ -30,6 +34,8 @@ export interface Player {
   hasConfirmedNewRound?: boolean;
   isSuspected?: boolean;
   hasStartedEmergencyVoting: boolean;
+  hasSubmittedWord?: boolean;
+  hasRevealedNewWord?: boolean;
 }
 
 export interface StrokeData {
@@ -53,6 +59,9 @@ export interface GameState {
   isMobile: boolean;
   phase: GamePhase;
   gameOptions: GameOptions;
+  // Applied as soon as the host moves the lobby carousel, unlike gameOptions
+  // which are staged in the modal until confirmed.
+  gameMode: GameMode;
   players: Player[];
   impostorId: string | null; // Only available in RESULTS or to the impostor themselves locally
   secretWord: string | null; // Only available to non-impostors
@@ -84,7 +93,10 @@ export interface GameState {
     kickPlayer: (playerId: string) => void;
     voteKickPlayer: (targetId: string) => void;
     startGame: () => void;
+    setGameMode: (mode: GameMode) => void;
+    submitCustomWord: (word: string) => void;
     proceedToDrawing: () => void;
+    confirmNewWord: () => void;
     drawStroke: (stroke: StrokeData) => void;
     undoStroke: () => void;
     endTurn: () => void;
@@ -114,6 +126,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     impostorGuessEnabled: false,
     impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
   },
+  gameMode: "CLASSIC",
   players: [],
   impostorId: null,
   secretWord: null,
@@ -192,10 +205,27 @@ export const useGameStore = create<GameState>()((set, get) => ({
     startGame: () => {
       socket.emit("startGame");
     },
+    setGameMode: (mode) => {
+      socket.emit("setGameMode", { gameMode: mode });
+      // Optimistic update so the carousel doesn't lag behind the swipe
+      set({ gameMode: mode });
+    },
+    submitCustomWord: (word) => {
+      const trimmed = word.trim();
+      if (!trimmed) return;
+      socket.emit("submitCustomWord", { word: trimmed });
+      // Optimistic update to prevent multiple submissions
+      set((state) => patchMyPlayer(state, { hasSubmittedWord: true }));
+    },
     proceedToDrawing: () => {
       socket.emit("proceedToDrawing");
       // Optimistic update for better performance and deny multiple clicks to proceed
       set((state) => patchMyPlayer(state, { hasRevealedRole: true }));
+    },
+    confirmNewWord: () => {
+      socket.emit("confirmNewWord");
+      // Optimistic update to prevent multiple clicks to proceed
+      set((state) => patchMyPlayer(state, { hasRevealedNewWord: true }));
     },
     drawStroke: (stroke) => {
       socket.emit("drawStroke", stroke);
@@ -276,6 +306,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         roomId: null,
         hostId: null,
         phase: "LOBBY",
+        gameMode: "CLASSIC",
         players: [],
         impostorId: null,
         secretWord: null,
@@ -336,7 +367,9 @@ socket.on("gameStateUpdate", (newState) => {
     players: newState.players.map((p: any) => {
       const prevPlayer = prevState.players.find((pp) => pp.id === p.id);
       const isNewGamePhase =
-        newState.phase === "LOBBY" || newState.phase === "ROLE_REVEAL";
+        newState.phase === "LOBBY" ||
+        newState.phase === "WORD_SELECTION" ||
+        newState.phase === "ROLE_REVEAL";
       return {
         ...p,
         isSuspected:
@@ -344,14 +377,16 @@ socket.on("gameStateUpdate", (newState) => {
       };
     }),
     impostorId: newState.impostorId,
+    // WORD_SELECTION resets alongside LOBBY: the word of the previous game must
+    // not linger while the players are writing the new one.
     secretWord:
-      newState.phase === "LOBBY"
+      newState.phase === "LOBBY" || newState.phase === "WORD_SELECTION"
         ? null
         : newState.secretWord !== null
           ? newState.secretWord
           : prevState.secretWord,
     secretCategory:
-      newState.phase === "LOBBY"
+      newState.phase === "LOBBY" || newState.phase === "WORD_SELECTION"
         ? null
         : newState.secretCategory !== null
           ? newState.secretCategory
@@ -366,6 +401,7 @@ socket.on("gameStateUpdate", (newState) => {
     ejectedId: newState.ejectedId,
     gameEnded: newState.gameEnded,
     gameOptions: newState.gameOptions,
+    gameMode: newState.gameMode ?? "CLASSIC",
     impostorGuessesUsed: newState.impostorGuessesUsed ?? 0,
     impostorGuessedCorrectly: newState.impostorGuessedCorrectly ?? false,
   });
@@ -430,6 +466,7 @@ socket.on("kicked", (msg: string) => {
       impostorGuessEnabled: false,
       impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
     },
+    gameMode: "CLASSIC",
     players: [],
     impostorId: null,
     secretWord: null,
