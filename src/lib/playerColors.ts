@@ -15,10 +15,10 @@ const PLAYER_STYLES = [
     canvas: "#10b981",
   },
   {
-    icon: "bg-purple-500 text-white",
-    active: "bg-purple-500/20 border border-purple-500/40",
-    voting: "bg-purple-500/20 border border-purple-500/40",
-    canvas: "#a855f7",
+    icon: "bg-violet-500 text-white",
+    active: "bg-violet-500/20 border border-violet-500/40",
+    voting: "bg-violet-500/20 border border-violet-500/40",
+    canvas: "#8b5cf6",
   },
   {
     icon: "bg-rose-500 text-white",
