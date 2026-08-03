@@ -49,7 +49,6 @@ export interface GameOptions {
   roundTime: number;
   unlimitedInk: boolean;
   clearCanvasEachRound: boolean;
-  // Disables the color palette: every player draws in their own player color.
   playerColorsEnabled: boolean;
   impostorGuessEnabled: boolean;
   impostorGuessAttempts: number;

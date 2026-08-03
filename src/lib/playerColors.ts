@@ -1,8 +1,6 @@
 import type { Player } from "../store/gameState";
 import { DEFAULT_CANVAS_COLOR } from "./canvasColors";
 
-// `canvas` is the hex equivalent of the `icon` class, so a stroke drawn in the
-// player-colors mode matches the avatar the rest of the UI shows for that player.
 const PLAYER_STYLES = [
   {
     icon: "bg-blue-500 text-white",
