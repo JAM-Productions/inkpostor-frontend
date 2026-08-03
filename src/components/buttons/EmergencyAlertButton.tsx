@@ -12,13 +12,15 @@ export const EmergencyAlertButton = () => {
   const actions = useGameStore((state) => state.actions);
   const players = useGameStore((state) => state.players);
   const myId = useGameStore((state) => state.myId);
+  const currentRound = useGameStore((state) => state.currentRound);
+  const gameMode = useGameStore((state) => state.gameMode);
 
   const me = players.find((p) => p.id === myId);
   const isDisabled = me?.hasStartedEmergencyVoting;
 
   useClickOutside(dropdownRef, isOpen, setIsOpen);
 
-  if (me?.isEjected) return null;
+  if (me?.isEjected || currentRound < 2 || gameMode === "HOT_WORD") return null;
 
   return (
     <div className="sm:relative" ref={dropdownRef}>

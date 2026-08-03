@@ -12,6 +12,8 @@ describe("EmergencyAlertButton", () => {
 
   const mockStateBase = {
     myId: "socket-456",
+    currentRound: 2,
+    gameMode: "CLASSIC",
     players: [
       {
         id: "socket-123",
@@ -116,6 +118,26 @@ describe("EmergencyAlertButton", () => {
       players: mockStateBase.players.map((player) =>
         player.id === "socket-456" ? { ...player, isEjected: true } : player,
       ),
+    });
+
+    const { container } = render(<EmergencyAlertButton />);
+
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("does not render in round 1", () => {
+    mockStore({
+      currentRound: 1,
+    });
+
+    const { container } = render(<EmergencyAlertButton />);
+
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("does not render when gameMode is HOT_WORD", () => {
+    mockStore({
+      gameMode: "HOT_WORD",
     });
 
     const { container } = render(<EmergencyAlertButton />);

@@ -320,6 +320,7 @@ describe("useGameStore", () => {
 
     useGameStore.setState({
       myId,
+      currentRound: 2,
       players: [
         {
           id: myId,
@@ -467,6 +468,7 @@ describe("useGameStore", () => {
 
     useGameStore.setState({
       myId,
+      currentRound: 2,
       players: [
         {
           id: myId,

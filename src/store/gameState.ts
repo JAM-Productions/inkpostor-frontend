@@ -266,6 +266,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     },
     startEmergencyVoting: () => {
       const currentState = get();
+      if (currentState.currentRound < 2 || currentState.gameMode === "HOT_WORD") return;
       if (!currentState.myId) return;
       const me = currentState.players.find((p) => p.id === currentState.myId);
       if (!me || me.hasStartedEmergencyVoting || me.isEjected) return;
@@ -509,3 +510,7 @@ i18n.on("languageChanged", (lng) => {
     socket.emit("setLanguage", { language: lng });
   }
 });
+
+if (typeof window !== "undefined") {
+  (window as any).useGameStore = useGameStore;
+}

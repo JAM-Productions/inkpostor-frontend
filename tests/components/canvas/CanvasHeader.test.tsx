@@ -20,6 +20,8 @@ describe("CanvasHeader", () => {
     currentTurnPlayerId: "socket-123", // my turn by default
     hostId: "socket-123",
     isMobile: false,
+    currentRound: 2,
+    gameMode: "CLASSIC",
     gameOptions: {
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
