@@ -60,8 +60,8 @@ const baseServerState = {
     roundTime: DEFAULT_ROUND_TIME,
     unlimitedInk: false,
     clearCanvasEachRound: true,
-    playerColorsEnabled: false,
-    impostorGuessEnabled: false,
+    playerColorsEnabled: true,
+    impostorGuessEnabled: true,
     impostorGuessAttempts: 3,
   },
 };
@@ -77,8 +77,8 @@ describe("useGameStore", () => {
         roundTime: DEFAULT_ROUND_TIME,
         unlimitedInk: false,
         clearCanvasEachRound: true,
-        playerColorsEnabled: false,
-        impostorGuessEnabled: false,
+        playerColorsEnabled: true,
+        impostorGuessEnabled: true,
         impostorGuessAttempts: 3,
       },
       gameMode: "CLASSIC",
@@ -770,8 +770,8 @@ describe("useGameStore", () => {
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: false,
       clearCanvasEachRound: true,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
+      playerColorsEnabled: true,
+      impostorGuessEnabled: true,
       impostorGuessAttempts: 3,
     });
   });

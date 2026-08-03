@@ -18,8 +18,8 @@ describe("OptionsModal", () => {
       roundTime: 30,
       unlimitedInk: false,
       clearCanvasEachRound: true,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
+      playerColorsEnabled: true,
+      impostorGuessEnabled: true,
       impostorGuessAttempts: 3,
     },
     gameMode: "CLASSIC",
@@ -94,14 +94,14 @@ describe("OptionsModal", () => {
       roundTime: 35,
       unlimitedInk: true,
       clearCanvasEachRound: false,
-      playerColorsEnabled: true,
-      impostorGuessEnabled: false,
+      playerColorsEnabled: false,
+      impostorGuessEnabled: true,
       impostorGuessAttempts: 3,
     });
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it("defaults player colors off and only applies them on save", async () => {
+  it("defaults player colors on and only applies them on save", async () => {
     const user = userEvent.setup();
     (useGameStore as any).mockImplementation((selector: any) =>
       selector(createState()),
@@ -112,23 +112,34 @@ describe("OptionsModal", () => {
     const playerColorsSwitch = screen.getByRole("switch", {
       name: /toggle player colors/i,
     });
-    expect(playerColorsSwitch).toHaveAttribute("aria-checked", "false");
+    expect(playerColorsSwitch).toHaveAttribute("aria-checked", "true");
 
     await user.click(playerColorsSwitch);
-    expect(playerColorsSwitch).toHaveAttribute("aria-checked", "true");
+    expect(playerColorsSwitch).toHaveAttribute("aria-checked", "false");
     expect(mockUpdateGameOptions).not.toHaveBeenCalled();
 
     await user.click(screen.getByTestId("confirm-options-button"));
 
     expect(mockUpdateGameOptions).toHaveBeenCalledWith(
-      expect.objectContaining({ playerColorsEnabled: true }),
+      expect.objectContaining({ playerColorsEnabled: false }),
     );
   });
 
   it("reveals the attempts stepper only when impostor guessing is enabled and saves the chosen count", async () => {
     const user = userEvent.setup();
     (useGameStore as any).mockImplementation((selector: any) =>
-      selector(createState()),
+      selector(
+        createState({
+          gameOptions: {
+            roundTime: 30,
+            unlimitedInk: false,
+            clearCanvasEachRound: true,
+            playerColorsEnabled: false,
+            impostorGuessEnabled: false,
+            impostorGuessAttempts: 3,
+          },
+        }),
+      ),
     );
 
     render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
@@ -189,8 +200,8 @@ describe("OptionsModal", () => {
       roundTime: 30,
       unlimitedInk: false,
       clearCanvasEachRound: true,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
+      playerColorsEnabled: true,
+      impostorGuessEnabled: true,
       impostorGuessAttempts: 3,
     });
   });
