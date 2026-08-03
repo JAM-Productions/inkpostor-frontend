@@ -60,6 +60,7 @@ const baseServerState = {
     roundTime: DEFAULT_ROUND_TIME,
     unlimitedInk: false,
     clearCanvasEachRound: true,
+    playerColorsEnabled: false,
     impostorGuessEnabled: false,
     impostorGuessAttempts: 3,
   },
@@ -76,6 +77,7 @@ describe("useGameStore", () => {
         roundTime: DEFAULT_ROUND_TIME,
         unlimitedInk: false,
         clearCanvasEachRound: true,
+        playerColorsEnabled: false,
         impostorGuessEnabled: false,
         impostorGuessAttempts: 3,
       },
@@ -115,6 +117,7 @@ describe("useGameStore", () => {
       roundTime: 90,
       unlimitedInk: false,
       clearCanvasEachRound: true,
+      playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
     });
@@ -129,6 +132,7 @@ describe("useGameStore", () => {
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: true,
       clearCanvasEachRound: true,
+      playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
     });
@@ -143,6 +147,7 @@ describe("useGameStore", () => {
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: false,
       clearCanvasEachRound: false,
+      playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
     });
@@ -158,6 +163,7 @@ describe("useGameStore", () => {
       roundTime: 40,
       unlimitedInk: true,
       clearCanvasEachRound: false,
+      playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
     };
@@ -542,6 +548,7 @@ describe("useGameStore", () => {
         roundTime: DEFAULT_ROUND_TIME,
         unlimitedInk: false,
         clearCanvasEachRound: true,
+        playerColorsEnabled: false,
         impostorGuessEnabled: false,
         impostorGuessAttempts: 3,
       },
@@ -751,6 +758,7 @@ describe("useGameStore", () => {
         roundTime: 40,
         unlimitedInk: true,
         clearCanvasEachRound: false,
+        playerColorsEnabled: false,
         impostorGuessEnabled: false,
         impostorGuessAttempts: 3,
       },
@@ -762,6 +770,7 @@ describe("useGameStore", () => {
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: false,
       clearCanvasEachRound: true,
+      playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
     });

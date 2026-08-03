@@ -1,9 +1,11 @@
 import { describe, it, expect } from "vitest";
 import {
   getActivePlayerCardColorClass,
+  getPlayerCanvasColor,
   getPlayerIconColorClass,
   getPlayerVotingCardColorClass,
 } from "../src/lib/playerColors";
+import { DEFAULT_CANVAS_COLOR } from "../src/lib/canvasColors";
 import type { Player } from "../src/store/gameState";
 
 describe("getPlayerIconColorClass", () => {
@@ -65,5 +67,35 @@ describe("getPlayerIconColorClass", () => {
     const color = getPlayerVotingCardColorClass("2", hostId, players);
     expect(color).toContain("bg-emerald-500/20");
     expect(color).toContain("border-emerald-500/40");
+  });
+
+  describe("getPlayerCanvasColor", () => {
+    it("should return a solid hex for the host", () => {
+      expect(getPlayerCanvasColor(hostId, hostId, players)).toBe("#f97316");
+    });
+
+    it("should return a distinct hex per player and cycle through them", () => {
+      const colors = new Set<string>();
+      for (let i = 1; i <= 10; i++) {
+        const color = getPlayerCanvasColor(players[i].id, hostId, players);
+        expect(color).toMatch(/^#[0-9a-f]{6}$/);
+        colors.add(color);
+      }
+
+      expect(colors.size).toBe(10);
+      // Index 10 wraps back around to the first style
+      expect(getPlayerCanvasColor("11", hostId, players)).toBe(
+        getPlayerCanvasColor("1", "2", players),
+      );
+    });
+
+    it("should fall back to the default brush color", () => {
+      expect(getPlayerCanvasColor(null, hostId, players)).toBe(
+        DEFAULT_CANVAS_COLOR,
+      );
+      expect(getPlayerCanvasColor("99", hostId, players)).toBe(
+        DEFAULT_CANVAS_COLOR,
+      );
+    });
   });
 });

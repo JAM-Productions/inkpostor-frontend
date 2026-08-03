@@ -8,6 +8,7 @@ import React, {
 import { useGameStore } from "../store/gameState";
 import { MAX_INK, DOT_INK_COST } from "../lib/constants";
 import { DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
+import { getPlayerCanvasColor } from "../lib/playerColors";
 
 export interface UseCanvasDrawing {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -45,11 +46,19 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
     (state) => state.currentTurnPlayerId,
   );
   const myId = useGameStore((state) => state.myId);
+  const hostId = useGameStore((state) => state.hostId);
+  const players = useGameStore((state) => state.players);
   const actions = useGameStore((state) => state.actions);
   const gameOptions = useGameStore((state) => state.gameOptions);
   const hasUnlimitedInk = gameOptions.unlimitedInk;
 
   const isMyTurn = currentTurnPlayerId === myId;
+  // With the palette disabled the picked color is ignored in favour of the one
+  // that identifies this player everywhere else in the UI. The picked color is
+  // kept around so it comes back if the host turns the palette on again.
+  const effectiveColor = gameOptions.playerColorsEnabled
+    ? getPlayerCanvasColor(myId, hostId, players)
+    : color;
 
   // Resize canvas to match CSS layout
   useLayoutEffect(() => {
@@ -146,7 +155,7 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
       inkCosts.current.push(DOT_INK_COST);
     }
 
-    actions.drawStroke({ x, y, color, isNewStroke: true });
+    actions.drawStroke({ x, y, color: effectiveColor, isNewStroke: true });
   };
 
   const draw = useCallback(
@@ -177,9 +186,9 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
       }
       lastPoint.current = { x, y };
 
-      actions.drawStroke({ x, y, color, isNewStroke: false });
+      actions.drawStroke({ x, y, color: effectiveColor, isNewStroke: false });
     },
-    [isDrawing, isMyTurn, inkUsed, hasUnlimitedInk, color, actions],
+    [isDrawing, isMyTurn, inkUsed, hasUnlimitedInk, effectiveColor, actions],
   );
 
   const stopDrawing = () => {
@@ -228,7 +237,7 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
   return {
     canvasRef,
     containerRef,
-    color,
+    color: effectiveColor,
     setColor,
     isDrawing,
     startDrawing,

@@ -247,6 +247,11 @@
         "description": "Players will have unlimited ink for drawing.",
         "toggle": "Toggle ink limit"
       },
+      "playerColors": {
+        "title": "Player Colors",
+        "description": "Turn off the color palette: everyone draws in their own player color.",
+        "toggle": "Toggle player colors"
+      },
       "clearCanvas": {
         "title": "Clear Canvas Each Round",
         "description": "Choose whether the canvas resets when a new round starts.",

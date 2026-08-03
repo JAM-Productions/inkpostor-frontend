@@ -6,6 +6,7 @@ import {
   Droplets,
   Eraser,
   Lock,
+  Palette,
   PenLine,
   Minus,
   Plus,
@@ -54,6 +55,9 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const [clearCanvasEachRound, setClearCanvasEachRound] = useState(
     gameOptions.clearCanvasEachRound,
   );
+  const [playerColorsEnabled, setPlayerColorsEnabled] = useState(
+    gameOptions.playerColorsEnabled,
+  );
   const [impostorGuessEnabled, setImpostorGuessEnabled] = useState(
     gameOptions.impostorGuessEnabled,
   );
@@ -77,6 +81,9 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const displayedClearCanvasEachRound =
     lockedOptions.clearCanvasEachRound ??
     (isHost ? clearCanvasEachRound : gameOptions.clearCanvasEachRound);
+  const displayedPlayerColorsEnabled = isHost
+    ? playerColorsEnabled
+    : gameOptions.playerColorsEnabled;
   const displayedImpostorGuessEnabled =
     lockedOptions.impostorGuessEnabled ??
     (isHost ? impostorGuessEnabled : gameOptions.impostorGuessEnabled);
@@ -126,6 +133,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
                 roundTime,
                 unlimitedInk,
                 clearCanvasEachRound: displayedClearCanvasEachRound,
+                playerColorsEnabled,
                 impostorGuessEnabled: displayedImpostorGuessEnabled,
                 impostorGuessAttempts,
               });
@@ -235,6 +243,46 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               <span
                 className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
                   displayedUnlimitedInk ? "translate-x-7" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-stone-800 bg-stone-800/40 p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex gap-3 justify-center items-center">
+              <div className="rounded-xl bg-pink-500/10 p-2 text-pink-400 h-fit">
+                <Palette className="size-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+                  {t("options.playerColors.title")}
+                </h3>
+                <p className="mt-1 text-sm text-stone-400">
+                  {t("options.playerColors.description")}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              role="switch"
+              disabled={!isHost}
+              aria-checked={displayedPlayerColorsEnabled}
+              onClick={() => setPlayerColorsEnabled(!playerColorsEnabled)}
+              className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border transition-colors ${
+                displayedPlayerColorsEnabled
+                  ? "border-pink-400/50 bg-pink-500"
+                  : "border-stone-700 bg-stone-700"
+              } ${isHost ? "cursor-pointer" : "cursor-default opacity-80"}`}
+              aria-label={t("options.playerColors.toggle")}
+            >
+              <span
+                className={`inline-block size-6 transform rounded-full bg-white shadow-sm transition-transform ${
+                  displayedPlayerColorsEnabled
+                    ? "translate-x-7"
+                    : "translate-x-1"
                 }`}
               />
             </button>
