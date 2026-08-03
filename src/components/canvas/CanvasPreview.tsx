@@ -74,7 +74,9 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({
     window.addEventListener("resize", measure);
 
     const observer =
-      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(measure);
     observer?.observe(container);
 
     return () => {
