@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { VoteDotsPreview } from "./VoteDotsPreview";
 import { ImpostorGuessForm } from "./ImpostorGuessForm";
+import { CanvasPreviewThumbnail } from "./canvas/CanvasPreviewThumbnail";
 import {
   getPlayerIconColorClass,
   getPlayerVotingCardColorClass,
@@ -83,6 +84,8 @@ export const VotingScreen: React.FC = () => {
             {t("voting.whoIsInkpostor")}
           </p>
         </div>
+
+        <CanvasPreviewThumbnail />
 
         <div className="bg-stone-800 rounded-3xl p-6 border border-stone-700 shadow-xl ">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 overflow-y-auto p-2 max-h-[50vh] custom-scrollbar">

@@ -70,6 +70,12 @@
       "lastChance": "Última oportunidad: adivina la palabra para ganar, o pasa para rendirte.",
       "waitingFinalGuess": "El Inkpostor fue eliminado y está haciendo su último intento..."
     },
+    "canvasPreview": {
+      "title": "El dibujo",
+      "empty": "No se dibujó nada",
+      "open": "Ver dibujo",
+      "closeDialog": "Cerrar vista del dibujo"
+    },
     "canvas": {
       "colors": {
         "#1a1a1a": "Negro",

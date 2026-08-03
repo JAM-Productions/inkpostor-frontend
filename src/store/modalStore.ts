@@ -6,6 +6,7 @@ export type ModalPayloads = {
   KICK_PLAYER: { playerId: string };
   OPTIONS: undefined;
   EXIT_GAME: undefined;
+  CANVAS_PREVIEW: undefined;
 };
 
 export type ModalType = keyof ModalPayloads;

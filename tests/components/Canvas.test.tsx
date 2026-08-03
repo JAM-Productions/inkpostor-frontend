@@ -59,14 +59,19 @@ describe("Canvas", () => {
     vi.clearAllMocks();
 
     // Mock HTMLCanvasElement since jsdom doesn't support getContext fully
-    HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
-      clearRect: vi.fn(),
-      beginPath: vi.fn(),
-      moveTo: vi.fn(),
-      lineTo: vi.fn(),
-      stroke: vi.fn(),
-      fillRect: vi.fn(),
-    })) as any;
+    HTMLCanvasElement.prototype.getContext = vi.fn(function (
+      this: HTMLCanvasElement,
+    ) {
+      return {
+        canvas: this,
+        clearRect: vi.fn(),
+        beginPath: vi.fn(),
+        moveTo: vi.fn(),
+        lineTo: vi.fn(),
+        stroke: vi.fn(),
+        fillRect: vi.fn(),
+      };
+    }) as any;
   });
 
   afterEach(() => {

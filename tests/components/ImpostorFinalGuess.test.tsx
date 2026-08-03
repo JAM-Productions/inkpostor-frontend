@@ -15,6 +15,7 @@ describe("ImpostorFinalGuess", () => {
     (useGameStore as any).mockImplementation((selector: any) =>
       selector({
         amIImpostor,
+        canvasStrokes: [{ x: 5, y: 5, color: "#000000", isNewStroke: true }],
         actions: {
           skipImpostorGuess: mockSkip,
           submitImpostorGuess: mockSubmit,
@@ -40,6 +41,17 @@ describe("ImpostorFinalGuess", () => {
     const skipBtn = screen.getByRole("button", { name: "Skip" });
     fireEvent.click(skipBtn);
     expect(mockSkip).toHaveBeenCalled();
+  });
+
+  it("shows the canvas preview to both the impostor and the rest", () => {
+    mockStore(true);
+    const { unmount } = render(<ImpostorFinalGuess />);
+    expect(screen.getByTestId("canvas-preview")).toBeInTheDocument();
+    unmount();
+
+    mockStore(false);
+    render(<ImpostorFinalGuess />);
+    expect(screen.getByTestId("canvas-preview")).toBeInTheDocument();
   });
 
   it("shows a waiting screen to everyone else", () => {

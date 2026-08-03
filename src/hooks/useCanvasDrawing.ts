@@ -8,6 +8,7 @@ import React, {
 import { useGameStore } from "../store/gameState";
 import { MAX_INK, DOT_INK_COST } from "../lib/constants";
 import { DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
+import { renderStrokes } from "../lib/canvasRender";
 
 export interface UseCanvasDrawing {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -76,30 +77,7 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.lineWidth = 4;
-
-    let currentPathStart: null | { x: number; y: number } = null;
-
-    canvasStrokes.forEach((stroke) => {
-      if (stroke.isNewStroke || !currentPathStart) {
-        ctx.beginPath();
-        ctx.strokeStyle = stroke.color;
-        ctx.moveTo(stroke.x, stroke.y);
-        ctx.lineTo(stroke.x, stroke.y);
-        ctx.stroke();
-        currentPathStart = { x: stroke.x, y: stroke.y };
-      } else {
-        ctx.beginPath();
-        ctx.strokeStyle = stroke.color;
-        ctx.moveTo(currentPathStart.x, currentPathStart.y);
-        ctx.lineTo(stroke.x, stroke.y);
-        ctx.stroke();
-        currentPathStart = { x: stroke.x, y: stroke.y };
-      }
-    });
+    renderStrokes(ctx, canvasStrokes);
   }, [canvasStrokes]);
 
   const getCoordinates = (

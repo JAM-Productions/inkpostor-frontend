@@ -70,6 +70,12 @@
       "lastChance": "One last chance: guess the word to win, or skip to give up.",
       "waitingFinalGuess": "The Inkpostor was eliminated and is making a final guess..."
     },
+    "canvasPreview": {
+      "title": "The drawing",
+      "empty": "Nothing was drawn",
+      "open": "View drawing",
+      "closeDialog": "Close drawing preview"
+    },
     "canvas": {
       "colors": {
         "#1a1a1a": "Black",

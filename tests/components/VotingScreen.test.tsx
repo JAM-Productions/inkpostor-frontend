@@ -52,6 +52,18 @@ describe("VotingScreen", () => {
     expect(screen.getByText("Skip Vote")).toBeInTheDocument();
   });
 
+  it("offers the canvas preview thumbnail", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({ ...mockStateBase }),
+    );
+
+    render(<VotingScreen />);
+
+    expect(
+      screen.getByRole("button", { name: "View drawing" }),
+    ).toBeInTheDocument();
+  });
+
   it("disables confirm button initially and enables it when a player is selected", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = { ...mockStateBase };

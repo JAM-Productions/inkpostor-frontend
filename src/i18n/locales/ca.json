@@ -70,6 +70,12 @@
       "lastChance": "Última oportunitat: endevina la paraula per guanyar, o passa per rendir-te.",
       "waitingFinalGuess": "L'Inkpostor ha estat eliminat i està fent el seu últim intent..."
     },
+    "canvasPreview": {
+      "title": "El dibuix",
+      "empty": "No s'ha dibuixat res",
+      "open": "Veure dibuix",
+      "closeDialog": "Tanca la vista del dibuix"
+    },
     "canvas": {
       "colors": {
         "#1a1a1a": "Negre",

@@ -29,6 +29,9 @@ vi.mock("../../../src/components/modals/KickPlayerModal", () => ({
 vi.mock("../../../src/components/modals/ExitGameModal", () => ({
   ExitGameModal: () => <div data-testid="exit-game-modal" />,
 }));
+vi.mock("../../../src/components/modals/CanvasPreviewModal", () => ({
+  CanvasPreviewModal: () => <div data-testid="canvas-preview-modal" />,
+}));
 
 describe("ModalRenderer", () => {
   const mockCloseModal = vi.fn();
@@ -119,5 +122,27 @@ describe("ModalRenderer", () => {
     );
     const { getByTestId } = render(<ModalRenderer />);
     expect(getByTestId("options-modal")).toBeInTheDocument();
+  });
+
+  it.each(["VOTING", "IMPOSTOR_GUESS"])(
+    "renders CANVAS_PREVIEW modal during the %s phase",
+    (phase) => {
+      setupMocks(
+        { activeModal: "CANVAS_PREVIEW", modalData: null },
+        { players: [], phase },
+      );
+      const { getByTestId } = render(<ModalRenderer />);
+      expect(getByTestId("canvas-preview-modal")).toBeInTheDocument();
+      expect(mockCloseModal).not.toHaveBeenCalled();
+    },
+  );
+
+  it("closes the CANVAS_PREVIEW modal once the phase moves on", () => {
+    setupMocks(
+      { activeModal: "CANVAS_PREVIEW", modalData: null },
+      { players: [], phase: "RESULTS" },
+    );
+    render(<ModalRenderer />);
+    expect(mockCloseModal).toHaveBeenCalled();
   });
 });
