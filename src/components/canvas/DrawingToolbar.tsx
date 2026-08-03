@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Maximize2, Minimize2, Undo } from "lucide-react";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { useGameStore } from "../../store/gameState";
 import { CANVAS_COLORS } from "../../lib/canvasColors";
+import { UndoButton } from "../buttons/UndoButton";
 
 interface DrawingToolbarProps {
   color: string;
@@ -39,22 +40,7 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
 
   const isUndoOnly = !hasPalette && hasUnlimitedInk;
 
-  const undoButton = (
-    <button
-      type="button"
-      onClick={onUndo}
-      className={`rounded-xl shrink-0 cursor-pointer bg-stone-700 flex items-center justify-center gap-2 text-stone-300 hover:bg-stone-600 transition-colors active:scale-95 ${isUndoOnly ? "h-10 px-4" : "size-10"}`}
-      title={t("canvas.undo")}
-      aria-label="Undo last stroke"
-    >
-      <Undo className="size-5" />
-      {isUndoOnly && (
-        <span className="text-sm font-bold uppercase tracking-wider">
-          {t("canvas.undo")}
-        </span>
-      )}
-    </button>
-  );
+  const undoButton = <UndoButton onClick={onUndo} isUndoOnly={isUndoOnly} />;
 
   return (
     <div
