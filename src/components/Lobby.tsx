@@ -26,6 +26,7 @@ export const Lobby: React.FC = () => {
     Number(gameMode !== "CLASSIC") +
     Number(gameOptions.roundTime !== DEFAULT_ROUND_TIME) +
     Number(gameOptions.unlimitedInk !== false) +
+    Number(gameOptions.playerColorsEnabled !== false) +
     Number(gameOptions.clearCanvasEachRound !== true) +
     Number(gameOptions.impostorGuessEnabled !== false);
 

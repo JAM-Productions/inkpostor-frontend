@@ -1,8 +1,9 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useCanvasDrawing } from "../../src/hooks/useCanvasDrawing";
-import { useGameStore } from "../../src/store/gameState";
+import { useGameStore, type Player } from "../../src/store/gameState";
 import { DEFAULT_CANVAS_COLOR } from "../../src/lib/canvasColors";
+import { getPlayerCanvasColor } from "../../src/lib/playerColors";
 
 vi.mock("../../src/store/gameState", () => ({
   useGameStore: vi.fn(),
@@ -20,6 +21,8 @@ describe("useCanvasDrawing", () => {
 
   const mockStateBase = {
     myId: "socket-123",
+    hostId: "socket-host",
+    players: [{ id: "socket-host" }, { id: "socket-123" }],
     currentTurnPlayerId: "socket-123", // my turn by default
     canvasStrokes: [],
     gameOptions: { unlimitedInk: false },
@@ -146,5 +149,54 @@ describe("useCanvasDrawing", () => {
     setStore({ currentTurnPlayerId: "socket-123" });
     rerender();
     expect(result.current.inkPercentage).toBe(0);
+  });
+
+  it("draws in my player color when the palette is disabled", () => {
+    setStore({
+      gameOptions: { unlimitedInk: false, playerColorsEnabled: true },
+    });
+    const { result } = renderHook(() => useCanvasDrawing());
+
+    // Whatever the palette had picked is ignored
+    act(() => {
+      result.current.setColor("#ffffff");
+    });
+    act(() => {
+      result.current.startDrawing(makeEvent());
+    });
+
+    // Second entry of the player list, so the second player style
+    const myColor = getPlayerCanvasColor(
+      "socket-123",
+      "socket-host",
+      mockStateBase.players as Player[],
+    );
+    expect(myColor).not.toBe("#ffffff");
+    expect(result.current.color).toBe(myColor);
+    expect(mockDrawStroke).toHaveBeenCalledWith({
+      x: 0,
+      y: 0,
+      color: myColor,
+      isNewStroke: true,
+    });
+  });
+
+  it("draws in the picked color when the palette is enabled", () => {
+    const { result } = renderHook(() => useCanvasDrawing());
+
+    act(() => {
+      result.current.setColor("#ffffff");
+    });
+    act(() => {
+      result.current.startDrawing(makeEvent());
+    });
+
+    expect(result.current.color).toBe("#ffffff");
+    expect(mockDrawStroke).toHaveBeenCalledWith({
+      x: 0,
+      y: 0,
+      color: "#ffffff",
+      isNewStroke: true,
+    });
   });
 });

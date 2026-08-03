@@ -247,6 +247,11 @@
         "description": "Los jugadores tendrán tinta ilimitada para dibujar.",
         "toggle": "Alternar límite de tinta"
       },
+      "playerColors": {
+        "title": "Colores de Jugador",
+        "description": "Desactiva la paleta de colores: cada jugador dibuja con su propio color.",
+        "toggle": "Alternar colores de jugador"
+      },
       "clearCanvas": {
         "title": "Limpiar lienzo cada ronda",
         "description": "Elige si el lienzo se reinicia al comenzar una nueva ronda.",

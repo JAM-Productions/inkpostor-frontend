@@ -247,6 +247,11 @@
         "description": "Els jugadors tindran tinta ilimitada per dibuixar.",
         "toggle": "Alternar límit de tinta"
       },
+      "playerColors": {
+        "title": "Colors de Jugador",
+        "description": "Desactiva la paleta de colors: cada jugador dibuixa amb el seu propi color.",
+        "toggle": "Alternar colors de jugador"
+      },
       "clearCanvas": {
         "title": "Netejar llenç cada ronda",
         "description": "Tria si el llenç es reinicia en començar una ronda nova.",

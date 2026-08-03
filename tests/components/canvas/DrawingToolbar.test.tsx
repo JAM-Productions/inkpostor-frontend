@@ -93,4 +93,40 @@ describe("DrawingToolbar", () => {
     expect(screen.queryByLabelText("Compress toolbar")).not.toBeInTheDocument();
     expect(screen.getByLabelText("Undo last stroke")).toBeInTheDocument();
   });
+
+  it("keeps only undo and the ink meter with player colors on", () => {
+    mockStore({
+      gameOptions: { unlimitedInk: false, playerColorsEnabled: true },
+    });
+    renderToolbar();
+
+    expect(screen.queryByLabelText("Green")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Compress toolbar")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Undo last stroke")).toBeInTheDocument();
+    expect(screen.getByText("Ink Supply")).toBeInTheDocument();
+  });
+
+  it("keeps only undo with player colors on and unlimited ink", () => {
+    mockStore({
+      gameOptions: { unlimitedInk: true, playerColorsEnabled: true },
+    });
+    renderToolbar();
+
+    expect(screen.queryByLabelText("Green")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Compress toolbar")).not.toBeInTheDocument();
+    expect(screen.queryByText("Ink Supply")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Undo last stroke")).toBeInTheDocument();
+  });
+
+  it("still calls onUndo when the palette is hidden", () => {
+    mockStore({
+      gameOptions: { unlimitedInk: true, playerColorsEnabled: true },
+    });
+    const onUndo = vi.fn();
+    renderToolbar({ onUndo });
+
+    fireEvent.click(screen.getByLabelText("Undo last stroke"));
+
+    expect(onUndo).toHaveBeenCalledTimes(1);
+  });
 });

@@ -49,6 +49,8 @@ export interface GameOptions {
   roundTime: number;
   unlimitedInk: boolean;
   clearCanvasEachRound: boolean;
+  // Disables the color palette: every player draws in their own player color.
+  playerColorsEnabled: boolean;
   impostorGuessEnabled: boolean;
   impostorGuessAttempts: number;
 }
@@ -123,6 +125,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
     roundTime: DEFAULT_ROUND_TIME,
     unlimitedInk: false,
     clearCanvasEachRound: true,
+    playerColorsEnabled: false,
     impostorGuessEnabled: false,
     impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
   },
@@ -463,6 +466,7 @@ socket.on("kicked", (msg: string) => {
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: false,
       clearCanvasEachRound: true,
+      playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
     },

@@ -18,6 +18,7 @@ describe("OptionsModal", () => {
       roundTime: 30,
       unlimitedInk: false,
       clearCanvasEachRound: true,
+      playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
     },
@@ -84,16 +85,44 @@ describe("OptionsModal", () => {
         name: /toggle canvas clearing each round/i,
       }),
     );
+    await user.click(
+      screen.getByRole("switch", { name: /toggle player colors/i }),
+    );
     await user.click(screen.getByTestId("confirm-options-button"));
 
     expect(mockUpdateGameOptions).toHaveBeenCalledWith({
       roundTime: 35,
       unlimitedInk: true,
       clearCanvasEachRound: false,
+      playerColorsEnabled: true,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
     });
     expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it("defaults player colors off and only applies them on save", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState()),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    const playerColorsSwitch = screen.getByRole("switch", {
+      name: /toggle player colors/i,
+    });
+    expect(playerColorsSwitch).toHaveAttribute("aria-checked", "false");
+
+    await user.click(playerColorsSwitch);
+    expect(playerColorsSwitch).toHaveAttribute("aria-checked", "true");
+    expect(mockUpdateGameOptions).not.toHaveBeenCalled();
+
+    await user.click(screen.getByTestId("confirm-options-button"));
+
+    expect(mockUpdateGameOptions).toHaveBeenCalledWith(
+      expect.objectContaining({ playerColorsEnabled: true }),
+    );
   });
 
   it("reveals the attempts stepper only when impostor guessing is enabled and saves the chosen count", async () => {
@@ -127,6 +156,7 @@ describe("OptionsModal", () => {
       roundTime: 30,
       unlimitedInk: false,
       clearCanvasEachRound: true,
+      playerColorsEnabled: false,
       impostorGuessEnabled: true,
       impostorGuessAttempts: 1,
     });
@@ -159,6 +189,7 @@ describe("OptionsModal", () => {
       roundTime: 30,
       unlimitedInk: false,
       clearCanvasEachRound: true,
+      playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
     });
@@ -173,6 +204,7 @@ describe("OptionsModal", () => {
           gameOptions: {
             roundTime: 30,
             unlimitedInk: false,
+            playerColorsEnabled: false,
             clearCanvasEachRound: true,
             // Even if the server still reported it on, the mode wins
             impostorGuessEnabled: true,
@@ -211,6 +243,7 @@ describe("OptionsModal", () => {
           gameOptions: {
             roundTime: 30,
             unlimitedInk: false,
+            playerColorsEnabled: false,
             // Even if the server still reported it off, the mode wins
             clearCanvasEachRound: false,
             impostorGuessEnabled: false,
@@ -271,6 +304,7 @@ describe("OptionsModal", () => {
             roundTime: 25,
             unlimitedInk: true,
             clearCanvasEachRound: false,
+            playerColorsEnabled: true,
           },
         }),
       ),
@@ -289,9 +323,15 @@ describe("OptionsModal", () => {
       name: /toggle canvas clearing each round/i,
     });
 
+    const playerColorsSwitch = screen.getByRole("switch", {
+      name: /toggle player colors/i,
+    });
+
     expect(inkSwitch).toBeDisabled();
     expect(inkSwitch).toHaveAttribute("aria-checked", "true");
     expect(clearSwitch).toBeDisabled();
     expect(clearSwitch).toHaveAttribute("aria-checked", "false");
+    expect(playerColorsSwitch).toBeDisabled();
+    expect(playerColorsSwitch).toHaveAttribute("aria-checked", "true");
   });
 });
