@@ -2,30 +2,27 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { GameModeCarousel } from "../../../src/components/modals/GameModeCarousel";
-import { useGameStore } from "../../../src/store/gameState";
 import { GAME_MODES } from "../../../src/lib/gameModes";
-
-vi.mock("../../../src/store/gameState", () => ({
-  useGameStore: vi.fn(),
-}));
+import type { GameMode } from "../../../src/store/gameState";
 
 describe("GameModeCarousel", () => {
-  const mockSetGameMode = vi.fn();
+  const onChange = vi.fn();
 
-  const mockStore = (gameMode = "CLASSIC") => {
-    (useGameStore as any).mockImplementation((selector: any) =>
-      selector({ gameMode, actions: { setGameMode: mockSetGameMode } }),
+  const renderCarousel = (gameMode = "CLASSIC", isHost = true) =>
+    render(
+      <GameModeCarousel
+        isHost={isHost}
+        gameMode={gameMode as GameMode}
+        onChange={onChange}
+      />,
     );
-  };
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("shows the currently selected mode", () => {
-    mockStore("CLASSIC");
-
-    render(<GameModeCarousel isHost={true} />);
+    renderCarousel("CLASSIC");
 
     expect(screen.getByText("Classic")).toBeInTheDocument();
     expect(screen.queryByText("Chaos")).not.toBeInTheDocument();
@@ -33,76 +30,61 @@ describe("GameModeCarousel", () => {
 
   it("applies the next mode immediately, without a confirm step", async () => {
     const user = userEvent.setup();
-    mockStore("CLASSIC");
-
-    render(<GameModeCarousel isHost={true} />);
+    renderCarousel("CLASSIC");
 
     await user.click(screen.getByRole("button", { name: /next game mode/i }));
 
-    expect(mockSetGameMode).toHaveBeenCalledWith("CUSTOM_WORD");
+    expect(onChange).toHaveBeenCalledWith("CUSTOM_WORD");
   });
 
   it("wraps around when moving past the first mode", async () => {
     const user = userEvent.setup();
-    mockStore("CLASSIC");
-
-    render(<GameModeCarousel isHost={true} />);
+    renderCarousel("CLASSIC");
 
     await user.click(
       screen.getByRole("button", { name: /previous game mode/i }),
     );
 
     // Going back from the first mode lands on the last one
-    expect(mockSetGameMode).toHaveBeenCalledWith(
-      GAME_MODES[GAME_MODES.length - 1].id,
-    );
+    expect(onChange).toHaveBeenCalledWith(GAME_MODES[GAME_MODES.length - 1].id);
   });
 
   it("offers the hot word mode", async () => {
     const user = userEvent.setup();
-    mockStore("CUSTOM_WORD");
-
-    render(<GameModeCarousel isHost={true} />);
+    renderCarousel("CUSTOM_WORD");
 
     await user.click(screen.getByRole("button", { name: /next game mode/i }));
-    expect(mockSetGameMode).toHaveBeenCalledWith("HOT_WORD");
+    expect(onChange).toHaveBeenCalledWith("HOT_WORD");
 
-    mockStore("HOT_WORD");
-    render(<GameModeCarousel isHost={true} />);
+    renderCarousel("HOT_WORD");
     expect(screen.getAllByText("Hot Word").length).toBeGreaterThan(0);
   });
 
   it("selects a mode from its dot", async () => {
     const user = userEvent.setup();
-    mockStore("CUSTOM_WORD");
-
-    render(<GameModeCarousel isHost={true} />);
+    renderCarousel("CUSTOM_WORD");
 
     expect(screen.getByText("Chaos")).toBeInTheDocument();
     await user.click(
       screen.getByRole("button", { name: /select classic mode/i }),
     );
 
-    expect(mockSetGameMode).toHaveBeenCalledWith("CLASSIC");
+    expect(onChange).toHaveBeenCalledWith("CLASSIC");
   });
 
   it("does not re-send the mode that is already selected", async () => {
     const user = userEvent.setup();
-    mockStore("CLASSIC");
-
-    render(<GameModeCarousel isHost={true} />);
+    renderCarousel("CLASSIC");
 
     await user.click(
       screen.getByRole("button", { name: /select classic mode/i }),
     );
 
-    expect(mockSetGameMode).not.toHaveBeenCalled();
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it("keeps every description mounted so switching modes cannot shift the layout", () => {
-    mockStore("CLASSIC");
-
-    render(<GameModeCarousel isHost={true} />);
+    renderCarousel("CLASSIC");
 
     const selected = screen.getByText(/drawn at random/i);
     const other = screen.getByText(/Every player writes a word/i);
@@ -114,22 +96,18 @@ describe("GameModeCarousel", () => {
   });
 
   it("flags the mode that only works with everyone in the same room", () => {
-    mockStore("CLASSIC");
-    const { unmount } = render(<GameModeCarousel isHost={true} />);
+    const { unmount } = renderCarousel("CLASSIC");
     expect(screen.queryByTestId("in-person-badge")).not.toBeInTheDocument();
     unmount();
 
-    mockStore("ORIGINAL");
-    render(<GameModeCarousel isHost={true} />);
+    renderCarousel("ORIGINAL");
     expect(screen.getByTestId("in-person-badge")).toHaveTextContent(
       "Best played in person",
     );
   });
 
   it("is read-only for non-hosts", () => {
-    mockStore("CUSTOM_WORD");
-
-    render(<GameModeCarousel isHost={false} />);
+    renderCarousel("CUSTOM_WORD", false);
 
     expect(screen.getByText("Chaos")).toBeInTheDocument();
     expect(

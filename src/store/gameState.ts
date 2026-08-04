@@ -106,7 +106,6 @@ export interface GameState {
     kickPlayer: (playerId: string) => void;
     voteKickPlayer: (targetId: string) => void;
     startGame: () => void;
-    setGameMode: (mode: GameMode) => void;
     submitCustomWord: (word: string) => void;
     proceedToDrawing: () => void;
     confirmNewWord: () => void;
@@ -121,7 +120,9 @@ export interface GameState {
     startEmergencyVoting: () => void;
     submitImpostorGuess: (guess: string, language: string) => void;
     skipImpostorGuess: () => void;
-    updateGameOptions: (options: GameOptions) => void;
+    // The game mode is staged in the options modal like everything else, so it
+    // is saved together with them rather than applied on its own.
+    updateGameOptions: (options: GameOptions & { gameMode: GameMode }) => void;
     setError: (msg: string | null) => void;
     toggleSus: (playerId: string) => void;
     exitGame: () => void;
@@ -213,11 +214,6 @@ export const useGameStore = create<GameState>()((set, get) => ({
     startGame: () => {
       socket.emit("startGame");
     },
-    setGameMode: (mode) => {
-      socket.emit("setGameMode", { gameMode: mode });
-      // Optimistic update so the carousel doesn't lag behind the swipe
-      set({ gameMode: mode });
-    },
     submitCustomWord: (word) => {
       const trimmed = word.trim();
       if (!trimmed) return;
@@ -292,10 +288,12 @@ export const useGameStore = create<GameState>()((set, get) => ({
     skipImpostorGuess: () => {
       socket.emit("skipImpostorGuess");
     },
-    updateGameOptions: (options) => {
-      socket.emit("updateGameOptions", options);
-      // Optimistic update for better performance
+    updateGameOptions: ({ gameMode, ...options }) => {
+      socket.emit("updateGameOptions", { gameMode, ...options });
+      // Optimistic update for better performance. The mode rides along in the
+      // same payload but lives outside gameOptions on the room.
       set((state) => ({
+        gameMode,
         gameOptions: { ...state.gameOptions, ...options },
       }));
     },

@@ -3,6 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { OptionsModal } from "../../../src/components/modals/OptionsModal";
 import { useGameStore } from "../../../src/store/gameState";
+import {
+  DEFAULT_IMPOSTOR_GUESSES,
+  DEFAULT_ROUND_TIME,
+} from "../../../src/lib/constants";
 
 vi.mock("../../../src/store/gameState", () => ({
   useGameStore: vi.fn(),
@@ -11,7 +15,6 @@ vi.mock("../../../src/store/gameState", () => ({
 describe("OptionsModal", () => {
   const mockOnClose = vi.fn();
   const mockUpdateGameOptions = vi.fn();
-  const mockSetGameMode = vi.fn();
 
   const createState = (overrides = {}) => ({
     gameOptions: {
@@ -27,10 +30,7 @@ describe("OptionsModal", () => {
     gameMode: "CLASSIC",
     myId: "player-1",
     hostId: "player-1",
-    actions: {
-      updateGameOptions: mockUpdateGameOptions,
-      setGameMode: mockSetGameMode,
-    },
+    actions: { updateGameOptions: mockUpdateGameOptions },
     ...overrides,
   });
 
@@ -93,6 +93,7 @@ describe("OptionsModal", () => {
     await user.click(screen.getByTestId("confirm-options-button"));
 
     expect(mockUpdateGameOptions).toHaveBeenCalledWith({
+      gameMode: "CLASSIC",
       roundTime: 35,
       unlimitedInk: true,
       clearCanvasEachRound: false,
@@ -157,6 +158,7 @@ describe("OptionsModal", () => {
     await user.click(screen.getByTestId("confirm-options-button"));
 
     expect(mockUpdateGameOptions).toHaveBeenCalledWith({
+      gameMode: "CLASSIC",
       roundTime: 30,
       unlimitedInk: false,
       clearCanvasEachRound: true,
@@ -179,7 +181,7 @@ describe("OptionsModal", () => {
     expect(sections[0]).toBe(screen.getByTestId("game-mode-carousel"));
   });
 
-  it("applies the game mode instantly and leaves it out of the saved options", async () => {
+  it("stages the game mode until save, like every other option", async () => {
     const user = userEvent.setup();
     (useGameStore as any).mockImplementation((selector: any) =>
       selector(createState()),
@@ -188,10 +190,13 @@ describe("OptionsModal", () => {
     render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
 
     await user.click(screen.getByRole("button", { name: /next game mode/i }));
-    expect(mockSetGameMode).toHaveBeenCalledWith("CUSTOM_WORD");
+    // Swiping the carousel touches nothing outside the modal
+    expect(mockUpdateGameOptions).not.toHaveBeenCalled();
+    expect(screen.getByText("Chaos")).toBeInTheDocument();
 
     await user.click(screen.getByTestId("confirm-options-button"));
     expect(mockUpdateGameOptions).toHaveBeenCalledWith({
+      gameMode: "CUSTOM_WORD",
       roundTime: 30,
       unlimitedInk: false,
       clearCanvasEachRound: true,
@@ -201,6 +206,29 @@ describe("OptionsModal", () => {
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
     });
+  });
+
+  it("discards a staged mode if the host closes without saving", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState()),
+    );
+
+    const { unmount } = render(
+      <OptionsModal isOpen={true} onClose={mockOnClose} />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /next game mode/i }));
+    await user.click(screen.getByTestId("close-modal-button-backdrop"));
+
+    expect(mockUpdateGameOptions).not.toHaveBeenCalled();
+    expect(mockOnClose).toHaveBeenCalled();
+
+    // ModalRenderer unmounts the modal on close, so reopening starts again
+    // from whatever the server has — the staged mode never survives.
+    unmount();
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+    expect(screen.getByText("Classic")).toBeInTheDocument();
   });
 
   it("locks the impostor guess off while the custom word mode is selected", async () => {
@@ -360,6 +388,46 @@ describe("OptionsModal", () => {
       expect.objectContaining({
         hideHint: true,
         turnOrderMode: "RANDOM_ORDER",
+      }),
+    );
+  });
+
+  it("never saves drawing settings the staged mode forces to default", async () => {
+    const user = userEvent.setup();
+    // The host arrives with drawing settings saved from a CLASSIC game
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(
+        createState({
+          gameOptions: {
+            roundTime: 40,
+            unlimitedInk: true,
+            clearCanvasEachRound: true,
+            playerColorsEnabled: true,
+            impostorGuessEnabled: false,
+            impostorGuessAttempts: 1,
+            hideHint: false,
+            turnOrderMode: "RANDOM_STARTER",
+          },
+        }),
+      ),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    // ...and stages a mode where nothing is drawn. The carousel lives in this
+    // same modal, so the locks have to follow what the host is looking at.
+    await user.click(
+      screen.getByRole("button", { name: /select original mode/i }),
+    );
+    await user.click(screen.getByTestId("confirm-options-button"));
+
+    expect(mockUpdateGameOptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        gameMode: "ORIGINAL",
+        roundTime: DEFAULT_ROUND_TIME,
+        unlimitedInk: false,
+        playerColorsEnabled: false,
+        impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
       }),
     );
   });

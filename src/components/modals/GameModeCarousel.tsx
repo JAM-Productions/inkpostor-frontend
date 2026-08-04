@@ -1,21 +1,23 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, ChevronRight, Users } from "lucide-react";
-import { useGameStore } from "../../store/gameState";
+import type { GameMode } from "../../store/gameState";
 import { GAME_MODES } from "../../lib/gameModes";
 
 interface GameModeCarouselProps {
   isHost: boolean;
+  gameMode: GameMode;
+  onChange: (mode: GameMode) => void;
 }
 
-// Unlike the rest of the options, the selected mode is sent to the server as
-// soon as it changes: the carousel has no confirm step.
+// Controlled by the options modal: like every other option the mode is staged
+// there and only reaches the server when the host saves.
 export const GameModeCarousel: React.FC<GameModeCarouselProps> = ({
   isHost,
+  gameMode,
+  onChange,
 }) => {
   const { t } = useTranslation();
-  const gameMode = useGameStore((state) => state.gameMode);
-  const actions = useGameStore((state) => state.actions);
 
   const currentIndex = Math.max(
     GAME_MODES.findIndex((mode) => mode.id === gameMode),
@@ -29,7 +31,7 @@ export const GameModeCarousel: React.FC<GameModeCarouselProps> = ({
     const wrappedIndex = (index + GAME_MODES.length) % GAME_MODES.length;
     const nextMode = GAME_MODES[wrappedIndex];
     if (nextMode.id === gameMode) return;
-    actions.setGameMode(nextMode.id);
+    onChange(nextMode.id);
   };
 
   return (

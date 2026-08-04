@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { useGameStore, type GameOptions } from "../../src/store/gameState";
+import {
+  useGameStore,
+  type GameMode,
+  type GameOptions,
+} from "../../src/store/gameState";
 import { PLAYER_NAME_KEY } from "../../src/lib/gameStateUtils";
 import { socket } from "../../src/socket";
 import { DEFAULT_ROUND_TIME } from "../../src/lib/constants";
@@ -118,6 +122,7 @@ describe("useGameStore", () => {
     const state = useGameStore.getState();
 
     state.actions.updateGameOptions({
+      gameMode: "CLASSIC",
       roundTime: 90,
       unlimitedInk: false,
       clearCanvasEachRound: true,
@@ -135,6 +140,7 @@ describe("useGameStore", () => {
     const state = useGameStore.getState();
 
     state.actions.updateGameOptions({
+      gameMode: "CLASSIC",
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: true,
       clearCanvasEachRound: true,
@@ -152,6 +158,7 @@ describe("useGameStore", () => {
     const state = useGameStore.getState();
 
     state.actions.updateGameOptions({
+      gameMode: "CLASSIC",
       roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: false,
       clearCanvasEachRound: false,
@@ -167,9 +174,10 @@ describe("useGameStore", () => {
     );
   });
 
-  it("should emit updateGameOptions with the provided values", () => {
+  it("should emit updateGameOptions with the provided values, mode included", () => {
     const state = useGameStore.getState();
-    const nextOptions: GameOptions = {
+    const nextOptions: GameOptions & { gameMode: GameMode } = {
+      gameMode: "HOT_WORD",
       roundTime: 40,
       unlimitedInk: true,
       clearCanvasEachRound: false,
@@ -183,6 +191,9 @@ describe("useGameStore", () => {
     state.actions.updateGameOptions(nextOptions);
 
     expect(socket.emit).toHaveBeenCalledWith("updateGameOptions", nextOptions);
+    // The mode is saved with the options, not applied on its own
+    expect(useGameStore.getState().gameMode).toBe("HOT_WORD");
+    expect(useGameStore.getState().gameOptions.roundTime).toBe(40);
   });
 
   it("should handle connectAndCreate success", async () => {
@@ -599,15 +610,6 @@ describe("useGameStore", () => {
   });
 
   describe("game mode & custom word", () => {
-    it("should emit setGameMode and apply it optimistically", () => {
-      useGameStore.getState().actions.setGameMode("CUSTOM_WORD");
-
-      expect(socket.emit).toHaveBeenCalledWith("setGameMode", {
-        gameMode: "CUSTOM_WORD",
-      });
-      expect(useGameStore.getState().gameMode).toBe("CUSTOM_WORD");
-    });
-
     it("should sync gameMode from gameStateUpdate", () => {
       const gameStateUpdate = getSocketListener("gameStateUpdate");
 

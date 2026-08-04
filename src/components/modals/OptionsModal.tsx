@@ -54,7 +54,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const gameOptions = useGameStore((state) => state.gameOptions);
-  const gameMode = useGameStore((state) => state.gameMode);
+  const savedGameMode = useGameStore((state) => state.gameMode);
   const actions = useGameStore((state) => state.actions);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
@@ -74,8 +74,13 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   );
   const [hideHint, setHideHint] = useState(gameOptions.hideHint);
   const [turnOrderMode, setTurnOrderMode] = useState(gameOptions.turnOrderMode);
+  const [stagedGameMode, setStagedGameMode] = useState(savedGameMode);
 
   const isHost = myId === hostId;
+  // Everything below keys off the staged mode, not the saved one: the carousel
+  // lives in this modal, so what the host is looking at is what the locks and
+  // the visible sections must follow. A guest has nothing staged.
+  const gameMode = isHost ? stagedGameMode : savedGameMode;
   // A mode can take an option over: its value is forced and the host cannot
   // change it while the mode is selected. The server enforces the same table.
   // Defaults to no locks so a mode this client doesn't know yet (server deployed
@@ -90,22 +95,26 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const modeName = t(
     GAME_MODES.find((mode) => mode.id === gameMode)?.nameKey ?? "",
   );
-  const displayedRoundTime = isHost ? roundTime : gameOptions.roundTime;
-  const displayedUnlimitedInk = isHost
-    ? unlimitedInk
-    : gameOptions.unlimitedInk;
+  // Every one of these has to go through lockedOptions, not just the ones the
+  // modal renders with a padlock: the carousel lives in this same modal, so the
+  // staged value can belong to the mode the host just swiped away from.
+  const displayedRoundTime =
+    lockedOptions.roundTime ?? (isHost ? roundTime : gameOptions.roundTime);
+  const displayedUnlimitedInk =
+    lockedOptions.unlimitedInk ??
+    (isHost ? unlimitedInk : gameOptions.unlimitedInk);
   const displayedClearCanvasEachRound =
     lockedOptions.clearCanvasEachRound ??
     (isHost ? clearCanvasEachRound : gameOptions.clearCanvasEachRound);
-  const displayedPlayerColorsEnabled = isHost
-    ? playerColorsEnabled
-    : gameOptions.playerColorsEnabled;
+  const displayedPlayerColorsEnabled =
+    lockedOptions.playerColorsEnabled ??
+    (isHost ? playerColorsEnabled : gameOptions.playerColorsEnabled);
   const displayedImpostorGuessEnabled =
     lockedOptions.impostorGuessEnabled ??
     (isHost ? impostorGuessEnabled : gameOptions.impostorGuessEnabled);
-  const displayedImpostorGuessAttempts = isHost
-    ? impostorGuessAttempts
-    : gameOptions.impostorGuessAttempts;
+  const displayedImpostorGuessAttempts =
+    lockedOptions.impostorGuessAttempts ??
+    (isHost ? impostorGuessAttempts : gameOptions.impostorGuessAttempts);
   const displayedHideHint =
     lockedOptions.hideHint ?? (isHost ? hideHint : gameOptions.hideHint);
   const displayedTurnOrderMode = isHost
@@ -181,14 +190,15 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               // The displayed values already carry whatever the mode forces,
               // which matters because the carousel lives in this same modal.
               actions.updateGameOptions({
-                roundTime,
-                unlimitedInk,
+                gameMode: stagedGameMode,
+                roundTime: displayedRoundTime,
+                unlimitedInk: displayedUnlimitedInk,
                 clearCanvasEachRound: displayedClearCanvasEachRound,
-                playerColorsEnabled,
+                playerColorsEnabled: displayedPlayerColorsEnabled,
                 impostorGuessEnabled: displayedImpostorGuessEnabled,
-                impostorGuessAttempts,
+                impostorGuessAttempts: displayedImpostorGuessAttempts,
                 hideHint: displayedHideHint,
-                turnOrderMode,
+                turnOrderMode: displayedTurnOrderMode,
               });
               onClose();
             }}
@@ -200,7 +210,11 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
       }
     >
       <div className="space-y-4">
-        <GameModeCarousel isHost={isHost} />
+        <GameModeCarousel
+          isHost={isHost}
+          gameMode={gameMode}
+          onChange={setStagedGameMode}
+        />
 
         {shows("hideHint") && (
           <section
