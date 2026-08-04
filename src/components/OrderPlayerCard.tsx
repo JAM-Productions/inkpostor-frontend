@@ -26,7 +26,7 @@ export const OrderPlayerCard: React.FC<OrderPlayerCardProps> = ({
 }) => {
   const players = useGameStore((state) => state.players);
   const isStarterCard = position === undefined;
-  
+
   const stagger =
     position === undefined
       ? undefined
@@ -37,10 +37,8 @@ export const OrderPlayerCard: React.FC<OrderPlayerCardProps> = ({
       style={stagger}
       className={`flex items-center gap-3 rounded-2xl animate-fade-in-right ${
         isStarterCard
-          ? 
-            `justify-center p-5 ${getActivePlayerCardColorClass(player.id, hostId, players)}`
-          :
-            `border p-3 sm:p-4 ${
+          ? `justify-center p-5 ${getActivePlayerCardColorClass(player.id, hostId, players)}`
+          : `border p-3 sm:p-4 ${
               player.id === myId
                 ? "bg-white/20 border-white/40"
                 : "bg-stone-900 border-stone-700/50"
