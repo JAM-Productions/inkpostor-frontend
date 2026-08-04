@@ -51,11 +51,13 @@ export const WordReveal: React.FC = () => {
               shoulder-surfer who the impostor is. */}
           <button
             type="button"
+            data-testid="reveal-word-card"
             onMouseDown={() => handleReveal()}
             onMouseUp={() => setRevealed(false)}
             onMouseLeave={() => setRevealed(false)}
             onTouchStart={() => handleReveal()}
             onTouchEnd={() => setRevealed(false)}
+            onClick={() => handleReveal()}
             className={`w-full aspect-video rounded-3xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in
               ${
                 revealed
@@ -119,6 +121,7 @@ export const WordReveal: React.FC = () => {
             isContinueButtonVisible && (
               <button
                 type="button"
+                data-testid="confirm-word-btn"
                 onClick={actions.confirmNewWord}
                 className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-[background-color,scale] hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
               >

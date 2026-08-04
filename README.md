@@ -33,12 +33,17 @@ Inkpostor is a creative social deduction game. Players are given a secret word a
 3. **Running the Tests:**
 
    ```bash
-   # Run tests once
+   # Run unit tests once
    pnpm test
 
-   # Run tests with coverage
+   # Run unit tests with coverage
    pnpm test:coverage
+
+   # Run Playwright multi-client E2E tests
+   pnpm test:e2e
    ```
+
+   For a detailed explanation of the multi-client E2E test architecture and cross-repo CI pipeline, see [TESTING.md](docs/TESTING.md).
 
 4. **Linting and Formatting:**
 

@@ -102,6 +102,7 @@ export const JoinScreen: React.FC = () => {
               <div className="pt-2">
                 <button
                   type="button"
+                  data-testid="create-room-btn"
                   onClick={handleCreate}
                   disabled={!playerName || isCheckingHealth}
                   className="w-full relative group overflow-hidden rounded-xl bg-ink-primary px-4 py-3 font-semibold text-white transition-all hover:bg-ink-primary-accent active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 cursor-pointer"
@@ -144,6 +145,7 @@ export const JoinScreen: React.FC = () => {
               </div>
               <button
                 type="submit"
+                data-testid="join-room-btn"
                 disabled={!playerName || !roomId || isCheckingHealth}
                 className="w-full rounded-xl bg-ink-secondary px-4 py-3 font-semibold text-black transition-all hover:bg-white active:scale-95 disabled:opacity-50 disabled:active:scale-100 cursor-pointer"
               >

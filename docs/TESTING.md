@@ -1,0 +1,161 @@
+# Inkpostor Testing Strategy & Cross-Repo CI
+
+This document outlines the testing architecture for **Inkpostor**, covering unit testing, multi-client End-to-End (E2E) testing with Playwright, and the cross-repository CI integration strategy between `inkpostor-frontend` and `inkpostor-backend`.
+
+---
+
+## 1. Multi-Client E2E Architecture
+
+Because Inkpostor is a real-time multiplayer social deduction game, E2E tests must simulate multiple players interacting simultaneously in real-time over WebSockets (Socket.io).
+
+Playwright enables this by instantiating **multiple isolated browser contexts** within a single test execution:
+
+```mermaid
+flowchart TD
+    subgraph Test Execution
+        PW[Playwright Test Runner]
+        
+        subgraph Multi-Context Browser
+            C1[Host Context - Tab 1]
+            C2[Player 2 Context - Tab 2]
+        end
+
+        Frontend[Frontend Server - :5173]
+        Backend[Backend API & Socket.io - :3001]
+
+        PW --> C1 & C2
+        C1 -->|HTTP & Socket.io| Frontend
+        C2 -->|HTTP & Socket.io| Frontend
+        Frontend -->|Socket Events| Backend
+    end
+```
+
+### Multi-Player Test Flow
+1. **Host Context**: Opens app, enters name, clicks `Create New Game`, receives generated 6-character room code.
+2. **Player 2 Context**: Opens app in a separate browser context, enters player name and room code, clicks `Join Game`.
+3. **Synchronization Check**: Validates that both Host and Player 2 see each other live in the lobby room via Socket.io broadcasts.
+
+### E2E Test Suite Roadmap
+
+```mermaid
+flowchart TD
+    subgraph "100% Complete System E2E Suite (44 Tests)"
+        S1[e2e/multiplayer.spec.ts]
+        S2[e2e/options-modal.spec.ts]
+        S3[e2e/game-modes.spec.ts]
+        S4[e2e/canvas-features.spec.ts]
+        S5[e2e/full-game-classic.spec.ts]
+        S6[e2e/impostor-guess-game.spec.ts]
+        S7[e2e/multi-round-hotword.spec.ts]
+        S8[e2e/full-game-chaos.spec.ts]
+        S9[e2e/reconnection.spec.ts]
+        S10[e2e/impostor-inphase-guess.spec.ts]
+        S11[e2e/host-actions.spec.ts]
+        S12[e2e/canvas-drawing-sync.spec.ts]
+        S13[e2e/suspects-marker.spec.ts]
+        S14[e2e/validations-errors.spec.ts]
+        S15[e2e/i18n-language.spec.ts]
+        S16[e2e/real-gameplay-matches.spec.ts]
+        S17[e2e/backend-docs-edge-cases.spec.ts]
+        S18[e2e/extended-real-gameplay.spec.ts]
+        S19[e2e/cross-language-guess.spec.ts]
+        S20[e2e/host-drop-recovery.spec.ts]
+        S21[e2e/canvas-undo-sync.spec.ts]
+        S22[e2e/more-real-gameplay-matches.spec.ts]
+        S23[e2e/timer-expirations.spec.ts]
+        S24[e2e/room-capacity-limit.spec.ts]
+        S25[e2e/non-host-permissions.spec.ts]
+    end
+
+    subgraph "Total 100% Production Qualification"
+        Qualification["Multiplayer Sync ➔ Modes ➔ Loops ➔ Reconnection ➔ Guesses ➔ Drawing Sync ➔ Suspects ➔ i18n ➔ 15 Real Matches ➔ Limit Guards ➔ 100% Full System Parity"]
+    end
+
+    S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 & S9 & S10 & S11 & S12 & S13 & S14 & S15 & S16 & S17 & S18 & S19 & S20 & S21 & S22 & S23 & S24 & S25 --> Qualification
+```
+
+---
+
+### E2E Test Suite Specification Directory (44 Tests across 25 Spec Files)
+
+| # | Spec File | Purpose & User Flow Tested | Key Verification & Assertions |
+|---|---|---|---|
+| 1 | `multiplayer.spec.ts` | Real-time room creation & joining | Host generates room code; Player 2 joins via WebSocket sync |
+| 2 | `options-modal.spec.ts` | Game configuration modal rules | Round time, Turn time, Impostor Can Guess toggle, & mode-locking rules |
+| 3 | `game-modes.spec.ts` | Classic vs Chaos mode initialization | Role reveal & initial canvas loading across game modes |
+| 4 | `canvas-features.spec.ts` | Emergency Alert & 2-Player Vote-Kick | Emergency Alert forces voting; 2 players kick 3rd player mid-turn |
+| 5 | `full-game-classic.spec.ts` | Complete CLASSIC Game Loop Journey | Full journey: Lobby ➔ Roles ➔ Turns ➔ Voting ➔ Ejection ➔ Play Again |
+| 6 | `impostor-guess-game.spec.ts` | Impostor Final Guess Feature Flow | Ejected Impostor enters `IMPOSTOR_GUESS` phase ➔ Skip ➔ Crewmates Win |
+| 7 | `multi-round-hotword.spec.ts` | Multi-Round `HOT_WORD` Rotation | Tie vote in Round 1 ➔ Next Round ➔ New secret word reveal ➔ Round 2 |
+| 8 | `full-game-chaos.spec.ts` | Complete `CUSTOM_WORD` Chaos Journey | Custom word submission ➔ Roles ➔ Drawing ➔ Voting ➔ Victory card |
+| 9 | `reconnection.spec.ts` | Network Resilience & Surrender | Disconnect/reconnect mid-game (`setOffline`) & Impostor surrender |
+| 10 | `impostor-inphase-guess.spec.ts` | In-Phase Impostor Secret Word Guess | Impostor submits correct secret word mid-turn ➔ Instant Inkpostor Win |
+| 11 | `host-actions.spec.ts` | Host End Game & Player Exit | Host manual game termination (`endGame`) & Exit Game room cleanup |
+| 12 | `canvas-drawing-sync.spec.ts` | Canvas Mouse Strokes & Undo | Active drawer draws strokes, triggers Undo, verifies canvas across clients |
+| 13 | `suspects-marker.spec.ts` | Suspect Marker System | Marking player as suspect during drawing phase persists into voting phase |
+| 14 | `validations-errors.spec.ts` | Validation Rules & Minimum Players | Room code validations & disabled START GAME with < 3 players |
+| 15 | `i18n-language.spec.ts` | Dynamic i18n Switching | Toggling language between English & Spanish updates UI dynamically |
+| 16 | `real-gameplay-matches.spec.ts` | Real Gameplay Matches 1–5 | Unanimous voting, framing innocent, secret word clutch, canvas pixel data |
+| 17 | `backend-docs-edge-cases.spec.ts` | Backend `game_states.md` Edge Cases | Host kick, last voter disconnect resolution, last result player disconnect |
+| 18 | `extended-real-gameplay.spec.ts` | Real Gameplay Matches 6–10 | Multi-round tie, 4-player vote-kick (3/3), ink depletion, rapid 3-round |
+| 19 | `cross-language-guess.spec.ts` | Localized Secret Word Validation | Spanish Impostor vs English Host secret word translation validation |
+| 20 | `host-drop-recovery.spec.ts` | Mid-Turn Host Tab Closure | Host closes tab mid-turn ➔ turn advances to Player 2 without UI freeze |
+| 21 | `canvas-undo-sync.spec.ts` | Canvas Undo Stack Pixel Matching | 3 strokes, 2 undos, clear canvas ➔ `canvas.toDataURL()` pixel match |
+| 22 | `more-real-gameplay-matches.spec.ts` | Real Gameplay Matches 11–15 | 5-player split vote tie, emergency alert disconnect, palette/eraser sync |
+| 23 | `timer-expirations.spec.ts` | Turn & Voting Timer Expirations | Turn timer auto-advances turn; voting timer auto-skips unsubmitted votes |
+| 24 | `room-capacity-limit.spec.ts` | 10-Player Capacity Limit Guard | 10 players fill lobby; 11th player join attempt handled gracefully |
+| 25 | `non-host-permissions.spec.ts` | Non-Host UI Permission Guards | Non-host player omits START GAME button & options locked in read-only |
+
+---
+
+## 2. Cross-Repository CI Strategy (Strategy 1)
+
+`inkpostor-frontend` and `inkpostor-backend` live in separate repositories. To ensure changes in one repo do not break the other, GitHub Actions uses a **Dynamic Dual-Checkout Strategy**.
+
+```mermaid
+flowchart TD
+    PR[PR Created in Frontend or Backend] --> CheckoutSelf[1. Checkout current PR repository & branch]
+    CheckoutSelf --> CheckOther[2. Check if matching branch name exists in other repo]
+    CheckOther -- Yes --> CheckoutMatching[Checkout matching branch in second repo]
+    CheckOther -- No --> CheckoutMain[Checkout main branch in second repo]
+    CheckoutMatching --> LaunchBackend[3. Build & Install Backend]
+    CheckoutMain --> LaunchBackend
+    LaunchBackend --> LaunchFrontend[4. Install Frontend & Playwright]
+    LaunchFrontend --> RunE2E[5. Execute Playwright E2E Suite]
+```
+
+### Key Rules for Cross-Repo PRs:
+* **Single-Repo Changes**: If a PR is frontend-only or backend-only, CI automatically runs E2E tests against `main` of the other repository.
+* **Synchronized Multi-Repo Changes**: If a feature requires changes in both repositories, **name the branches identically** (e.g. `feat/new-game-mode` in both repos). The CI pipeline will automatically pair the matching branches and test them together.
+
+---
+
+## 3. Running Tests Locally
+
+### End-to-End (E2E) Tests (Playwright)
+
+From the `inkpostor-frontend` directory:
+
+```bash
+# Run E2E tests headlessly (auto-starts backend & frontend dev servers)
+pnpm test:e2e
+
+# Run E2E tests in Playwright Interactive UI Mode
+pnpm test:e2e:ui
+```
+
+> **Note:** Playwright's `webServer` configuration automatically boots up `inkpostor-backend` (`:3001`) and `inkpostor-frontend` (`:5173`) before test execution begins.
+
+### Unit & Component Tests (Vitest)
+
+* **Frontend Unit Tests:**
+  ```bash
+  cd inkpostor-frontend
+  pnpm test
+  ```
+
+* **Backend Unit Tests:**
+  ```bash
+  cd inkpostor-backend
+  pnpm test
+  ```

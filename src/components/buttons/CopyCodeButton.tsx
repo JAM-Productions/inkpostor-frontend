@@ -35,7 +35,10 @@ export const CopyCodeButton: React.FC<CopyCodeButtonProps> = ({ roomId }) => {
       }`}
       title={hasRoomId ? t("lobby.clickToCopy") : t("lobby.waitingCode")}
     >
-      <span className="text-5xl font-mono font-bold tracking-[0.2em] text-white">
+      <span
+        data-testid="room-code-display"
+        className="text-5xl font-mono font-bold tracking-[0.2em] text-white"
+      >
         {roomId ?? "------"}
       </span>
       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider">

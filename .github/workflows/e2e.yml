@@ -1,0 +1,69 @@
+name: End-to-End Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  e2e:
+    name: Playwright E2E Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Frontend (Current Repo)
+        uses: actions/checkout@v4
+        with:
+          path: inkpostor-frontend
+
+      - name: Resolve & Checkout Backend
+        id: backend-checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/inkpostor-backend
+          path: inkpostor-backend
+          ref: ${{ github.head_ref || github.ref_name }}
+        continue-on-error: true
+
+      - name: Fallback Backend to main if matching branch missing
+        if: steps.backend-checkout.outcome == 'failure'
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/inkpostor-backend
+          path: inkpostor-backend
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Install Backend Dependencies
+        run: pnpm install
+        working-directory: inkpostor-backend
+
+      - name: Install Frontend Dependencies
+        run: pnpm install
+        working-directory: inkpostor-frontend
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+        working-directory: inkpostor-frontend
+
+      - name: Run Playwright E2E Tests
+        run: pnpm test:e2e
+        working-directory: inkpostor-frontend
+
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: inkpostor-frontend/playwright-report/
+          retention-days: 14
