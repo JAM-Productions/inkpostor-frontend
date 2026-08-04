@@ -1,34 +1,40 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Production Resilience: Reconnection & Disconnect Handling', () => {
-  test('Network Disconnection Recovery: Player disconnects and reconnects mid-game, preserving game state & canvas', async ({ browser }) => {
+test.describe("Production Resilience: Reconnection & Disconnect Handling", () => {
+  test("Network Disconnection Recovery: Player disconnects and reconnects mid-game, preserving game state & canvas", async ({
+    browser,
+  }) => {
     // 1. Host creates room
     const ctxHost = await browser.newContext();
     const pageHost = await ctxHost.newPage();
-    await pageHost.goto('/');
-    await pageHost.locator('#player-name').fill('HostReconn');
+    await pageHost.goto("/");
+    await pageHost.locator("#player-name").fill("HostReconn");
     await pageHost.locator('[data-testid="create-room-btn"]').click();
 
-    const roomCodeElement = pageHost.locator('[data-testid="room-code-display"]');
+    const roomCodeElement = pageHost.locator(
+      '[data-testid="room-code-display"]',
+    );
     await expect(roomCodeElement).toBeVisible({ timeout: 15000 });
     const roomCode = (await roomCodeElement.innerText()).trim();
 
     // 2. Player 2 & 3 join
     const ctxP2 = await browser.newContext();
     const pageP2 = await ctxP2.newPage();
-    await pageP2.goto('/');
-    await pageP2.locator('#player-name').fill('P2Reconn');
-    await pageP2.locator('#room-code').fill(roomCode);
+    await pageP2.goto("/");
+    await pageP2.locator("#player-name").fill("P2Reconn");
+    await pageP2.locator("#room-code").fill(roomCode);
     await pageP2.locator('[data-testid="join-room-btn"]').click();
 
     const ctxP3 = await browser.newContext();
     const pageP3 = await ctxP3.newPage();
-    await pageP3.goto('/');
-    await pageP3.locator('#player-name').fill('P3Reconn');
-    await pageP3.locator('#room-code').fill(roomCode);
+    await pageP3.goto("/");
+    await pageP3.locator("#player-name").fill("P3Reconn");
+    await pageP3.locator("#room-code").fill(roomCode);
     await pageP3.locator('[data-testid="join-room-btn"]').click();
 
-    await expect(pageHost.locator('body')).toContainText('P3Reconn', { timeout: 15000 });
+    await expect(pageHost.locator("body")).toContainText("P3Reconn", {
+      timeout: 15000,
+    });
 
     // 3. Start Game
     const startBtn = pageHost.locator('[data-testid="start-game-btn"]');
@@ -41,7 +47,7 @@ test.describe('Production Resilience: Reconnection & Disconnect Handling', () =>
     for (const page of pages) {
       const card = page.locator('[data-testid="reveal-role-card"]');
       await expect(card).toBeVisible({ timeout: 15000 });
-      await card.dispatchEvent('mousedown');
+      await card.dispatchEvent("mousedown");
 
       const proceedBtn = page.locator('[data-testid="proceed-to-drawing-btn"]');
       await expect(proceedBtn).toBeVisible({ timeout: 15000 });
@@ -49,7 +55,7 @@ test.describe('Production Resilience: Reconnection & Disconnect Handling', () =>
     }
 
     for (const page of pages) {
-      await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 });
+      await expect(page.locator("canvas")).toBeVisible({ timeout: 15000 });
     }
 
     // 5. Simulate network disconnect & reconnect on Player 2 (setOffline)
@@ -58,47 +64,57 @@ test.describe('Production Resilience: Reconnection & Disconnect Handling', () =>
     await ctxP2.setOffline(false);
 
     // 6. Verify game canvas & UI state remain healthy on Player 2
-    await expect(pageP2.locator('canvas')).toBeVisible({ timeout: 15000 });
-    await expect(pageHost.locator('canvas')).toBeVisible({ timeout: 15000 });
+    await expect(pageP2.locator("canvas")).toBeVisible({ timeout: 15000 });
+    await expect(pageHost.locator("canvas")).toBeVisible({ timeout: 15000 });
 
     await ctxHost.close();
     await ctxP2.close();
     await ctxP3.close();
   });
 
-  test('Impostor Disconnect Surrender: Impostor disconnects during IMPOSTOR_GUESS phase and room resolves to Crewmates Win', async ({ browser }) => {
+  test("Impostor Disconnect Surrender: Impostor disconnects during IMPOSTOR_GUESS phase and room resolves to Crewmates Win", async ({
+    browser,
+  }) => {
     // 1. Host creates room with Impostor Can Guess enabled
     const ctxHost = await browser.newContext();
     const pageHost = await ctxHost.newPage();
-    await pageHost.goto('/');
-    await pageHost.locator('#player-name').fill('HostDisSurr');
+    await pageHost.goto("/");
+    await pageHost.locator("#player-name").fill("HostDisSurr");
     await pageHost.locator('[data-testid="create-room-btn"]').click();
 
-    const roomCodeElement = pageHost.locator('[data-testid="room-code-display"]');
+    const roomCodeElement = pageHost.locator(
+      '[data-testid="room-code-display"]',
+    );
     await expect(roomCodeElement).toBeVisible({ timeout: 15000 });
     const roomCode = (await roomCodeElement.innerText()).trim();
 
-    const openOptionsBtn = pageHost.locator('button:has(svg.lucide-settings)').first();
+    const openOptionsBtn = pageHost
+      .locator("button:has(svg.lucide-settings)")
+      .first();
     await openOptionsBtn.click();
-    const guessToggle = pageHost.locator('button[aria-label*="impostor"i]').first();
+    const guessToggle = pageHost
+      .locator('button[aria-label*="impostor"i]')
+      .first();
     await guessToggle.click();
     await pageHost.locator('[data-testid="confirm-options-button"]').click();
 
     const ctxP2 = await browser.newContext();
     const pageP2 = await ctxP2.newPage();
-    await pageP2.goto('/');
-    await pageP2.locator('#player-name').fill('P2DisSurr');
-    await pageP2.locator('#room-code').fill(roomCode);
+    await pageP2.goto("/");
+    await pageP2.locator("#player-name").fill("P2DisSurr");
+    await pageP2.locator("#room-code").fill(roomCode);
     await pageP2.locator('[data-testid="join-room-btn"]').click();
 
     const ctxP3 = await browser.newContext();
     const pageP3 = await ctxP3.newPage();
-    await pageP3.goto('/');
-    await pageP3.locator('#player-name').fill('P3DisSurr');
-    await pageP3.locator('#room-code').fill(roomCode);
+    await pageP3.goto("/");
+    await pageP3.locator("#player-name").fill("P3DisSurr");
+    await pageP3.locator("#room-code").fill(roomCode);
     await pageP3.locator('[data-testid="join-room-btn"]').click();
 
-    await expect(pageHost.locator('body')).toContainText('P3DisSurr', { timeout: 15000 });
+    await expect(pageHost.locator("body")).toContainText("P3DisSurr", {
+      timeout: 15000,
+    });
 
     const startBtn = pageHost.locator('[data-testid="start-game-btn"]');
     await expect(startBtn).toBeEnabled({ timeout: 15000 });
@@ -106,9 +122,9 @@ test.describe('Production Resilience: Reconnection & Disconnect Handling', () =>
 
     const pages = [pageHost, pageP2, pageP3];
     const contexts = [ctxHost, ctxP2, ctxP3];
-    const playerNames = ['HostDisSurr', 'P2DisSurr', 'P3DisSurr'];
+    const playerNames = ["HostDisSurr", "P2DisSurr", "P3DisSurr"];
 
-    let impostorName = '';
+    let impostorName = "";
     let impostorContext = ctxHost;
     let impostorPage = pageHost;
 
@@ -116,10 +132,12 @@ test.describe('Production Resilience: Reconnection & Disconnect Handling', () =>
       const page = pages[i];
       const card = page.locator('[data-testid="reveal-role-card"]');
       await expect(card).toBeVisible({ timeout: 15000 });
-      await card.dispatchEvent('mousedown');
+      await card.dispatchEvent("mousedown");
       await page.waitForTimeout(200);
 
-      const isInkpostor = await page.locator('img[alt="Inkpostor Logo"]').isVisible();
+      const isInkpostor = await page
+        .locator('img[alt="Inkpostor Logo"]')
+        .isVisible();
       if (isInkpostor) {
         impostorName = playerNames[i];
         impostorContext = contexts[i];
@@ -132,20 +150,25 @@ test.describe('Production Resilience: Reconnection & Disconnect Handling', () =>
     }
 
     for (const page of pages) {
-      await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 });
+      await expect(page.locator("canvas")).toBeVisible({ timeout: 15000 });
     }
 
     // Advance turns to VOTING
     for (let turn = 0; turn < 6; turn++) {
       for (const page of pages) {
-        const doneBtn = page.locator('button', { hasText: /Done|Hecho/i });
+        const doneBtn = page.locator("button", { hasText: /Done|Hecho/i });
         if (await doneBtn.isVisible()) {
           await doneBtn.click();
           await page.waitForTimeout(300);
           break;
         }
       }
-      if (await pageHost.locator('body').filter({ hasText: /Voting Time|Tiempo de votación/i }).isVisible()) {
+      if (
+        await pageHost
+          .locator("body")
+          .filter({ hasText: /Voting Time|Tiempo de votación/i })
+          .isVisible()
+      ) {
         break;
       }
     }
@@ -154,10 +177,16 @@ test.describe('Production Resilience: Reconnection & Disconnect Handling', () =>
     for (let i = 0; i < pages.length; i++) {
       const page = pages[i];
       const name = playerNames[i];
-      await expect(page.locator('body')).toContainText(/Voting Time|Tiempo de votación/i, { timeout: 15000 });
+      await expect(page.locator("body")).toContainText(
+        /Voting Time|Tiempo de votación/i,
+        { timeout: 15000 },
+      );
 
       if (name !== impostorName && impostorName) {
-        const voteTargetCard = page.locator('button[data-testid*="vote-card-"]').filter({ hasText: impostorName }).first();
+        const voteTargetCard = page
+          .locator('button[data-testid*="vote-card-"]')
+          .filter({ hasText: impostorName })
+          .first();
         await expect(voteTargetCard).toBeEnabled({ timeout: 10000 });
         await voteTargetCard.click();
       } else {
@@ -169,7 +198,9 @@ test.describe('Production Resilience: Reconnection & Disconnect Handling', () =>
     }
 
     // Wait for IMPOSTOR_GUESS phase UI to settle on impostorPage
-    await expect(impostorPage.locator('[data-testid="skip-guess-btn"]').first()).toBeVisible({ timeout: 15000 });
+    await expect(
+      impostorPage.locator('[data-testid="skip-guess-btn"]').first(),
+    ).toBeVisible({ timeout: 15000 });
 
     // Impostor context closes (surrender) during IMPOSTOR_GUESS phase
     await impostorContext.close();
@@ -177,7 +208,10 @@ test.describe('Production Resilience: Reconnection & Disconnect Handling', () =>
     // Remaining connected pages see RESULTS screen ("Crewmates Win")
     for (let i = 0; i < pages.length; i++) {
       if (playerNames[i] !== impostorName) {
-        await expect(pages[i].locator('body')).toContainText(/Defeated|Won|Result|Victoria|Derrota/i, { timeout: 15000 });
+        await expect(pages[i].locator("body")).toContainText(
+          /Defeated|Won|Result|Victoria|Derrota/i,
+          { timeout: 15000 },
+        );
       }
     }
 

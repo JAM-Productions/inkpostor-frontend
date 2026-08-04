@@ -43,12 +43,13 @@ export const RoleReveal: React.FC = () => {
           <button
             type="button"
             data-testid="reveal-role-card"
+            onPointerDown={() => handleReveal()}
+            onPointerUp={() => setRevealed(false)}
+            onPointerCancel={() => setRevealed(false)}
+            onPointerLeave={() => setRevealed(false)}
             onMouseDown={() => handleReveal()}
             onMouseUp={() => setRevealed(false)}
             onMouseLeave={() => setRevealed(false)}
-            onTouchStart={() => handleReveal()}
-            onTouchEnd={() => setRevealed(false)}
-            onClick={() => handleReveal()}
             className={`w-full aspect-video rounded-3xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in
               ${
                 revealed

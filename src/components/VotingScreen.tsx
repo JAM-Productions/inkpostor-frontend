@@ -122,7 +122,7 @@ export const VotingScreen: React.FC = () => {
                 </div>
                 <div className="flex flex-col">
                   <span
-                    data-testid={`vote-name-${player.name}`}
+                    data-testid={`vote-name-${player.id}`}
                     className={`text-sm sm:text-lg font-semibold ${player.isEjected ? "text-stone-500 line-through" : effectiveSelectedPlayer === player.id ? "text-white" : "text-stone-300"}`}
                   >
                     {player.name}

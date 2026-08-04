@@ -12,8 +12,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "format": "prettier --write 'src/**/*.{ts,tsx}' 'tests/**/*.{ts,tsx}'",
-    "check-format": "prettier --check 'src/**/*.{ts,tsx}' 'tests/**/*.{ts,tsx}'",
+    "format": "prettier --write 'src/**/*.{ts,tsx}' 'tests/**/*.{ts,tsx}' 'e2e/**/*.{ts,tsx}'",
+    "check-format": "prettier --check 'src/**/*.{ts,tsx}' 'tests/**/*.{ts,tsx}' 'e2e/**/*.{ts,tsx}'",
     "doctor": "pnpm dlx react-doctor@latest"
   },
   "dependencies": {
