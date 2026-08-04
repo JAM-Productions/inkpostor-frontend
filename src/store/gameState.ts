@@ -61,7 +61,6 @@ export interface GameOptions {
   playerColorsEnabled: boolean;
   impostorGuessEnabled: boolean;
   impostorGuessAttempts: number;
-  // ORIGINAL mode only. Both are forced off/default in the other modes.
   hideHint: boolean; // Keeps the category from the impostor
   turnOrderMode: TurnOrderMode;
 }
