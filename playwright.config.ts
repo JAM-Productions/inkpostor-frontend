@@ -31,8 +31,10 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 30000,
       env: {
+        JWT_SECRET: 'e2e-test-jwt-secret-key-inkpostor',
         DISABLE_RATE_LIMIT: 'true',
         NODE_ENV: 'test',
+        PORT: '3001',
       },
     },
     {
