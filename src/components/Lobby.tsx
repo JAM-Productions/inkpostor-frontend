@@ -122,6 +122,7 @@ export const Lobby: React.FC = () => {
           {isHost ? (
             <button
               type="button"
+              data-testid="start-game-btn"
               onClick={actions.startGame}
               disabled={!canStart}
               className="w-full shrink-0 group relative overflow-hidden rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer bg-ink-primary hover:bg-ink-primary-accent"

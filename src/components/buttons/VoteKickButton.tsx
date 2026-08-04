@@ -53,6 +53,8 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
   return (
     <button
       type="button"
+      data-testid="vote-kick-btn"
+      data-testid-player={player.id}
       onClick={handleVoteKick}
       className={`flex shrink-0 items-center justify-center rounded-xl transition-colors cursor-pointer px-2 gap-1.5 ${
         hasVoted

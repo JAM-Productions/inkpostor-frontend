@@ -24,6 +24,7 @@ export const EmergencyAlertButton = () => {
     <div className="sm:relative" ref={dropdownRef}>
       <button
         type="button"
+        data-testid="emergency-alert-btn"
         onClick={() => setIsOpen((prev) => !prev)}
         className={`flex items-center justify-center size-11 sm:h-12 sm:w-16 md:h-13 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-red-900/50 cursor-pointer ${isOpen ? "bg-ink-primary-accent" : "bg-ink-primary"} ${isDisabled ? "opacity-50" : "hover:bg-ink-primary-accent"}`}
         aria-label="Alert"
@@ -39,6 +40,7 @@ export const EmergencyAlertButton = () => {
           </p>
           <button
             type="button"
+            data-testid="confirm-emergency-btn"
             onClick={() => {
               setIsOpen(false);
               actions.startEmergencyVoting();

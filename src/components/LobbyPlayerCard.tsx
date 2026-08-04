@@ -84,6 +84,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                data-testid={`confirm-lobby-kick-btn-${player.id}`}
                 onClick={handleKickConfirm}
                 className="inline-flex size-8 items-center justify-center rounded-full border border-green-500/40 bg-green-500/10 text-green-400 transition-colors hover:bg-green-500/20 cursor-pointer animate-fade-in-left animate-duration-fast"
                 aria-label={t("lobby.confirmKickAria", {
@@ -106,6 +107,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
           ) : (
             <button
               type="button"
+              data-testid={`lobby-kick-btn-${player.id}`}
               onClick={() => setIsPendingKick(true)}
               className="group relative inline-flex size-8 items-center justify-center rounded-full border border-stone-600 bg-stone-800 text-stone-400 transition-colors hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 cursor-pointer"
               aria-label={t("lobby.kickPlayerAria", {
