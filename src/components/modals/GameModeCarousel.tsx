@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { useGameStore } from "../../store/gameState";
 import { GAME_MODES } from "../../lib/gameModes";
 
@@ -45,9 +45,6 @@ export const GameModeCarousel: React.FC<GameModeCarouselProps> = ({
           <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
             {t("options.gameMode.title")}
           </h3>
-          {/* Every description is stacked in the same grid cell so the block is
-              always as tall as the longest one: switching modes (or languages)
-              can't shift the layout below it. */}
           <div className="mt-1 grid">
             {GAME_MODES.map((mode, index) => {
               const isSelected = index === currentIndex;
@@ -64,6 +61,18 @@ export const GameModeCarousel: React.FC<GameModeCarouselProps> = ({
                 </p>
               );
             })}
+          </div>
+
+          <div className="mt-2 min-h-7">
+            {currentMode.isInPerson && (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-900/30 px-2.5 py-1 text-xs font-semibold text-amber-400"
+                data-testid="in-person-badge"
+              >
+                <Users className="size-3.5" />
+                {t("options.gameMode.inPerson")}
+              </span>
+            )}
           </div>
         </div>
       </div>

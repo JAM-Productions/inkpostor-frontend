@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { socket, SERVICE_URL } from "../socket";
 import i18n from "../i18n";
-import { DEFAULT_ROUND_TIME, DEFAULT_IMPOSTOR_GUESSES } from "../lib/constants";
+import { DEFAULT_GAME_OPTIONS } from "../lib/constants";
 import {
   detectIsMobile,
   getSavedPlayerName,
@@ -16,12 +16,20 @@ export type GamePhase =
   | "WORD_SELECTION"
   | "ROLE_REVEAL"
   | "WORD_REVEAL"
+  | "ORDER_INFO"
   | "DRAWING"
   | "VOTING"
   | "IMPOSTOR_GUESS"
   | "RESULTS";
 
-export type GameMode = "CLASSIC" | "CUSTOM_WORD" | "HOT_WORD";
+export type GameMode =
+  | "CLASSIC"
+  | "CUSTOM_WORD"
+  | "HOT_WORD"
+  | "ORIGINAL"
+  | "ORIGINAL_CHAOS";
+
+export type TurnOrderMode = "RANDOM_STARTER" | "FIXED_ORDER" | "RANDOM_ORDER";
 
 export interface Player {
   id: string;
@@ -36,6 +44,7 @@ export interface Player {
   hasStartedEmergencyVoting: boolean;
   hasSubmittedWord?: boolean;
   hasRevealedNewWord?: boolean;
+  hasConfirmedOrder?: boolean;
 }
 
 export interface StrokeData {
@@ -52,6 +61,9 @@ export interface GameOptions {
   playerColorsEnabled: boolean;
   impostorGuessEnabled: boolean;
   impostorGuessAttempts: number;
+  // ORIGINAL mode only. Both are forced off/default in the other modes.
+  hideHint: boolean; // Keeps the category from the impostor
+  turnOrderMode: TurnOrderMode;
 }
 
 export interface GameState {
@@ -98,6 +110,7 @@ export interface GameState {
     submitCustomWord: (word: string) => void;
     proceedToDrawing: () => void;
     confirmNewWord: () => void;
+    confirmOrder: () => void;
     drawStroke: (stroke: StrokeData) => void;
     undoStroke: () => void;
     endTurn: () => void;
@@ -120,14 +133,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
   hostId: null,
   isMobile: detectIsMobile(),
   phase: "LOBBY",
-  gameOptions: {
-    roundTime: DEFAULT_ROUND_TIME,
-    unlimitedInk: false,
-    clearCanvasEachRound: true,
-    playerColorsEnabled: false,
-    impostorGuessEnabled: false,
-    impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
-  },
+  gameOptions: DEFAULT_GAME_OPTIONS,
   gameMode: "CLASSIC",
   players: [],
   impostorId: null,
@@ -228,6 +234,11 @@ export const useGameStore = create<GameState>()((set, get) => ({
       socket.emit("confirmNewWord");
       // Optimistic update to prevent multiple clicks to proceed
       set((state) => patchMyPlayer(state, { hasRevealedNewWord: true }));
+    },
+    confirmOrder: () => {
+      socket.emit("confirmOrder");
+      // Optimistic update to prevent multiple clicks to proceed
+      set((state) => patchMyPlayer(state, { hasConfirmedOrder: true }));
     },
     drawStroke: (stroke) => {
       socket.emit("drawStroke", stroke);
@@ -461,14 +472,7 @@ socket.on("kicked", (msg: string) => {
     roomId: null,
     hostId: null,
     phase: "LOBBY",
-    gameOptions: {
-      roundTime: DEFAULT_ROUND_TIME,
-      unlimitedInk: false,
-      clearCanvasEachRound: true,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
-      impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
-    },
+    gameOptions: DEFAULT_GAME_OPTIONS,
     gameMode: "CLASSIC",
     players: [],
     impostorId: null,

@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { GameModeCarousel } from "../../../src/components/modals/GameModeCarousel";
 import { useGameStore } from "../../../src/store/gameState";
+import { GAME_MODES } from "../../../src/lib/gameModes";
 
 vi.mock("../../../src/store/gameState", () => ({
   useGameStore: vi.fn(),
@@ -52,7 +53,9 @@ describe("GameModeCarousel", () => {
     );
 
     // Going back from the first mode lands on the last one
-    expect(mockSetGameMode).toHaveBeenCalledWith("HOT_WORD");
+    expect(mockSetGameMode).toHaveBeenCalledWith(
+      GAME_MODES[GAME_MODES.length - 1].id,
+    );
   });
 
   it("offers the hot word mode", async () => {
@@ -108,6 +111,19 @@ describe("GameModeCarousel", () => {
     expect(selected).toHaveClass("opacity-100");
     expect(other).toHaveClass("opacity-0");
     expect(other).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("flags the mode that only works with everyone in the same room", () => {
+    mockStore("CLASSIC");
+    const { unmount } = render(<GameModeCarousel isHost={true} />);
+    expect(screen.queryByTestId("in-person-badge")).not.toBeInTheDocument();
+    unmount();
+
+    mockStore("ORIGINAL");
+    render(<GameModeCarousel isHost={true} />);
+    expect(screen.getByTestId("in-person-badge")).toHaveTextContent(
+      "Best played in person",
+    );
   });
 
   it("is read-only for non-hosts", () => {

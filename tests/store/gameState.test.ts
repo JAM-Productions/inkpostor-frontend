@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { useGameStore } from "../../src/store/gameState";
+import { useGameStore, type GameOptions } from "../../src/store/gameState";
 import { PLAYER_NAME_KEY } from "../../src/lib/gameStateUtils";
 import { socket } from "../../src/socket";
 import { DEFAULT_ROUND_TIME } from "../../src/lib/constants";
@@ -63,6 +63,8 @@ const baseServerState = {
     playerColorsEnabled: false,
     impostorGuessEnabled: false,
     impostorGuessAttempts: 3,
+    hideHint: false,
+    turnOrderMode: "RANDOM_STARTER",
   },
 };
 
@@ -80,6 +82,8 @@ describe("useGameStore", () => {
         playerColorsEnabled: false,
         impostorGuessEnabled: false,
         impostorGuessAttempts: 3,
+        hideHint: false,
+        turnOrderMode: "RANDOM_STARTER",
       },
       gameMode: "CLASSIC",
       players: [],
@@ -120,6 +124,8 @@ describe("useGameStore", () => {
       playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
+      hideHint: false,
+      turnOrderMode: "RANDOM_STARTER",
     });
 
     expect(useGameStore.getState().gameOptions.roundTime).toBe(90);
@@ -135,6 +141,8 @@ describe("useGameStore", () => {
       playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
+      hideHint: false,
+      turnOrderMode: "RANDOM_STARTER",
     });
 
     expect(useGameStore.getState().gameOptions.unlimitedInk).toBe(true);
@@ -150,6 +158,8 @@ describe("useGameStore", () => {
       playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
+      hideHint: false,
+      turnOrderMode: "RANDOM_STARTER",
     });
 
     expect(useGameStore.getState().gameOptions.clearCanvasEachRound).toBe(
@@ -159,13 +169,15 @@ describe("useGameStore", () => {
 
   it("should emit updateGameOptions with the provided values", () => {
     const state = useGameStore.getState();
-    const nextOptions = {
+    const nextOptions: GameOptions = {
       roundTime: 40,
       unlimitedInk: true,
       clearCanvasEachRound: false,
       playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
+      hideHint: false,
+      turnOrderMode: "RANDOM_STARTER",
     };
 
     state.actions.updateGameOptions(nextOptions);
@@ -551,6 +563,8 @@ describe("useGameStore", () => {
         playerColorsEnabled: false,
         impostorGuessEnabled: false,
         impostorGuessAttempts: 3,
+        hideHint: false,
+        turnOrderMode: "RANDOM_STARTER",
       },
     });
 
@@ -680,6 +694,26 @@ describe("useGameStore", () => {
       expect(useGameStore.getState().players[0].hasRevealedNewWord).toBe(true);
     });
 
+    it("should emit confirmOrder and mark the player as done", () => {
+      useGameStore.setState({
+        myId: "player1",
+        players: [
+          {
+            id: "player1",
+            name: "Alice",
+            isConnected: true,
+            score: 0,
+            hasStartedEmergencyVoting: false,
+          },
+        ],
+      });
+
+      useGameStore.getState().actions.confirmOrder();
+
+      expect(socket.emit).toHaveBeenCalledWith("confirmOrder");
+      expect(useGameStore.getState().players[0].hasConfirmedOrder).toBe(true);
+    });
+
     it("should reset gameMode when kicked is received", () => {
       useGameStore.setState({ gameMode: "CUSTOM_WORD" });
       const kicked = getSocketListener("kicked");
@@ -761,6 +795,8 @@ describe("useGameStore", () => {
         playerColorsEnabled: false,
         impostorGuessEnabled: false,
         impostorGuessAttempts: 3,
+        hideHint: false,
+        turnOrderMode: "RANDOM_STARTER",
       },
     });
 
@@ -773,6 +809,8 @@ describe("useGameStore", () => {
       playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
+      hideHint: false,
+      turnOrderMode: "RANDOM_STARTER",
     });
   });
 

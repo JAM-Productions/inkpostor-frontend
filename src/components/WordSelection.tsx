@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Check } from "lucide-react";
 import { useGameStore } from "../store/gameState";
 import {
+  isSpokenMode,
   MAX_CUSTOM_WORD_LENGTH,
   MIN_CUSTOM_WORD_LENGTH,
 } from "../lib/constants";
@@ -12,6 +13,7 @@ export const WordSelection: React.FC = () => {
   const [word, setWord] = useState("");
   const players = useGameStore((state) => state.players);
   const myId = useGameStore((state) => state.myId);
+  const gameMode = useGameStore((state) => state.gameMode);
   const actions = useGameStore((state) => state.actions);
 
   const me = players.find((p) => p.id === myId);
@@ -35,7 +37,11 @@ export const WordSelection: React.FC = () => {
             {t("wordSelection.title")}
           </h1>
           <p className="text-stone-400 text-sm pt-2">
-            {t("wordSelection.description")}
+            {t(
+              isSpokenMode(gameMode)
+                ? "wordSelection.descriptionSpoken"
+                : "wordSelection.description",
+            )}
           </p>
         </div>
 

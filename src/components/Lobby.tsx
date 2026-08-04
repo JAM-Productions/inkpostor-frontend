@@ -3,7 +3,13 @@ import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { useModalStore } from "../store/modalStore";
 import { Users, Loader2, HelpCircle, Settings } from "lucide-react";
-import { DEFAULT_ROUND_TIME, MAX_PLAYERS, MIN_PLAYERS } from "../lib/constants";
+import {
+  DEFAULT_ROUND_TIME,
+  DEFAULT_TURN_ORDER_MODE,
+  isSpokenMode,
+  MAX_PLAYERS,
+  MIN_PLAYERS,
+} from "../lib/constants";
 import { LobbyPlayerCard } from "./LobbyPlayerCard";
 import { CopyLinkButton } from "./buttons/CopyLinkButton";
 import { CopyCodeButton } from "./buttons/CopyCodeButton";
@@ -22,13 +28,16 @@ export const Lobby: React.FC = () => {
   const isHost = myId === hostId;
   const canStart = isHost && players.length >= MIN_PLAYERS;
   const hasRoomId = !!roomId;
+  const changedModeOptions = isSpokenMode(gameMode)
+    ? Number(gameOptions.hideHint !== false) +
+      Number(gameOptions.turnOrderMode !== DEFAULT_TURN_ORDER_MODE)
+    : Number(gameOptions.roundTime !== DEFAULT_ROUND_TIME) +
+      Number(gameOptions.unlimitedInk !== false) +
+      Number(gameOptions.playerColorsEnabled !== false) +
+      Number(gameOptions.clearCanvasEachRound !== true) +
+      Number(gameOptions.impostorGuessEnabled !== false);
   const optionsChangedCount =
-    Number(gameMode !== "CLASSIC") +
-    Number(gameOptions.roundTime !== DEFAULT_ROUND_TIME) +
-    Number(gameOptions.unlimitedInk !== false) +
-    Number(gameOptions.playerColorsEnabled !== false) +
-    Number(gameOptions.clearCanvasEachRound !== true) +
-    Number(gameOptions.impostorGuessEnabled !== false);
+    Number(gameMode !== "CLASSIC") + changedModeOptions;
 
   return (
     <div className="flex flex-col items-center justify-center max-h-screen p-4 pb-12 pt-20 bg-stone-900">
@@ -98,13 +107,14 @@ export const Lobby: React.FC = () => {
           </div>
 
           <div className="space-y-2 sm:space-y-3 mb-8 overflow-y-auto flex-1 pr-2 custom-scrollbar">
-            {players.map((player) => (
+            {players.map((player, index) => (
               <LobbyPlayerCard
                 key={player.id}
                 player={player}
                 hostId={hostId}
                 myId={myId}
                 isHost={isHost}
+                index={index}
               />
             ))}
 

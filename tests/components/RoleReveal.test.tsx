@@ -87,6 +87,49 @@ describe("RoleReveal", () => {
     expect(screen.getByText("Hint: Animals")).toBeInTheDocument();
   });
 
+  it.each(["ORIGINAL", "ORIGINAL_CHAOS"])(
+    "does not offer to start drawing in %s",
+    (gameMode) => {
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector({ ...mockStateBase, gameMode }),
+      );
+
+      render(<RoleReveal />);
+
+      fireEvent.mouseDown(
+        screen.getByText("Press and hold to reveal").closest("button")!,
+      );
+
+      // Nothing is drawn in a spoken mode: the button just opens the round
+      expect(
+        screen.getByRole("button", { name: /^start$/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /start drawing/i }),
+      ).not.toBeInTheDocument();
+    },
+  );
+
+  it("tells the impostor there is no hint when the category is withheld", () => {
+    // ORIGINAL mode with hideHint on: the server never sends the category
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        amIImpostor: true,
+        secretCategory: null,
+      }),
+    );
+
+    render(<RoleReveal />);
+
+    fireEvent.mouseDown(
+      screen.getByText("Press and hold to reveal").closest("button")!,
+    );
+
+    expect(screen.getByText("No hint this time")).toBeInTheDocument();
+    expect(screen.queryByText(/^Hint:/)).not.toBeInTheDocument();
+  });
+
   it("shows Start Drawing button after revealing and allows starting", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = { ...mockStateBase };

@@ -18,6 +18,7 @@ interface LobbyPlayerCardProps {
   hostId: string | null;
   myId: string | null;
   isHost: boolean;
+  index?: number;
 }
 
 export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
@@ -25,6 +26,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
   hostId,
   myId,
   isHost,
+  index = 0,
 }) => {
   const { t } = useTranslation();
   const players = useGameStore((state) => state.players);
@@ -42,6 +44,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
 
   return (
     <div
+      style={{ animationDelay: `${index * 100}ms` }}
       className={`flex items-center justify-between p-3 sm:p-4 rounded-xl border animate-fade-in-right ${player.id === myId ? "bg-white/20 border-white/40" : "bg-stone-900 border-stone-700/50"}`}
     >
       <div className="flex items-center gap-3">

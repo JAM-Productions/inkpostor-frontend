@@ -119,6 +119,7 @@
     "wordSelection": {
       "title": "Write Your Word",
       "description": "One of the words written by the players will be the secret word. Choose something drawable!",
+      "descriptionSpoken": "One of the words written by the players will be the secret word. Choose something easy to describe out loud!",
       "placeholder": "Your secret word",
       "submit": "Confirm Word",
       "submitted": "Your word is locked in",
@@ -136,7 +137,9 @@
       "pressHold": "Press and hold to reveal",
       "makeSure": "Make sure everyone knows their role before continuing.",
       "startDrawing": "Start Drawing",
-      "waitingPlayers": "{{count}} of {{total}} players have revealed their role"
+      "start": "Start",
+      "waitingPlayers": "{{count}} of {{total}} players have revealed their role",
+      "noHint": "No hint this time"
     },
     "wordReveal": {
       "round": "Round {{round}}",
@@ -148,6 +151,15 @@
       "impostorNoWord": "You still don't get the word",
       "startDrawing": "Start Drawing",
       "waitingPlayers": "{{count}} of {{total}} players have seen the new word"
+    },
+    "orderInfo": {
+      "round": "Round {{round}}",
+      "title": "Who Starts",
+      "youDecideRest": "You decide the rest of the order",
+      "followOrder": "Say your word in this order",
+      "sayOneWord": "Each player says one word related to the secret word.",
+      "confirm": "Start Voting",
+      "waitingPlayers": "{{count}} of {{total}} players are ready"
     },
     "rules": {
       "title": "How to Play Inkpostor",
@@ -229,7 +241,16 @@
         "hotWord": {
           "name": "Hot Word",
           "description": "A new word every round, drawn from the Inkpostor word list. The Inkpostor stays the same."
-        }
+        },
+        "original": {
+          "name": "Original",
+          "description": "The classic in-person game: nobody draws, players say one word out loud in turn."
+        },
+        "originalChaos": {
+          "name": "Original + Chaos",
+          "description": "The in-person game, but the secret word is one the players write before starting."
+        },
+        "inPerson": "Best played in person"
       },
       "time": {
         "title": "Drawing Time per Round",
@@ -268,7 +289,22 @@
         "decrease": "Decrease attempts"
       },
       "confirm": "Save Options",
-      "open": "Open options dialog"
+      "open": "Open options dialog",
+      "hideHint": {
+        "title": "Hide the Hint",
+        "description": "The Inkpostor doesn't even get the category — they walk in blind.",
+        "toggle": "Toggle hiding the hint"
+      },
+      "turnOrder": {
+        "title": "Turn Order",
+        "description": "How much of the speaking order the game hands out.",
+        "randomStarter": "Starter only",
+        "randomStarterHint": "The first player is drawn; you decide the rest of the order.",
+        "fixedOrder": "Fixed order",
+        "fixedOrderHint": "The full order is drawn once and kept every round.",
+        "randomOrder": "Random order",
+        "randomOrderHint": "The full order is drawn again on every round."
+      }
     }
   }
 }

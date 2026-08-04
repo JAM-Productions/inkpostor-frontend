@@ -233,4 +233,26 @@ describe("Lobby", () => {
     expect(dot).toBeInTheDocument();
     expect(dot).toHaveClass("bg-amber-400");
   });
+
+  it("reveals the player list one card at a time", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        players: [
+          { id: "socket-123", name: "Host Player" },
+          { id: "socket-456", name: "Player 2" },
+          { id: "socket-789", name: "Player 3" },
+        ],
+      }),
+    );
+
+    render(<Lobby />);
+
+    const delays = ["Host Player", "Player 2", "Player 3"].map(
+      (name) =>
+        (screen.getByText(name).closest("div[style]") as HTMLElement).style
+          .animationDelay,
+    );
+    expect(delays).toEqual(["0ms", "100ms", "200ms"]);
+  });
 });

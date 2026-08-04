@@ -21,6 +21,8 @@ describe("OptionsModal", () => {
       playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
+      hideHint: false,
+      turnOrderMode: "RANDOM_STARTER",
     },
     gameMode: "CLASSIC",
     myId: "player-1",
@@ -97,6 +99,8 @@ describe("OptionsModal", () => {
       playerColorsEnabled: true,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
+      hideHint: false,
+      turnOrderMode: "RANDOM_STARTER",
     });
     expect(mockOnClose).toHaveBeenCalled();
   });
@@ -159,6 +163,8 @@ describe("OptionsModal", () => {
       playerColorsEnabled: false,
       impostorGuessEnabled: true,
       impostorGuessAttempts: 1,
+      hideHint: false,
+      turnOrderMode: "RANDOM_STARTER",
     });
   });
 
@@ -192,6 +198,8 @@ describe("OptionsModal", () => {
       playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
+      hideHint: false,
+      turnOrderMode: "RANDOM_STARTER",
     });
   });
 
@@ -292,6 +300,111 @@ describe("OptionsModal", () => {
     ).not.toBeInTheDocument();
     // Nothing is locked in the classic mode
     expect(screen.queryByTestId("clear-canvas-locked")).not.toBeInTheDocument();
+  });
+
+  it.each(["ORIGINAL", "ORIGINAL_CHAOS"])(
+    "swaps the drawing options for its own ones in %s",
+    (gameMode) => {
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector(createState({ gameMode })),
+      );
+
+      render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+      expect(
+        screen.queryByText("Drawing Time per Round"),
+      ).not.toBeInTheDocument();
+      expect(screen.getByTestId("hide-hint-section")).toBeInTheDocument();
+      expect(screen.getByTestId("turn-order-section")).toBeInTheDocument();
+    },
+  );
+
+  it("swaps the drawing options for its own ones in the original mode", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState({ gameMode: "ORIGINAL" })),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    // Nothing is drawn, so these aren't shown with a padlock — they are gone
+    expect(
+      screen.queryByText("Drawing Time per Round"),
+    ).not.toBeInTheDocument();
+    [
+      /toggle ink limit/i,
+      /toggle player colors/i,
+      /toggle canvas clearing each round/i,
+      /toggle impostor guessing/i,
+    ].forEach((name) =>
+      expect(screen.queryByRole("switch", { name })).not.toBeInTheDocument(),
+    );
+    expect(screen.queryByTestId("clear-canvas-locked")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("impostor-guess-locked"),
+    ).not.toBeInTheDocument();
+
+    // ...and its own two are there instead
+    expect(screen.getByTestId("hide-hint-section")).toBeInTheDocument();
+    expect(screen.getByTestId("turn-order-section")).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("switch", { name: /toggle hiding the hint/i }),
+    );
+    await user.click(
+      screen.getByRole("radio", { name: /the full order is drawn again/i }),
+    );
+    await user.click(screen.getByTestId("confirm-options-button"));
+
+    expect(mockUpdateGameOptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        hideHint: true,
+        turnOrderMode: "RANDOM_ORDER",
+      }),
+    );
+  });
+
+  it("hides the original-only options in every other mode", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState()),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    expect(screen.queryByTestId("hide-hint-section")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("turn-order-section")).not.toBeInTheDocument();
+  });
+
+  it("shows the original options read-only for non-hosts", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(
+        createState({
+          gameMode: "ORIGINAL",
+          myId: "player-2",
+          hostId: "player-1",
+          gameOptions: {
+            roundTime: 30,
+            unlimitedInk: false,
+            clearCanvasEachRound: true,
+            playerColorsEnabled: false,
+            impostorGuessEnabled: false,
+            impostorGuessAttempts: 3,
+            hideHint: true,
+            turnOrderMode: "FIXED_ORDER",
+          },
+        }),
+      ),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    const hideHintSwitch = screen.getByRole("switch", {
+      name: /toggle hiding the hint/i,
+    });
+    expect(hideHintSwitch).toBeDisabled();
+    expect(hideHintSwitch).toHaveAttribute("aria-checked", "true");
+    expect(screen.queryByRole("radiogroup")).not.toBeInTheDocument();
+    expect(screen.getByText("Fixed order")).toBeInTheDocument();
   });
 
   it("shows read-only options for non-hosts", () => {
