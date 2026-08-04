@@ -41,6 +41,7 @@ export const ImpostorGuessForm: React.FC<ImpostorGuessFormProps> = ({
       <div className="flex items-stretch gap-2">
         <input
           type="text"
+          data-testid="impostor-guess-input"
           value={guess}
           autoFocus={autoFocus}
           onChange={(e) => setGuess(e.target.value)}
@@ -51,6 +52,7 @@ export const ImpostorGuessForm: React.FC<ImpostorGuessFormProps> = ({
         />
         <button
           type="submit"
+          data-testid="submit-guess-btn"
           disabled={!guess.trim()}
           className="shrink-0 rounded-xl bg-purple-600 px-4 py-2.5 font-bold text-white transition-all hover:bg-purple-500 active:scale-95 disabled:opacity-50 cursor-pointer"
         >

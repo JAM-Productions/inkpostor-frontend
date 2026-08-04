@@ -90,6 +90,7 @@ export const VotingScreen: React.FC = () => {
               <button
                 type="button"
                 key={player.id}
+                data-testid={`vote-card-${player.id}`}
                 onClick={() => setSelectedPlayer(player.id)}
                 disabled={
                   player.isEjected ||
@@ -121,6 +122,7 @@ export const VotingScreen: React.FC = () => {
                 </div>
                 <div className="flex flex-col">
                   <span
+                    data-testid={`vote-name-${player.id}`}
                     className={`text-sm sm:text-lg font-semibold ${player.isEjected ? "text-stone-500 line-through" : effectiveSelectedPlayer === player.id ? "text-white" : "text-stone-300"}`}
                   >
                     {player.name}
@@ -150,6 +152,7 @@ export const VotingScreen: React.FC = () => {
           <div className="mt-4 space-y-6">
             <button
               type="button"
+              data-testid="skip-vote-btn"
               onClick={() => setSelectedPlayer("skip")}
               disabled={hasVoted}
               className={` w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 text-left col-span-1 md:col-span-2 ${
@@ -195,6 +198,7 @@ export const VotingScreen: React.FC = () => {
             {!hasBeenEjected && !hasVoted ? (
               <button
                 type="button"
+                data-testid="confirm-vote-btn"
                 onClick={handleVote}
                 disabled={!selectedPlayer || isSubmitting}
                 className="w-full py-3 rounded-xl bg-ink-primary hover:bg-ink-primary-accent text-white sm:text-xl text-lg disabled:opacity-50 transition-all active:scale-95 cursor-pointer font-extrabold"

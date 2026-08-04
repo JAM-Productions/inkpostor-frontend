@@ -130,6 +130,7 @@ export const GameResult: React.FC = () => {
           isHost ? (
             <button
               type="button"
+              data-testid="play-again-btn"
               onClick={actions.playAgain}
               className="w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-primary hover:bg-ink-primary-accent "
             >
@@ -151,6 +152,7 @@ export const GameResult: React.FC = () => {
         ) : !hasConfirmedNewRound && !me?.isEjected ? (
           <button
             type="button"
+            data-testid="next-round-btn"
             onClick={actions.nextRound}
             className="w-full min-h-14 cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-secondary hover:bg-white text-black"
           >
