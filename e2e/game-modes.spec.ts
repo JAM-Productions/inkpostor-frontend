@@ -87,16 +87,12 @@ test.describe("Game Modes E2E Suite", () => {
       .locator("button:has(svg.lucide-settings)")
       .first();
     await openOptionsBtn.click();
+    // Picked by its own dot rather than by counting carousel steps, so
+    // adding a mode cannot silently move this test onto another one.
+    await pageHost.getByRole("button", { name: /Select Chaos mode/i }).click();
 
-    const nextModeBtn = pageHost
-      .locator('button[aria-label*="Next"i], button[aria-label*="Siguiente"i]')
-      .first();
-    await nextModeBtn.click();
-
-    const closeOptionsBtn = pageHost
-      .locator('[data-testid="close-modal-button"]')
-      .first();
-    await closeOptionsBtn.click();
+    // The mode is staged in the modal now: it only reaches the server on save.
+    await pageHost.locator('[data-testid="confirm-options-button"]').click();
 
     // Context 2: Player 2
     const ctxP2 = await browser.newContext();

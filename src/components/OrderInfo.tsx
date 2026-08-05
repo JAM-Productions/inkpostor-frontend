@@ -95,6 +95,7 @@ export const OrderInfo: React.FC = () => {
           ) : (
             <button
               type="button"
+              data-testid="confirm-order-btn"
               onClick={actions.confirmOrder}
               className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-[background-color,scale] hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
             >

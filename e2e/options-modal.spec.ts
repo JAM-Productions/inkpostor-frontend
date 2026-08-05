@@ -84,6 +84,11 @@ test.describe("Options Modal E2E Suite", () => {
       .locator('button[aria-label*="Next"i], button[aria-label*="Siguiente"i]')
       .first();
     await nextModeBtn.click();
+    // Spelled out so a reordered carousel fails here, on the mode, instead of
+    // further down on a lock that belongs to a different one.
+    await expect(page.locator('[aria-live="polite"] p')).toHaveText(
+      /Chaos|Caos/i,
+    );
 
     // Check locked indicator appears
     const lockedNotice = page.locator(

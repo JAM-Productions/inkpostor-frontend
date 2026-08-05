@@ -21,14 +21,12 @@ test.describe("More Real Gameplay Match Simulations (Matches 11-15)", () => {
       .locator("button:has(svg.lucide-settings)")
       .first();
     await openOptionsBtn.click();
-    const nextModeBtn = pageHost
-      .locator('button[aria-label*="Next"i], button[aria-label*="Siguiente"i]')
-      .first();
-    await nextModeBtn.click();
-    const closeOptionsBtn = pageHost
-      .locator('[data-testid="close-modal-button"]')
-      .first();
-    await closeOptionsBtn.click();
+    // Picked by its own dot rather than by counting carousel steps, so
+    // adding a mode cannot silently move this test onto another one.
+    await pageHost.getByRole("button", { name: /Select Chaos mode/i }).click();
+
+    // The mode is staged in the modal now: it only reaches the server on save.
+    await pageHost.locator('[data-testid="confirm-options-button"]').click();
 
     // Join 4 more players (5 total)
     const contexts = [ctxHost];

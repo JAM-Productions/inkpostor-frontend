@@ -21,16 +21,14 @@ test.describe("Extended Real Gameplay Match Simulations", () => {
       .locator("button:has(svg.lucide-settings)")
       .first();
     await openOptionsBtn.click();
-    const prevModeBtn = pageHost
-      .locator(
-        'button[aria-label*="Previous"i], button[aria-label*="Anterior"i]',
-      )
-      .first();
-    await prevModeBtn.click();
-    const closeOptionsBtn = pageHost
-      .locator('[data-testid="close-modal-button"]')
-      .first();
-    await closeOptionsBtn.click();
+    // Picked by its own dot rather than by wrapping around with "previous":
+    // that trick silently lands on a different mode whenever one is added.
+    await pageHost
+      .getByRole("button", { name: /Select Hot Word mode/i })
+      .click();
+
+    // The mode is staged in the modal now: it only reaches the server on save.
+    await pageHost.locator('[data-testid="confirm-options-button"]').click();
 
     // 2. Join 3 players (4 total)
     const ctxP2 = await browser.newContext();
