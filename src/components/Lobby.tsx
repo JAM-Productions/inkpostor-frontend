@@ -125,7 +125,7 @@ export const Lobby: React.FC = () => {
               data-testid="start-game-btn"
               onClick={actions.startGame}
               disabled={!canStart}
-              className="w-full shrink-0 group relative overflow-hidden rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer bg-ink-primary hover:bg-ink-primary-accent"
+              className="w-full shrink-0 group relative overflow-hidden rounded-2xl transition-[background-color,transform] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer bg-ink-primary hover:bg-ink-primary-accent"
             >
               <div className="flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 font-bold text-white">
                 <span className="text-xl sm:text-2xl tracking-wide font-rubik-wet-paint font-extralight">

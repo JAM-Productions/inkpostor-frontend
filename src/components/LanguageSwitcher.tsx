@@ -41,7 +41,7 @@ export function LanguageSwitcher() {
         type="button"
         data-testid="language-switcher-btn"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 text-xs sm:text-sm bg-stone-800 hover:bg-stone-700 px-3 py-1.5 rounded-full border border-stone-700 text-white transition-all cursor-pointer shadow-lg active:scale-95"
+        className="flex items-center gap-2 text-xs sm:text-sm bg-stone-800 hover:bg-stone-700 px-3 py-1.5 rounded-full border border-stone-700 text-white transition-[background-color,transform] cursor-pointer shadow-lg active:scale-95"
         aria-label="Select language"
         aria-expanded={isOpen}
         aria-haspopup="listbox"

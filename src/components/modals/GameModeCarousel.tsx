@@ -114,7 +114,7 @@ export const GameModeCarousel: React.FC<GameModeCarouselProps> = ({
                 mode: t(mode.nameKey),
               })}
               aria-current={isSelected}
-              className={`h-2 rounded-full transition-all disabled:cursor-default ${
+              className={`h-2 rounded-full transition-[width,background-color] disabled:cursor-default ${
                 isSelected
                   ? "w-6 bg-ink-primary"
                   : "w-2 bg-stone-600 hover:bg-stone-500"

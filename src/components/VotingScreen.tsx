@@ -98,7 +98,7 @@ export const VotingScreen: React.FC = () => {
                   hasVoted ||
                   player.id === myId
                 }
-                className={`flex items-center gap-3 sm:p-4 p-3 rounded-xl border-2 transition-all duration-200 text-left animate-pulse-fade-in  ${
+                className={`flex items-center gap-3 sm:p-4 p-3 rounded-xl border-2 transition-[background-color,border-color,transform,opacity,filter] duration-200 text-left animate-pulse-fade-in  ${
                   player.id === myId
                     ? getPlayerVotingCardColorClass(
                         player.id,
@@ -155,7 +155,7 @@ export const VotingScreen: React.FC = () => {
               data-testid="skip-vote-btn"
               onClick={() => setSelectedPlayer("skip")}
               disabled={hasVoted}
-              className={` w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 text-left col-span-1 md:col-span-2 ${
+              className={` w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 transition-[background-color,border-color,transform,opacity] duration-200 text-left col-span-1 md:col-span-2 ${
                 hasBeenEjected
                   ? "hidden"
                   : effectiveSelectedPlayer === "skip"
@@ -201,7 +201,7 @@ export const VotingScreen: React.FC = () => {
                 data-testid="confirm-vote-btn"
                 onClick={handleVote}
                 disabled={!selectedPlayer || isSubmitting}
-                className="w-full py-3 rounded-xl bg-ink-primary hover:bg-ink-primary-accent text-white sm:text-xl text-lg disabled:opacity-50 transition-all active:scale-95 cursor-pointer font-extrabold"
+                className="w-full py-3 rounded-xl bg-ink-primary hover:bg-ink-primary-accent text-white sm:text-xl text-lg disabled:opacity-50 transition-[background-color,transform,opacity] active:scale-95 cursor-pointer font-extrabold"
               >
                 {t("voting.confirmVote")}
               </button>

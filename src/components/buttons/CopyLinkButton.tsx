@@ -26,7 +26,7 @@ export const CopyLinkButton: React.FC<CopyLinkButtonProps> = ({ roomId }) => {
     <button
       type="button"
       onClick={handleCopyLink}
-      className="group relative inline-flex items-center justify-center gap-2 bg-stone-800/80 border border-stone-700/80 rounded-xl px-4 py-2 shadow-sm transition-all hover:border-stone-600 hover:bg-stone-800 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+      className="group relative inline-flex items-center justify-center gap-2 bg-stone-800/80 border border-stone-700/80 rounded-xl px-4 py-2 shadow-sm transition-[background-color,border-color,transform] hover:border-stone-600 hover:bg-stone-800 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
       title={t("lobby.copyLink")}
     >
       {copiedLink ? (

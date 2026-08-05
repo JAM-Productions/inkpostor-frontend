@@ -18,7 +18,7 @@ export function ExitGameButton() {
     <button
       type="button"
       data-testid="exit-game-button"
-      className="fixed top-4 left-4 p-2 sm:p-2.5 rounded-full bg-stone-800 hover:bg-stone-700 border border-stone-700 text-white transition-all cursor-pointer shadow-lg active:scale-95 z-50 flex items-center justify-center"
+      className="fixed top-4 left-4 p-2 sm:p-2.5 rounded-full bg-stone-800 hover:bg-stone-700 border border-stone-700 text-white transition-[background-color,transform] cursor-pointer shadow-lg active:scale-95 z-50 flex items-center justify-center"
       onClick={() => modalActions.openModal("EXIT_GAME")}
       aria-label={t("exitGame.open")}
     >
