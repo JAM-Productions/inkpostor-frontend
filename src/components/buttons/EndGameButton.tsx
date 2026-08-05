@@ -21,7 +21,7 @@ export function EndGameButton() {
     <button
       type="button"
       data-testid="end-game-btn"
-      className="p-2 sm:p-2.5 rounded-full bg-stone-800 hover:bg-stone-700 border border-stone-700 text-white transition-all cursor-pointer shadow-lg active:scale-95"
+      className="p-2 sm:p-2.5 rounded-full bg-stone-800 hover:bg-stone-700 border border-stone-700 text-white transition-[background-color,transform] cursor-pointer shadow-lg active:scale-95"
       onClick={() => modalActions.openModal("END_GAME")}
       aria-label={t("endGame.open")}
     >

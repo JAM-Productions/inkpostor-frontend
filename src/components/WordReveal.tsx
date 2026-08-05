@@ -59,7 +59,7 @@ export const WordReveal: React.FC = () => {
             onMouseDown={() => handleReveal()}
             onMouseUp={() => setRevealed(false)}
             onMouseLeave={() => setRevealed(false)}
-            className={`w-full aspect-video rounded-3xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in
+            className={`w-full aspect-video rounded-3xl border-2 transition-[background-color,border-color,box-shadow] duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in
               ${
                 revealed
                   ? "border-amber-500/50 bg-amber-950/40 shadow-[0_0_50px_rgba(245,158,11,0.2)]"

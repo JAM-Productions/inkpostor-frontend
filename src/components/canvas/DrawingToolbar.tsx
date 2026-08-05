@@ -59,7 +59,7 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
 
   return (
     <div
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 bg-stone-800/95 backdrop-blur-xl p-4 rounded-3xl border border-stone-700 shadow-2xl flex flex-col gap-4 animate-in slide-in-from-bottom-10 z-50 transition-all duration-300 ${
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 bg-stone-800/95 backdrop-blur-xl p-4 rounded-3xl border border-stone-700 shadow-2xl flex flex-col gap-4 animate-in slide-in-from-bottom-10 z-50 transition-[max-width,width] duration-300 ${
         hasPalette
           ? `w-[calc(100%-2rem)] ${isCompressed ? "max-w-sm" : "max-w-3xl"}`
           : hasUnlimitedInk
@@ -128,7 +128,7 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
             </div>
             <div className="h-4 bg-stone-900 rounded-full overflow-hidden border border-stone-700 shadow-inner">
               <div
-                className={`h-full transition-all duration-100 ease-out ${isOutOfInk ? "bg-red-500" : "bg-linear-to-r from-emerald-400 to-teal-400"}`}
+                className={`h-full transition-[width,background-color] duration-100 ease-out ${isOutOfInk ? "bg-red-500" : "bg-linear-to-r from-emerald-400 to-teal-400"}`}
                 style={{ width: `${inkPercentage}%` }}
               />
             </div>

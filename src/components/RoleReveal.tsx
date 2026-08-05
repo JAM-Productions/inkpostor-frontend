@@ -50,7 +50,7 @@ export const RoleReveal: React.FC = () => {
             onMouseDown={() => handleReveal()}
             onMouseUp={() => setRevealed(false)}
             onMouseLeave={() => setRevealed(false)}
-            className={`w-full aspect-video rounded-3xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in
+            className={`w-full aspect-video rounded-3xl border-2 transition-[background-color,border-color,box-shadow] duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in
               ${
                 revealed
                   ? amIImpostor
@@ -119,7 +119,7 @@ export const RoleReveal: React.FC = () => {
                 type="button"
                 data-testid="proceed-to-drawing-btn"
                 onClick={actions.proceedToDrawing}
-                className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-all hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
+                className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-[background-color,transform] hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
               >
                 <Brush className="size-5" />
                 {t("roleReveal.startDrawing")}

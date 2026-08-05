@@ -26,7 +26,7 @@ export const EmergencyAlertButton = () => {
         type="button"
         data-testid="emergency-alert-btn"
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`flex items-center justify-center size-11 sm:h-12 sm:w-16 md:h-13 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-red-900/50 cursor-pointer ${isOpen ? "bg-ink-primary-accent" : "bg-ink-primary"} ${isDisabled ? "opacity-50" : "hover:bg-ink-primary-accent"}`}
+        className={`flex items-center justify-center size-11 sm:h-12 sm:w-16 md:h-13 rounded-xl font-bold transition-[background-color,transform] active:scale-95 shadow-lg shadow-red-900/50 cursor-pointer ${isOpen ? "bg-ink-primary-accent" : "bg-ink-primary"} ${isDisabled ? "opacity-50" : "hover:bg-ink-primary-accent"}`}
         aria-label="Alert"
         disabled={isDisabled}
       >
@@ -46,7 +46,7 @@ export const EmergencyAlertButton = () => {
               actions.startEmergencyVoting();
             }}
             disabled={isDisabled}
-            className="px-4 py-2 bg-ink-primary hover:bg-ink-primary-accent cursor-pointer text-white font-bold rounded-xl transition-all"
+            className="px-4 py-2 bg-ink-primary hover:bg-ink-primary-accent cursor-pointer text-white font-bold rounded-xl transition-[background-color,transform]"
           >
             {t("canvas.confirm")}
           </button>

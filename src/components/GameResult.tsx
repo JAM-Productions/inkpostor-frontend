@@ -132,7 +132,7 @@ export const GameResult: React.FC = () => {
               type="button"
               data-testid="play-again-btn"
               onClick={actions.playAgain}
-              className="w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-primary hover:bg-ink-primary-accent "
+              className="w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-[background-color,transform] hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-primary hover:bg-ink-primary-accent "
             >
               <div
                 className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 `}
@@ -154,7 +154,7 @@ export const GameResult: React.FC = () => {
             type="button"
             data-testid="next-round-btn"
             onClick={actions.nextRound}
-            className="w-full min-h-14 cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-secondary hover:bg-white text-black"
+            className="w-full min-h-14 cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-[background-color,transform] hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-secondary hover:bg-white text-black"
           >
             <div
               className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 `}
@@ -185,7 +185,7 @@ export const GameResult: React.FC = () => {
             type="button"
             aria-label="Return to Home"
             onClick={actions.exitGame}
-            className="mt-6 px-6 py-2.5 rounded-xl border border-stone-800 text-stone-400 hover:text-white hover:bg-stone-900 transition-all cursor-pointer font-semibold text-sm flex items-center justify-center gap-2 mx-auto shadow-sm active:scale-95"
+            className="mt-6 px-6 py-2.5 rounded-xl border border-stone-800 text-stone-400 hover:text-white hover:bg-stone-900 transition-[background-color,transform] cursor-pointer font-semibold text-sm flex items-center justify-center gap-2 mx-auto shadow-sm active:scale-95"
             data-testid="return-home-button"
           >
             <Home className="size-4 text-stone-400" />

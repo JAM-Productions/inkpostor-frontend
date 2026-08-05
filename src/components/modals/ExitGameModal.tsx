@@ -29,7 +29,7 @@ export const ExitGameModal: React.FC<ExitGameModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-white font-bold rounded-xl transition-all active:scale-[0.98] cursor-pointer"
+            className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-white font-bold rounded-xl transition-[background-color,transform] active:scale-[0.98] cursor-pointer"
           >
             {t("exitGame.cancel")}
           </button>
@@ -40,7 +40,7 @@ export const ExitGameModal: React.FC<ExitGameModalProps> = ({
               actions.exitGame();
               onClose();
             }}
-            className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all active:scale-[0.98] cursor-pointer uppercase"
+            className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-[background-color,transform] active:scale-[0.98] cursor-pointer uppercase"
           >
             {t("exitGame.confirm")}
           </button>

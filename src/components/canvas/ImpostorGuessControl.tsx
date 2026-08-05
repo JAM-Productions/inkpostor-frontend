@@ -42,7 +42,7 @@ export const ImpostorGuessControl: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsGuessOpen(!isGuessOpen)}
-        className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-stone-900/50 cursor-pointer ${
+        className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-xl font-bold transition-[background-color,border-color,transform] active:scale-95 shadow-lg shadow-stone-900/50 cursor-pointer ${
           isGuessOpen
             ? "bg-stone-600 text-white border-2 border-stone-500"
             : "bg-surface text-stone-300 hover:bg-stone-700 hover:text-white border-2 border-transparent"

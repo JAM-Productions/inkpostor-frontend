@@ -32,7 +32,7 @@ export const EndGameModal: React.FC<EndGameModalProps> = ({
             actions.endGame();
             onClose();
           }}
-          className="w-full py-3 bg-ink-primary hover:bg-ink-primary-accent text-white font-bold rounded-xl transition-all active:scale-[0.98] cursor-pointer uppercase"
+          className="w-full py-3 bg-ink-primary hover:bg-ink-primary-accent text-white font-bold rounded-xl transition-[background-color,transform] active:scale-[0.98] cursor-pointer uppercase"
         >
           {t("endGame.endGame")}
         </button>
