@@ -1,5 +1,5 @@
 import React from "react";
-import { Dices, Flame, PartyPopper } from "lucide-react";
+import { Dices, Drama, Flame, MessagesSquare, PartyPopper } from "lucide-react";
 import type { GameMode } from "../store/gameState";
 
 export interface GameModeDefinition {
@@ -7,6 +7,7 @@ export interface GameModeDefinition {
   nameKey: string;
   descriptionKey: string;
   icon: React.ReactNode;
+  isInPerson?: boolean;
 }
 
 // Order defines the carousel order.
@@ -28,5 +29,19 @@ export const GAME_MODES: GameModeDefinition[] = [
     nameKey: "options.gameMode.hotWord.name",
     descriptionKey: "options.gameMode.hotWord.description",
     icon: <Flame className="size-5" />,
+  },
+  {
+    id: "ORIGINAL",
+    nameKey: "options.gameMode.original.name",
+    descriptionKey: "options.gameMode.original.description",
+    icon: <MessagesSquare className="size-5" />,
+    isInPerson: true,
+  },
+  {
+    id: "ORIGINAL_CHAOS",
+    nameKey: "options.gameMode.originalChaos.name",
+    descriptionKey: "options.gameMode.originalChaos.description",
+    icon: <Drama className="size-5" />,
+    isInPerson: true,
   },
 ];

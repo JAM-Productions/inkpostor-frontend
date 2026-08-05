@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { socket, SERVICE_URL } from "../socket";
 import i18n from "../i18n";
-import { DEFAULT_ROUND_TIME, DEFAULT_IMPOSTOR_GUESSES } from "../lib/constants";
+import { DEFAULT_GAME_OPTIONS } from "../lib/constants";
 import {
   detectIsMobile,
   getSavedPlayerName,
@@ -16,12 +16,20 @@ export type GamePhase =
   | "WORD_SELECTION"
   | "ROLE_REVEAL"
   | "WORD_REVEAL"
+  | "ORDER_INFO"
   | "DRAWING"
   | "VOTING"
   | "IMPOSTOR_GUESS"
   | "RESULTS";
 
-export type GameMode = "CLASSIC" | "CUSTOM_WORD" | "HOT_WORD";
+export type GameMode =
+  | "CLASSIC"
+  | "CUSTOM_WORD"
+  | "HOT_WORD"
+  | "ORIGINAL"
+  | "ORIGINAL_CHAOS";
+
+export type TurnOrderMode = "RANDOM_STARTER" | "FIXED_ORDER" | "RANDOM_ORDER";
 
 export interface Player {
   id: string;
@@ -36,6 +44,7 @@ export interface Player {
   hasStartedEmergencyVoting: boolean;
   hasSubmittedWord?: boolean;
   hasRevealedNewWord?: boolean;
+  hasConfirmedOrder?: boolean;
 }
 
 export interface StrokeData {
@@ -52,6 +61,8 @@ export interface GameOptions {
   playerColorsEnabled: boolean;
   impostorGuessEnabled: boolean;
   impostorGuessAttempts: number;
+  hideHint: boolean; // Keeps the category from the impostor
+  turnOrderMode: TurnOrderMode;
 }
 
 export interface GameState {
@@ -94,10 +105,10 @@ export interface GameState {
     kickPlayer: (playerId: string) => void;
     voteKickPlayer: (targetId: string) => void;
     startGame: () => void;
-    setGameMode: (mode: GameMode) => void;
     submitCustomWord: (word: string) => void;
     proceedToDrawing: () => void;
     confirmNewWord: () => void;
+    confirmOrder: () => void;
     drawStroke: (stroke: StrokeData) => void;
     undoStroke: () => void;
     endTurn: () => void;
@@ -108,7 +119,9 @@ export interface GameState {
     startEmergencyVoting: () => void;
     submitImpostorGuess: (guess: string, language: string) => void;
     skipImpostorGuess: () => void;
-    updateGameOptions: (options: GameOptions) => void;
+    // The game mode is staged in the options modal like everything else, so it
+    // is saved together with them rather than applied on its own.
+    updateGameOptions: (options: GameOptions & { gameMode: GameMode }) => void;
     setError: (msg: string | null) => void;
     toggleSus: (playerId: string) => void;
     exitGame: () => void;
@@ -120,14 +133,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
   hostId: null,
   isMobile: detectIsMobile(),
   phase: "LOBBY",
-  gameOptions: {
-    roundTime: DEFAULT_ROUND_TIME,
-    unlimitedInk: false,
-    clearCanvasEachRound: true,
-    playerColorsEnabled: false,
-    impostorGuessEnabled: false,
-    impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
-  },
+  gameOptions: DEFAULT_GAME_OPTIONS,
   gameMode: "CLASSIC",
   players: [],
   impostorId: null,
@@ -207,11 +213,6 @@ export const useGameStore = create<GameState>()((set, get) => ({
     startGame: () => {
       socket.emit("startGame");
     },
-    setGameMode: (mode) => {
-      socket.emit("setGameMode", { gameMode: mode });
-      // Optimistic update so the carousel doesn't lag behind the swipe
-      set({ gameMode: mode });
-    },
     submitCustomWord: (word) => {
       const trimmed = word.trim();
       if (!trimmed) return;
@@ -228,6 +229,11 @@ export const useGameStore = create<GameState>()((set, get) => ({
       socket.emit("confirmNewWord");
       // Optimistic update to prevent multiple clicks to proceed
       set((state) => patchMyPlayer(state, { hasRevealedNewWord: true }));
+    },
+    confirmOrder: () => {
+      socket.emit("confirmOrder");
+      // Optimistic update to prevent multiple clicks to proceed
+      set((state) => patchMyPlayer(state, { hasConfirmedOrder: true }));
     },
     drawStroke: (stroke) => {
       socket.emit("drawStroke", stroke);
@@ -281,10 +287,12 @@ export const useGameStore = create<GameState>()((set, get) => ({
     skipImpostorGuess: () => {
       socket.emit("skipImpostorGuess");
     },
-    updateGameOptions: (options) => {
-      socket.emit("updateGameOptions", options);
-      // Optimistic update for better performance
+    updateGameOptions: ({ gameMode, ...options }) => {
+      socket.emit("updateGameOptions", { gameMode, ...options });
+      // Optimistic update for better performance. The mode rides along in the
+      // same payload but lives outside gameOptions on the room.
       set((state) => ({
+        gameMode,
         gameOptions: { ...state.gameOptions, ...options },
       }));
     },
@@ -461,14 +469,7 @@ socket.on("kicked", (msg: string) => {
     roomId: null,
     hostId: null,
     phase: "LOBBY",
-    gameOptions: {
-      roundTime: DEFAULT_ROUND_TIME,
-      unlimitedInk: false,
-      clearCanvasEachRound: true,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
-      impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
-    },
+    gameOptions: DEFAULT_GAME_OPTIONS,
     gameMode: "CLASSIC",
     players: [],
     impostorId: null,

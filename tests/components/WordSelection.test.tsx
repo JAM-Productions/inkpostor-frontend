@@ -13,6 +13,7 @@ describe("WordSelection", () => {
 
   const createState = (overrides = {}) => ({
     myId: "player-1",
+    gameMode: "CUSTOM_WORD",
     players: [
       { id: "player-1", name: "Alice", hasSubmittedWord: false },
       { id: "player-2", name: "Bob", hasSubmittedWord: false },
@@ -42,6 +43,19 @@ describe("WordSelection", () => {
     expect(
       screen.getByRole("button", { name: /confirm word/i }),
     ).toBeInTheDocument();
+  });
+
+  it("does not ask for a drawable word in a spoken mode", () => {
+    mockStore();
+    const { unmount } = render(<WordSelection />);
+    expect(screen.getByText(/something drawable/i)).toBeInTheDocument();
+    unmount();
+
+    mockStore({ gameMode: "ORIGINAL_CHAOS" });
+    render(<WordSelection />);
+
+    expect(screen.queryByText(/something drawable/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/easy to describe out loud/i)).toBeInTheDocument();
   });
 
   it("keeps the submit button disabled until the word is long enough", async () => {

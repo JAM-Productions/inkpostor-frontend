@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
-import { Brush, Eye } from "lucide-react";
+import { isSpokenMode } from "../lib/constants";
+import { Brush, Eye, Play } from "lucide-react";
 
 export const RoleReveal: React.FC = () => {
   const { t } = useTranslation();
@@ -12,10 +13,13 @@ export const RoleReveal: React.FC = () => {
   const secretCategory = useGameStore((state) => state.secretCategory);
   const secretWord = useGameStore((state) => state.secretWord);
   const myId = useGameStore((state) => state.myId);
+  const gameMode = useGameStore((state) => state.gameMode);
   const actions = useGameStore((state) => state.actions);
 
   const me = players.find((p) => p.id === myId);
   const hasPlayerRevealedRoleAndContinued = me?.hasRevealedRole;
+
+  const isSpoken = isSpokenMode(gameMode);
 
   const handleReveal = () => {
     setRevealed(true);
@@ -75,9 +79,9 @@ export const RoleReveal: React.FC = () => {
                       </span>
                     </h3>
                     <p className="text-red-500 font-medium px-4 py-1 bg-red-900/50 rounded-full border border-red-500/30 text-sm ">
-                      {t("roleReveal.hint", {
-                        category: secretCategory || "",
-                      })}
+                      {secretCategory
+                        ? t("roleReveal.hint", { category: secretCategory })
+                        : t("roleReveal.noHint")}
                     </p>
                   </>
                 ) : (
@@ -121,8 +125,12 @@ export const RoleReveal: React.FC = () => {
                 onClick={actions.proceedToDrawing}
                 className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-[background-color,transform] hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
               >
-                <Brush className="size-5" />
-                {t("roleReveal.startDrawing")}
+                {isSpoken ? (
+                  <Play className="size-5 fill-current" />
+                ) : (
+                  <Brush className="size-5" />
+                )}
+                {t(isSpoken ? "roleReveal.start" : "roleReveal.startDrawing")}
               </button>
             ) : (
               <div className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in">

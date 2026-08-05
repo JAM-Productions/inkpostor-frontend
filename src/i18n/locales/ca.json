@@ -119,6 +119,7 @@
     "wordSelection": {
       "title": "Escriu la teva paraula",
       "description": "Una de les paraules escrites pels jugadors serà la paraula secreta. Tria alguna cosa que es pugui dibuixar!",
+      "descriptionSpoken": "Una de les paraules escrites pels jugadors serà la paraula secreta. Tria alguna cosa fàcil de descriure en veu alta!",
       "placeholder": "La teva paraula secreta",
       "submit": "Confirmar paraula",
       "submitted": "La teva paraula està confirmada",
@@ -136,7 +137,9 @@
       "pressHold": "Mantén premut per revelar",
       "makeSure": "Assegura't que tothom conegui el seu rol abans de continuar.",
       "startDrawing": "Començar a Dibuixar",
-      "waitingPlayers": "{{count}} de {{total}} jugadors han revelat el seu rol"
+      "start": "Començar",
+      "waitingPlayers": "{{count}} de {{total}} jugadors han revelat el seu rol",
+      "noHint": "Aquesta vegada no hi ha pista"
     },
     "wordReveal": {
       "round": "Ronda {{round}}",
@@ -148,6 +151,15 @@
       "impostorNoWord": "Segueixes sense conèixer la paraula",
       "startDrawing": "Començar a Dibuixar",
       "waitingPlayers": "{{count}} de {{total}} jugadors han vist la nova paraula"
+    },
+    "orderInfo": {
+      "round": "Ronda {{round}}",
+      "title": "Qui comença",
+      "youDecideRest": "La resta de l'ordre ho decidiu vosaltres",
+      "followOrder": "Digueu la vostra paraula en aquest ordre",
+      "sayOneWord": "Cada jugador diu una paraula relacionada amb la paraula secreta.",
+      "confirm": "Començar la votació",
+      "waitingPlayers": "{{count}} de {{total}} jugadors estan preparats"
     },
     "rules": {
       "title": "Com Jugar Inkpostor",
@@ -229,7 +241,16 @@
         "hotWord": {
           "name": "Paraula calenta",
           "description": "Una paraula nova a cada ronda, treta de la llista d'Inkpostor. L'impostor segueix sent el mateix."
-        }
+        },
+        "original": {
+          "name": "Original",
+          "description": "El joc clàssic en persona: ningú dibuixa, cada jugador diu una paraula en veu alta per torns."
+        },
+        "originalChaos": {
+          "name": "Original + Caos",
+          "description": "El joc en persona, però la paraula secreta l'escriviu vosaltres abans de començar."
+        },
+        "inPerson": "Millor en persona"
       },
       "time": {
         "title": "Temps de dibuix per ronda",
@@ -268,7 +289,22 @@
         "decrease": "Disminuir intents"
       },
       "confirm": "Guardar opcions",
-      "open": "Obrir diàleg de opcions"
+      "open": "Obrir diàleg de opcions",
+      "hideHint": {
+        "title": "Amagar la pista",
+        "description": "L'impostor tampoc veurà la categoria: va completament a cegues.",
+        "toggle": "Activar o desactivar amagar la pista"
+      },
+      "turnOrder": {
+        "title": "Ordre de la ronda",
+        "description": "Quant de l'ordre reparteix el joc.",
+        "randomStarter": "Només qui comença",
+        "randomStarterHint": "Es sorteja qui obre la ronda; la resta de l'ordre ho decidiu vosaltres.",
+        "fixedOrder": "Ordre predefinit",
+        "fixedOrderHint": "Es sorteja l'ordre complet i es manté a totes les rondes.",
+        "randomOrder": "Ordre aleatori",
+        "randomOrderHint": "Es sorteja l'ordre complet a cada ronda."
+      }
     }
   }
 }

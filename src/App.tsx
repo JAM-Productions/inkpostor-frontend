@@ -4,6 +4,7 @@ import { Lobby } from "./components/Lobby";
 import { WordSelection } from "./components/WordSelection";
 import { RoleReveal } from "./components/RoleReveal";
 import { WordReveal } from "./components/WordReveal";
+import { OrderInfo } from "./components/OrderInfo";
 import { Canvas } from "./components/Canvas";
 import { VotingScreen } from "./components/VotingScreen";
 import { ImpostorFinalGuess } from "./components/ImpostorFinalGuess";
@@ -37,6 +38,8 @@ function App() {
         return <RoleReveal />;
       case "WORD_REVEAL":
         return <WordReveal />;
+      case "ORDER_INFO":
+        return <OrderInfo />;
       case "DRAWING":
         return <Canvas />;
       case "VOTING":
