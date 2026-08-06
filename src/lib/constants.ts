@@ -88,7 +88,7 @@ export const DEFAULT_GAME_MODE: GameMode = "CLASSIC";
 export const applyModeLockedOptions = (
   options: GameOptions,
   gameMode: GameMode,
-): GameOptions => ({ ...options, ...(MODE_LOCKED_OPTIONS[gameMode] ?? {}) });
+): GameOptions => ({ ...options, ...MODE_LOCKED_OPTIONS[gameMode] });
 
 // Which option sections the modal renders for each mode. Different from
 // MODE_LOCKED_OPTIONS, which forces a value and shows it with a padlock: a

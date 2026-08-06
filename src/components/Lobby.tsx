@@ -32,11 +32,15 @@ export const Lobby: React.FC = () => {
   // Only what the mode actually puts on screen counts: an option it hides can
   // still hold a value from another mode, and that is nothing the host changed
   // here. Unknown modes (server deployed first) fall back to the drawing ones.
-  const changedModeOptions = (
-    MODE_OPTION_SECTIONS[gameMode] ?? DRAWING_OPTION_SECTIONS
-  )
-    .flatMap((section) => SECTION_OPTION_KEYS[section])
-    .filter((key) => gameOptions[key] !== DEFAULT_GAME_OPTIONS[key]).length;
+  let changedModeOptions = 0;
+
+  for (const section of MODE_OPTION_SECTIONS[gameMode] ?? DRAWING_OPTION_SECTIONS) {
+    for (const key of SECTION_OPTION_KEYS[section]) {
+      if (gameOptions[key] !== DEFAULT_GAME_OPTIONS[key]) {
+        changedModeOptions++;
+      }
+    }
+  }
   const optionsChangedCount =
     Number(gameMode !== "CLASSIC") + changedModeOptions;
 

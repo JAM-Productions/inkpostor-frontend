@@ -79,8 +79,8 @@ export interface GameState {
   // What the host chose, before those locks. The options modal edits these, so
   // a detour through a mode that takes an option over doesn't lose the value.
   hostGameOptions: GameOptions;
-  // Applied as soon as the host moves the lobby carousel, unlike gameOptions
-  // which are staged in the modal until confirmed.
+  // Selected game mode for the room. In the OptionsModal it is staged until saved
+  // (see actions.updateGameOptions) rather than applied immediately on carousel change.
   gameMode: GameMode;
   players: Player[];
   impostorId: string | null; // Only available in RESULTS or to the impostor themselves locally
@@ -145,8 +145,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
   hostId: null,
   isMobile: detectIsMobile(),
   phase: "LOBBY",
-  gameOptions: DEFAULT_GAME_OPTIONS,
-  hostGameOptions: DEFAULT_GAME_OPTIONS,
+  gameOptions: { ...DEFAULT_GAME_OPTIONS },
+  hostGameOptions: { ...DEFAULT_GAME_OPTIONS },
   gameMode: "CLASSIC",
   players: [],
   impostorId: null,
@@ -353,6 +353,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
         impostorGuessesUsed: 0,
         impostorGuessedCorrectly: false,
         impostorOutOfGuesses: false,
+        gameOptions: { ...DEFAULT_GAME_OPTIONS },
+        hostGameOptions: { ...DEFAULT_GAME_OPTIONS },
         amIImpostor: null,
         errorMessage: null,
       });
