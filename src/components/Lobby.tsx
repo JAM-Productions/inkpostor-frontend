@@ -34,7 +34,8 @@ export const Lobby: React.FC = () => {
   // here. Unknown modes (server deployed first) fall back to the drawing ones.
   let changedModeOptions = 0;
 
-  for (const section of MODE_OPTION_SECTIONS[gameMode] ?? DRAWING_OPTION_SECTIONS) {
+  for (const section of MODE_OPTION_SECTIONS[gameMode] ??
+    DRAWING_OPTION_SECTIONS) {
     for (const key of SECTION_OPTION_KEYS[section]) {
       if (gameOptions[key] !== DEFAULT_GAME_OPTIONS[key]) {
         changedModeOptions++;

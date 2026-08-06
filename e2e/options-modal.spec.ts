@@ -99,5 +99,31 @@ test.describe("Options Modal E2E Suite", () => {
     const closeBtn = page.locator('[data-testid="close-modal-button"]').first();
     await closeBtn.click();
     await expect(optionsDialog).toBeHidden({ timeout: 10000 });
+
+    // 5. Reset puts the whole room back to how it starts, mode included, and
+    // closes on its own
+    await openOptionsBtn.click();
+    await expect(optionsDialog).toBeVisible({ timeout: 10000 });
+    await page.locator('[data-testid="reset-options-button"]').click();
+    await expect(optionsDialog).toBeHidden({ timeout: 10000 });
+
+    await openOptionsBtn.click();
+    await expect(optionsDialog).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[aria-live="polite"] p')).toHaveText(
+      /Classic|Clásico|Clàssic/i,
+    );
+    await expect(
+      page.locator('button[role="radio"]').filter({ hasText: /20/ }).first(),
+    ).toHaveAttribute("aria-checked", "true");
+    await expect(inkToggle).toHaveAttribute("aria-checked", "false");
+    // The guess is on by default, so reset brings it back rather than clearing it
+    await expect(guessToggle).toHaveAttribute("aria-checked", "true");
+    await expect(
+      page
+        .locator(
+          'button[aria-label*="decrease"i], button[aria-label*="disminuir"i]',
+        )
+        .first(),
+    ).toBeDisabled();
   });
 });
