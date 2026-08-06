@@ -75,7 +75,9 @@ export const WordReveal: React.FC = () => {
                       {t("wordReveal.impostorNoWord")}
                     </p>
                     <p className="text-amber-400 font-medium px-4 py-1 bg-amber-900/50 rounded-full border border-amber-500/30 text-sm">
-                      {t("wordReveal.hint", { category: secretCategory || "" })}
+                      {secretCategory
+                        ? t("wordReveal.hint", { category: secretCategory })
+                        : t("wordReveal.noHint")}
                     </p>
                   </>
                 ) : (

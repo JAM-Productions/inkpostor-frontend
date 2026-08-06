@@ -6,7 +6,10 @@ import {
 } from "../../src/store/gameState";
 import { PLAYER_NAME_KEY } from "../../src/lib/gameStateUtils";
 import { socket } from "../../src/socket";
-import { DEFAULT_ROUND_TIME } from "../../src/lib/constants";
+import {
+  DEFAULT_GAME_OPTIONS,
+  DEFAULT_ROUND_TIME,
+} from "../../src/lib/constants";
 
 const { socketListeners } = vi.hoisted(() => ({
   socketListeners: new Map<string, (...args: any[]) => void>(),
@@ -60,16 +63,7 @@ const baseServerState = {
   currentRound: 1,
   ejectedId: null,
   gameEnded: false,
-  gameOptions: {
-    roundTime: DEFAULT_ROUND_TIME,
-    unlimitedInk: false,
-    clearCanvasEachRound: true,
-    playerColorsEnabled: false,
-    impostorGuessEnabled: false,
-    impostorGuessAttempts: 3,
-    hideHint: false,
-    turnOrderMode: "RANDOM_STARTER",
-  },
+  gameOptions: { ...DEFAULT_GAME_OPTIONS },
 };
 
 describe("useGameStore", () => {
@@ -79,16 +73,7 @@ describe("useGameStore", () => {
       roomId: null,
       hostId: null,
       phase: "LOBBY",
-      gameOptions: {
-        roundTime: DEFAULT_ROUND_TIME,
-        unlimitedInk: false,
-        clearCanvasEachRound: true,
-        playerColorsEnabled: false,
-        impostorGuessEnabled: false,
-        impostorGuessAttempts: 3,
-        hideHint: false,
-        turnOrderMode: "RANDOM_STARTER",
-      },
+      gameOptions: { ...DEFAULT_GAME_OPTIONS },
       gameMode: "CLASSIC",
       players: [],
       impostorId: null,
@@ -122,15 +107,9 @@ describe("useGameStore", () => {
     const state = useGameStore.getState();
 
     state.actions.updateGameOptions({
+      ...DEFAULT_GAME_OPTIONS,
       gameMode: "CLASSIC",
       roundTime: 90,
-      unlimitedInk: false,
-      clearCanvasEachRound: true,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
-      impostorGuessAttempts: 3,
-      hideHint: false,
-      turnOrderMode: "RANDOM_STARTER",
     });
 
     expect(useGameStore.getState().gameOptions.roundTime).toBe(90);
@@ -140,15 +119,9 @@ describe("useGameStore", () => {
     const state = useGameStore.getState();
 
     state.actions.updateGameOptions({
+      ...DEFAULT_GAME_OPTIONS,
       gameMode: "CLASSIC",
-      roundTime: DEFAULT_ROUND_TIME,
       unlimitedInk: true,
-      clearCanvasEachRound: true,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
-      impostorGuessAttempts: 3,
-      hideHint: false,
-      turnOrderMode: "RANDOM_STARTER",
     });
 
     expect(useGameStore.getState().gameOptions.unlimitedInk).toBe(true);
@@ -158,15 +131,9 @@ describe("useGameStore", () => {
     const state = useGameStore.getState();
 
     state.actions.updateGameOptions({
+      ...DEFAULT_GAME_OPTIONS,
       gameMode: "CLASSIC",
-      roundTime: DEFAULT_ROUND_TIME,
-      unlimitedInk: false,
       clearCanvasEachRound: false,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
-      impostorGuessAttempts: 3,
-      hideHint: false,
-      turnOrderMode: "RANDOM_STARTER",
     });
 
     expect(useGameStore.getState().gameOptions.clearCanvasEachRound).toBe(
@@ -177,15 +144,11 @@ describe("useGameStore", () => {
   it("should emit updateGameOptions with the provided values, mode included", () => {
     const state = useGameStore.getState();
     const nextOptions: GameOptions & { gameMode: GameMode } = {
+      ...DEFAULT_GAME_OPTIONS,
       gameMode: "HOT_WORD",
       roundTime: 40,
       unlimitedInk: true,
       clearCanvasEachRound: false,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
-      impostorGuessAttempts: 3,
-      hideHint: false,
-      turnOrderMode: "RANDOM_STARTER",
     };
 
     state.actions.updateGameOptions(nextOptions);
@@ -194,6 +157,48 @@ describe("useGameStore", () => {
     // The mode is saved with the options, not applied on its own
     expect(useGameStore.getState().gameMode).toBe("HOT_WORD");
     expect(useGameStore.getState().gameOptions.roundTime).toBe(40);
+  });
+
+  it("should keep what the host chose apart from what the mode makes of it", () => {
+    const state = useGameStore.getState();
+
+    state.actions.updateGameOptions({
+      ...DEFAULT_GAME_OPTIONS,
+      // HOT_WORD draws a new word every round, so it owns this one
+      gameMode: "HOT_WORD",
+      clearCanvasEachRound: false,
+      playerColorsEnabled: false,
+    });
+
+    // What the game runs on carries the lock...
+    expect(useGameStore.getState().gameOptions.clearCanvasEachRound).toBe(true);
+    // ...what the host picked doesn't, so it comes back in another mode
+    expect(useGameStore.getState().hostGameOptions.clearCanvasEachRound).toBe(
+      false,
+    );
+    expect(useGameStore.getState().hostGameOptions.playerColorsEnabled).toBe(
+      false,
+    );
+
+    state.actions.updateGameOptions({
+      ...useGameStore.getState().hostGameOptions,
+      gameMode: "CLASSIC",
+    });
+    expect(useGameStore.getState().gameOptions.clearCanvasEachRound).toBe(
+      false,
+    );
+  });
+
+  it("should fall back to the effective options when the server omits the host ones", () => {
+    const gameStateUpdate = getSocketListener("gameStateUpdate");
+
+    gameStateUpdate({
+      ...baseServerState,
+      phase: "LOBBY",
+      gameOptions: { ...DEFAULT_GAME_OPTIONS, roundTime: 35 },
+    });
+
+    expect(useGameStore.getState().hostGameOptions.roundTime).toBe(35);
   });
 
   it("should handle connectAndCreate success", async () => {
@@ -567,16 +572,7 @@ describe("useGameStore", () => {
     const gameStateUpdate = getSocketListener("gameStateUpdate");
 
     useGameStore.setState({
-      gameOptions: {
-        roundTime: DEFAULT_ROUND_TIME,
-        unlimitedInk: false,
-        clearCanvasEachRound: true,
-        playerColorsEnabled: false,
-        impostorGuessEnabled: false,
-        impostorGuessAttempts: 3,
-        hideHint: false,
-        turnOrderMode: "RANDOM_STARTER",
-      },
+      gameOptions: { ...DEFAULT_GAME_OPTIONS },
     });
 
     gameStateUpdate({
@@ -791,29 +787,16 @@ describe("useGameStore", () => {
 
     useGameStore.setState({
       gameOptions: {
+        ...DEFAULT_GAME_OPTIONS,
         roundTime: 40,
         unlimitedInk: true,
         clearCanvasEachRound: false,
-        playerColorsEnabled: false,
-        impostorGuessEnabled: false,
-        impostorGuessAttempts: 3,
-        hideHint: false,
-        turnOrderMode: "RANDOM_STARTER",
       },
     });
 
     kicked("You were kicked from the room");
 
-    expect(useGameStore.getState().gameOptions).toEqual({
-      roundTime: DEFAULT_ROUND_TIME,
-      unlimitedInk: false,
-      clearCanvasEachRound: true,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
-      impostorGuessAttempts: 3,
-      hideHint: false,
-      turnOrderMode: "RANDOM_STARTER",
-    });
+    expect(useGameStore.getState().gameOptions).toEqual(DEFAULT_GAME_OPTIONS);
   });
 
   // -----------------------------------------------------------------------

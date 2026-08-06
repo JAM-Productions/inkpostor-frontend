@@ -44,21 +44,19 @@ test.describe("Options Modal E2E Suite", () => {
     await inkToggle.click();
     await expect(inkToggle).toHaveAttribute("aria-checked", "true");
 
-    // Toggle Impostor Can Guess
+    // Impostor Can Guess is on by default, so its stepper is already there
     const guessToggle = page.locator('button[aria-label*="impostor"i]').first();
-    await guessToggle.click();
     await expect(guessToggle).toHaveAttribute("aria-checked", "true");
 
-    // Decrease attempts (from default 3 to 2)
+    // Already at the minimum, so there is nothing left to take away
     const decreaseAttemptsBtn = page
       .locator(
         'button[aria-label*="decrease"i], button[aria-label*="disminuir"i]',
       )
       .first();
-    await expect(decreaseAttemptsBtn).toBeEnabled();
-    await decreaseAttemptsBtn.click();
+    await expect(decreaseAttemptsBtn).toBeDisabled();
 
-    // Increase attempts (from 2 back to 3)
+    // Increase attempts (from the default 1 to 2)
     const increaseAttemptsBtn = page
       .locator(
         'button[aria-label*="increase"i], button[aria-label*="aumentar"i]',
@@ -66,6 +64,7 @@ test.describe("Options Modal E2E Suite", () => {
       .first();
     await expect(increaseAttemptsBtn).toBeEnabled();
     await increaseAttemptsBtn.click();
+    await expect(decreaseAttemptsBtn).toBeEnabled();
 
     // Confirm & save options
     const confirmBtn = page.locator('[data-testid="confirm-options-button"]');

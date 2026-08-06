@@ -78,6 +78,17 @@ describe("WordReveal", () => {
     expect(screen.queryByText("The new word is")).not.toBeInTheDocument();
   });
 
+  it("says so instead of showing an empty hint when it is hidden", () => {
+    // hideHint: the server withholds the category from the impostor
+    mockStore({ amIImpostor: true, secretWord: null, secretCategory: null });
+
+    render(<WordReveal />);
+    revealCard();
+
+    expect(screen.getByText("No hint this time")).toBeInTheDocument();
+    expect(screen.queryByText(/^Hint:/)).not.toBeInTheDocument();
+  });
+
   it("confirms the word and switches to the waiting state", () => {
     mockStore();
 

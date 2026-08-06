@@ -92,10 +92,11 @@ test.describe("Production Resilience: Reconnection & Disconnect Handling", () =>
       .locator("button:has(svg.lucide-settings)")
       .first();
     await openOptionsBtn.click();
+    // Impostor Can Guess is on by default: confirm it rather than turn it on
     const guessToggle = pageHost
       .locator('button[aria-label*="impostor"i]')
       .first();
-    await guessToggle.click();
+    await expect(guessToggle).toHaveAttribute("aria-checked", "true");
     await pageHost.locator('[data-testid="confirm-options-button"]').click();
 
     const ctxP2 = await browser.newContext();

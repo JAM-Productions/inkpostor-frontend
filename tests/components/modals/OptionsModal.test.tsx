@@ -4,8 +4,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { OptionsModal } from "../../../src/components/modals/OptionsModal";
 import { useGameStore } from "../../../src/store/gameState";
 import {
+  DEFAULT_GAME_OPTIONS,
   DEFAULT_IMPOSTOR_GUESSES,
-  DEFAULT_ROUND_TIME,
 } from "../../../src/lib/constants";
 
 vi.mock("../../../src/store/gameState", () => ({
@@ -16,17 +16,28 @@ describe("OptionsModal", () => {
   const mockOnClose = vi.fn();
   const mockUpdateGameOptions = vi.fn();
 
-  const createState = (overrides = {}) => ({
-    gameOptions: {
-      roundTime: 30,
-      unlimitedInk: false,
-      clearCanvasEachRound: true,
-      playerColorsEnabled: false,
-      impostorGuessEnabled: false,
-      impostorGuessAttempts: 3,
-      hideHint: false,
-      turnOrderMode: "RANDOM_STARTER",
-    },
+  // A room whose host has already turned the optional rules off, so a test can
+  // switch each one on. Deliberately not DEFAULT_GAME_OPTIONS.
+  const hostOptions = {
+    roundTime: 30,
+    unlimitedInk: false,
+    clearCanvasEachRound: true,
+    playerColorsEnabled: false,
+    impostorGuessEnabled: false,
+    impostorGuessAttempts: 3,
+    impostorLosesWhenOutOfGuesses: false,
+    hideHint: false,
+    turnOrderMode: "RANDOM_STARTER",
+  };
+
+  // `gameOptions` are what the mode makes of the host's choices and
+  // `hostGameOptions` the choices themselves. A test that passes options is
+  // describing what the host picked, so both start from the same object.
+  const createState = (
+    { gameOptions = hostOptions, ...overrides } = {} as any,
+  ) => ({
+    gameOptions,
+    hostGameOptions: gameOptions,
     gameMode: "CLASSIC",
     myId: "player-1",
     hostId: "player-1",
@@ -100,6 +111,7 @@ describe("OptionsModal", () => {
       playerColorsEnabled: true,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
+      impostorLosesWhenOutOfGuesses: false,
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
     });
@@ -165,9 +177,147 @@ describe("OptionsModal", () => {
       playerColorsEnabled: false,
       impostorGuessEnabled: true,
       impostorGuessAttempts: 1,
+      impostorLosesWhenOutOfGuesses: false,
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
     });
+  });
+
+  it("arrives with the player colors and the impostor guess already on", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState({ gameOptions: DEFAULT_GAME_OPTIONS })),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    expect(
+      screen.getByRole("switch", { name: /toggle player colors/i }),
+    ).toHaveAttribute("aria-checked", "true");
+    expect(
+      screen.getByRole("switch", { name: /toggle impostor guessing/i }),
+    ).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByText("Number of attempts")).toBeInTheDocument();
+    expect(screen.getByText(String(DEFAULT_IMPOSTOR_GUESSES))).toBeVisible();
+  });
+
+  it("reveals the lethal pool sub-option only while guessing is on", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState()),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    expect(
+      screen.queryByTestId("impostor-lose-on-last-attempt"),
+    ).not.toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("switch", { name: /toggle impostor guessing/i }),
+    );
+
+    expect(
+      screen.getByTestId("impostor-lose-on-last-attempt"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("switch", {
+        name: /toggle losing on the last attempt/i,
+      }),
+    ).toHaveAttribute("aria-checked", "false");
+  });
+
+  it("saves the guess pool as lethal", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState({ gameOptions: DEFAULT_GAME_OPTIONS })),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    await user.click(
+      screen.getByRole("switch", {
+        name: /toggle losing on the last attempt/i,
+      }),
+    );
+    await user.click(screen.getByTestId("confirm-options-button"));
+
+    expect(mockUpdateGameOptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        impostorGuessEnabled: true,
+        impostorLosesWhenOutOfGuesses: true,
+      }),
+    );
+  });
+
+  it("saves the sub-option back at default when guessing is turned off", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(
+        createState({
+          gameOptions: {
+            ...DEFAULT_GAME_OPTIONS,
+            impostorLosesWhenOutOfGuesses: true,
+          },
+        }),
+      ),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    await user.click(
+      screen.getByRole("switch", { name: /toggle impostor guessing/i }),
+    );
+    await user.click(screen.getByTestId("confirm-options-button"));
+
+    // It means nothing without the feature, so it doesn't linger
+    expect(mockUpdateGameOptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        impostorGuessEnabled: false,
+        impostorLosesWhenOutOfGuesses: false,
+      }),
+    );
+  });
+
+  it("puts everything back to default and closes when reset is pressed", async () => {
+    const user = userEvent.setup();
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(
+        createState({
+          gameMode: "HOT_WORD",
+          gameOptions: {
+            ...DEFAULT_GAME_OPTIONS,
+            roundTime: 40,
+            unlimitedInk: true,
+            hideHint: true,
+          },
+        }),
+      ),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    // Staged changes on top of an already customised room: reset takes both
+    await user.click(screen.getByRole("radio", { name: /35 seconds/i }));
+    await user.click(screen.getByTestId("reset-options-button"));
+
+    // The carousel lives in this modal, so the mode goes back too
+    expect(mockUpdateGameOptions).toHaveBeenCalledWith({
+      gameMode: "CLASSIC",
+      ...DEFAULT_GAME_OPTIONS,
+    });
+    expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it("keeps the reset button out of a guest's read-only view", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState({ myId: "player-2", hostId: "player-1" })),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    expect(
+      screen.queryByTestId("reset-options-button"),
+    ).not.toBeInTheDocument();
   });
 
   it("renders the game mode carousel as the first section", () => {
@@ -203,6 +353,7 @@ describe("OptionsModal", () => {
       playerColorsEnabled: false,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
+      impostorLosesWhenOutOfGuesses: false,
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
     });
@@ -242,7 +393,7 @@ describe("OptionsModal", () => {
             unlimitedInk: false,
             playerColorsEnabled: false,
             clearCanvasEachRound: true,
-            // Even if the server still reported it on, the mode wins
+            // The host had it on from another mode: this one takes it over
             impostorGuessEnabled: true,
             impostorGuessAttempts: 3,
           },
@@ -265,8 +416,13 @@ describe("OptionsModal", () => {
 
     await user.click(screen.getByTestId("confirm-options-button"));
 
+    // Saving keeps the host's own value: the mode masks it (here and on the
+    // server), so it is still there when they pick a mode that allows guessing.
     expect(mockUpdateGameOptions).toHaveBeenCalledWith(
-      expect.objectContaining({ impostorGuessEnabled: false }),
+      expect.objectContaining({
+        gameMode: "CUSTOM_WORD",
+        impostorGuessEnabled: true,
+      }),
     );
   });
 
@@ -280,7 +436,7 @@ describe("OptionsModal", () => {
             roundTime: 30,
             unlimitedInk: false,
             playerColorsEnabled: false,
-            // Even if the server still reported it off, the mode wins
+            // The host had it off from another mode: this one takes it over
             clearCanvasEachRound: false,
             impostorGuessEnabled: false,
             impostorGuessAttempts: 3,
@@ -305,8 +461,12 @@ describe("OptionsModal", () => {
 
     await user.click(screen.getByTestId("confirm-options-button"));
 
+    // Masked on screen, untouched in what is saved
     expect(mockUpdateGameOptions).toHaveBeenCalledWith(
-      expect.objectContaining({ clearCanvasEachRound: true }),
+      expect.objectContaining({
+        gameMode: "HOT_WORD",
+        clearCanvasEachRound: false,
+      }),
     );
   });
 
@@ -392,7 +552,7 @@ describe("OptionsModal", () => {
     );
   });
 
-  it("never saves drawing settings the staged mode forces to default", async () => {
+  it("keeps the drawing settings the staged mode has no use for", async () => {
     const user = userEvent.setup();
     // The host arrives with drawing settings saved from a CLASSIC game
     (useGameStore as any).mockImplementation((selector: any) =>
@@ -415,33 +575,68 @@ describe("OptionsModal", () => {
     render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
 
     // ...and stages a mode where nothing is drawn. The carousel lives in this
-    // same modal, so the locks have to follow what the host is looking at.
+    // same modal, so the locks have to follow what the host is looking at:
+    // those sections disappear from the screen...
     await user.click(
       screen.getByRole("button", { name: /select original mode/i }),
     );
+    expect(
+      screen.queryByText("Drawing Time per Round"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("switch", { name: /toggle player colors/i }),
+    ).not.toBeInTheDocument();
+
     await user.click(screen.getByTestId("confirm-options-button"));
 
+    // ...but the values survive the detour: the mode masks them where it
+    // matters (the server stores both), so picking a drawing mode again gives
+    // the host back the settings they had.
     expect(mockUpdateGameOptions).toHaveBeenCalledWith(
       expect.objectContaining({
         gameMode: "ORIGINAL",
-        roundTime: DEFAULT_ROUND_TIME,
-        unlimitedInk: false,
-        playerColorsEnabled: false,
-        impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
+        roundTime: 40,
+        unlimitedInk: true,
+        playerColorsEnabled: true,
       }),
     );
   });
 
-  it("hides the original-only options in every other mode", () => {
+  it("hides the turn order outside the spoken modes, but keeps the hint option", () => {
     (useGameStore as any).mockImplementation((selector: any) =>
       selector(createState()),
     );
 
     render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
 
-    expect(screen.queryByTestId("hide-hint-section")).not.toBeInTheDocument();
     expect(screen.queryByTestId("turn-order-section")).not.toBeInTheDocument();
+    // No mode owns the hint: every one of them can hide it
+    expect(screen.getByTestId("hide-hint-section")).toBeInTheDocument();
   });
+
+  it.each(["CLASSIC", "CUSTOM_WORD", "HOT_WORD", "ORIGINAL", "ORIGINAL_CHAOS"])(
+    "lets the host hide the hint in %s",
+    async (gameMode) => {
+      const user = userEvent.setup();
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector(createState({ gameMode })),
+      );
+
+      render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+      const hideHintSwitch = screen.getByRole("switch", {
+        name: /toggle hiding the hint/i,
+      });
+      expect(hideHintSwitch).toBeEnabled();
+
+      await user.click(hideHintSwitch);
+      await user.click(screen.getByTestId("confirm-options-button"));
+
+      expect(mockUpdateGameOptions).toHaveBeenCalledWith(
+        expect.objectContaining({ hideHint: true }),
+      );
+    },
+  );
 
   it("shows the original options read-only for non-hosts", () => {
     (useGameStore as any).mockImplementation((selector: any) =>

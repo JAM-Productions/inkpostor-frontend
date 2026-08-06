@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { socket, SERVICE_URL } from "../socket";
 import i18n from "../i18n";
-import { DEFAULT_GAME_OPTIONS } from "../lib/constants";
+import { applyModeLockedOptions, DEFAULT_GAME_OPTIONS } from "../lib/constants";
 import {
   detectIsMobile,
   getSavedPlayerName,
@@ -61,6 +61,9 @@ export interface GameOptions {
   playerColorsEnabled: boolean;
   impostorGuessEnabled: boolean;
   impostorGuessAttempts: number;
+  // Sub-option of impostorGuessEnabled: spending the whole guess pool ends the
+  // game right there with the impostor defeated.
+  impostorLosesWhenOutOfGuesses: boolean;
   hideHint: boolean; // Keeps the category from the impostor
   turnOrderMode: TurnOrderMode;
 }
@@ -70,7 +73,12 @@ export interface GameState {
   hostId: string | null;
   isMobile: boolean;
   phase: GamePhase;
+  // What the game runs on: the host's choices with the current mode's locks
+  // applied on top (see MODE_LOCKED_OPTIONS).
   gameOptions: GameOptions;
+  // What the host chose, before those locks. The options modal edits these, so
+  // a detour through a mode that takes an option over doesn't lose the value.
+  hostGameOptions: GameOptions;
   // Applied as soon as the host moves the lobby carousel, unlike gameOptions
   // which are staged in the modal until confirmed.
   gameMode: GameMode;
@@ -91,6 +99,10 @@ export interface GameState {
   // Impostor guess feature
   impostorGuessesUsed: number;
   impostorGuessedCorrectly: boolean;
+  // The impostor lost by spending the whole pool (impostorLosesWhenOutOfGuesses).
+  // Comes from the server: it ends the game without an ejection, so the result
+  // screen cannot infer it.
+  impostorOutOfGuesses: boolean;
 
   // Local only state
   myId: string | null;
@@ -134,6 +146,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
   isMobile: detectIsMobile(),
   phase: "LOBBY",
   gameOptions: DEFAULT_GAME_OPTIONS,
+  hostGameOptions: DEFAULT_GAME_OPTIONS,
   gameMode: "CLASSIC",
   players: [],
   impostorId: null,
@@ -150,6 +163,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
   gameEnded: false,
   impostorGuessesUsed: 0,
   impostorGuessedCorrectly: false,
+  impostorOutOfGuesses: false,
   myId: null,
   myName: getSavedPlayerName(),
   amIImpostor: null,
@@ -290,11 +304,17 @@ export const useGameStore = create<GameState>()((set, get) => ({
     updateGameOptions: ({ gameMode, ...options }) => {
       socket.emit("updateGameOptions", { gameMode, ...options });
       // Optimistic update for better performance. The mode rides along in the
-      // same payload but lives outside gameOptions on the room.
-      set((state) => ({
-        gameMode,
-        gameOptions: { ...state.gameOptions, ...options },
-      }));
+      // same payload but lives outside gameOptions on the room. What travels is
+      // what the host chose; the mode's locks are layered on top for the values
+      // the game actually runs on, exactly as the server does it.
+      set((state) => {
+        const hostGameOptions = { ...state.hostGameOptions, ...options };
+        return {
+          gameMode,
+          hostGameOptions,
+          gameOptions: applyModeLockedOptions(hostGameOptions, gameMode),
+        };
+      });
     },
     setError: (msg) => {
       set({ errorMessage: msg });
@@ -332,6 +352,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         gameEnded: false,
         impostorGuessesUsed: 0,
         impostorGuessedCorrectly: false,
+        impostorOutOfGuesses: false,
         amIImpostor: null,
         errorMessage: null,
       });
@@ -411,9 +432,12 @@ socket.on("gameStateUpdate", (newState) => {
     ejectedId: newState.ejectedId,
     gameEnded: newState.gameEnded,
     gameOptions: newState.gameOptions,
+    // A server that doesn't split them yet reports only the effective ones
+    hostGameOptions: newState.hostGameOptions ?? newState.gameOptions,
     gameMode: newState.gameMode ?? "CLASSIC",
     impostorGuessesUsed: newState.impostorGuessesUsed ?? 0,
     impostorGuessedCorrectly: newState.impostorGuessedCorrectly ?? false,
+    impostorOutOfGuesses: newState.impostorOutOfGuesses ?? false,
   });
 });
 
@@ -470,6 +494,7 @@ socket.on("kicked", (msg: string) => {
     hostId: null,
     phase: "LOBBY",
     gameOptions: DEFAULT_GAME_OPTIONS,
+    hostGameOptions: DEFAULT_GAME_OPTIONS,
     gameMode: "CLASSIC",
     players: [],
     impostorId: null,
@@ -486,6 +511,7 @@ socket.on("kicked", (msg: string) => {
     gameEnded: false,
     impostorGuessesUsed: 0,
     impostorGuessedCorrectly: false,
+    impostorOutOfGuesses: false,
     amIImpostor: null,
     errorMessage: msg,
     myName: state.myName,

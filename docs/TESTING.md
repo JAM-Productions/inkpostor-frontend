@@ -39,7 +39,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    subgraph "100% Complete System E2E Suite (44 Tests)"
+    subgraph "100% Complete System E2E Suite (52 Tests)"
         S1[e2e/multiplayer.spec.ts]
         S2[e2e/options-modal.spec.ts]
         S3[e2e/game-modes.spec.ts]
@@ -65,18 +65,23 @@ flowchart TD
         S23[e2e/timer-expirations.spec.ts]
         S24[e2e/room-capacity-limit.spec.ts]
         S25[e2e/non-host-permissions.spec.ts]
+        S26[e2e/impostor-lethal-pool.spec.ts]
+        S27[e2e/game-mode-staging.spec.ts]
+        S28[e2e/original-mode.spec.ts]
+        S29[e2e/original-chaos-mode.spec.ts]
+        S30[e2e/original-turn-order.spec.ts]
     end
 
     subgraph "Total 100% Production Qualification"
         Qualification["Multiplayer Sync ➔ Modes ➔ Loops ➔ Reconnection ➔ Guesses ➔ Drawing Sync ➔ Suspects ➔ i18n ➔ 15 Real Matches ➔ Limit Guards ➔ 100% Full System Parity"]
     end
 
-    S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 & S9 & S10 & S11 & S12 & S13 & S14 & S15 & S16 & S17 & S18 & S19 & S20 & S21 & S22 & S23 & S24 & S25 --> Qualification
+    S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 & S9 & S10 & S11 & S12 & S13 & S14 & S15 & S16 & S17 & S18 & S19 & S20 & S21 & S22 & S23 & S24 & S25 & S26 & S27 & S28 & S29 & S30 --> Qualification
 ```
 
 ---
 
-### E2E Test Suite Specification Directory (44 Tests across 25 Spec Files)
+### E2E Test Suite Specification Directory (52 Tests across 30 Spec Files)
 
 | # | Spec File | Purpose & User Flow Tested | Key Verification & Assertions |
 |---|---|---|---|
@@ -105,6 +110,11 @@ flowchart TD
 | 23 | `timer-expirations.spec.ts` | Turn & Voting Timer Expirations | Turn timer auto-advances turn; voting timer auto-skips unsubmitted votes |
 | 24 | `room-capacity-limit.spec.ts` | 10-Player Capacity Limit Guard | 10 players fill lobby; 11th player join attempt handled gracefully |
 | 25 | `non-host-permissions.spec.ts` | Non-Host UI Permission Guards | Non-host player omits START GAME button & options locked in read-only |
+| 26 | `impostor-lethal-pool.spec.ts` | Impostor Loses On The Last Attempt | Host makes the guess pool lethal; a wrong guess empties it and ends the game with the Inkpostor defeated |
+| 27 | `game-mode-staging.spec.ts` | Game Mode Staging In The Options Modal | Mode staged until save & discarded on close; a mode that hides the drawing options gives them back on the way out |
+| 28 | `original-mode.spec.ts` | `ORIGINAL` Spoken Round Loop | Full round loop without ever reaching a canvas; `hideHint` keeps the category from the Inkpostor |
+| 29 | `original-chaos-mode.spec.ts` | `ORIGINAL_CHAOS` Player-Written Word | Word selection first, then the spoken round with no canvas |
+| 30 | `original-turn-order.spec.ts` | `ORIGINAL` Turn Order Options | `FIXED_ORDER` keeps the announced order between rounds; `RANDOM_ORDER` redraws it with every player still in it |
 
 ---
 

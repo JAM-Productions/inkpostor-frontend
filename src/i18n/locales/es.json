@@ -148,6 +148,7 @@
       "theWordIs": "La nueva palabra es",
       "category": "Categoría: {{category}}",
       "hint": "Pista: {{category}}",
+      "noHint": "Esta vez no hay pista",
       "impostorNoWord": "Sigues sin conocer la palabra",
       "startDrawing": "Empezar a Dibujar",
       "waitingPlayers": "{{count}} de {{total}} jugadores han visto la nueva palabra"
@@ -281,14 +282,23 @@
       },
       "impostorGuess": {
         "title": "El impostor puede adivinar",
-        "description": "Permite que el impostor intente adivinar la palabra secreta para ganar.",
+        "description": "Permite al impostor ganar adivinando la palabra. Si lo eliminan con algún intento libre, tendrá una última oportunidad.",
         "unavailableInMode": "No disponible en el modo \"{{mode}}\".",
         "toggle": "Alternar adivinanza del impostor",
         "attempts": "Número de intentos",
         "increase": "Aumentar intentos",
-        "decrease": "Disminuir intentos"
+        "decrease": "Disminuir intentos",
+        "loseWhenOutOfGuesses": {
+          "title": "Perder al gastar el último intento",
+          "description": "La partida termina con el impostor derrotado en cuanto gasta todos sus intentos.",
+          "toggle": "Alternar la derrota al gastar el último intento"
+        }
       },
       "confirm": "Guardar opciones",
+      "reset": {
+        "label": "Restablecer",
+        "toggle": "Restablecer todas las opciones a su valor por defecto"
+      },
       "open": "Abrir diálogo de opciones",
       "hideHint": {
         "title": "Ocultar la pista",

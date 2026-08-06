@@ -9,7 +9,7 @@ export const DOT_INK_COST = 5;
 // rounds). Configurable by the host between MIN and MAX, defaulting to DEFAULT.
 export const MIN_IMPOSTOR_GUESSES = 1;
 export const MAX_IMPOSTOR_GUESSES = 3;
-export const DEFAULT_IMPOSTOR_GUESSES = 3;
+export const DEFAULT_IMPOSTOR_GUESSES = 1;
 // Word players write in CUSTOM_WORD mode. Must match the server-side bounds.
 export const MIN_CUSTOM_WORD_LENGTH = 2;
 export const MAX_CUSTOM_WORD_LENGTH = 40;
@@ -31,11 +31,20 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   roundTime: DEFAULT_ROUND_TIME,
   unlimitedInk: false,
   clearCanvasEachRound: true,
-  playerColorsEnabled: false,
-  impostorGuessEnabled: false,
+  playerColorsEnabled: true,
+  impostorGuessEnabled: true,
   impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
+  impostorLosesWhenOutOfGuesses: false,
   hideHint: false,
   turnOrderMode: DEFAULT_TURN_ORDER_MODE,
+};
+
+// The guessing sub-option means nothing while the feature itself is off, so
+// wherever guessing is turned off it goes back to default. Mirrors the server,
+// which is what actually enforces it.
+const GUESS_SUB_OPTION_DEFAULTS: Partial<GameOptions> = {
+  impostorLosesWhenOutOfGuesses:
+    DEFAULT_GAME_OPTIONS.impostorLosesWhenOutOfGuesses,
 };
 
 // Modes where players say their words out loud instead of drawing: the round
@@ -45,8 +54,8 @@ const SPOKEN_GAME_MODES: GameMode[] = ["ORIGINAL", "ORIGINAL_CHAOS"];
 export const isSpokenMode = (mode: GameMode): boolean =>
   SPOKEN_GAME_MODES.includes(mode);
 
-// Nothing is drawn in a spoken mode, so every drawing option goes back to
-// default instead of lingering as a setting the host cannot see.
+// Nothing is drawn in a spoken mode, so every drawing option is forced to a
+// neutral value instead of lingering as a setting the host cannot see.
 const SPOKEN_MODE_LOCKS: Partial<GameOptions> = {
   roundTime: DEFAULT_ROUND_TIME,
   unlimitedInk: false,
@@ -54,20 +63,32 @@ const SPOKEN_MODE_LOCKS: Partial<GameOptions> = {
   playerColorsEnabled: false,
   impostorGuessEnabled: false,
   impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
+  ...GUESS_SUB_OPTION_DEFAULTS,
 };
 
 // Options a mode takes over: while it is selected the value is forced and the
 // host cannot change it. Mirrors MODE_LOCKED_OPTIONS on the server, which is
 // what actually enforces it.
 export const MODE_LOCKED_OPTIONS: Record<GameMode, Partial<GameOptions>> = {
-  CLASSIC: { hideHint: false },
+  CLASSIC: {},
   // The word is written by a player, so it could simply be handed to the impostor
-  CUSTOM_WORD: { impostorGuessEnabled: false, hideHint: false },
+  CUSTOM_WORD: { impostorGuessEnabled: false, ...GUESS_SUB_OPTION_DEFAULTS },
   // Every round has a new word, so keeping the previous drawing makes no sense
-  HOT_WORD: { clearCanvasEachRound: true, hideHint: false },
+  HOT_WORD: { clearCanvasEachRound: true },
   ORIGINAL: SPOKEN_MODE_LOCKS,
   ORIGINAL_CHAOS: SPOKEN_MODE_LOCKS,
 };
+
+// What a fresh room plays, and what the options modal resets back to.
+export const DEFAULT_GAME_MODE: GameMode = "CLASSIC";
+
+// Layers a mode's locks on top of the host's own choices. The server does the
+// same thing on every save, so this is what the host's settings will become
+// while that mode is selected.
+export const applyModeLockedOptions = (
+  options: GameOptions,
+  gameMode: GameMode,
+): GameOptions => ({ ...options, ...(MODE_LOCKED_OPTIONS[gameMode] ?? {}) });
 
 // Which option sections the modal renders for each mode. Different from
 // MODE_LOCKED_OPTIONS, which forces a value and shows it with a padlock: a
@@ -87,10 +108,29 @@ export const DRAWING_OPTION_SECTIONS: OptionSection[] = [
   "playerColors",
   "clearCanvas",
   "impostorGuess",
+  "hideHint",
 ];
 
 // Nothing is drawn: the drawing options are replaced, not just locked
-const SPOKEN_OPTION_SECTIONS: OptionSection[] = ["hideHint", "turnOrder"];
+const SPOKEN_OPTION_SECTIONS: OptionSection[] = ["turnOrder", "hideHint"];
+
+// The options each section owns. Lets a caller go from "what this mode shows"
+// to "which options it can change" — the lobby counts the non-default ones from
+// this, so an option that isn't on screen never shows up in that count.
+export const SECTION_OPTION_KEYS: Record<OptionSection, (keyof GameOptions)[]> =
+  {
+    time: ["roundTime"],
+    unlimitedInk: ["unlimitedInk"],
+    playerColors: ["playerColorsEnabled"],
+    clearCanvas: ["clearCanvasEachRound"],
+    impostorGuess: [
+      "impostorGuessEnabled",
+      "impostorGuessAttempts",
+      "impostorLosesWhenOutOfGuesses",
+    ],
+    hideHint: ["hideHint"],
+    turnOrder: ["turnOrderMode"],
+  };
 
 export const MODE_OPTION_SECTIONS: Record<GameMode, OptionSection[]> = {
   CLASSIC: DRAWING_OPTION_SECTIONS,
