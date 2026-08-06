@@ -23,10 +23,11 @@ test.describe("Deep E2E: Impostor Final Guess Feature Flow", () => {
       .first();
     await openOptionsBtn.click();
 
+    // Impostor Can Guess is on by default: confirm it rather than turn it on
     const guessToggle = pageHost
       .locator('button[aria-label*="impostor"i]')
       .first();
-    await guessToggle.click();
+    await expect(guessToggle).toHaveAttribute("aria-checked", "true");
     await pageHost.locator('[data-testid="confirm-options-button"]').click();
 
     // 2. Players 2 and 3 join

@@ -5,6 +5,7 @@ import { Lobby } from "../../src/components/Lobby";
 import { useGameStore } from "../../src/store/gameState";
 import { useModalStore } from "../../src/store/modalStore";
 import { ModalRenderer } from "../../src/components/modals/ModalRenderer";
+import { DEFAULT_GAME_OPTIONS } from "../../src/lib/constants";
 
 // Mock the store
 vi.mock("../../src/store/gameState", () => ({
@@ -25,6 +26,9 @@ describe("Lobby", () => {
       unlimitedInk: false,
       clearCanvasEachRound: false,
     },
+    // What the host picked; the lobby reads the effective ones above, the
+    // options modal these (see the store).
+    hostGameOptions: DEFAULT_GAME_OPTIONS,
     actions: {
       startGame: mockStartGame,
       updateGameOptions: mockUpdateGameOptions,
@@ -232,6 +236,70 @@ describe("Lobby", () => {
     const dot = optionsButton.querySelector('span[aria-hidden="true"]');
     expect(dot).toBeInTheDocument();
     expect(dot).toHaveClass("bg-amber-400");
+  });
+
+  it("shows no badge while every option is still at its default", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        gameMode: "CLASSIC",
+        gameOptions: DEFAULT_GAME_OPTIONS,
+        players: [],
+      }),
+    );
+
+    render(<Lobby />);
+
+    const optionsButton = screen.getByRole("button", {
+      name: /open options dialog/i,
+    });
+    expect(optionsButton).toHaveAccessibleName("Open options dialog");
+    expect(
+      optionsButton.querySelector('span[aria-hidden="true"]'),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not count an option the mode never shows", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        gameMode: "CLASSIC",
+        gameOptions: {
+          ...DEFAULT_GAME_OPTIONS,
+          // Left over from a spoken game; CLASSIC has no turn order section
+          turnOrderMode: "RANDOM_ORDER",
+        },
+        players: [],
+      }),
+    );
+
+    render(<Lobby />);
+
+    expect(
+      screen.getByRole("button", { name: /open options dialog/i }),
+    ).toHaveAccessibleName("Open options dialog");
+  });
+
+  it("counts the options of the mode on screen", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        gameMode: "ORIGINAL",
+        gameOptions: {
+          ...DEFAULT_GAME_OPTIONS,
+          hideHint: true,
+          turnOrderMode: "RANDOM_ORDER",
+        },
+        players: [],
+      }),
+    );
+
+    render(<Lobby />);
+
+    // The mode itself counts too, on top of its own two options
+    expect(
+      screen.getByRole("button", { name: /open options dialog/i }),
+    ).toHaveAccessibleName("Open options dialog (3)");
   });
 
   it("reveals the player list one card at a time", () => {

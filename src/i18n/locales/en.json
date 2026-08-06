@@ -148,6 +148,7 @@
       "theWordIs": "The new word is",
       "category": "Category: {{category}}",
       "hint": "Hint: {{category}}",
+      "noHint": "No hint this time",
       "impostorNoWord": "You still don't get the word",
       "startDrawing": "Start Drawing",
       "waitingPlayers": "{{count}} of {{total}} players have seen the new word"
@@ -281,14 +282,23 @@
       },
       "impostorGuess": {
         "title": "Impostor Can Guess",
-        "description": "Let the impostor try to guess the secret word to win.",
+        "description": "Let the impostor guess the secret word to win. Caught with an attempt left, they get one last try.",
         "unavailableInMode": "Not available in the \"{{mode}}\" mode.",
         "toggle": "Toggle impostor guessing",
         "attempts": "Number of attempts",
         "increase": "Increase attempts",
-        "decrease": "Decrease attempts"
+        "decrease": "Decrease attempts",
+        "loseWhenOutOfGuesses": {
+          "title": "Lose on the last attempt",
+          "description": "The game ends with the impostor defeated as soon as they use up every attempt.",
+          "toggle": "Toggle losing on the last attempt"
+        }
       },
       "confirm": "Save Options",
+      "reset": {
+        "label": "Reset",
+        "toggle": "Reset every option to its default"
+      },
       "open": "Open options dialog",
       "hideHint": {
         "title": "Hide the Hint",

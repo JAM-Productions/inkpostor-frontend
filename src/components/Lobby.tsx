@@ -4,11 +4,12 @@ import { useGameStore } from "../store/gameState";
 import { useModalStore } from "../store/modalStore";
 import { Users, Loader2, HelpCircle, Settings } from "lucide-react";
 import {
-  DEFAULT_ROUND_TIME,
-  DEFAULT_TURN_ORDER_MODE,
-  isSpokenMode,
+  DEFAULT_GAME_OPTIONS,
+  DRAWING_OPTION_SECTIONS,
   MAX_PLAYERS,
   MIN_PLAYERS,
+  MODE_OPTION_SECTIONS,
+  SECTION_OPTION_KEYS,
 } from "../lib/constants";
 import { LobbyPlayerCard } from "./LobbyPlayerCard";
 import { CopyLinkButton } from "./buttons/CopyLinkButton";
@@ -28,14 +29,19 @@ export const Lobby: React.FC = () => {
   const isHost = myId === hostId;
   const canStart = isHost && players.length >= MIN_PLAYERS;
   const hasRoomId = !!roomId;
-  const changedModeOptions = isSpokenMode(gameMode)
-    ? Number(gameOptions.hideHint !== false) +
-      Number(gameOptions.turnOrderMode !== DEFAULT_TURN_ORDER_MODE)
-    : Number(gameOptions.roundTime !== DEFAULT_ROUND_TIME) +
-      Number(gameOptions.unlimitedInk !== false) +
-      Number(gameOptions.playerColorsEnabled !== false) +
-      Number(gameOptions.clearCanvasEachRound !== true) +
-      Number(gameOptions.impostorGuessEnabled !== false);
+  // Only what the mode actually puts on screen counts: an option it hides can
+  // still hold a value from another mode, and that is nothing the host changed
+  // here. Unknown modes (server deployed first) fall back to the drawing ones.
+  let changedModeOptions = 0;
+
+  for (const section of MODE_OPTION_SECTIONS[gameMode] ??
+    DRAWING_OPTION_SECTIONS) {
+    for (const key of SECTION_OPTION_KEYS[section]) {
+      if (gameOptions[key] !== DEFAULT_GAME_OPTIONS[key]) {
+        changedModeOptions++;
+      }
+    }
+  }
   const optionsChangedCount =
     Number(gameMode !== "CLASSIC") + changedModeOptions;
 

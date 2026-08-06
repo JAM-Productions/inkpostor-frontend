@@ -44,21 +44,19 @@ test.describe("Options Modal E2E Suite", () => {
     await inkToggle.click();
     await expect(inkToggle).toHaveAttribute("aria-checked", "true");
 
-    // Toggle Impostor Can Guess
+    // Impostor Can Guess is on by default, so its stepper is already there
     const guessToggle = page.locator('button[aria-label*="impostor"i]').first();
-    await guessToggle.click();
     await expect(guessToggle).toHaveAttribute("aria-checked", "true");
 
-    // Decrease attempts (from default 3 to 2)
+    // Already at the minimum, so there is nothing left to take away
     const decreaseAttemptsBtn = page
       .locator(
         'button[aria-label*="decrease"i], button[aria-label*="disminuir"i]',
       )
       .first();
-    await expect(decreaseAttemptsBtn).toBeEnabled();
-    await decreaseAttemptsBtn.click();
+    await expect(decreaseAttemptsBtn).toBeDisabled();
 
-    // Increase attempts (from 2 back to 3)
+    // Increase attempts (from the default 1 to 2)
     const increaseAttemptsBtn = page
       .locator(
         'button[aria-label*="increase"i], button[aria-label*="aumentar"i]',
@@ -66,6 +64,7 @@ test.describe("Options Modal E2E Suite", () => {
       .first();
     await expect(increaseAttemptsBtn).toBeEnabled();
     await increaseAttemptsBtn.click();
+    await expect(decreaseAttemptsBtn).toBeEnabled();
 
     // Confirm & save options
     const confirmBtn = page.locator('[data-testid="confirm-options-button"]');
@@ -100,5 +99,31 @@ test.describe("Options Modal E2E Suite", () => {
     const closeBtn = page.locator('[data-testid="close-modal-button"]').first();
     await closeBtn.click();
     await expect(optionsDialog).toBeHidden({ timeout: 10000 });
+
+    // 5. Reset puts the whole room back to how it starts, mode included, and
+    // closes on its own
+    await openOptionsBtn.click();
+    await expect(optionsDialog).toBeVisible({ timeout: 10000 });
+    await page.locator('[data-testid="reset-options-button"]').click();
+    await expect(optionsDialog).toBeHidden({ timeout: 10000 });
+
+    await openOptionsBtn.click();
+    await expect(optionsDialog).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[aria-live="polite"] p')).toHaveText(
+      /Classic|Clásico|Clàssic/i,
+    );
+    await expect(
+      page.locator('button[role="radio"]').filter({ hasText: /20/ }).first(),
+    ).toHaveAttribute("aria-checked", "true");
+    await expect(inkToggle).toHaveAttribute("aria-checked", "false");
+    // The guess is on by default, so reset brings it back rather than clearing it
+    await expect(guessToggle).toHaveAttribute("aria-checked", "true");
+    await expect(
+      page
+        .locator(
+          'button[aria-label*="decrease"i], button[aria-label*="disminuir"i]',
+        )
+        .first(),
+    ).toBeDisabled();
   });
 });

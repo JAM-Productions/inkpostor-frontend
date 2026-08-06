@@ -59,7 +59,7 @@ test.describe("E2E: Game Mode Staging", () => {
     ).toBeVisible();
   });
 
-  test("a mode that resets the drawing options never saves the stale ones", async ({
+  test("a mode that hides the drawing options gives them back on the way out", async ({
     page,
   }) => {
     await page.goto("/");
@@ -97,13 +97,17 @@ test.describe("E2E: Game Mode Staging", () => {
     await page.locator('[data-testid="confirm-options-button"]').click();
     await expect(dialog).toBeHidden({ timeout: 10000 });
 
-    // Back in a drawing mode the settings are the mode's defaults, not the 40s
-    // and unlimited ink that were staged before the switch.
+    // The spoken mode has no use for them, so they are gone from the screen...
     await openOptionsBtn.click();
+    await expect(page.locator('button[role="radio"]').first()).toHaveCount(1);
+    await expect(inkToggle).toHaveCount(0);
+
+    // ...but picking a drawing mode again hands them back exactly as they were:
+    // the mode masks the host's settings, it doesn't eat them.
     await page.getByRole("button", { name: /Select Classic mode/i }).click();
     await expect(
-      page.locator('button[role="radio"]').filter({ hasText: /20/ }).first(),
+      page.locator('button[role="radio"]').filter({ hasText: /40/ }).first(),
     ).toHaveAttribute("aria-checked", "true");
-    await expect(inkToggle).toHaveAttribute("aria-checked", "false");
+    await expect(inkToggle).toHaveAttribute("aria-checked", "true");
   });
 });

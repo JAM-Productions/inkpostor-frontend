@@ -1,14 +1,14 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("High-Value Production Test: Cross-Language Impostor Secret Word Validation", () => {
-  test("Impostor guesses secret word across localized languages and resolves game outcome", async ({
+test.describe("Deep E2E: Impostor Loses On The Last Attempt", () => {
+  test("Lethal pool enabled ➔ Impostor guesses wrong ➔ game ends with the Inkpostor defeated", async ({
     browser,
   }) => {
-    // 1. Host creates room with Impostor Can Guess enabled
+    // 1. Host creates room & makes the guess pool lethal
     const ctxHost = await browser.newContext();
     const pageHost = await ctxHost.newPage();
     await pageHost.goto("/");
-    await pageHost.locator("#player-name").fill("HostCrossLang");
+    await pageHost.locator("#player-name").fill("HostLethal");
     await pageHost.locator('[data-testid="create-room-btn"]').click();
 
     const roomCodeElement = pageHost.locator(
@@ -21,60 +21,53 @@ test.describe("High-Value Production Test: Cross-Language Impostor Secret Word V
       .locator("button:has(svg.lucide-settings)")
       .first();
     await openOptionsBtn.click();
-    // Impostor Can Guess is on by default: confirm it rather than turn it on
-    const guessToggle = pageHost
-      .locator('button[aria-label*="impostor"i]')
-      .first();
-    await expect(guessToggle).toHaveAttribute("aria-checked", "true");
+
+    const loseToggle = pageHost.getByRole("switch", {
+      name: /losing on the last attempt|derrota al gastar|derrota en gastar/i,
+    });
+    await loseToggle.click();
+    await expect(loseToggle).toHaveAttribute("aria-checked", "true");
+
     await pageHost.locator('[data-testid="confirm-options-button"]').click();
 
-    // 2. Player 2 (Spanish UI) joins
+    // 2. Players 2 and 3 join
     const ctxP2 = await browser.newContext();
     const pageP2 = await ctxP2.newPage();
     await pageP2.goto("/");
-    await pageP2.locator('[data-testid="language-switcher-btn"]').click();
-    await pageP2.locator('[data-testid="lang-option-es"]').click();
-    await pageP2.locator("#player-name").fill("P2Spanish");
+    await pageP2.locator("#player-name").fill("P2Lethal");
     await pageP2.locator("#room-code").fill(roomCode);
     await pageP2.locator('[data-testid="join-room-btn"]').click();
 
-    // 3. Player 3 joins
     const ctxP3 = await browser.newContext();
     const pageP3 = await ctxP3.newPage();
     await pageP3.goto("/");
-    await pageP3.locator("#player-name").fill("P3CrossLang");
+    await pageP3.locator("#player-name").fill("P3Lethal");
     await pageP3.locator("#room-code").fill(roomCode);
     await pageP3.locator('[data-testid="join-room-btn"]').click();
 
-    await expect(pageHost.locator("body")).toContainText("P3CrossLang", {
+    await expect(pageHost.locator("body")).toContainText("P3Lethal", {
       timeout: 15000,
     });
 
-    const startBtn = pageHost.locator('[data-testid="start-game-btn"]');
+    // 3. Start game & reveal roles, keeping the impostor's page
+    const startBtn = pageHost.locator("button", {
+      hasText: /START GAME|INICIAR/i,
+    });
     await expect(startBtn).toBeEnabled({ timeout: 15000 });
     await startBtn.click();
 
     const pages = [pageHost, pageP2, pageP3];
-    let secretWord = "";
     let impostorPage = pageHost;
 
-    // Role reveal
     for (const page of pages) {
       const card = page.locator('[data-testid="reveal-role-card"]');
       await expect(card).toBeVisible({ timeout: 15000 });
-      await card.click();
+      // The card only shows the role while it is held down
+      await card.dispatchEvent("mousedown");
+      await page.waitForTimeout(200);
 
-      const text = await card.innerText();
-      if (text.includes("INKPOSTOR") || text.includes("Inkpostor")) {
+      if (await page.locator('img[alt="Inkpostor Logo"]').isVisible()) {
         impostorPage = page;
-      } else {
-        const lines = text
-          .split("\n")
-          .map((l) => l.trim())
-          .filter(Boolean);
-        if (lines.length >= 2) {
-          secretWord = lines[1];
-        }
       }
 
       const proceedBtn = page.locator('[data-testid="proceed-to-drawing-btn"]');
@@ -86,30 +79,40 @@ test.describe("High-Value Production Test: Cross-Language Impostor Secret Word V
       await expect(page.locator("canvas")).toBeVisible({ timeout: 15000 });
     }
 
-    // Impostor opens guess control and submits secret word guess
+    // 4. The impostor spends their only attempt on a word that cannot match.
+    // The guess button is hidden while they are the one drawing, so hand the
+    // turn over first if the game happened to start on them.
     const guessControlBtn = impostorPage
       .locator('button[aria-label*="guess"i], button[aria-label*="adivinar"i]')
       .first();
-    if (await guessControlBtn.isVisible()) {
-      await guessControlBtn.click();
+    const doneTurnBtn = impostorPage.locator("button", {
+      hasText: /^(Done|Hecho|Fet)$/,
+    });
+    // Whichever of the two the header settles on tells us whose turn it is
+    await expect(guessControlBtn.or(doneTurnBtn).first()).toBeVisible({
+      timeout: 15000,
+    });
+    if (await doneTurnBtn.isVisible()) {
+      await doneTurnBtn.click();
     }
+    await expect(guessControlBtn).toBeVisible({ timeout: 15000 });
+    await guessControlBtn.click();
 
     const guessInput = impostorPage.locator(
       '[data-testid="impostor-guess-input"]',
     );
-    if ((await guessInput.isVisible()) && secretWord) {
-      await guessInput.fill(secretWord);
-      const submitGuessBtn = impostorPage.locator(
-        '[data-testid="submit-guess-btn"]',
-      );
-      await submitGuessBtn.click();
-    }
+    await expect(guessInput).toBeVisible({ timeout: 10000 });
+    await guessInput.fill("zzzznotaword");
+    await impostorPage.locator('[data-testid="submit-guess-btn"]').click();
 
-    // Verify game state updates cleanly on all pages
+    // 5. Everyone lands on RESULTS with the crewmates winning, no ejection
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Your turn|turno|Dibujando|Drawing|Won|Victoria|Defeated|Result/i,
+        /Inkpostor Defeated|Inkpostor Derrotado|Inkpostor Derrotat/i,
         { timeout: 15000 },
+      );
+      await expect(page.locator('[data-testid="play-again-btn"]')).toHaveCount(
+        page === pageHost ? 1 : 0,
       );
     }
 

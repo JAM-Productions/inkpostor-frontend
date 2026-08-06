@@ -148,6 +148,7 @@
       "theWordIs": "La nova paraula és",
       "category": "Categoria: {{category}}",
       "hint": "Pista: {{category}}",
+      "noHint": "Aquesta vegada no hi ha pista",
       "impostorNoWord": "Segueixes sense conèixer la paraula",
       "startDrawing": "Començar a Dibuixar",
       "waitingPlayers": "{{count}} de {{total}} jugadors han vist la nova paraula"
@@ -281,14 +282,23 @@
       },
       "impostorGuess": {
         "title": "L'impostor pot endevinar",
-        "description": "Permet que l'impostor intenti endevinar la paraula secreta per guanyar.",
+        "description": "Permet a l'impostor guanyar endevinant la paraula. Si l'eliminen amb algun intent lliure, tindrà una última oportunitat.",
         "unavailableInMode": "No disponible en el mode \"{{mode}}\".",
         "toggle": "Alternar endevinació de l'impostor",
         "attempts": "Nombre d'intents",
         "increase": "Augmentar intents",
-        "decrease": "Disminuir intents"
+        "decrease": "Disminuir intents",
+        "loseWhenOutOfGuesses": {
+          "title": "Perdre en gastar l'últim intent",
+          "description": "La partida acaba amb l'impostor derrotat tan bon punt gasta tots els seus intents.",
+          "toggle": "Alternar la derrota en gastar l'últim intent"
+        }
       },
       "confirm": "Guardar opcions",
+      "reset": {
+        "label": "Restablir",
+        "toggle": "Restablir totes les opcions al seu valor per defecte"
+      },
       "open": "Obrir diàleg de opcions",
       "hideHint": {
         "title": "Amagar la pista",

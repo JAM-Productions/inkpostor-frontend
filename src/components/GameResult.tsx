@@ -19,12 +19,19 @@ export const GameResult: React.FC = () => {
   const impostorGuessedCorrectly = useGameStore(
     (state) => state.impostorGuessedCorrectly,
   );
+  const impostorOutOfGuesses = useGameStore(
+    (state) => state.impostorOutOfGuesses,
+  );
 
   const me = players.find((p) => p.id === myId);
   const hasConfirmedNewRound = me?.hasConfirmedNewRound;
 
-  // If the impostor guessed the word they win, even if they were ejected.
-  const impostorCaught = ejectedId === impostorId && !impostorGuessedCorrectly;
+  // If the impostor guessed the word they win, even if they were ejected. They
+  // can also lose without ever being ejected, by spending a lethal guess pool —
+  // which only the server knows, hence the flag.
+  const impostorCaught =
+    (ejectedId === impostorId || impostorOutOfGuesses) &&
+    !impostorGuessedCorrectly;
   const isGameOver =
     impostorCaught || playersRemaining.length < MIN_PLAYERS || gameEnded;
   const impostorName =

@@ -22,10 +22,11 @@ test.describe("Production Qualification: In-Phase Impostor Guesses", () => {
       .locator("button:has(svg.lucide-settings)")
       .first();
     await openOptionsBtn.click();
+    // Impostor Can Guess is on by default: confirm it rather than turn it on
     const guessToggle = pageHost
       .locator('button[aria-label*="impostor"i]')
       .first();
-    await guessToggle.click();
+    await expect(guessToggle).toHaveAttribute("aria-checked", "true");
     await pageHost.locator('[data-testid="confirm-options-button"]').click();
 
     // 2. Join Players 2 & 3
