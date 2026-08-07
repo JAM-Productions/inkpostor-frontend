@@ -2,7 +2,6 @@
 
 A real-time multiplayer drawing and deduction game built with React, Vite, and Socket.IO.
 
-
 ## Concept
 
 Inkpostor is a creative social deduction game. Players are given a secret word and must draw it together on a shared canvas. However, one player is the **Inkpostor**: they don't know the word and must blend in by looking at what others are drawing. After the drawing phase, players vote on who they think the Inkpostor is!
