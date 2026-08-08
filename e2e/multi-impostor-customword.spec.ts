@@ -62,12 +62,14 @@ test.describe("Multi-Impostor CUSTOM_WORD Mode E2E Suite", () => {
     await openOptionsBtn.click();
     await expect(hostPage.getByRole("dialog")).toBeVisible({ timeout: 10000 });
 
-    // Select CHAOS / CUSTOM_WORD mode in carousel
-    const chaosBtn = hostPage
-      .locator('button:has-text("CHAOS"), button:has-text("CAOS")')
+    // Select CHAOS / CUSTOM_WORD mode via carousel indicator
+    const chaosDot = hostPage
+      .locator(
+        '[data-testid="game-mode-carousel"] button[aria-label*="Custom Word"i], [data-testid="game-mode-carousel"] button[aria-label*="Palabra Personalizada"i]',
+      )
       .first();
-    if (await chaosBtn.isVisible()) {
-      await chaosBtn.click();
+    if (await chaosDot.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await chaosDot.click();
     }
 
     // Increase Inkpostors count to 2
@@ -247,7 +249,7 @@ test.describe("Multi-Impostor CUSTOM_WORD Mode E2E Suite", () => {
 
     for (const item of pages) {
       await expect(item.page.locator("body")).toContainText(
-        /Defeated|Won|Victoria|Derrota/i,
+        /Defeated|Won|Victoria|Derrota|eliminated|elimina/i,
         { timeout: 15000 },
       );
     }

@@ -38,8 +38,10 @@ test.describe("Options Modal E2E Suite", () => {
     await expect(time40Btn).toHaveAttribute("aria-checked", "true");
 
     // Toggle Unlimited Ink
-    const inkToggle = page
-      .locator('button[aria-label*="ink"i], button[aria-label*="tinta"i]')
+    const inkToggle = optionsDialog
+      .locator(
+        'button[aria-label*="ink limit"i], button[aria-label*="límite de tinta"i], button[aria-label*="limit"i]',
+      )
       .first();
     await inkToggle.click();
     await expect(inkToggle).toHaveAttribute("aria-checked", "true");
@@ -49,19 +51,15 @@ test.describe("Options Modal E2E Suite", () => {
     await expect(guessToggle).toHaveAttribute("aria-checked", "true");
 
     // Already at the minimum, so there is nothing left to take away
-    const decreaseAttemptsBtn = page
-      .locator(
-        'button[aria-label*="decrease"i], button[aria-label*="disminuir"i]',
-      )
-      .first();
+    const decreaseAttemptsBtn = page.locator(
+      '[data-testid="decrease-guesses-btn"]',
+    );
     await expect(decreaseAttemptsBtn).toBeDisabled();
 
     // Increase attempts (from the default 1 to 2)
-    const increaseAttemptsBtn = page
-      .locator(
-        'button[aria-label*="increase"i], button[aria-label*="aumentar"i]',
-      )
-      .first();
+    const increaseAttemptsBtn = page.locator(
+      '[data-testid="increase-guesses-btn"]',
+    );
     await expect(increaseAttemptsBtn).toBeEnabled();
     await increaseAttemptsBtn.click();
     await expect(decreaseAttemptsBtn).toBeEnabled();

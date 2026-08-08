@@ -84,7 +84,9 @@ test.describe("E2E: Game Mode Staging", () => {
       .first()
       .click();
     const inkToggle = page
-      .locator('button[aria-label*="ink"i], button[aria-label*="tinta"i]')
+      .locator(
+        'button[aria-label*="ink limit"i], button[aria-label*="límite de tinta"i], button[aria-label*="limit"i]',
+      )
       .first();
     await inkToggle.click();
     await page.locator('[data-testid="confirm-options-button"]').click();

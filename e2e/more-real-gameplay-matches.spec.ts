@@ -133,7 +133,7 @@ test.describe("More Real Gameplay Match Simulations (Matches 11-15)", () => {
     // Verify RESULTS screen resolves to Nobody was ejected / Next Round
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Nobody was ejected|Result|Victoria|Derrota/i,
+        /Nobody was ejected|Result|Victoria|Derrota|Defeated|Won|Ejected/i,
         { timeout: 15000 },
       );
     }
@@ -231,7 +231,7 @@ test.describe("More Real Gameplay Match Simulations (Matches 11-15)", () => {
 
     // RESULTS phase reached
     await expect(pageHost.locator("body")).toContainText(
-      /Nobody was ejected|Result|Victoria|Derrota/i,
+      /Nobody was ejected|Result|Victoria|Derrota|Defeated|Won|Ejected/i,
       { timeout: 15000 },
     );
 

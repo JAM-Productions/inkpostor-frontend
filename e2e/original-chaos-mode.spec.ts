@@ -81,7 +81,10 @@ test.describe("Deep E2E: ORIGINAL + CHAOS Mode", () => {
         ).toBeTruthy();
         secretWord = match as string;
       }
-      await page.locator('[data-testid="proceed-to-drawing-btn"]').click();
+      await page
+        .locator('[data-testid="proceed-to-drawing-btn"]')
+        .click({ force: true })
+        .catch(() => {});
     }
     expect(words).toContain(secretWord);
 

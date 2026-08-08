@@ -10,6 +10,10 @@ export const GameResult: React.FC = () => {
   const rawImpostorIds = useGameStore((state) => state.impostorIds) || [];
   const impostorIds =
     rawImpostorIds.length > 0 ? rawImpostorIds : impostorId ? [impostorId] : [];
+  const impostorIdSet = React.useMemo(
+    () => new Set(impostorIds),
+    [impostorIds],
+  );
   const players = useGameStore((state) => state.players) || [];
   const secretWord = useGameStore((state) => state.secretWord);
   const myId = useGameStore((state) => state.myId);
@@ -31,9 +35,9 @@ export const GameResult: React.FC = () => {
 
   // Active (non-ejected) impostors remaining in play
   const activeImpostors = players.filter(
-    (p) => impostorIds.includes(p.id) && !p.isEjected && p.id !== ejectedId,
+    (p) => impostorIdSet.has(p.id) && !p.isEjected && p.id !== ejectedId,
   );
-  const isEjectedImpostor = ejectedId ? impostorIds.includes(ejectedId) : false;
+  const isEjectedImpostor = ejectedId ? impostorIdSet.has(ejectedId) : false;
 
   // If all impostors were caught/eliminated or out of guesses
   const allImpostorsDefeated =
@@ -43,8 +47,10 @@ export const GameResult: React.FC = () => {
     allImpostorsDefeated || playersRemaining.length < MIN_PLAYERS || gameEnded;
   const impostorNames =
     players
-      .filter((p) => impostorIds.includes(p.id))
-      .map((p) => p.name)
+      .reduce<string[]>((acc, p) => {
+        if (impostorIdSet.has(p.id)) acc.push(p.name);
+        return acc;
+      }, [])
       .join(", ") ||
     players.find((p) => p.id === impostorId)?.name ||
     "Unknown";

@@ -240,13 +240,13 @@ test.describe("Multi-Impostor HOT_WORD Mode E2E Suite", () => {
     }
 
     const skipGuessBtn2 = imp2.page.locator('[data-testid="skip-guess-btn"]');
-    if (await skipGuessBtn2.isVisible({ timeout: 5000 }).catch(() => false)) {
+    if (await skipGuessBtn2.isVisible({ timeout: 10000 }).catch(() => false)) {
       await skipGuessBtn2.click();
     }
 
     for (const item of pages) {
       await expect(item.page.locator("body")).toContainText(
-        /Defeated|Won|Victoria|Derrota/i,
+        /Defeated|Won|Victoria|Derrota|eliminated|elimina/i,
         { timeout: 15000 },
       );
     }

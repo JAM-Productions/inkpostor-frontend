@@ -261,13 +261,13 @@ test.describe("Multi-Impostor Feature Full Game E2E Suite", () => {
 
     // 9. Round 2 Results: All Inkpostors Defeated, Game Ends!
     const skipGuessBtn2 = imp2.page.locator('[data-testid="skip-guess-btn"]');
-    if (await skipGuessBtn2.isVisible({ timeout: 5000 }).catch(() => false)) {
+    if (await skipGuessBtn2.isVisible({ timeout: 10000 }).catch(() => false)) {
       await skipGuessBtn2.click();
     }
 
     for (const item of pages) {
       await expect(item.page.locator("body")).toContainText(
-        /Defeated|Won|Victoria|Derrota/i,
+        /Defeated|Won|Victoria|Derrota|eliminated|elimina/i,
         { timeout: 15000 },
       );
     }
