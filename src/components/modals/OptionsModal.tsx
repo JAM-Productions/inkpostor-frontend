@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { BaseModal } from "./BaseModal";
 import { GameModeCarousel } from "./GameModeCarousel";
 import { ClearCanvasSection } from "./options/ClearCanvasSection";
+import { ImpostorCountSection } from "./options/ImpostorCountSection";
 import { ImpostorGuessSection } from "./options/ImpostorGuessSection";
 import { OptionsFooter } from "./options/OptionsFooter";
 import { RoundTimeSection } from "./options/RoundTimeSection";
@@ -16,6 +17,7 @@ import {
   DRAWING_OPTION_SECTIONS,
   MAX_IMPOSTOR_GUESSES,
   MIN_IMPOSTOR_GUESSES,
+  MIN_IMPOSTORS,
   MODE_LOCKED_OPTIONS,
   MODE_OPTION_SECTIONS,
   type OptionSection,
@@ -35,6 +37,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const { t } = useTranslation();
   const hostGameOptions = useGameStore((state) => state.hostGameOptions);
   const savedGameMode = useGameStore((state) => state.gameMode);
+  const players = useGameStore((state) => state.players);
   const actions = useGameStore((state) => state.actions);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
@@ -47,6 +50,12 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   );
   const [playerColorsEnabled, setPlayerColorsEnabled] = useState(
     hostGameOptions.playerColorsEnabled,
+  );
+  const [impostorCount, setImpostorCount] = useState(
+    hostGameOptions.impostorCount ?? 1,
+  );
+  const [revealImpostorTeammates, setRevealImpostorTeammates] = useState(
+    hostGameOptions.revealImpostorTeammates ?? true,
   );
   const [impostorGuessEnabled, setImpostorGuessEnabled] = useState(
     hostGameOptions.impostorGuessEnabled,
@@ -63,6 +72,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const [stagedGameMode, setStagedGameMode] = useState(savedGameMode);
 
   const isHost = myId === hostId;
+  const playerCount = players?.length || 0;
+  const maxImpostors = Math.max(1, Math.floor((playerCount - 1) / 2));
   // The carousel is staged with the rest of the form, so it controls the
   // settings shown in the modal without changing the room until it is saved.
   const gameMode = isHost ? stagedGameMode : savedGameMode;
@@ -79,6 +90,11 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
         unlimitedInk,
         clearCanvasEachRound,
         playerColorsEnabled,
+        impostorCount: Math.min(
+          maxImpostors,
+          Math.max(MIN_IMPOSTORS, impostorCount),
+        ),
+        revealImpostorTeammates,
         impostorGuessEnabled,
         impostorGuessAttempts,
         // This setting has no meaning while guessing is disabled, so do not
@@ -93,6 +109,12 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const displayed = applyModeLockedOptions(stagedOptions, gameMode);
   const isClearCanvasLocked = "clearCanvasEachRound" in lockedOptions;
   const isImpostorGuessLocked = "impostorGuessEnabled" in lockedOptions;
+
+  const changeImpostorCount = (delta: number) => {
+    setImpostorCount((previous) =>
+      Math.min(maxImpostors, Math.max(MIN_IMPOSTORS, previous + delta)),
+    );
+  };
 
   const changeImpostorGuessAttempts = (delta: number) => {
     setImpostorGuessAttempts((previous) =>
@@ -132,6 +154,19 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
           gameMode={gameMode}
           onChange={setStagedGameMode}
         />
+
+        {shows("impostorCount") && (
+          <ImpostorCountSection
+            count={displayed.impostorCount}
+            maxImpostors={maxImpostors}
+            revealTeammates={displayed.revealImpostorTeammates}
+            isHost={isHost}
+            onCountChange={changeImpostorCount}
+            onRevealTeammatesChange={() =>
+              setRevealImpostorTeammates(!revealImpostorTeammates)
+            }
+          />
+        )}
 
         {shows("turnOrder") && (
           <TurnOrderSection

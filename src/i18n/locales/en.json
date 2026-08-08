@@ -37,7 +37,9 @@
       "nobodyEjected": "Nobody was ejected...",
       "wasEjected": "{{name}} was ejected.",
       "stillAmongUs": "Inkpostor is still among us...",
+      "impostorEjectedMoreLeft": "{{name}} was an Inkpostor! There are still {{count}} Inkpostors left among us.",
       "wasImpostor": "{{name}} was the Inkpostor!",
+      "wereImpostors": "The Inkpostors were {{names}}!",
       "impostorGuessedWord": "{{name}} guessed the word!",
       "secretWord": "The secret word was",
       "noSecretWord": "No word was chosen",
@@ -131,6 +133,7 @@
       "yourSecretRole": "Your Secret Role",
       "youAreInkpostor": "You are the",
       "inkpostor": "Inkpostor",
+      "otherImpostors": "Fellow Inkpostors: {{names}}",
       "hint": "Hint: {{category}}",
       "theWordIs": "The word is",
       "category": "Category: {{category}}",
@@ -252,6 +255,17 @@
           "description": "The in-person game, but the secret word is one the players write before starting."
         },
         "inPerson": "Best played in person"
+      },
+      "impostorCount": {
+        "title": "Inkpostors",
+        "description": "Set the number of Inkpostors in the game.",
+        "increase": "Increase Inkpostors",
+        "decrease": "Decrease Inkpostors",
+        "revealTeammates": {
+          "title": "Reveal Teammate Inkpostors",
+          "description": "Show Inkpostors who their fellow Inkpostors are during role reveal.",
+          "toggle": "Toggle teammate reveal"
+        }
       },
       "time": {
         "title": "Drawing Time per Round",

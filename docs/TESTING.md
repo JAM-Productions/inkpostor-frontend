@@ -115,6 +115,43 @@ flowchart TD
 | 28 | `original-mode.spec.ts` | `ORIGINAL` Spoken Round Loop | Full round loop without ever reaching a canvas; `hideHint` keeps the category from the Inkpostor |
 | 29 | `original-chaos-mode.spec.ts` | `ORIGINAL_CHAOS` Player-Written Word | Word selection first, then the spoken round with no canvas |
 | 30 | `original-turn-order.spec.ts` | `ORIGINAL` Turn Order Options | `FIXED_ORDER` keeps the announced order between rounds; `RANDOM_ORDER` redraws it with every player still in it |
+| 31 | `multi-impostor.spec.ts` | Multi-Impostor CLASSIC Full Game Journey | Configure 2 Inkpostors in 5-player lobby ➔ Teammate role reveal ➔ Round 1 Inkpostor ejection (1 remaining) ➔ Round 2 final Inkpostor ejection & victory |
+| 32 | `multi-impostor-hotword.spec.ts` | Multi-Impostor `HOT_WORD` Game Journey | 5-player `HOT_WORD` mode with 2 Inkpostors ➔ Round 1 ejection ➔ Word Reveal phase for new secret word ➔ Round 2 final ejection |
+| 33 | `multi-impostor-customword.spec.ts` | Multi-Impostor `CUSTOM_WORD` Chaos Journey | 5-player Chaos mode ➔ Word Selection excludes words from BOTH Inkpostors ➔ Round 1 ejection ➔ Round 2 victory |
+| 34 | `multi-impostor-original.spec.ts` | Multi-Impostor `ORIGINAL` Spoken Journey | 5-player Spoken mode ➔ Teammate role reveal ➔ ORDER_INFO phase ➔ Round 1 ejection ➔ ORDER_INFO Round 2 ➔ Round 2 victory |
+
+### Multi-Impostor E2E Game Flow Architecture
+
+```mermaid
+flowchart TD
+    subgraph Lobby & Staging
+        Lobby[5 Players Join Lobby] --> Staging[Host Sets Impostor Count = 2]
+        Staging --> SubOption[Reveal Teammates Sub-Option Enabled]
+    end
+
+    subgraph Phase 1: Role Reveal
+        SubOption --> StartGame[Game Starts]
+        StartGame --> RoleReveal[2 Inkpostors & 3 Crewmates Assigned]
+        RoleReveal --> TeammateCheck[Both Inkpostors see fellow Inkpostor in 'impostor-teammates']
+    end
+
+    subgraph Phase 2 & 3: Round 1 Loop
+        TeammateCheck --> Drawing1[Round 1 Drawing / Word Turns]
+        Drawing1 --> Voting1[Round 1 Voting]
+        Voting1 --> Eject1[Unanimous Vote Ejects Inkpostor 1]
+        Eject1 --> LastChance1[Inkpostor 1 Skips Final Guess]
+        LastChance1 --> Results1[Results: 1 Inkpostor Remaining - Game Continues]
+    end
+
+    subgraph Phase 4 & 5: Round 2 Loop & Victory
+        Results1 --> NextRound[All Active Players Confirm Next Round]
+        NextRound --> Drawing2[Round 2 Drawing / Word Reveal]
+        Drawing2 --> Voting2[Round 2 Voting]
+        Voting2 --> Eject2[Unanimous Vote Ejects Inkpostor 2]
+        Eject2 --> LastChance2[Inkpostor 2 Skips Final Guess]
+        LastChance2 --> Defeated[Final Victory: Inkpostor Defeated & Play Again Button Enabled]
+    end
+```
 
 ---
 

@@ -87,6 +87,28 @@ describe("RoleReveal", () => {
     expect(screen.getByText("Hint: Animals")).toBeInTheDocument();
   });
 
+  it("renders fellow Inkpostors message when impostorTeammates exist", () => {
+    (useGameStore as any).mockImplementation((selector: any) => {
+      const state = {
+        ...mockStateBase,
+        amIImpostor: true,
+        impostorTeammates: ["Bob", "Charlie"],
+      };
+      return selector(state);
+    });
+
+    render(<RoleReveal />);
+
+    const revealButton = screen
+      .getByText("Press and hold to reveal")
+      .closest("button");
+    fireEvent.mouseDown(revealButton!);
+
+    expect(screen.getByTestId("impostor-teammates")).toHaveTextContent(
+      "Fellow Inkpostors: Bob, Charlie",
+    );
+  });
+
   it.each(["ORIGINAL", "ORIGINAL_CHAOS"])(
     "does not offer to start drawing in %s",
     (gameMode) => {

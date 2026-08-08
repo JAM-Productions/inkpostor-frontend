@@ -95,6 +95,7 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
             <span
               className="w-6 text-center text-lg font-bold tabular-nums text-white"
               aria-live="polite"
+              data-testid="impostor-guess-attempts-value"
             >
               {attempts}
             </span>
