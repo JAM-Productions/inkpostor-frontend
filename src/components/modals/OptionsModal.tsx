@@ -74,6 +74,10 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const isHost = myId === hostId;
   const playerCount = players?.length || 0;
   const maxImpostors = Math.max(1, Math.floor((playerCount - 1) / 2));
+  const effectiveImpostorCount = Math.min(
+    maxImpostors,
+    Math.max(MIN_IMPOSTORS, impostorCount),
+  );
   // The carousel is staged with the rest of the form, so it controls the
   // settings shown in the modal without changing the room until it is saved.
   const gameMode = isHost ? stagedGameMode : savedGameMode;
@@ -90,11 +94,11 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
         unlimitedInk,
         clearCanvasEachRound,
         playerColorsEnabled,
-        impostorCount: Math.min(
-          maxImpostors,
-          Math.max(MIN_IMPOSTORS, impostorCount),
-        ),
-        revealImpostorTeammates,
+        impostorCount: effectiveImpostorCount,
+        revealImpostorTeammates:
+          effectiveImpostorCount > 1
+            ? revealImpostorTeammates
+            : DEFAULT_GAME_OPTIONS.revealImpostorTeammates,
         impostorGuessEnabled,
         impostorGuessAttempts,
         // This setting has no meaning while guessing is disabled, so do not

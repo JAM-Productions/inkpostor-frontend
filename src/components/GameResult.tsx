@@ -8,12 +8,16 @@ export const GameResult: React.FC = () => {
   const { t } = useTranslation();
   const impostorId = useGameStore((state) => state.impostorId);
   const rawImpostorIds = useGameStore((state) => state.impostorIds) || [];
-  const impostorIds =
-    rawImpostorIds.length > 0 ? rawImpostorIds : impostorId ? [impostorId] : [];
-  const impostorIdSet = React.useMemo(
-    () => new Set(impostorIds),
-    [impostorIds],
-  );
+  const impostorIdSet = React.useMemo(() => {
+    const list =
+      rawImpostorIds.length > 0
+        ? rawImpostorIds
+        : impostorId
+          ? [impostorId]
+          : [];
+    return new Set(list);
+  }, [rawImpostorIds, impostorId]);
+  const impostorIds = Array.from(impostorIdSet);
   const players = useGameStore((state) => state.players) || [];
   const secretWord = useGameStore((state) => state.secretWord);
   const myId = useGameStore((state) => state.myId);
@@ -30,21 +34,48 @@ export const GameResult: React.FC = () => {
     (state) => state.impostorOutOfGuesses,
   );
 
+  const ejectedWasImpostorState = useGameStore(
+    (state: any) => state.ejectedWasImpostor,
+  );
+  const remainingImpostorCountState = useGameStore(
+    (state: any) => state.remainingImpostorCount,
+  );
+
   const me = players.find((p) => p.id === myId);
   const hasConfirmedNewRound = me?.hasConfirmedNewRound;
 
-  // Active (non-ejected) impostors remaining in play
+  // Active (non-ejected) players
   const activeImpostors = players.filter(
     (p) => impostorIdSet.has(p.id) && !p.isEjected && p.id !== ejectedId,
   );
-  const isEjectedImpostor = ejectedId ? impostorIdSet.has(ejectedId) : false;
+  const activeCrewmates = players.filter(
+    (p) => !impostorIdSet.has(p.id) && !p.isEjected && p.id !== ejectedId,
+  );
+  const isEjectedImpostor =
+    ejectedWasImpostorState ??
+    (ejectedId ? impostorIdSet.has(ejectedId) : false);
+  const remainingImpostorCount =
+    remainingImpostorCountState ?? activeImpostors.length;
 
-  // If all impostors were caught/eliminated or out of guesses
+  const isMultiImpostor = impostorIds.length > 1;
+  const hasKnownImpostors = impostorIdSet.size > 0;
+
+  // Crewmates win if all known impostors are eliminated or out of guesses (and no correct guess)
   const allImpostorsDefeated =
-    (activeImpostors.length === 0 || gameEnded || impostorOutOfGuesses) &&
+    hasKnownImpostors &&
+    (activeImpostors.length === 0 || impostorOutOfGuesses) &&
     !impostorGuessedCorrectly;
-  const isGameOver =
-    allImpostorsDefeated || playersRemaining.length < MIN_PLAYERS || gameEnded;
+
+  // Impostors win if they guessed correctly, reached parity (when > 1 impostors), or game was ended with impostors remaining
+  const impostorWon =
+    impostorGuessedCorrectly ||
+    (hasKnownImpostors &&
+      (isMultiImpostor
+        ? activeImpostors.length >= activeCrewmates.length
+        : activeCrewmates.length === 0)) ||
+    (gameEnded && activeImpostors.length > 0);
+
+  const isGameOver = gameEnded || allImpostorsDefeated || impostorWon;
   const impostorNames =
     players
       .reduce<string[]>((acc, p) => {
@@ -97,32 +128,31 @@ export const GameResult: React.FC = () => {
           </h1>
 
           <div className="text-xl md:text-2xl text-stone-300 font-medium space-y-2">
-            {!gameEnded &&
-              (!ejectedId ? (
+            {ejectedId ? (
+              <p>{t("result.wasEjected", { name: ejectedName })}</p>
+            ) : (
+              !gameEnded && (
                 <p className="text-stone-400 italic">
                   {t("result.nobodyEjected")}
                 </p>
-              ) : (
-                <>
-                  <p>{t("result.wasEjected", { name: ejectedName })}</p>
-                  {!isGameOver &&
-                    (isEjectedImpostor ? (
-                      <p
-                        className="text-amber-400 font-semibold italic"
-                        data-testid="impostor-ejected-remaining"
-                      >
-                        {t("result.impostorEjectedMoreLeft", {
-                          name: ejectedName,
-                          count: activeImpostors.length,
-                        })}
-                      </p>
-                    ) : (
-                      <p className="text-stone-400 italic">
-                        {t("result.stillAmongUs")}
-                      </p>
-                    ))}
-                </>
-              ))}
+              )
+            )}
+            {!isGameOver && isEjectedImpostor && (
+              <p
+                className="text-amber-400 font-semibold italic"
+                data-testid="impostor-ejected-remaining"
+              >
+                {t("result.impostorEjectedMoreLeft", {
+                  name: ejectedName,
+                  count: remainingImpostorCount,
+                })}
+              </p>
+            )}
+            {!isGameOver && ejectedId && !isEjectedImpostor && (
+              <p className="text-stone-400 italic">
+                {t("result.stillAmongUs")}
+              </p>
+            )}
 
             {isGameOver && (
               <p className="">

@@ -98,6 +98,8 @@ export interface GameState {
   currentRound: number;
   ejectedId: string | null;
   gameEnded: boolean;
+  ejectedWasImpostor?: boolean | null;
+  remainingImpostorCount?: number | null;
 
   // Impostor guess feature
   impostorGuessesUsed: number;
@@ -167,6 +169,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
   currentRound: 1,
   ejectedId: null,
   gameEnded: false,
+  ejectedWasImpostor: null,
+  remainingImpostorCount: null,
   impostorGuessesUsed: 0,
   impostorGuessedCorrectly: false,
   impostorOutOfGuesses: false,
@@ -442,6 +446,8 @@ socket.on("gameStateUpdate", (newState) => {
     currentRound: newState.currentRound,
     ejectedId: newState.ejectedId,
     gameEnded: newState.gameEnded,
+    ejectedWasImpostor: newState.ejectedWasImpostor ?? null,
+    remainingImpostorCount: newState.remainingImpostorCount ?? null,
     gameOptions: newState.gameOptions,
     // A server that doesn't split them yet reports only the effective ones
     hostGameOptions: newState.hostGameOptions ?? newState.gameOptions,
@@ -550,6 +556,6 @@ i18n.on("languageChanged", (lng) => {
   }
 });
 
-if (typeof window !== "undefined") {
+if (typeof window !== "undefined" && import.meta.env.DEV) {
   (window as any).__GAME_STORE__ = useGameStore;
 }

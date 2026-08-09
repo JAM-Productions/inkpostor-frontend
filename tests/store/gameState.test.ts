@@ -1091,5 +1091,26 @@ describe("useGameStore", () => {
       expect(updatedState.myId).toBe("my-id");
       expect(updatedState.myName).toBe("Alice");
     });
+
+    it("updates store state and handles impostorIds fallback on gameStateUpdate socket event", () => {
+      const listener = getSocketListener("gameStateUpdate");
+      listener({
+        ...baseServerState,
+        impostorId: "imp-1",
+        impostorIds: ["imp-1", "imp-2"],
+      });
+
+      let state = useGameStore.getState();
+      expect(state.impostorIds).toEqual(["imp-1", "imp-2"]);
+
+      listener({
+        ...baseServerState,
+        impostorId: "imp-1",
+        impostorIds: undefined,
+      });
+
+      state = useGameStore.getState();
+      expect(state.impostorIds).toEqual(["imp-1"]);
+    });
   });
 });
