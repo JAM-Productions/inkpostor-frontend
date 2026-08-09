@@ -2,15 +2,14 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { CircleQuestionMark, Play, Home } from "lucide-react";
-import { MIN_PLAYERS } from "../lib/constants";
 
 export const GameResult: React.FC = () => {
   const { t } = useTranslation();
   const impostorId = useGameStore((state) => state.impostorId);
-  const rawImpostorIds = useGameStore((state) => state.impostorIds) || [];
+  const rawImpostorIds = useGameStore((state) => state.impostorIds);
   const impostorIdSet = React.useMemo(() => {
     const list =
-      rawImpostorIds.length > 0
+      rawImpostorIds && rawImpostorIds.length > 0
         ? rawImpostorIds
         : impostorId
           ? [impostorId]
@@ -25,7 +24,6 @@ export const GameResult: React.FC = () => {
   const actions = useGameStore((state) => state.actions);
   const isHost = myId === hostId;
   const ejectedId = useGameStore((state) => state.ejectedId);
-  const playersRemaining = players.filter((p) => !p.isEjected);
   const gameEnded = useGameStore((state) => state.gameEnded);
   const impostorGuessedCorrectly = useGameStore(
     (state) => state.impostorGuessedCorrectly,
