@@ -263,9 +263,14 @@
         "increase": "Augmentar Inkpostors",
         "decrease": "Reduir Inkpostors",
         "revealTeammates": {
-          "title": "Revelar Companys Inkpostors",
-          "description": "Mostra als Inkpostors qui són els seus companys durant el revelat de rol.",
-          "toggle": "Commutar revelat de companys"
+          "title": "Revelar Inkpostors companys",
+          "description": "Mostra als Inkpostors qui són els seus companys durant la revelació de rols.",
+          "toggle": "Alternar revelació de companys"
+        },
+        "preventRepeat": {
+          "title": "Rotació justa d'Inkpostors",
+          "description": "Equilibra la selecció de rols entre partides perquè tothom tingui el seu torn.",
+          "toggle": "Alternar rotació justa d'Inkpostors"
         }
       },
       "time": {

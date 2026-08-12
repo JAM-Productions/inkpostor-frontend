@@ -41,6 +41,7 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   impostorLosesWhenOutOfGuesses: false,
   hideHint: false,
   turnOrderMode: DEFAULT_TURN_ORDER_MODE,
+  preventRepeatImpostors: true,
 };
 
 // The guessing sub-option means nothing while the feature itself is off, so
@@ -58,6 +59,16 @@ const SPOKEN_GAME_MODES: GameMode[] = ["ORIGINAL", "ORIGINAL_CHAOS"];
 export const isSpokenMode = (mode: GameMode): boolean =>
   SPOKEN_GAME_MODES.includes(mode);
 
+// Modes where the secret word is written by the players, so it opens on
+// WORD_SELECTION and is never treated as a translation key.
+const PLAYER_WORD_GAME_MODES: GameMode[] = ["CUSTOM_WORD", "ORIGINAL_CHAOS"];
+export const isPlayerWordMode = (mode: GameMode): boolean =>
+  PLAYER_WORD_GAME_MODES.includes(mode);
+
+// Options a mode takes over: while it is selected the value is forced and the
+// host cannot change it. Single source of truth for the lock, mirrored by the
+// server.
+//
 // Nothing is drawn in a spoken mode, so every drawing option is forced to a
 // neutral value instead of lingering as a setting the host cannot see.
 const SPOKEN_MODE_LOCKS: Partial<GameOptions> = {
@@ -70,14 +81,14 @@ const SPOKEN_MODE_LOCKS: Partial<GameOptions> = {
   ...GUESS_SUB_OPTION_DEFAULTS,
 };
 
-// Options a mode takes over: while it is selected the value is forced and the
-// host cannot change it. Mirrors MODE_LOCKED_OPTIONS on the server, which is
-// what actually enforces it.
 export const MODE_LOCKED_OPTIONS: Record<GameMode, Partial<GameOptions>> = {
   CLASSIC: {},
-  // The word is written by a player, so it could simply be handed to the impostor
-  CUSTOM_WORD: { impostorGuessEnabled: false, ...GUESS_SUB_OPTION_DEFAULTS },
-  // Every round has a new word, so keeping the previous drawing makes no sense
+  // The word is written by a player, so it could simply be handed to the impostor.
+  CUSTOM_WORD: {
+    impostorGuessEnabled: false,
+    ...GUESS_SUB_OPTION_DEFAULTS,
+  },
+  // Every round has a new word, so keeping the previous drawing makes no sense.
   HOT_WORD: { clearCanvasEachRound: true },
   ORIGINAL: SPOKEN_MODE_LOCKS,
   ORIGINAL_CHAOS: SPOKEN_MODE_LOCKS,
@@ -129,7 +140,11 @@ const SPOKEN_OPTION_SECTIONS: OptionSection[] = [
 // this, so an option that isn't on screen never shows up in that count.
 export const SECTION_OPTION_KEYS: Record<OptionSection, (keyof GameOptions)[]> =
   {
-    impostorCount: ["impostorCount", "revealImpostorTeammates"],
+    impostorCount: [
+      "impostorCount",
+      "revealImpostorTeammates",
+      "preventRepeatImpostors",
+    ],
     time: ["roundTime"],
     unlimitedInk: ["unlimitedInk"],
     playerColors: ["playerColorsEnabled"],

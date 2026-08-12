@@ -116,6 +116,7 @@ describe("OptionsModal", () => {
       impostorLosesWhenOutOfGuesses: false,
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
+      preventRepeatImpostors: true,
     });
     expect(mockOnClose).toHaveBeenCalled();
   });
@@ -186,6 +187,7 @@ describe("OptionsModal", () => {
       impostorLosesWhenOutOfGuesses: false,
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
+      preventRepeatImpostors: true,
     });
   });
 
@@ -366,6 +368,7 @@ describe("OptionsModal", () => {
       impostorLosesWhenOutOfGuesses: false,
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
+      preventRepeatImpostors: true,
     });
   });
 

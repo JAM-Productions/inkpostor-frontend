@@ -28,6 +28,7 @@ describe("the options the client mirrors from the server", () => {
       impostorLosesWhenOutOfGuesses: false,
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
+      preventRepeatImpostors: true,
     });
     expect(DEFAULT_GAME_MODE).toBe("CLASSIC");
   });

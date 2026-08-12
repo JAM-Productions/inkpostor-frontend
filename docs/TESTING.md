@@ -89,6 +89,7 @@ flowchart TD
 |---|---|---|---|
 | 1 | `multiplayer.spec.ts` | Real-time room creation & joining | Host generates room code; Player 2 joins via WebSocket sync |
 | 2 | `options-modal.spec.ts` | Game configuration modal rules | Round time, Turn time, Impostor Can Guess toggle, & mode-locking rules |
+| 2b | `prevent-repeat-impostors.spec.ts` | Prevent Repeat Inkpostors option | Host opens options, verifies Prevent Repeat toggle defaults to ON, toggles OFF & saves |
 | 3 | `game-modes.spec.ts` | Classic vs Chaos mode initialization | Role reveal & initial canvas loading across game modes |
 | 4 | `canvas-features.spec.ts` | Emergency Alert & 2-Player Vote-Kick | Emergency Alert forces voting; 2 players kick 3rd player mid-turn |
 | 5 | `full-game-classic.spec.ts` | Complete CLASSIC Game Loop Journey | Full journey: Lobby ➔ Roles ➔ Turns ➔ Voting ➔ Ejection ➔ Play Again |

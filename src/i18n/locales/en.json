@@ -266,6 +266,11 @@
           "title": "Reveal Teammate Inkpostors",
           "description": "Show Inkpostors who their fellow Inkpostors are during role reveal.",
           "toggle": "Toggle teammate reveal"
+        },
+        "preventRepeat": {
+          "title": "Fair Inkpostor Rotation",
+          "description": "Balances role selection across games so everyone gets a turn.",
+          "toggle": "Toggle fair Inkpostor rotation"
         }
       },
       "time": {
