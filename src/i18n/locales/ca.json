@@ -268,9 +268,9 @@
           "toggle": "Alternar revelació de companys"
         },
         "preventRepeat": {
-          "title": "Rotació justa d'Inkpostors",
-          "description": "Equilibra la selecció de rols entre partides perquè tothom tingui el seu torn.",
-          "toggle": "Alternar rotació justa d'Inkpostors"
+          "title": "Reduir Inkpostors repetits",
+          "description": "Fa que els últims Inkpostors siguin menys probables de ser escollits en partides seguides.",
+          "toggle": "Alternar reduir Inkpostors repetits"
         }
       },
       "time": {

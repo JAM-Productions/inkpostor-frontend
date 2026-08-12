@@ -2,7 +2,7 @@
 
 This document outlines the testing architecture for **Inkpostor**, covering unit testing, multi-client End-to-End (E2E) testing with Playwright, and the cross-repository CI integration strategy between `inkpostor-frontend` and `inkpostor-backend`.
 
-> 💡 **Visual Flow Diagrams**: For step-by-step Mermaid sequence and state machine diagrams for every test spec in the suite, see **[E2E_FLOWS.md](file:///Users/jordi/dev/inkpostor/inkpostor-frontend/docs/E2E_FLOWS.md)**.
+> 💡 **Visual Flow Diagrams**: For step-by-step Mermaid sequence and state machine diagrams for every test spec in the suite, see **[E2E_FLOWS.md](./E2E_FLOWS.md)**.
 
 ---
 
@@ -83,47 +83,47 @@ flowchart TD
 
 ---
 
-### E2E Test Suite Specification Directory (52 Tests across 30 Spec Files)
+### E2E Test Suite Specification Directory (52 Tests across 35 Spec Files)
 
 | # | Spec File | Purpose & User Flow Tested | Key Verification & Assertions |
 |---|---|---|---|
 | 1 | `multiplayer.spec.ts` | Real-time room creation & joining | Host generates room code; Player 2 joins via WebSocket sync |
 | 2 | `options-modal.spec.ts` | Game configuration modal rules | Round time, Turn time, Impostor Can Guess toggle, & mode-locking rules |
-| 2b | `prevent-repeat-impostors.spec.ts` | Prevent Repeat Inkpostors option | Host opens options, verifies Prevent Repeat toggle defaults to ON, toggles OFF & saves |
-| 3 | `game-modes.spec.ts` | Classic vs Chaos mode initialization | Role reveal & initial canvas loading across game modes |
-| 4 | `canvas-features.spec.ts` | Emergency Alert & 2-Player Vote-Kick | Emergency Alert forces voting; 2 players kick 3rd player mid-turn |
-| 5 | `full-game-classic.spec.ts` | Complete CLASSIC Game Loop Journey | Full journey: Lobby ➔ Roles ➔ Turns ➔ Voting ➔ Ejection ➔ Play Again |
-| 6 | `impostor-guess-game.spec.ts` | Impostor Final Guess Feature Flow | Ejected Impostor enters `IMPOSTOR_GUESS` phase ➔ Skip ➔ Crewmates Win |
-| 7 | `multi-round-hotword.spec.ts` | Multi-Round `HOT_WORD` Rotation | Tie vote in Round 1 ➔ Next Round ➔ New secret word reveal ➔ Round 2 |
-| 8 | `full-game-chaos.spec.ts` | Complete `CUSTOM_WORD` Chaos Journey | Custom word submission ➔ Roles ➔ Drawing ➔ Voting ➔ Victory card |
-| 9 | `reconnection.spec.ts` | Network Resilience & Surrender | Disconnect/reconnect mid-game (`setOffline`) & Impostor surrender |
-| 10 | `impostor-inphase-guess.spec.ts` | In-Phase Impostor Secret Word Guess | Impostor submits correct secret word mid-turn ➔ Instant Inkpostor Win |
-| 11 | `host-actions.spec.ts` | Host End Game & Player Exit | Host manual game termination (`endGame`) & Exit Game room cleanup |
-| 12 | `canvas-drawing-sync.spec.ts` | Canvas Mouse Strokes & Undo | Active drawer draws strokes, triggers Undo, verifies canvas across clients |
-| 13 | `suspects-marker.spec.ts` | Suspect Marker System | Marking player as suspect during drawing phase persists into voting phase |
-| 14 | `validations-errors.spec.ts` | Validation Rules & Minimum Players | Room code validations & disabled START GAME with < 3 players |
-| 15 | `i18n-language.spec.ts` | Dynamic i18n Switching | Toggling language between English & Spanish updates UI dynamically |
-| 16 | `real-gameplay-matches.spec.ts` | Real Gameplay Matches 1–5 | Unanimous voting, framing innocent, secret word clutch, canvas pixel data |
-| 17 | `backend-docs-edge-cases.spec.ts` | Backend `game_states.md` Edge Cases | Host kick, last voter disconnect resolution, last result player disconnect |
-| 18 | `extended-real-gameplay.spec.ts` | Real Gameplay Matches 6–10 | Multi-round tie, 4-player vote-kick (3/3), ink depletion, rapid 3-round |
-| 19 | `cross-language-guess.spec.ts` | Localized Secret Word Validation | Spanish Impostor vs English Host secret word translation validation |
-| 20 | `host-drop-recovery.spec.ts` | Mid-Turn Host Tab Closure | Host closes tab mid-turn ➔ turn advances to Player 2 without UI freeze |
-| 21 | `canvas-undo-sync.spec.ts` | Canvas Undo Stack Pixel Matching | 3 strokes, 2 undos, clear canvas ➔ `canvas.toDataURL()` pixel match |
-| 22 | `more-real-gameplay-matches.spec.ts` | Real Gameplay Matches 11–15 | 5-player split vote tie, emergency alert disconnect, palette/eraser sync |
-| 23 | `timer-expirations.spec.ts` | Turn & Voting Timer Expirations | Turn timer auto-advances turn; voting timer auto-skips unsubmitted votes |
-| 24 | `room-capacity-limit.spec.ts` | 10-Player Capacity Limit Guard | 10 players fill lobby; 11th player join attempt handled gracefully |
-| 25 | `non-host-permissions.spec.ts` | Non-Host UI Permission Guards | Non-host player omits START GAME button & options locked in read-only |
-| 26 | `impostor-lethal-pool.spec.ts` | Impostor Loses On The Last Attempt | Host makes the guess pool lethal; a wrong guess empties it and ends the game with the Inkpostor defeated |
-| 27 | `game-mode-staging.spec.ts` | Game Mode Staging In The Options Modal | Mode staged until save & discarded on close; a mode that hides the drawing options gives them back on the way out |
-| 28 | `original-mode.spec.ts` | `ORIGINAL` Spoken Round Loop | Full round loop without ever reaching a canvas; `hideHint` keeps the category from the Inkpostor |
-| 29 | `original-chaos-mode.spec.ts` | `ORIGINAL_CHAOS` Player-Written Word | Word selection first, then the spoken round with no canvas |
-| 30 | `original-turn-order.spec.ts` | `ORIGINAL` Turn Order Options | `FIXED_ORDER` keeps the announced order between rounds; `RANDOM_ORDER` redraws it with every player still in it |
-| 31 | `multi-impostor.spec.ts` | Multi-Impostor CLASSIC Full Game Journey | Configure 2 Inkpostors in 5-player lobby ➔ Teammate role reveal ➔ Round 1 Inkpostor ejection (1 remaining) ➔ Round 2 final Inkpostor ejection & victory |
-| 32 | `multi-impostor-hotword.spec.ts` | Multi-Impostor `HOT_WORD` Game Journey | 5-player `HOT_WORD` mode with 2 Inkpostors ➔ Round 1 ejection ➔ Word Reveal phase for new secret word ➔ Round 2 final ejection |
-| 33 | `multi-impostor-customword.spec.ts` | Multi-Impostor `CUSTOM_WORD` Chaos Journey | 5-player Chaos mode ➔ Word Selection excludes words from BOTH Inkpostors ➔ Round 1 ejection ➔ Round 2 victory |
-| 34 | `multi-impostor-original.spec.ts` | Multi-Impostor `ORIGINAL` Spoken Journey | 5-player Spoken mode ➔ Teammate role reveal ➔ ORDER_INFO phase ➔ Round 1 ejection ➔ ORDER_INFO Round 2 ➔ Round 2 victory |
+| 3 | `prevent-repeat-impostors.spec.ts` | Reduce Repeat Inkpostors option | Host opens options, verifies Reduce Repeat toggle defaults to ON, toggles OFF & saves |
+| 4 | `game-modes.spec.ts` | Classic vs Chaos mode initialization | Role reveal & initial canvas loading across game modes |
+| 5 | `canvas-features.spec.ts` | Emergency Alert & 2-Player Vote-Kick | Emergency Alert forces voting; 2 players kick 3rd player mid-turn |
+| 6 | `full-game-classic.spec.ts` | Complete CLASSIC Game Loop Journey | Full journey: Lobby ➔ Roles ➔ Turns ➔ Voting ➔ Ejection ➔ Play Again |
+| 7 | `impostor-guess-game.spec.ts` | Impostor Final Guess Feature Flow | Ejected Impostor enters `IMPOSTOR_GUESS` phase ➔ Skip ➔ Crewmates Win |
+| 8 | `multi-round-hotword.spec.ts` | Multi-Round `HOT_WORD` Rotation | Tie vote in Round 1 ➔ Next Round ➔ New secret word reveal ➔ Round 2 |
+| 9 | `full-game-chaos.spec.ts` | Complete `CUSTOM_WORD` Chaos Journey | Custom word submission ➔ Roles ➔ Drawing ➔ Voting ➔ Victory card |
+| 10 | `reconnection.spec.ts` | Network Resilience & Surrender | Disconnect/reconnect mid-game (`setOffline`) & Impostor surrender |
+| 11 | `impostor-inphase-guess.spec.ts` | In-Phase Impostor Secret Word Guess | Impostor submits correct secret word mid-turn ➔ Instant Inkpostor Win |
+| 12 | `host-actions.spec.ts` | Host End Game & Player Exit | Host manual game termination (`endGame`) & Exit Game room cleanup |
+| 13 | `canvas-drawing-sync.spec.ts` | Canvas Mouse Strokes & Undo | Active drawer draws strokes, triggers Undo, verifies canvas across clients |
+| 14 | `suspects-marker.spec.ts` | Suspect Marker System | Marking player as suspect during drawing phase persists into voting phase |
+| 15 | `validations-errors.spec.ts` | Validation Rules & Minimum Players | Room code validations & disabled START GAME with < 3 players |
+| 16 | `i18n-language.spec.ts` | Dynamic i18n Switching | Toggling language between English & Spanish updates UI dynamically |
+| 17 | `real-gameplay-matches.spec.ts` | Real Gameplay Matches 1–5 | Unanimous voting, framing innocent, secret word clutch, canvas pixel data |
+| 18 | `backend-docs-edge-cases.spec.ts` | Backend `game_states.md` Edge Cases | Host kick, last voter disconnect resolution, last result player disconnect |
+| 19 | `extended-real-gameplay.spec.ts` | Real Gameplay Matches 6–10 | Multi-round tie, 4-player vote-kick (3/3), ink depletion, rapid 3-round |
+| 20 | `cross-language-guess.spec.ts` | Localized Secret Word Validation | Spanish Impostor vs English Host secret word translation validation |
+| 21 | `host-drop-recovery.spec.ts` | Mid-Turn Host Tab Closure | Host closes tab mid-turn ➔ turn advances to Player 2 without UI freeze |
+| 22 | `canvas-undo-sync.spec.ts` | Canvas Undo Stack Pixel Matching | 3 strokes, 2 undos, clear canvas ➔ `canvas.toDataURL()` pixel match |
+| 23 | `more-real-gameplay-matches.spec.ts` | Real Gameplay Matches 11–15 | 5-player split vote tie, emergency alert disconnect, palette/eraser sync |
+| 24 | `timer-expirations.spec.ts` | Turn & Voting Timer Expirations | Turn timer auto-advances turn; voting timer auto-skips unsubmitted votes |
+| 25 | `room-capacity-limit.spec.ts` | 10-Player Capacity Limit Guard | 10 players fill lobby; 11th player join attempt handled gracefully |
+| 26 | `non-host-permissions.spec.ts` | Non-Host UI Permission Guards | Non-host player omits START GAME button & options locked in read-only |
+| 27 | `impostor-lethal-pool.spec.ts` | Impostor Loses On The Last Attempt | Host makes the guess pool lethal; a wrong guess empties it and ends the game with the Inkpostor defeated |
+| 28 | `game-mode-staging.spec.ts` | Game Mode Staging In The Options Modal | Mode staged until save & discarded on close; a mode that hides the drawing options gives them back on the way out |
+| 29 | `original-mode.spec.ts` | `ORIGINAL` Spoken Round Loop | Full round loop without ever reaching a canvas; `hideHint` keeps the category from the Inkpostor |
+| 30 | `original-chaos-mode.spec.ts` | `ORIGINAL_CHAOS` Player-Written Word | Word selection first, then the spoken round with no canvas |
+| 31 | `original-turn-order.spec.ts` | `ORIGINAL` Turn Order Options | `FIXED_ORDER` keeps the announced order between rounds; `RANDOM_ORDER` redraws it with every player still in it |
+| 32 | `multi-impostor.spec.ts` | Multi-Impostor CLASSIC Full Game Journey | Configure 2 Inkpostors in 5-player lobby ➔ Teammate role reveal ➔ Round 1 Inkpostor ejection (1 remaining) ➔ Round 2 final Inkpostor ejection & victory |
+| 33 | `multi-impostor-hotword.spec.ts` | Multi-Impostor `HOT_WORD` Game Journey | 5-player `HOT_WORD` mode with 2 Inkpostors ➔ Round 1 ejection ➔ Word Reveal phase for new secret word ➔ Round 2 final ejection |
+| 34 | `multi-impostor-customword.spec.ts` | Multi-Impostor `CUSTOM_WORD` Chaos Journey | 5-player Chaos mode ➔ Word Selection excludes words from BOTH Inkpostors ➔ Round 1 ejection ➔ Round 2 victory |
+| 35 | `multi-impostor-original.spec.ts` | Multi-Impostor `ORIGINAL` Spoken Journey | 5-player Spoken mode ➔ Teammate role reveal ➔ ORDER_INFO phase ➔ Round 1 ejection ➔ ORDER_INFO Round 2 ➔ Round 2 victory |
 
-> 🎨 **Multi-Client Game Flow Diagrams**: Detailed phase-by-phase state machine diagrams for Multi-Impostor games, Classic mode, Spoken modes, and all 34 E2E test files are available in **[docs/E2E_FLOWS.md](file:///Users/jordi/dev/inkpostor/inkpostor-frontend/docs/E2E_FLOWS.md)**.
+> 🎨 **Multi-Client Game Flow Diagrams**: Detailed phase-by-phase state machine diagrams for Multi-Impostor games, Classic mode, Spoken modes, and all 35 E2E test files are available in **[docs/E2E_FLOWS.md](./E2E_FLOWS.md)**.
 
 ---
 

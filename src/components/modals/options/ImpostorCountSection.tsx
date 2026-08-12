@@ -75,11 +75,11 @@ export const ImpostorCountSection: React.FC<ImpostorCountSectionProps> = ({
       </div>
 
       <div
-        className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-stone-700 bg-stone-900 px-4 py-3"
+        className="mt-4 pt-4 border-t border-stone-800 flex items-center justify-between gap-4"
         data-testid="prevent-repeat-suboption"
       >
         <div className="min-w-0">
-          <span className="text-sm font-semibold text-stone-300">
+          <span className="text-sm font-semibold text-stone-200">
             {t("options.impostorCount.preventRepeat.title")}
           </span>
           <p className="mt-1 text-sm text-stone-400">

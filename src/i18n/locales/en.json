@@ -268,9 +268,9 @@
           "toggle": "Toggle teammate reveal"
         },
         "preventRepeat": {
-          "title": "Fair Inkpostor Rotation",
-          "description": "Balances role selection across games so everyone gets a turn.",
-          "toggle": "Toggle fair Inkpostor rotation"
+          "title": "Reduce Repeat Inkpostors",
+          "description": "Makes recent Inkpostors less likely to be chosen again in consecutive games.",
+          "toggle": "Toggle reduce repeat Inkpostors"
         }
       },
       "time": {

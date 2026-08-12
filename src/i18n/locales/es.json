@@ -268,9 +268,9 @@
           "toggle": "Alternar revelación de compañeros"
         },
         "preventRepeat": {
-          "title": "Rotación justa de Inkpostores",
-          "description": "Equilibra la selección de roles entre partidas para que todos tengan su turno.",
-          "toggle": "Alternar rotación justa de Inkpostores"
+          "title": "Reducir Inkpostores repetidos",
+          "description": "Hace que los últimos Inkpostores sean menos probables de ser elegidos en partidas seguidas.",
+          "toggle": "Alternar reducir Inkpostores repetidos"
         }
       },
       "time": {
