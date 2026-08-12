@@ -37,7 +37,10 @@
       "nobodyEjected": "Ningú ha estat expulsat...",
       "wasEjected": "{{name}} ha estat expulsat/da.",
       "stillAmongUs": "L'Inkpostor segueix entre nosaltres...",
+      "impostorEjectedMoreLeft_one": "{{name}} era un Inkpostor! Encara queda 1 Inkpostor entre nosaltres.",
+      "impostorEjectedMoreLeft_other": "{{name}} era un Inkpostor! Encara queden {{count}} Inkpostors entre nosaltres.",
       "wasImpostor": "{{name}} era l'Inkpostor!",
+      "wereImpostors": "Els Inkpostors eren {{names}}!",
       "impostorGuessedWord": "{{name}} ha encertat la paraula!",
       "secretWord": "La paraula secreta era",
       "noSecretWord": "No es va arribar a triar cap paraula",
@@ -131,6 +134,7 @@
       "yourSecretRole": "El Teu Rol Secret",
       "youAreInkpostor": "Ets l'",
       "inkpostor": "Inkpostor",
+      "otherImpostors": "Companys Inkpostors: {{names}}",
       "hint": "Pista: {{category}}",
       "theWordIs": "La paraula és",
       "category": "Categoria: {{category}}",
@@ -252,6 +256,17 @@
           "description": "El joc en persona, però la paraula secreta l'escriviu vosaltres abans de començar."
         },
         "inPerson": "Millor en persona"
+      },
+      "impostorCount": {
+        "title": "Inkpostors",
+        "description": "Estableix el nombre d'Inkpostors a la partida.",
+        "increase": "Augmentar Inkpostors",
+        "decrease": "Reduir Inkpostors",
+        "revealTeammates": {
+          "title": "Revelar Companys Inkpostors",
+          "description": "Mostra als Inkpostors qui són els seus companys durant el revelat de rol.",
+          "toggle": "Commutar revelat de companys"
+        }
       },
       "time": {
         "title": "Temps de dibuix per ronda",

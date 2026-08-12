@@ -89,12 +89,14 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
               onClick={() => onAttemptsChange(-1)}
               className="flex size-8 items-center justify-center rounded-lg border border-stone-600 bg-stone-800 text-white transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
               aria-label={t("options.impostorGuess.decrease")}
+              data-testid="decrease-guesses-btn"
             >
               <Minus className="size-4" />
             </button>
             <span
               className="w-6 text-center text-lg font-bold tabular-nums text-white"
               aria-live="polite"
+              data-testid="impostor-guess-attempts-value"
             >
               {attempts}
             </span>
@@ -104,6 +106,7 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
               onClick={() => onAttemptsChange(1)}
               className="flex size-8 items-center justify-center rounded-lg border border-stone-600 bg-stone-800 text-white transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
               aria-label={t("options.impostorGuess.increase")}
+              data-testid="increase-guesses-btn"
             >
               <Plus className="size-4" />
             </button>

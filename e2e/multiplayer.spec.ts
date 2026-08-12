@@ -52,6 +52,12 @@ test.describe("Multiplayer E2E Flow", () => {
     await joinBtn.click();
 
     // 3. Assert real-time synchronization between both player contexts
+    const p2RoomCodeDisplay = player2Page.locator(
+      '[data-testid="room-code-display"]',
+    );
+    await expect(p2RoomCodeDisplay).toBeVisible({ timeout: 15000 });
+    await expect(p2RoomCodeDisplay).toHaveText(roomCode, { timeout: 15000 });
+
     // Player 2 should see both HostPlayer and PlayerTwo in their lobby
     await expect(player2Page.locator("body")).toContainText("HostPlayer", {
       timeout: 15000,

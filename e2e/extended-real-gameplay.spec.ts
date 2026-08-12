@@ -120,7 +120,7 @@ test.describe("Extended Real Gameplay Match Simulations", () => {
     // RESULTS phase: Click Next Round on all pages
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Nobody was ejected|Result|Victoria|Derrota/i,
+        /Nobody was ejected|Result|Victoria|Derrota|Defeated|Won|Ejected/i,
         { timeout: 15000 },
       );
       const nextRoundBtn = page.locator('[data-testid="next-round-btn"]');
@@ -314,7 +314,9 @@ test.describe("Extended Real Gameplay Match Simulations", () => {
       .first();
     await openOptionsBtn.click();
     const inkToggle = pageHost
-      .locator('button[aria-label*="ink"i], button[aria-label*="tinta"i]')
+      .locator(
+        'button[aria-label*="ink limit"i], button[aria-label*="límite de tinta"i], button[aria-label*="limit"i]',
+      )
       .first();
     if (await inkToggle.isVisible()) {
       await inkToggle.click();
@@ -471,7 +473,7 @@ test.describe("Extended Real Gameplay Match Simulations", () => {
     }
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Nobody was ejected|Result|Victoria|Derrota/i,
+        /Nobody was ejected|Result|Victoria|Derrota|Defeated|Won|Ejected/i,
         { timeout: 15000 },
       );
       await page.locator('[data-testid="next-round-btn"]').click();
@@ -509,7 +511,7 @@ test.describe("Extended Real Gameplay Match Simulations", () => {
     }
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Nobody was ejected|Result|Victoria|Derrota/i,
+        /Nobody was ejected|Result|Victoria|Derrota|Defeated|Won|Ejected/i,
         { timeout: 15000 },
       );
       await page.locator('[data-testid="next-round-btn"]').click();

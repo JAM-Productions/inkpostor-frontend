@@ -20,6 +20,7 @@ describe("GameResult", () => {
       { id: "socket-123", name: "Host", hasConfirmedNewRound: false },
       { id: "socket-456", name: "Impostor", hasConfirmedNewRound: false },
       { id: "socket-789", name: "Player 3", hasConfirmedNewRound: false },
+      { id: "socket-999", name: "Player 4", hasConfirmedNewRound: false },
     ],
     secretWord: "Apple",
     secretCategory: "Food",
@@ -35,6 +36,7 @@ describe("GameResult", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         ...mockStateBase,
+        gameEnded: true,
         ejectedId: "socket-456",
         votes: {
           "socket-123": "socket-456", // Host votes Impostor
@@ -59,6 +61,7 @@ describe("GameResult", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         ...mockStateBase,
+        gameEnded: true,
         ejectedId: "socket-789",
         players: [
           { id: "socket-123", name: "Host" },
@@ -176,6 +179,7 @@ describe("GameResult", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         ...mockStateBase,
+        gameEnded: true,
         ejectedId: "socket-456",
         votes: { "socket-123": "socket-456" },
       };
@@ -193,6 +197,7 @@ describe("GameResult", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         ...mockStateBase,
+        gameEnded: true,
         myId: "socket-456",
         ejectedId: "socket-456", // Impostor caught
         votes: { "socket-456": "socket-123" },
@@ -345,6 +350,7 @@ describe("GameResult", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = {
         ...mockStateBase,
+        gameEnded: true,
         ejectedId: "socket-456",
         votes: { "socket-123": "socket-456" },
         actions: {

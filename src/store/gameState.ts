@@ -59,6 +59,8 @@ export interface GameOptions {
   unlimitedInk: boolean;
   clearCanvasEachRound: boolean;
   playerColorsEnabled: boolean;
+  impostorCount: number;
+  revealImpostorTeammates: boolean;
   impostorGuessEnabled: boolean;
   impostorGuessAttempts: number;
   // Sub-option of impostorGuessEnabled: spending the whole guess pool ends the
@@ -84,6 +86,7 @@ export interface GameState {
   gameMode: GameMode;
   players: Player[];
   impostorId: string | null; // Only available in RESULTS or to the impostor themselves locally
+  impostorIds: string[];
   secretWord: string | null; // Only available to non-impostors
   secretCategory: string | null;
   currentTurnPlayerId: string | null;
@@ -95,6 +98,8 @@ export interface GameState {
   currentRound: number;
   ejectedId: string | null;
   gameEnded: boolean;
+  ejectedWasImpostor?: boolean | null;
+  remainingImpostorCount?: number | null;
 
   // Impostor guess feature
   impostorGuessesUsed: number;
@@ -108,6 +113,7 @@ export interface GameState {
   myId: string | null;
   myName: string | null;
   amIImpostor: boolean | null;
+  impostorTeammates: string[];
   errorMessage: string | null;
 
   // Actions mapped to Socket
@@ -150,6 +156,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
   gameMode: "CLASSIC",
   players: [],
   impostorId: null,
+  impostorIds: [],
+  impostorTeammates: [],
   secretWord: null,
   secretCategory: null,
   currentTurnPlayerId: null,
@@ -161,6 +169,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
   currentRound: 1,
   ejectedId: null,
   gameEnded: false,
+  ejectedWasImpostor: null,
+  remainingImpostorCount: null,
   impostorGuessesUsed: 0,
   impostorGuessedCorrectly: false,
   impostorOutOfGuesses: false,
@@ -409,7 +419,10 @@ socket.on("gameStateUpdate", (newState) => {
           isNewGamePhase || p.isEjected ? false : prevPlayer?.isSuspected,
       };
     }),
-    impostorId: newState.impostorId,
+    impostorId: newState.impostorId ?? newState.impostorIds?.[0] ?? null,
+    impostorIds:
+      newState.impostorIds ??
+      (newState.impostorId ? [newState.impostorId] : []),
     // WORD_SELECTION resets alongside LOBBY: the word of the previous game must
     // not linger while the players are writing the new one.
     secretWord:
@@ -433,6 +446,8 @@ socket.on("gameStateUpdate", (newState) => {
     currentRound: newState.currentRound,
     ejectedId: newState.ejectedId,
     gameEnded: newState.gameEnded,
+    ejectedWasImpostor: newState.ejectedWasImpostor ?? null,
+    remainingImpostorCount: newState.remainingImpostorCount ?? null,
     gameOptions: newState.gameOptions,
     // A server that doesn't split them yet reports only the effective ones
     hostGameOptions: newState.hostGameOptions ?? newState.gameOptions,
@@ -447,12 +462,14 @@ socket.on(
   "roleAssignment",
   (roles: {
     isImpostor: boolean;
+    impostorTeammates?: string[];
     secretWord: string | null;
     secretCategory: string | null;
   }) => {
     if (!socket.connected) return;
     useGameStore.setState({
       amIImpostor: roles.isImpostor,
+      impostorTeammates: roles.impostorTeammates || [],
       secretWord: roles.secretWord,
       secretCategory: roles.secretCategory,
     });
@@ -538,3 +555,7 @@ i18n.on("languageChanged", (lng) => {
     socket.emit("setLanguage", { language: lng });
   }
 });
+
+if (typeof window !== "undefined" && import.meta.env.DEV) {
+  (window as any).__GAME_STORE__ = useGameStore;
+}

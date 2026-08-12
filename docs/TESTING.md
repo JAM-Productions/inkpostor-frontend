@@ -2,6 +2,8 @@
 
 This document outlines the testing architecture for **Inkpostor**, covering unit testing, multi-client End-to-End (E2E) testing with Playwright, and the cross-repository CI integration strategy between `inkpostor-frontend` and `inkpostor-backend`.
 
+> 💡 **Visual Flow Diagrams**: For step-by-step Mermaid sequence and state machine diagrams for every test spec in the suite, see **[E2E_FLOWS.md](file:///Users/jordi/dev/inkpostor/inkpostor-frontend/docs/E2E_FLOWS.md)**.
+
 ---
 
 ## 1. Multi-Client E2E Architecture
@@ -115,6 +117,12 @@ flowchart TD
 | 28 | `original-mode.spec.ts` | `ORIGINAL` Spoken Round Loop | Full round loop without ever reaching a canvas; `hideHint` keeps the category from the Inkpostor |
 | 29 | `original-chaos-mode.spec.ts` | `ORIGINAL_CHAOS` Player-Written Word | Word selection first, then the spoken round with no canvas |
 | 30 | `original-turn-order.spec.ts` | `ORIGINAL` Turn Order Options | `FIXED_ORDER` keeps the announced order between rounds; `RANDOM_ORDER` redraws it with every player still in it |
+| 31 | `multi-impostor.spec.ts` | Multi-Impostor CLASSIC Full Game Journey | Configure 2 Inkpostors in 5-player lobby ➔ Teammate role reveal ➔ Round 1 Inkpostor ejection (1 remaining) ➔ Round 2 final Inkpostor ejection & victory |
+| 32 | `multi-impostor-hotword.spec.ts` | Multi-Impostor `HOT_WORD` Game Journey | 5-player `HOT_WORD` mode with 2 Inkpostors ➔ Round 1 ejection ➔ Word Reveal phase for new secret word ➔ Round 2 final ejection |
+| 33 | `multi-impostor-customword.spec.ts` | Multi-Impostor `CUSTOM_WORD` Chaos Journey | 5-player Chaos mode ➔ Word Selection excludes words from BOTH Inkpostors ➔ Round 1 ejection ➔ Round 2 victory |
+| 34 | `multi-impostor-original.spec.ts` | Multi-Impostor `ORIGINAL` Spoken Journey | 5-player Spoken mode ➔ Teammate role reveal ➔ ORDER_INFO phase ➔ Round 1 ejection ➔ ORDER_INFO Round 2 ➔ Round 2 victory |
+
+> 🎨 **Multi-Client Game Flow Diagrams**: Detailed phase-by-phase state machine diagrams for Multi-Impostor games, Classic mode, Spoken modes, and all 34 E2E test files are available in **[docs/E2E_FLOWS.md](file:///Users/jordi/dev/inkpostor/inkpostor-frontend/docs/E2E_FLOWS.md)**.
 
 ---
 

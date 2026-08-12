@@ -110,10 +110,16 @@ test.describe("Deep E2E: Full CLASSIC Game Loop & Play Again", () => {
     await skipBtn.click();
     await pageP3.locator('[data-testid="confirm-vote-btn"]').click();
 
+    // If Impostor Final Guess phase triggered, skip the guess
+    const skipGuessBtn = pageP3.locator('[data-testid="skip-guess-btn"]');
+    if (await skipGuessBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await skipGuessBtn.click();
+    }
+
     // 6. Results phase: room resolves voting outcome
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Defeated|Won|Result|Victoria|Derrota/i,
+        /Defeated|Won|Result|Victoria|Derrota|eliminated|elimina/i,
         { timeout: 15000 },
       );
     }
@@ -123,7 +129,6 @@ test.describe("Deep E2E: Full CLASSIC Game Loop & Play Again", () => {
     await expect(playAgainBtn).toBeVisible({ timeout: 15000 });
     await playAgainBtn.click();
 
-    // All players return to LOBBY
     for (const page of pages) {
       await expect(
         page.locator('[data-testid="room-code-display"]'),

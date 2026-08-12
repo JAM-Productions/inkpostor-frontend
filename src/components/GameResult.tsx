@@ -2,19 +2,28 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { CircleQuestionMark, Play, Home } from "lucide-react";
-import { MIN_PLAYERS } from "../lib/constants";
 
 export const GameResult: React.FC = () => {
   const { t } = useTranslation();
   const impostorId = useGameStore((state) => state.impostorId);
-  const players = useGameStore((state) => state.players);
+  const rawImpostorIds = useGameStore((state) => state.impostorIds);
+  const impostorIdSet = React.useMemo(() => {
+    const list =
+      rawImpostorIds && rawImpostorIds.length > 0
+        ? rawImpostorIds
+        : impostorId
+          ? [impostorId]
+          : [];
+    return new Set(list);
+  }, [rawImpostorIds, impostorId]);
+  const impostorIds = Array.from(impostorIdSet);
+  const players = useGameStore((state) => state.players) || [];
   const secretWord = useGameStore((state) => state.secretWord);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
   const isHost = myId === hostId;
   const ejectedId = useGameStore((state) => state.ejectedId);
-  const playersRemaining = players.filter((p) => !p.isEjected);
   const gameEnded = useGameStore((state) => state.gameEnded);
   const impostorGuessedCorrectly = useGameStore(
     (state) => state.impostorGuessedCorrectly,
@@ -23,19 +32,44 @@ export const GameResult: React.FC = () => {
     (state) => state.impostorOutOfGuesses,
   );
 
+  const ejectedWasImpostorState = useGameStore(
+    (state) => state.ejectedWasImpostor,
+  );
+  const remainingImpostorCountState = useGameStore(
+    (state) => state.remainingImpostorCount,
+  );
+
   const me = players.find((p) => p.id === myId);
   const hasConfirmedNewRound = me?.hasConfirmedNewRound;
 
-  // If the impostor guessed the word they win, even if they were ejected. They
-  // can also lose without ever being ejected, by spending a lethal guess pool —
-  // which only the server knows, hence the flag.
-  const impostorCaught =
-    (ejectedId === impostorId || impostorOutOfGuesses) &&
+  // Active (non-ejected) players
+  const activeImpostors = players.filter(
+    (p) => impostorIdSet.has(p.id) && !p.isEjected && p.id !== ejectedId,
+  );
+  const isEjectedImpostor =
+    ejectedWasImpostorState ??
+    (ejectedId ? impostorIdSet.has(ejectedId) : false);
+  const remainingImpostorCount =
+    remainingImpostorCountState ?? activeImpostors.length;
+
+  const hasKnownImpostors = impostorIdSet.size > 0;
+
+  // Crewmates win if all known impostors are eliminated or out of guesses (and no correct guess)
+  const allImpostorsDefeated =
+    hasKnownImpostors &&
+    (activeImpostors.length === 0 || impostorOutOfGuesses) &&
     !impostorGuessedCorrectly;
-  const isGameOver =
-    impostorCaught || playersRemaining.length < MIN_PLAYERS || gameEnded;
-  const impostorName =
-    players.find((p) => p.id === impostorId)?.name || "Unknown";
+
+  const isGameOver = gameEnded;
+  const impostorNames =
+    players
+      .reduce<string[]>((acc, p) => {
+        if (impostorIdSet.has(p.id)) acc.push(p.name);
+        return acc;
+      }, [])
+      .join(", ") ||
+    players.find((p) => p.id === impostorId)?.name ||
+    "Unknown";
   const ejectedName = players.find((p) => p.id === ejectedId)?.name;
 
   return (
@@ -44,7 +78,7 @@ export const GameResult: React.FC = () => {
         <div
           className={`p-8 rounded-3xl border-2 transition-colors animate-fade-in animate-delay-200 animate-duration-slower ${
             isGameOver
-              ? impostorCaught
+              ? allImpostorsDefeated
                 ? "border-emerald-500/50 bg-emerald-950/40 shadow-[0_0_50px_rgba(16,185,129,0.2)]"
                 : "border-red-500/50 bg-red-950/40 shadow-[0_0_50px_rgba(239,68,68,0.2)]"
               : "bg-stone-900/60 border-stone-700"
@@ -52,7 +86,7 @@ export const GameResult: React.FC = () => {
         >
           <div className="flex justify-center mb-4">
             {isGameOver ? (
-              impostorCaught ? (
+              allImpostorsDefeated ? (
                 <img
                   src="/no-inkpostor-character.webp"
                   alt="Inkpostor"
@@ -72,38 +106,50 @@ export const GameResult: React.FC = () => {
 
           <h1 className="text-4xl md:text-5xl text-white uppercase tracking-tight mb-8 font-rubik-wet-paint font-extralight">
             {isGameOver
-              ? impostorCaught
+              ? allImpostorsDefeated
                 ? t("result.impostorDefeated")
                 : t("result.impostorWon")
               : t("result.voteResult")}
           </h1>
 
           <div className="text-xl md:text-2xl text-stone-300 font-medium space-y-2">
-            {!gameEnded &&
-              (!ejectedId ? (
+            {ejectedId ? (
+              <p>{t("result.wasEjected", { name: ejectedName })}</p>
+            ) : (
+              !gameEnded && (
                 <p className="text-stone-400 italic">
                   {t("result.nobodyEjected")}
                 </p>
-              ) : (
-                <>
-                  <p>{t("result.wasEjected", { name: ejectedName })}</p>
-                  {!isGameOver && (
-                    <p className="text-stone-400 italic">
-                      {t("result.stillAmongUs")}
-                    </p>
-                  )}
-                </>
-              ))}
+              )
+            )}
+            {!isGameOver && isEjectedImpostor && (
+              <p
+                className="text-amber-400 font-semibold italic"
+                data-testid="impostor-ejected-remaining"
+              >
+                {t("result.impostorEjectedMoreLeft", {
+                  name: ejectedName,
+                  count: remainingImpostorCount,
+                })}
+              </p>
+            )}
+            {!isGameOver && ejectedId && !isEjectedImpostor && (
+              <p className="text-stone-400 italic">
+                {t("result.stillAmongUs")}
+              </p>
+            )}
 
             {isGameOver && (
               <p className="">
-                {t("result.wasImpostor", { name: impostorName })}
+                {impostorIds.length > 1
+                  ? t("result.wereImpostors", { names: impostorNames })
+                  : t("result.wasImpostor", { name: impostorNames })}
               </p>
             )}
 
             {impostorGuessedCorrectly && (
               <p className="text-purple-300 font-semibold">
-                {t("result.impostorGuessedWord", { name: impostorName })}
+                {t("result.impostorGuessedWord", { name: impostorNames })}
               </p>
             )}
           </div>

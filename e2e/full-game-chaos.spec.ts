@@ -117,7 +117,7 @@ test.describe("Deep E2E: Full CUSTOM_WORD (Chaos) Game Loop", () => {
     // 8. RESULTS phase
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Nobody was ejected|Result|Victoria|Derrota/i,
+        /Nobody was ejected|Result|Victoria|Derrota|Defeated|Won|Ejected/i,
         { timeout: 15000 },
       );
     }

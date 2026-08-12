@@ -258,10 +258,18 @@ test.describe("Real Gameplay Match Simulations", () => {
       await page.locator('[data-testid="confirm-vote-btn"]').click();
     }
 
+    // Handle IMPOSTOR_GUESS phase if triggered
+    for (const page of pages) {
+      const skipGuessBtn = page.locator('[data-testid="skip-guess-btn"]');
+      if (await skipGuessBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await skipGuessBtn.click();
+      }
+    }
+
     // Verify Inkpostor Victory / Ejection result screen
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Inkpostor Won|Defeated|Won|Result|Victoria|Derrota/i,
+        /Inkpostor Won|Defeated|Won|Result|Victoria|Derrota|eliminated|elimina/i,
         { timeout: 15000 },
       );
     }
@@ -657,7 +665,7 @@ test.describe("Real Gameplay Match Simulations", () => {
     // Verify RESULTS phase
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Nobody was ejected|Result|Victoria|Derrota/i,
+        /Nobody was ejected|Result|Victoria|Derrota|Defeated|Won|Ejected/i,
         { timeout: 15000 },
       );
     }

@@ -109,6 +109,8 @@ describe("OptionsModal", () => {
       unlimitedInk: true,
       clearCanvasEachRound: false,
       playerColorsEnabled: true,
+      impostorCount: 1,
+      revealImpostorTeammates: true,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
       impostorLosesWhenOutOfGuesses: false,
@@ -164,7 +166,9 @@ describe("OptionsModal", () => {
     const decrease = screen.getByRole("button", { name: /decrease attempts/i });
     await user.click(decrease);
     await user.click(decrease);
-    expect(screen.getByText("1")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("impostor-guess-attempts-value"),
+    ).toHaveTextContent("1");
     expect(decrease).toBeDisabled();
 
     await user.click(screen.getByTestId("confirm-options-button"));
@@ -175,6 +179,8 @@ describe("OptionsModal", () => {
       unlimitedInk: false,
       clearCanvasEachRound: true,
       playerColorsEnabled: false,
+      impostorCount: 1,
+      revealImpostorTeammates: true,
       impostorGuessEnabled: true,
       impostorGuessAttempts: 1,
       impostorLosesWhenOutOfGuesses: false,
@@ -197,7 +203,9 @@ describe("OptionsModal", () => {
       screen.getByRole("switch", { name: /toggle impostor guessing/i }),
     ).toHaveAttribute("aria-checked", "true");
     expect(screen.getByText("Number of attempts")).toBeInTheDocument();
-    expect(screen.getByText(String(DEFAULT_IMPOSTOR_GUESSES))).toBeVisible();
+    expect(
+      screen.getByTestId("impostor-guess-attempts-value"),
+    ).toHaveTextContent(String(DEFAULT_IMPOSTOR_GUESSES));
   });
 
   it("reveals the lethal pool sub-option only while guessing is on", async () => {
@@ -351,6 +359,8 @@ describe("OptionsModal", () => {
       unlimitedInk: false,
       clearCanvasEachRound: true,
       playerColorsEnabled: false,
+      impostorCount: 1,
+      revealImpostorTeammates: true,
       impostorGuessEnabled: false,
       impostorGuessAttempts: 3,
       impostorLosesWhenOutOfGuesses: false,

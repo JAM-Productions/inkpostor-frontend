@@ -21,6 +21,8 @@ describe("the options the client mirrors from the server", () => {
       unlimitedInk: false,
       clearCanvasEachRound: true,
       playerColorsEnabled: true,
+      impostorCount: 1,
+      revealImpostorTeammates: true,
       impostorGuessEnabled: true,
       impostorGuessAttempts: 1,
       impostorLosesWhenOutOfGuesses: false,

@@ -148,7 +148,7 @@ test.describe("Backend Docs Edge Cases & Parity", () => {
 
     // Voting phase resolves immediately for remaining connected players
     await expect(pageHost.locator("body")).toContainText(
-      /Nobody was ejected|Result|Victoria|Derrota/i,
+      /Nobody was ejected|Result|Victoria|Derrota|Defeated|Won|Ejected/i,
       { timeout: 15000 },
     );
 

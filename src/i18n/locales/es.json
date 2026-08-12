@@ -37,7 +37,10 @@
       "nobodyEjected": "Nadie ha sido expulsado...",
       "wasEjected": "{{name}} ha sido expulsado/a.",
       "stillAmongUs": "El Inkpostor sigue entre nosotros...",
+      "impostorEjectedMoreLeft_one": "¡{{name}} era un Inkpostor! Todavía queda 1 Inkpostor entre nosotros.",
+      "impostorEjectedMoreLeft_other": "¡{{name}} era un Inkpostor! Todavía quedan {{count}} Inkpostores entre nosotros.",
       "wasImpostor": "¡{{name}} era el Inkpostor!",
+      "wereImpostors": "¡Los Inkpostores eran {{names}}!",
       "impostorGuessedWord": "¡{{name}} adivinó la palabra!",
       "secretWord": "La palabra secreta era",
       "noSecretWord": "No se llegó a elegir palabra",
@@ -131,6 +134,7 @@
       "yourSecretRole": "Tu Rol Secreto",
       "youAreInkpostor": "Eres el",
       "inkpostor": "Inkpostor",
+      "otherImpostors": "Compañeros Inkpostores: {{names}}",
       "hint": "Pista: {{category}}",
       "theWordIs": "La palabra es",
       "category": "Categoría: {{category}}",
@@ -252,6 +256,17 @@
           "description": "El juego en persona, pero la palabra secreta la escribís vosotros antes de empezar."
         },
         "inPerson": "Mejor en persona"
+      },
+      "impostorCount": {
+        "title": "Inkpostores",
+        "description": "Establece la cantidad de Inkpostores en la partida.",
+        "increase": "Aumentar Inkpostores",
+        "decrease": "Reducir Inkpostores",
+        "revealTeammates": {
+          "title": "Revelar Compañeros Inkpostores",
+          "description": "Muestra a los Inkpostores quiénes son sus compañeros durante la revelación de rol.",
+          "toggle": "Conmutar revelación de compañeros"
+        }
       },
       "time": {
         "title": "Tiempo de dibujo por ronda",

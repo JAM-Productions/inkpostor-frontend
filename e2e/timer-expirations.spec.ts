@@ -93,7 +93,7 @@ test.describe("System Resilience: Timer Expirations & Auto-Advance", () => {
     // Server auto-resolves voting phase to RESULTS screen
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Nobody was ejected|Result|Victoria|Derrota/i,
+        /Nobody was ejected|Result|Victoria|Derrota|Defeated|Won|Ejected/i,
         { timeout: 20000 },
       );
     }

@@ -10,6 +10,7 @@ export const RoleReveal: React.FC = () => {
   const [isContinueButtonVisible, setIsContinueButtonVisible] = useState(false);
   const players = useGameStore((state) => state.players);
   const amIImpostor = useGameStore((state) => state.amIImpostor);
+  const impostorTeammates = useGameStore((state) => state.impostorTeammates);
   const secretCategory = useGameStore((state) => state.secretCategory);
   const secretWord = useGameStore((state) => state.secretWord);
   const myId = useGameStore((state) => state.myId);
@@ -83,6 +84,16 @@ export const RoleReveal: React.FC = () => {
                         ? t("roleReveal.hint", { category: secretCategory })
                         : t("roleReveal.noHint")}
                     </p>
+                    {impostorTeammates && impostorTeammates.length > 0 && (
+                      <p
+                        className="text-red-400 font-medium text-xs sm:text-sm px-4 py-1.5 bg-red-950/60 rounded-xl border border-red-500/30 max-w-xs text-center"
+                        data-testid="impostor-teammates"
+                      >
+                        {t("roleReveal.otherImpostors", {
+                          names: impostorTeammates.join(", "),
+                        })}
+                      </p>
+                    )}
                   </>
                 ) : (
                   <>

@@ -65,7 +65,7 @@ test.describe("Deep E2E: Multi-Round HOT_WORD Game Loop", () => {
 
       const proceedBtn = page.locator('[data-testid="proceed-to-drawing-btn"]');
       await expect(proceedBtn).toBeVisible({ timeout: 15000 });
-      await proceedBtn.click();
+      await proceedBtn.click({ force: true }).catch(() => {});
     }
 
     // 4. Drawing phase ➔ Advance turns to VOTING

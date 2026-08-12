@@ -10,6 +10,8 @@ export const DOT_INK_COST = 5;
 export const MIN_IMPOSTOR_GUESSES = 1;
 export const MAX_IMPOSTOR_GUESSES = 3;
 export const DEFAULT_IMPOSTOR_GUESSES = 1;
+export const MIN_IMPOSTORS = 1;
+export const DEFAULT_IMPOSTOR_COUNT = 1;
 // Word players write in CUSTOM_WORD mode. Must match the server-side bounds.
 export const MIN_CUSTOM_WORD_LENGTH = 2;
 export const MAX_CUSTOM_WORD_LENGTH = 40;
@@ -32,6 +34,8 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   unlimitedInk: false,
   clearCanvasEachRound: true,
   playerColorsEnabled: true,
+  impostorCount: DEFAULT_IMPOSTOR_COUNT,
+  revealImpostorTeammates: true,
   impostorGuessEnabled: true,
   impostorGuessAttempts: DEFAULT_IMPOSTOR_GUESSES,
   impostorLosesWhenOutOfGuesses: false,
@@ -98,11 +102,13 @@ export type OptionSection =
   | "unlimitedInk"
   | "playerColors"
   | "clearCanvas"
+  | "impostorCount"
   | "impostorGuess"
   | "hideHint"
   | "turnOrder";
 
 export const DRAWING_OPTION_SECTIONS: OptionSection[] = [
+  "impostorCount",
   "time",
   "unlimitedInk",
   "playerColors",
@@ -112,13 +118,18 @@ export const DRAWING_OPTION_SECTIONS: OptionSection[] = [
 ];
 
 // Nothing is drawn: the drawing options are replaced, not just locked
-const SPOKEN_OPTION_SECTIONS: OptionSection[] = ["turnOrder", "hideHint"];
+const SPOKEN_OPTION_SECTIONS: OptionSection[] = [
+  "impostorCount",
+  "turnOrder",
+  "hideHint",
+];
 
 // The options each section owns. Lets a caller go from "what this mode shows"
 // to "which options it can change" — the lobby counts the non-default ones from
 // this, so an option that isn't on screen never shows up in that count.
 export const SECTION_OPTION_KEYS: Record<OptionSection, (keyof GameOptions)[]> =
   {
+    impostorCount: ["impostorCount", "revealImpostorTeammates"],
     time: ["roundTime"],
     unlimitedInk: ["unlimitedInk"],
     playerColors: ["playerColorsEnabled"],
