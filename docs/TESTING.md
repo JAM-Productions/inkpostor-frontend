@@ -2,6 +2,8 @@
 
 This document outlines the testing architecture for **Inkpostor**, covering unit testing, multi-client End-to-End (E2E) testing with Playwright, and the cross-repository CI integration strategy between `inkpostor-frontend` and `inkpostor-backend`.
 
+> 💡 **Visual Flow Diagrams**: For step-by-step Mermaid sequence and state machine diagrams for every test spec in the suite, see **[E2E_FLOWS.md](file:///Users/jordi/dev/inkpostor/inkpostor-frontend/docs/E2E_FLOWS.md)**.
+
 ---
 
 ## 1. Multi-Client E2E Architecture
@@ -120,38 +122,7 @@ flowchart TD
 | 33 | `multi-impostor-customword.spec.ts` | Multi-Impostor `CUSTOM_WORD` Chaos Journey | 5-player Chaos mode ➔ Word Selection excludes words from BOTH Inkpostors ➔ Round 1 ejection ➔ Round 2 victory |
 | 34 | `multi-impostor-original.spec.ts` | Multi-Impostor `ORIGINAL` Spoken Journey | 5-player Spoken mode ➔ Teammate role reveal ➔ ORDER_INFO phase ➔ Round 1 ejection ➔ ORDER_INFO Round 2 ➔ Round 2 victory |
 
-### Multi-Impostor E2E Game Flow Architecture
-
-```mermaid
-flowchart TD
-    subgraph Lobby & Staging
-        Lobby[5 Players Join Lobby] --> Staging[Host Sets Impostor Count = 2]
-        Staging --> SubOption[Reveal Teammates Sub-Option Enabled]
-    end
-
-    subgraph Phase 1: Role Reveal
-        SubOption --> StartGame[Game Starts]
-        StartGame --> RoleReveal[2 Inkpostors & 3 Crewmates Assigned]
-        RoleReveal --> TeammateCheck[Both Inkpostors see fellow Inkpostor in 'impostor-teammates']
-    end
-
-    subgraph Phase 2 & 3: Round 1 Loop
-        TeammateCheck --> Drawing1[Round 1 Drawing / Word Turns]
-        Drawing1 --> Voting1[Round 1 Voting]
-        Voting1 --> Eject1[Unanimous Vote Ejects Inkpostor 1]
-        Eject1 --> LastChance1[Inkpostor 1 Skips Final Guess]
-        LastChance1 --> Results1[Results: 1 Inkpostor Remaining - Game Continues]
-    end
-
-    subgraph Phase 4 & 5: Round 2 Loop & Victory
-        Results1 --> NextRound[All Active Players Confirm Next Round]
-        NextRound --> Drawing2[Round 2 Drawing / Word Reveal]
-        Drawing2 --> Voting2[Round 2 Voting]
-        Voting2 --> Eject2[Unanimous Vote Ejects Inkpostor 2]
-        Eject2 --> LastChance2[Inkpostor 2 Skips Final Guess]
-        LastChance2 --> Defeated[Final Victory: Inkpostor Defeated & Play Again Button Enabled]
-    end
-```
+> 🎨 **Multi-Client Game Flow Diagrams**: Detailed phase-by-phase state machine diagrams for Multi-Impostor games, Classic mode, Spoken modes, and all 34 E2E test files are available in **[docs/E2E_FLOWS.md](file:///Users/jordi/dev/inkpostor/inkpostor-frontend/docs/E2E_FLOWS.md)**.
 
 ---
 

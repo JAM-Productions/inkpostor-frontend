@@ -269,7 +269,7 @@ test.describe("Real Gameplay Match Simulations", () => {
     // Verify Inkpostor Victory / Ejection result screen
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Inkpostor Won|Defeated|Won|Result|Victoria|Derrota|eliminated|elimina|making a final guess/i,
+        /Inkpostor Won|Defeated|Won|Result|Victoria|Derrota|eliminated|elimina/i,
         { timeout: 15000 },
       );
     }

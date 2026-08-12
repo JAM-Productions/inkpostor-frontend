@@ -33,10 +33,10 @@ export const GameResult: React.FC = () => {
   );
 
   const ejectedWasImpostorState = useGameStore(
-    (state: any) => state.ejectedWasImpostor,
+    (state) => state.ejectedWasImpostor,
   );
   const remainingImpostorCountState = useGameStore(
-    (state: any) => state.remainingImpostorCount,
+    (state) => state.remainingImpostorCount,
   );
 
   const me = players.find((p) => p.id === myId);
@@ -46,16 +46,12 @@ export const GameResult: React.FC = () => {
   const activeImpostors = players.filter(
     (p) => impostorIdSet.has(p.id) && !p.isEjected && p.id !== ejectedId,
   );
-  const activeCrewmates = players.filter(
-    (p) => !impostorIdSet.has(p.id) && !p.isEjected && p.id !== ejectedId,
-  );
   const isEjectedImpostor =
     ejectedWasImpostorState ??
     (ejectedId ? impostorIdSet.has(ejectedId) : false);
   const remainingImpostorCount =
     remainingImpostorCountState ?? activeImpostors.length;
 
-  const isMultiImpostor = impostorIds.length > 1;
   const hasKnownImpostors = impostorIdSet.size > 0;
 
   // Crewmates win if all known impostors are eliminated or out of guesses (and no correct guess)
@@ -64,16 +60,7 @@ export const GameResult: React.FC = () => {
     (activeImpostors.length === 0 || impostorOutOfGuesses) &&
     !impostorGuessedCorrectly;
 
-  // Impostors win if they guessed correctly, reached parity (when > 1 impostors), or game was ended with impostors remaining
-  const impostorWon =
-    impostorGuessedCorrectly ||
-    (hasKnownImpostors &&
-      (isMultiImpostor
-        ? activeImpostors.length >= activeCrewmates.length
-        : activeCrewmates.length === 0)) ||
-    (gameEnded && activeImpostors.length > 0);
-
-  const isGameOver = gameEnded || allImpostorsDefeated || impostorWon;
+  const isGameOver = gameEnded;
   const impostorNames =
     players
       .reduce<string[]>((acc, p) => {

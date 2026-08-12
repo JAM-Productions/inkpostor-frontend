@@ -124,21 +124,15 @@ test.describe("Deep E2E: Full CLASSIC Game Loop & Play Again", () => {
       );
     }
 
-    // 7. Host clicks "Play Again" (if game ended) or "Next Round" (if continuing)
+    // 7. Host clicks "Play Again" to restart game session
     const playAgainBtn = pageHost.locator('[data-testid="play-again-btn"]');
-    const nextRoundBtn = pageHost.locator('[data-testid="next-round-btn"]');
+    await expect(playAgainBtn).toBeVisible({ timeout: 15000 });
+    await playAgainBtn.click();
 
-    if (await playAgainBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await playAgainBtn.click();
-      for (const page of pages) {
-        await expect(
-          page.locator('[data-testid="room-code-display"]'),
-        ).toBeVisible({ timeout: 15000 });
-      }
-    } else if (
-      await nextRoundBtn.isVisible({ timeout: 5000 }).catch(() => false)
-    ) {
-      await nextRoundBtn.click();
+    for (const page of pages) {
+      await expect(
+        page.locator('[data-testid="room-code-display"]'),
+      ).toBeVisible({ timeout: 15000 });
     }
 
     await ctxHost.close();
