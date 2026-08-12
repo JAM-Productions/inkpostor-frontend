@@ -9,9 +9,11 @@ describe("ImpostorCountSection", () => {
         count={2}
         maxImpostors={3}
         revealTeammates={true}
+        preventRepeat={true}
         isHost={true}
         onCountChange={vi.fn()}
         onRevealTeammatesChange={vi.fn()}
+        onPreventRepeatChange={vi.fn()}
       />,
     );
 
@@ -21,6 +23,7 @@ describe("ImpostorCountSection", () => {
     expect(
       screen.getByTestId("reveal-teammates-suboption"),
     ).toBeInTheDocument();
+    expect(screen.getByTestId("prevent-repeat-suboption")).toBeInTheDocument();
   });
 
   it("disables decrease button when count is 1", () => {
@@ -29,16 +32,19 @@ describe("ImpostorCountSection", () => {
         count={1}
         maxImpostors={3}
         revealTeammates={true}
+        preventRepeat={true}
         isHost={true}
         onCountChange={vi.fn()}
         onRevealTeammatesChange={vi.fn()}
+        onPreventRepeatChange={vi.fn()}
       />,
     );
 
     expect(screen.getByTestId("decrease-impostors-btn")).toBeDisabled();
     expect(
-      screen.queryByTestId("reveal-teammates-toggle"),
+      screen.queryByTestId("reveal-teammates-suboption"),
     ).not.toBeInTheDocument();
+    expect(screen.getByTestId("prevent-repeat-suboption")).toBeInTheDocument();
   });
 
   it("calls onCountChange when stepper buttons are clicked", () => {
@@ -48,9 +54,11 @@ describe("ImpostorCountSection", () => {
         count={2}
         maxImpostors={3}
         revealTeammates={true}
+        preventRepeat={true}
         isHost={true}
         onCountChange={onCountChange}
         onRevealTeammatesChange={vi.fn()}
+        onPreventRepeatChange={vi.fn()}
       />,
     );
 
@@ -59,5 +67,28 @@ describe("ImpostorCountSection", () => {
 
     fireEvent.click(screen.getByTestId("decrease-impostors-btn"));
     expect(onCountChange).toHaveBeenCalledWith(-1);
+  });
+
+  it("calls onPreventRepeatChange when prevent repeat switch is toggled", () => {
+    const onPreventRepeatChange = vi.fn();
+    render(
+      <ImpostorCountSection
+        count={1}
+        maxImpostors={3}
+        revealTeammates={true}
+        preventRepeat={true}
+        isHost={true}
+        onCountChange={vi.fn()}
+        onRevealTeammatesChange={vi.fn()}
+        onPreventRepeatChange={onPreventRepeatChange}
+      />,
+    );
+
+    const switchBtn = screen
+      .getByTestId("prevent-repeat-suboption")
+      .querySelector('button[role="switch"]');
+    expect(switchBtn).toBeInTheDocument();
+    fireEvent.click(switchBtn!);
+    expect(onPreventRepeatChange).toHaveBeenCalled();
   });
 });
