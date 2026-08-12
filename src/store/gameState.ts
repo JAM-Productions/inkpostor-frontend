@@ -68,6 +68,7 @@ export interface GameOptions {
   impostorLosesWhenOutOfGuesses: boolean;
   hideHint: boolean; // Keeps the category from the impostor
   turnOrderMode: TurnOrderMode;
+  preventRepeatImpostors: boolean;
 }
 
 export interface GameState {

@@ -266,6 +266,11 @@
           "title": "Reveal Teammate Inkpostors",
           "description": "Show Inkpostors who their fellow Inkpostors are during role reveal.",
           "toggle": "Toggle teammate reveal"
+        },
+        "preventRepeat": {
+          "title": "Reduce Repeat Inkpostors",
+          "description": "Makes recent Inkpostors less likely to be chosen again in consecutive games.",
+          "toggle": "Toggle reduce repeat Inkpostors"
         }
       },
       "time": {

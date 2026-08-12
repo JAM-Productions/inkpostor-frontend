@@ -263,9 +263,14 @@
         "increase": "Aumentar Inkpostores",
         "decrease": "Reducir Inkpostores",
         "revealTeammates": {
-          "title": "Revelar Compañeros Inkpostores",
-          "description": "Muestra a los Inkpostores quiénes son sus compañeros durante la revelación de rol.",
-          "toggle": "Conmutar revelación de compañeros"
+          "title": "Revelar Inkpostores compañeros",
+          "description": "Muestra a los Inkpostores quiénes son sus compañeros durante la revelación de roles.",
+          "toggle": "Alternar revelación de compañeros"
+        },
+        "preventRepeat": {
+          "title": "Reducir Inkpostores repetidos",
+          "description": "Hace que los últimos Inkpostores sean menos probables de ser elegidos en partidas seguidas.",
+          "toggle": "Alternar reducir Inkpostores repetidos"
         }
       },
       "time": {

@@ -46,6 +46,12 @@ test.describe("Options Modal E2E Suite", () => {
     await inkToggle.click();
     await expect(inkToggle).toHaveAttribute("aria-checked", "true");
 
+    // Prevent Repeat Inkpostors option is on by default
+    const preventRepeatToggle = optionsDialog.locator(
+      '[data-testid="prevent-repeat-suboption"] button[role="switch"]',
+    );
+    await expect(preventRepeatToggle).toHaveAttribute("aria-checked", "true");
+
     // Impostor Can Guess is on by default, so its stepper is already there
     const guessToggle = page.locator('button[aria-label*="impostor"i]').first();
     await expect(guessToggle).toHaveAttribute("aria-checked", "true");

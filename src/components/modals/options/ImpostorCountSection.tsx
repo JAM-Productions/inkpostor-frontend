@@ -8,18 +8,22 @@ interface ImpostorCountSectionProps {
   count: number;
   maxImpostors: number;
   revealTeammates: boolean;
+  preventRepeat: boolean;
   isHost: boolean;
   onCountChange: (delta: number) => void;
   onRevealTeammatesChange: () => void;
+  onPreventRepeatChange: () => void;
 }
 
 export const ImpostorCountSection: React.FC<ImpostorCountSectionProps> = ({
   count,
   maxImpostors,
   revealTeammates,
+  preventRepeat,
   isHost,
   onCountChange,
   onRevealTeammatesChange,
+  onPreventRepeatChange,
 }) => {
   const { t } = useTranslation();
 
@@ -68,6 +72,27 @@ export const ImpostorCountSection: React.FC<ImpostorCountSectionProps> = ({
             <Plus className="size-4" />
           </button>
         </div>
+      </div>
+
+      <div
+        className="mt-4 pt-4 border-t border-stone-800 flex items-center justify-between gap-4"
+        data-testid="prevent-repeat-suboption"
+      >
+        <div className="min-w-0">
+          <span className="text-sm font-semibold text-stone-200">
+            {t("options.impostorCount.preventRepeat.title")}
+          </span>
+          <p className="mt-1 text-sm text-stone-400">
+            {t("options.impostorCount.preventRepeat.description")}
+          </p>
+        </div>
+        <OptionSwitch
+          checked={preventRepeat}
+          disabled={!isHost}
+          label={t("options.impostorCount.preventRepeat.toggle")}
+          onChange={onPreventRepeatChange}
+          tone="purple"
+        />
       </div>
 
       {count > 1 && (

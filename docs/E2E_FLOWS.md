@@ -317,10 +317,20 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    OpenModal["Host Opens Options Modal"] --> Modify["Adjust Round Time, Impostor Count, Guess Toggles"]
+    OpenModal["Host Opens Options Modal"] --> Modify["Adjust Round Time, Impostor Count, Guess Toggles, Prevent Repeat"]
     Modify --> SelectMode["Select Spoken / Custom Word Mode"]
     SelectMode --> LockRules["Mode Locks Mask Disabled Options with Padlock/Hidden Rules"]
     LockRules --> Save["Save Options -> Server Applies hostGameOptions & gameOptions"]
+```
+
+### `prevent-repeat-impostors.spec.ts` — Prevent Repeat Inkpostors Option
+
+```mermaid
+flowchart TD
+    HostCreate["Host Creates Room"] --> OpenOpt["Host Opens Options Modal"]
+    OpenOpt --> CheckToggle["Verify Prevent Repeat Inkpostors Toggle is ON by default"]
+    CheckToggle --> ToggleOff["Host Toggles Option OFF & Saves"]
+    ToggleOff --> ReopenOpt["Host Re-opens Modal -> Verify OFF state persisted"]
 ```
 
 ### `game-mode-staging.spec.ts` — Staged Options vs Lock Restoration

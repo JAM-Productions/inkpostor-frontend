@@ -57,6 +57,9 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const [revealImpostorTeammates, setRevealImpostorTeammates] = useState(
     hostGameOptions.revealImpostorTeammates ?? true,
   );
+  const [preventRepeatImpostors, setPreventRepeatImpostors] = useState(
+    hostGameOptions.preventRepeatImpostors ?? true,
+  );
   const [impostorGuessEnabled, setImpostorGuessEnabled] = useState(
     hostGameOptions.impostorGuessEnabled,
   );
@@ -99,6 +102,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
           effectiveImpostorCount > 1
             ? revealImpostorTeammates
             : DEFAULT_GAME_OPTIONS.revealImpostorTeammates,
+        preventRepeatImpostors,
         impostorGuessEnabled,
         impostorGuessAttempts,
         // This setting has no meaning while guessing is disabled, so do not
@@ -164,10 +168,14 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
             count={displayed.impostorCount}
             maxImpostors={maxImpostors}
             revealTeammates={displayed.revealImpostorTeammates}
+            preventRepeat={displayed.preventRepeatImpostors}
             isHost={isHost}
             onCountChange={changeImpostorCount}
             onRevealTeammatesChange={() =>
               setRevealImpostorTeammates(!revealImpostorTeammates)
+            }
+            onPreventRepeatChange={() =>
+              setPreventRepeatImpostors(!preventRepeatImpostors)
             }
           />
         )}
