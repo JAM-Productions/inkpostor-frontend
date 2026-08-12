@@ -810,8 +810,7 @@ describe("OptionsModal", () => {
       expect(mockUpdateGameOptions).toHaveBeenCalledWith(
         expect.objectContaining({
           impostorCount: 1,
-          revealImpostorTeammates:
-            DEFAULT_GAME_OPTIONS.revealImpostorTeammates,
+          revealImpostorTeammates: DEFAULT_GAME_OPTIONS.revealImpostorTeammates,
         }),
       );
     });
