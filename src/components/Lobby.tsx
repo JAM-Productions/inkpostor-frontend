@@ -11,6 +11,7 @@ import {
   MODE_OPTION_SECTIONS,
   SECTION_OPTION_KEYS,
 } from "../lib/constants";
+import { useImpostorCountClamp } from "../hooks/useImpostorCountClamp";
 import { LobbyPlayerCard } from "./LobbyPlayerCard";
 import { CopyLinkButton } from "./buttons/CopyLinkButton";
 import { CopyCodeButton } from "./buttons/CopyCodeButton";
@@ -25,6 +26,10 @@ export const Lobby: React.FC = () => {
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
   const modalActions = useModalStore((state) => state.actions);
+
+  // A player leaving can take the impostor count out of range, and it is the
+  // host's client that puts it back
+  useImpostorCountClamp();
 
   const isHost = myId === hostId;
   const canStart = isHost && players.length >= MIN_PLAYERS;

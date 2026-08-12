@@ -36,6 +36,7 @@ This document provides visual Mermaid flow diagrams for all 34 End-to-End (E2E) 
 6. [Room Configuration & UI Guards](#6-room-configuration--ui-guards)
    - `multiplayer.spec.ts`
    - `options-modal.spec.ts`
+   - `impostor-count-shrinks.spec.ts`
    - `game-mode-staging.spec.ts`
    - `non-host-permissions.spec.ts`
    - `room-capacity-limit.spec.ts`
@@ -331,6 +332,17 @@ flowchart TD
     OpenOpt --> CheckToggle["Verify Prevent Repeat Inkpostors Toggle is ON by default"]
     CheckToggle --> ToggleOff["Host Toggles Option OFF & Saves"]
     ToggleOff --> ReopenOpt["Host Re-opens Modal -> Verify OFF state persisted"]
+```
+
+### `impostor-count-shrinks.spec.ts` — Inkpostor Count Follows The Room
+
+```mermaid
+flowchart TD
+    FivePlayers["5 Players in Lobby"] --> SetTwo["Host Sets 2 Inkpostors & Saves"]
+    SetTwo --> GuestReads["Guest Opens Options -> Reads 2"]
+    GuestReads --> Leaves["One Player Leaves -> 4 Remain"]
+    Leaves --> HostCorrects["Host Client Saves the Count 4 Players Allow"]
+    HostCorrects --> BackToOne["Host & Guest Both Read 1, Steppers Disabled"]
 ```
 
 ### `game-mode-staging.spec.ts` — Staged Options vs Lock Restoration

@@ -723,4 +723,126 @@ describe("OptionsModal", () => {
     expect(playerColorsSwitch).toBeDisabled();
     expect(playerColorsSwitch).toHaveAttribute("aria-checked", "true");
   });
+
+  // The count the host saved outlives the players it was chosen for: it is the
+  // room it has to fit, not the moment it was picked in.
+  describe("an impostor count the remaining players no longer allow", () => {
+    const makePlayers = (count: number) =>
+      Array.from({ length: count }, (_, index) => ({
+        id: `player-${index + 1}`,
+        name: `Player ${index + 1}`,
+      }));
+
+    // Two impostors, chosen while there were five in the room
+    const twoImpostors = {
+      ...DEFAULT_GAME_OPTIONS,
+      impostorCount: 2,
+      revealImpostorTeammates: true,
+    };
+
+    it("shows the host what four players allow instead of the saved two", () => {
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector(
+          createState({ gameOptions: twoImpostors, players: makePlayers(4) }),
+        ),
+      );
+
+      render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+      expect(screen.getByTestId("impostor-count-value")).toHaveTextContent("1");
+      // Nowhere left to go in either direction
+      expect(screen.getByTestId("increase-impostors-btn")).toBeDisabled();
+      expect(screen.getByTestId("decrease-impostors-btn")).toBeDisabled();
+      // A lone impostor has no teammates to be shown
+      expect(
+        screen.queryByTestId("reveal-teammates-suboption"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("shows a guest the cut count too, not the room's stale one", () => {
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector(
+          createState({
+            gameOptions: twoImpostors,
+            players: makePlayers(4),
+            myId: "player-2",
+            hostId: "player-1",
+          }),
+        ),
+      );
+
+      render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+      expect(screen.getByTestId("impostor-count-value")).toHaveTextContent("1");
+      expect(
+        screen.queryByTestId("reveal-teammates-suboption"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("leaves the count alone while the room is still big enough for it", () => {
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector(
+          createState({ gameOptions: twoImpostors, players: makePlayers(7) }),
+        ),
+      );
+
+      render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+      expect(screen.getByTestId("impostor-count-value")).toHaveTextContent("2");
+      // Seven players allow a third
+      expect(screen.getByTestId("increase-impostors-btn")).toBeEnabled();
+      expect(
+        screen.getByTestId("reveal-teammates-suboption"),
+      ).toBeInTheDocument();
+    });
+
+    it("saves the count that fits, and drops the teammate reveal with it", async () => {
+      const user = userEvent.setup();
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector(
+          createState({ gameOptions: twoImpostors, players: makePlayers(4) }),
+        ),
+      );
+
+      render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+      await user.click(screen.getByTestId("confirm-options-button"));
+
+      expect(mockUpdateGameOptions).toHaveBeenCalledWith(
+        expect.objectContaining({
+          impostorCount: 1,
+          revealImpostorTeammates:
+            DEFAULT_GAME_OPTIONS.revealImpostorTeammates,
+        }),
+      );
+    });
+
+    it("does not put the count back up when a new player takes the free seat", () => {
+      const mockWith = (playerCount: number) =>
+        (useGameStore as any).mockImplementation((selector: any) =>
+          selector(
+            createState({
+              gameOptions: twoImpostors,
+              players: makePlayers(playerCount),
+            }),
+          ),
+        );
+
+      mockWith(5);
+      const { rerender } = render(
+        <OptionsModal isOpen={true} onClose={mockOnClose} />,
+      );
+      expect(screen.getByTestId("impostor-count-value")).toHaveTextContent("2");
+
+      // One of the five leaves while the modal is open
+      mockWith(4);
+      rerender(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+      expect(screen.getByTestId("impostor-count-value")).toHaveTextContent("1");
+
+      // Someone else joins: the second impostor is the host's to ask for again
+      mockWith(5);
+      rerender(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+      expect(screen.getByTestId("impostor-count-value")).toHaveTextContent("1");
+      expect(screen.getByTestId("increase-impostors-btn")).toBeEnabled();
+    });
+  });
 });
