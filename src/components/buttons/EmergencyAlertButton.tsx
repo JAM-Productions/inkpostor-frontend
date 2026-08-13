@@ -36,7 +36,7 @@ export const EmergencyAlertButton = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full inset-x-0 sm:inset-x-auto sm:left-auto sm:right-0 mt-3 p-4 bg-[#26221d] rounded-[20px_8px_18px_6px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-4 sm:min-w-64 animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-200 z-50">
+        <div className="absolute top-full inset-x-0 sm:inset-x-auto sm:left-auto sm:right-0 mt-3 p-4 bg-[#26221d] rounded-[20px_8px_18px_6px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-4 sm:min-w-64 animate-slide-pop-in z-50">
           <p className="text-base text-amber-100 font-handwritten font-bold text-center">
             {t("canvas.emergencyVotingPrompt")}
           </p>

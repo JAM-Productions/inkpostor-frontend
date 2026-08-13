@@ -59,7 +59,7 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
 
   return (
     <div
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 bg-[#26221d] p-4 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-4 animate-in slide-in-from-bottom-10 z-50 transition-[max-width,width] duration-300 ${
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 bg-[#26221d] p-4 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-4 animate-pop-in z-50 transition-[max-width,width] duration-300 ${
         hasPalette
           ? `w-[calc(100%-2rem)] ${isCompressed ? "max-w-sm" : "max-w-3xl"}`
           : hasUnlimitedInk

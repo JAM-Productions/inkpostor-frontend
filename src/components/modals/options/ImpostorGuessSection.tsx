@@ -78,7 +78,7 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
       </div>
 
       {enabled && (
-        <div className="mt-4 flex items-center justify-between gap-4 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] px-4 py-3 shadow-[2px_2px_0px_#000] animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="mt-4 flex items-center justify-between gap-4 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] px-4 py-3 shadow-[2px_2px_0px_#000] animate-slide-pop-in">
           <span className="text-base font-handwritten font-bold text-amber-100">
             {t("options.impostorGuess.attempts")}
           </span>
@@ -116,7 +116,7 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
 
       {enabled && (
         <div
-          className="mt-3 flex items-center justify-between gap-4 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] px-4 py-3 shadow-[2px_2px_0px_#000] animate-in fade-in slide-in-from-top-2 duration-200"
+          className="mt-3 flex items-center justify-between gap-4 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] px-4 py-3 shadow-[2px_2px_0px_#000] animate-slide-pop-in"
           data-testid="impostor-lose-on-last-attempt"
         >
           <div className="min-w-0 font-handwritten">

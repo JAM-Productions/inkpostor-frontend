@@ -97,7 +97,7 @@ export const ImpostorCountSection: React.FC<ImpostorCountSectionProps> = ({
 
       {count > 1 && (
         <div
-          className="mt-3 flex items-center justify-between gap-4 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] px-4 py-3 shadow-[2px_2px_0px_#000] animate-in fade-in slide-in-from-top-2 duration-200"
+          className="mt-3 flex items-center justify-between gap-4 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] px-4 py-3 shadow-[2px_2px_0px_#000] animate-slide-pop-in"
           data-testid="reveal-teammates-suboption"
         >
           <div className="min-w-0 font-handwritten">
