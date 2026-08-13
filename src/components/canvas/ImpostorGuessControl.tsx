@@ -42,7 +42,7 @@ export const ImpostorGuessControl: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsGuessOpen(!isGuessOpen)}
-        className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-[14px_4px_16px_5px] font-handwritten font-bold text-lg transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 shadow-[3px_3px_0px_#0c0b09] cursor-pointer border-2 border-stone-950 ${
+        className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-[14px_4px_16px_5px] font-handwritten font-bold text-lg transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 shadow-[3px_3px_0px_#0c0b09] cursor-pointer border-2 border-stone-950 ${
           isGuessOpen
             ? "bg-purple-500 text-white -rotate-1"
             : "bg-[#26221d] text-purple-300 hover:bg-stone-800"

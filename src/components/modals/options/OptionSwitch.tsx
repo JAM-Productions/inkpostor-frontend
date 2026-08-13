@@ -38,7 +38,7 @@ export const OptionSwitch: React.FC<OptionSwitchProps> = ({
     disabled={disabled}
     aria-checked={checked}
     onClick={onChange}
-    className={`relative inline-flex h-8 w-15 shrink-0 items-center rounded-full border-3 border-stone-950 transition-all shadow-[3px_3px_0px_#0c0b09] ${
+    className={`relative inline-flex h-8 w-15 shrink-0 items-center rounded-full border-3 border-stone-950 transition-colors transition-transform shadow-[3px_3px_0px_#0c0b09] ${
       checked ? toneClasses[tone] : "bg-[#181512]"
     } ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09]"}`}
     aria-label={label}

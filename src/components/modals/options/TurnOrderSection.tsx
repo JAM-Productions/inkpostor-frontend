@@ -72,7 +72,7 @@ export const TurnOrderSection: React.FC<TurnOrderSectionProps> = ({
                     key={option.value}
                     type="button"
                     onClick={() => onChange(option.value)}
-                    className={`flex items-center justify-between rounded-[14px_4px_16px_5px] border-2 px-4 py-3 text-left transition-all cursor-pointer font-handwritten ${
+                    className={`flex items-center justify-between rounded-[14px_4px_16px_5px] border-2 px-4 py-3 text-left transition-colors transition-transform cursor-pointer font-handwritten ${
                       isSelected
                         ? "border-stone-950 bg-teal-400 text-stone-950 shadow-[3px_3px_0px_#000] -rotate-1"
                         : "border-stone-950 bg-[#26221d] text-teal-100 shadow-[2px_2px_0px_#000] hover:border-teal-400/60 hover:-rotate-1"

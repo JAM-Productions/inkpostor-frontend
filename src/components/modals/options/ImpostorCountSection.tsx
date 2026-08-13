@@ -48,7 +48,7 @@ export const ImpostorCountSection: React.FC<ImpostorCountSectionProps> = ({
             type="button"
             disabled={!isHost || count <= MIN_IMPOSTORS}
             onClick={() => onCountChange(-1)}
-            className="flex size-9 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-[#26221d] text-amber-200 shadow-[2px_2px_0px_#000] hover:-rotate-3 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0 cursor-pointer"
+            className="flex size-9 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-[#26221d] text-amber-200 shadow-[2px_2px_0px_#000] hover:-rotate-3 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] transition-colors transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0 cursor-pointer"
             aria-label={t("options.impostorCount.decrease")}
             data-testid="decrease-impostors-btn"
           >
@@ -65,7 +65,7 @@ export const ImpostorCountSection: React.FC<ImpostorCountSectionProps> = ({
             type="button"
             disabled={!isHost || count >= maxImpostors}
             onClick={() => onCountChange(1)}
-            className="flex size-9 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-[#26221d] text-amber-200 shadow-[2px_2px_0px_#000] hover:rotate-3 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0 cursor-pointer"
+            className="flex size-9 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-[#26221d] text-amber-200 shadow-[2px_2px_0px_#000] hover:rotate-3 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] transition-colors transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0 cursor-pointer"
             aria-label={t("options.impostorCount.increase")}
             data-testid="increase-impostors-btn"
           >

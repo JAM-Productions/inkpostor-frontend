@@ -28,7 +28,7 @@ export const CopyCodeButton: React.FC<CopyCodeButtonProps> = ({ roomId }) => {
       type="button"
       onClick={handleCopy}
       disabled={!hasRoomId}
-      className={`group relative inline-flex flex-col items-center gap-2 bg-[#26221d] border-3 border-stone-950 rounded-[20px_6px_22px_7px] px-8 py-4 shadow-[5px_5px_0px_#0c0b09] transition-all ${
+      className={`group relative inline-flex flex-col items-center gap-2 bg-[#26221d] border-3 border-stone-950 rounded-[20px_6px_22px_7px] px-8 py-4 shadow-[5px_5px_0px_#0c0b09] transition-colors transition-transform ${
         hasRoomId
           ? "hover:border-amber-400 hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_#0c0b09] cursor-pointer"
           : "cursor-not-allowed opacity-60"

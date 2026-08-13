@@ -54,7 +54,7 @@ export const ImpostorGuessForm: React.FC<ImpostorGuessFormProps> = ({
           type="submit"
           data-testid="submit-guess-btn"
           disabled={!guess.trim()}
-          className="shrink-0 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-purple-600 px-4 py-2.5 font-bold text-white shadow-[3px_3px_0px_#000] transition-all hover:bg-purple-500 hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          className="shrink-0 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-purple-600 px-4 py-2.5 font-bold text-white shadow-[3px_3px_0px_#000] transition-colors transition-transform hover:bg-purple-500 hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
           <CornerDownRight className="size-5 stroke-[3]" />
         </button>

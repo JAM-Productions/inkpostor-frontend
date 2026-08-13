@@ -45,7 +45,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
   return (
     <div
       style={{ animationDelay: `${index * 100}ms` }}
-      className={`flex items-center justify-between p-3.5 sm:p-4 rounded-[18px_6px_20px_8px] border-2 transition-all animate-fade-in-right ${
+      className={`flex items-center justify-between p-3.5 sm:p-4 rounded-[18px_6px_20px_8px] border-2 transition-colors transition-transform animate-fade-in-right ${
         player.id === myId
           ? "bg-white/20 border-white/40 shadow-[3px_3px_0px_#000]"
           : "bg-[#181512] border-stone-800 shadow-[2px_2px_0px_#000]"

@@ -154,7 +154,7 @@ export const Lobby: React.FC = () => {
               data-testid="start-game-btn"
               onClick={actions.startGame}
               disabled={!canStart}
-              className="w-full shrink-0 group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer bg-red-600 hover:bg-red-500 shadow-[4px_4px_0px_#000]"
+              className="w-full shrink-0 group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer bg-red-600 hover:bg-red-500 shadow-[4px_4px_0px_#000]"
             >
               <div className="flex h-full w-full items-center justify-center gap-2 px-8 py-3.5 font-bold text-white">
                 <span className="text-2xl sm:text-3xl tracking-wider font-rubik-wet-paint">

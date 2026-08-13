@@ -197,7 +197,7 @@ export const GameResult: React.FC = () => {
               type="button"
               data-testid="play-again-btn"
               onClick={actions.playAgain}
-              className="w-full cursor-pointer group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] bg-red-600 hover:bg-red-500 text-white animate-fade-in animate-delay-2000 animate-duration-slower"
+              className="w-full cursor-pointer group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] bg-red-600 hover:bg-red-500 text-white animate-fade-in animate-delay-2000 animate-duration-slower"
             >
               <div className="flex h-full w-full items-center justify-center gap-2 px-8 py-3.5">
                 <span className="text-2xl sm:text-3xl tracking-wider uppercase font-rubik-wet-paint">
@@ -217,7 +217,7 @@ export const GameResult: React.FC = () => {
             type="button"
             data-testid="next-round-btn"
             onClick={actions.nextRound}
-            className="w-full min-h-14 cursor-pointer group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] bg-amber-300 hover:bg-amber-200 text-stone-950 animate-fade-in animate-delay-2000 animate-duration-slower"
+            className="w-full min-h-14 cursor-pointer group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] bg-amber-300 hover:bg-amber-200 text-stone-950 animate-fade-in animate-delay-2000 animate-duration-slower"
           >
             <div className="flex h-full w-full items-center justify-center gap-2.5 px-8 py-3.5">
               <Play className="fill-stone-950 size-6 text-stone-950" />
@@ -246,7 +246,7 @@ export const GameResult: React.FC = () => {
             type="button"
             aria-label="Return to Home"
             onClick={actions.exitGame}
-            className="mt-6 px-6 py-2.5 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] text-amber-200 hover:text-white hover:bg-stone-800 transition-all cursor-pointer font-handwritten font-bold text-lg flex items-center justify-center gap-2 mx-auto shadow-[3px_3px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09]"
+            className="mt-6 px-6 py-2.5 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] text-amber-200 hover:text-white hover:bg-stone-800 transition-colors transition-transform cursor-pointer font-handwritten font-bold text-lg flex items-center justify-center gap-2 mx-auto shadow-[3px_3px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09]"
             data-testid="return-home-button"
           >
             <Home className="size-5 text-amber-400" />

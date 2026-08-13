@@ -62,13 +62,13 @@ export const WordSelection: React.FC = () => {
               placeholder={t("wordSelection.placeholder")}
               aria-label={t("wordSelection.placeholder")}
               maxLength={MAX_CUSTOM_WORD_LENGTH}
-              className="w-full rounded-[18px_6px_20px_7px] border-2 border-stone-700 focus:border-amber-400 bg-[#181512] px-4 py-3.5 text-center text-2xl font-handwritten text-white placeholder-stone-500 outline-none shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-all"
+              className="w-full rounded-[18px_6px_20px_7px] border-2 border-stone-700 focus:border-amber-400 bg-[#181512] px-4 py-3.5 text-center text-2xl font-handwritten text-white placeholder-stone-500 outline-none shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-colors transition-transform"
             />
             <button
               type="submit"
               data-testid="submit-custom-word-btn"
               disabled={!isValid}
-              className="flex w-full items-center justify-center gap-2 rounded-[20px_6px_18px_8px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 px-8 py-3.5 text-xl font-handwritten font-bold text-stone-950 shadow-[4px_4px_0px_#0c0b09] transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-[20px_6px_18px_8px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 px-8 py-3.5 text-xl font-handwritten font-bold text-stone-950 shadow-[4px_4px_0px_#0c0b09] transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer"
             >
               {t("wordSelection.submit")}
             </button>

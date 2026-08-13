@@ -97,7 +97,7 @@ export const JoinScreen: React.FC = () => {
                   id="player-name"
                   type="text"
                   placeholder={t("join.enterName")}
-                  className="w-full px-4 py-3 bg-[#181512] border-2 border-stone-700 focus:border-amber-400 rounded-[18px_6px_22px_7px] outline-none text-white text-xl font-handwritten placeholder-stone-500 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-all disabled:opacity-50"
+                  className="w-full px-4 py-3 bg-[#181512] border-2 border-stone-700 focus:border-amber-400 rounded-[18px_6px_22px_7px] outline-none text-white text-xl font-handwritten placeholder-stone-500 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-colors transition-transform disabled:opacity-50"
                   value={playerName}
                   onChange={(e) => setPlayerName(e.target.value)}
                   maxLength={15}
@@ -111,7 +111,7 @@ export const JoinScreen: React.FC = () => {
                   data-testid="create-room-btn"
                   onClick={handleCreate}
                   disabled={!playerName || isCheckingHealth}
-                  className="w-full relative group rounded-[22px_7px_18px_9px] border-2 border-stone-950 bg-red-600 hover:bg-red-500 px-5 py-3.5 text-xl font-bold text-white shadow-[4px_4px_0px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#0c0b09] transition-all disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 flex items-center justify-center gap-2.5 cursor-pointer font-handwritten tracking-wide"
+                  className="w-full relative group rounded-[22px_7px_18px_9px] border-2 border-stone-950 bg-red-600 hover:bg-red-500 px-5 py-3.5 text-xl font-bold text-white shadow-[4px_4px_0px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#0c0b09] transition-colors transition-transform disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 flex items-center justify-center gap-2.5 cursor-pointer font-handwritten tracking-wide"
                 >
                   <Users className="size-6" />
                   <span>{t("join.createGame")}</span>
@@ -142,7 +142,7 @@ export const JoinScreen: React.FC = () => {
                   id="room-code"
                   type="text"
                   placeholder={t("join.roomCodePlaceholder")}
-                  className="w-full px-4 py-3 bg-[#181512] border-2 border-stone-700 focus:border-amber-400 rounded-[16px_8px_20px_6px] outline-none text-center uppercase tracking-widest text-white text-2xl font-short-stack placeholder-stone-600 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-all disabled:opacity-50"
+                  className="w-full px-4 py-3 bg-[#181512] border-2 border-stone-700 focus:border-amber-400 rounded-[16px_8px_20px_6px] outline-none text-center uppercase tracking-widest text-white text-2xl font-short-stack placeholder-stone-600 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-colors transition-transform disabled:opacity-50"
                   value={roomId}
                   onChange={(e) => setRoomId(e.target.value)}
                   maxLength={6}
@@ -153,7 +153,7 @@ export const JoinScreen: React.FC = () => {
                 type="submit"
                 data-testid="join-room-btn"
                 disabled={!playerName || !roomId || isCheckingHealth}
-                className="w-full rounded-[18px_8px_20px_6px] border-2 border-stone-950 bg-amber-300 hover:bg-amber-200 px-5 py-3.5 text-xl font-bold text-stone-950 shadow-[4px_4px_0px_0px_#0c0b09] hover:rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#0c0b09] transition-all disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer font-handwritten tracking-wide"
+                className="w-full rounded-[18px_8px_20px_6px] border-2 border-stone-950 bg-amber-300 hover:bg-amber-200 px-5 py-3.5 text-xl font-bold text-stone-950 shadow-[4px_4px_0px_0px_#0c0b09] hover:rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#0c0b09] transition-colors transition-transform disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer font-handwritten tracking-wide"
               >
                 {t("join.joinGame")}
               </button>

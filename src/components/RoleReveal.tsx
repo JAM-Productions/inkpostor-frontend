@@ -64,7 +64,7 @@ export const RoleReveal: React.FC = () => {
             onMouseDown={() => handleReveal()}
             onMouseUp={() => setRevealed(false)}
             onMouseLeave={() => setRevealed(false)}
-            className={`w-full aspect-video rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 transition-all duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in shadow-[6px_6px_0px_#0c0b09]
+            className={`w-full aspect-video rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 transition-colors transition-transform duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in shadow-[6px_6px_0px_#0c0b09]
               ${
                 revealed
                   ? amIImpostor
@@ -143,7 +143,7 @@ export const RoleReveal: React.FC = () => {
                 type="button"
                 data-testid="proceed-to-drawing-btn"
                 onClick={actions.proceedToDrawing}
-                className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
+                className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
               >
                 {isSpoken ? (
                   <Play className="size-6 fill-current text-stone-950" />

@@ -95,7 +95,7 @@ export const CanvasHeader: React.FC<CanvasHeaderProps> = ({ timeLeft }) => {
           <button
             type="button"
             onClick={() => actions.endTurn()}
-            className="bg-amber-300 hover:bg-amber-200 text-stone-950 border-3 border-stone-950 px-5 py-3 rounded-[16px_5px_18px_6px] font-handwritten font-bold text-xl transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] cursor-pointer flex items-center gap-2"
+            className="bg-amber-300 hover:bg-amber-200 text-stone-950 border-3 border-stone-950 px-5 py-3 rounded-[16px_5px_18px_6px] font-handwritten font-bold text-xl transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] cursor-pointer flex items-center gap-2"
           >
             <CheckSquare className="size-6 text-stone-950" />
             <span>{t("canvas.done")}</span>

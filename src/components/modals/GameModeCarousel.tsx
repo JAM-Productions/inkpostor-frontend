@@ -85,7 +85,7 @@ export const GameModeCarousel: React.FC<GameModeCarouselProps> = ({
           disabled={!isHost}
           onClick={() => goTo(currentIndex - 1)}
           aria-label={t("options.gameMode.previous")}
-          className="flex size-10 shrink-0 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-[#26221d] text-amber-300 shadow-[2px_2px_0px_#000] transition-all hover:-rotate-6 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0 cursor-pointer"
+          className="flex size-10 shrink-0 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-[#26221d] text-amber-300 shadow-[2px_2px_0px_#000] transition-colors transition-transform hover:-rotate-6 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0 cursor-pointer"
         >
           <ChevronLeft className="size-6 stroke-[3]" />
         </button>
@@ -105,7 +105,7 @@ export const GameModeCarousel: React.FC<GameModeCarouselProps> = ({
           disabled={!isHost}
           onClick={() => goTo(currentIndex + 1)}
           aria-label={t("options.gameMode.next")}
-          className="flex size-10 shrink-0 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-[#26221d] text-amber-300 shadow-[2px_2px_0px_#000] transition-all hover:rotate-6 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0 cursor-pointer"
+          className="flex size-10 shrink-0 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-[#26221d] text-amber-300 shadow-[2px_2px_0px_#000] transition-colors transition-transform hover:rotate-6 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0 cursor-pointer"
         >
           <ChevronRight className="size-6 stroke-[3]" />
         </button>
@@ -125,7 +125,7 @@ export const GameModeCarousel: React.FC<GameModeCarouselProps> = ({
                 mode: t(mode.nameKey),
               })}
               aria-current={isSelected}
-              className={`h-2.5 rounded-full border border-stone-950 transition-all disabled:cursor-default ${
+              className={`h-2.5 rounded-full border border-stone-950 transition-colors transition-transform disabled:cursor-default ${
                 isSelected
                   ? "w-6 bg-amber-400 shadow-[1px_1px_0px_#000]"
                   : "w-2.5 bg-stone-700 hover:bg-stone-600"

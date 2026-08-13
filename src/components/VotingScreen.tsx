@@ -104,7 +104,7 @@ export const VotingScreen: React.FC = () => {
                   hasVoted ||
                   player.id === myId
                 }
-                className={`flex items-center gap-3 sm:p-4 p-3 rounded-[18px_6px_20px_7px] border-2 transition-all text-left animate-pulse-fade-in ${
+                className={`flex items-center gap-3 sm:p-4 p-3 rounded-[18px_6px_20px_7px] border-2 transition-colors transition-transform text-left animate-pulse-fade-in ${
                   player.id === myId
                     ? getPlayerVotingCardColorClass(
                         player.id,
@@ -161,7 +161,7 @@ export const VotingScreen: React.FC = () => {
               data-testid="skip-vote-btn"
               onClick={() => setSelectedPlayer("skip")}
               disabled={hasVoted}
-              className={`w-full flex items-center gap-3 p-3.5 sm:p-4 rounded-[18px_6px_20px_7px] border-2 transition-all text-left ${
+              className={`w-full flex items-center gap-3 p-3.5 sm:p-4 rounded-[18px_6px_20px_7px] border-2 transition-colors transition-transform text-left ${
                 hasBeenEjected
                   ? "hidden"
                   : effectiveSelectedPlayer === "skip"
@@ -207,7 +207,7 @@ export const VotingScreen: React.FC = () => {
                 data-testid="confirm-vote-btn"
                 onClick={handleVote}
                 disabled={!selectedPlayer || isSubmitting}
-                className="w-full py-3.5 rounded-[20px_6px_18px_8px] border-3 border-stone-950 bg-red-600 hover:bg-red-500 text-white sm:text-2xl text-xl font-handwritten font-bold shadow-[4px_4px_0px_#0c0b09] transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] disabled:opacity-50 disabled:hover:rotate-0 cursor-pointer"
+                className="w-full py-3.5 rounded-[20px_6px_18px_8px] border-3 border-stone-950 bg-red-600 hover:bg-red-500 text-white sm:text-2xl text-xl font-handwritten font-bold shadow-[4px_4px_0px_#0c0b09] transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] disabled:opacity-50 disabled:hover:rotate-0 cursor-pointer"
               >
                 {t("voting.confirmVote")}
               </button>

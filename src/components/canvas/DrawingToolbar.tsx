@@ -44,7 +44,7 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
       type="button"
       data-testid="undo-stroke-btn"
       onClick={onUndo}
-      className={`rounded-[14px_4px_16px_4px] border-2 border-stone-950 shrink-0 cursor-pointer bg-[#181512] flex items-center justify-center gap-2 text-amber-200 hover:bg-stone-800 transition-all shadow-[2px_2px_0px_#000] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] ${isUndoOnly ? "h-10 px-4" : "size-10"}`}
+      className={`rounded-[14px_4px_16px_4px] border-2 border-stone-950 shrink-0 cursor-pointer bg-[#181512] flex items-center justify-center gap-2 text-amber-200 hover:bg-stone-800 transition-colors transition-transform shadow-[2px_2px_0px_#000] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] ${isUndoOnly ? "h-10 px-4" : "size-10"}`}
       title={t("canvas.undo")}
       aria-label="Undo last stroke"
     >
@@ -96,7 +96,7 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
               <button
                 type="button"
                 onClick={() => setIsCompressed(true)}
-                className="mt-0.5 size-10 rounded-[14px_4px_16px_4px] border-2 border-stone-950 shrink-0 cursor-pointer bg-[#181512] flex items-center justify-center text-amber-200 hover:bg-stone-800 transition-all shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000]"
+                className="mt-0.5 size-10 rounded-[14px_4px_16px_4px] border-2 border-stone-950 shrink-0 cursor-pointer bg-[#181512] flex items-center justify-center text-amber-200 hover:bg-stone-800 transition-colors transition-transform shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000]"
                 title={t("canvas.compress")}
                 aria-label="Compress toolbar"
               >
@@ -148,7 +148,7 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
             <button
               type="button"
               onClick={() => setIsCompressed(false)}
-              className="size-10 rounded-[14px_4px_16px_4px] border-2 border-stone-950 cursor-pointer bg-[#181512] flex items-center justify-center text-amber-200 hover:bg-stone-800 transition-all shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000]"
+              className="size-10 rounded-[14px_4px_16px_4px] border-2 border-stone-950 cursor-pointer bg-[#181512] flex items-center justify-center text-amber-200 hover:bg-stone-800 transition-colors transition-transform shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000]"
               title={t("canvas.expand")}
               aria-label="Expand toolbar"
             >

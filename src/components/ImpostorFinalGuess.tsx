@@ -60,7 +60,7 @@ export const ImpostorFinalGuess: React.FC = () => {
           type="button"
           data-testid="skip-guess-btn"
           onClick={actions.skipImpostorGuess}
-          className="w-full rounded-[16px_5px_18px_6px] border-2 border-stone-950 bg-[#181512] px-4 py-3 font-handwritten text-lg font-bold text-amber-200 hover:bg-stone-800 transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] shadow-[3px_3px_0px_#0c0b09] cursor-pointer"
+          className="w-full rounded-[16px_5px_18px_6px] border-2 border-stone-950 bg-[#181512] px-4 py-3 font-handwritten text-lg font-bold text-amber-200 hover:bg-stone-800 transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] shadow-[3px_3px_0px_#0c0b09] cursor-pointer"
         >
           {t("impostorGuess.skip")}
         </button>

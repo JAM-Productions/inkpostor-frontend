@@ -47,7 +47,7 @@ export const SuspectsPopover: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsSusListOpen(!isSusListOpen)}
-        className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-[14px_4px_16px_5px] font-handwritten font-bold text-lg transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 shadow-[3px_3px_0px_#0c0b09] cursor-pointer border-2 border-stone-950 ${
+        className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-[14px_4px_16px_5px] font-handwritten font-bold text-lg transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 shadow-[3px_3px_0px_#0c0b09] cursor-pointer border-2 border-stone-950 ${
           isSusListOpen
             ? "bg-amber-400 text-stone-950 -rotate-1"
             : "bg-[#26221d] text-amber-200 hover:bg-stone-800"
@@ -75,7 +75,7 @@ export const SuspectsPopover: React.FC = () => {
                 }}
                 disabled={player.id === myId || player.isEjected}
                 title={player.name}
-                className={`flex items-center gap-3 px-3 py-2 rounded-[14px_4px_16px_5px] border-2 border-stone-950 transition-all flex-1 text-left ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-[14px_4px_16px_5px] border-2 border-stone-950 transition-colors transition-transform flex-1 text-left ${
                   player.isEjected
                     ? "bg-[#181512]/50 opacity-50 cursor-default"
                     : player.isSuspected
