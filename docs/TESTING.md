@@ -41,7 +41,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    subgraph "100% Complete System E2E Suite (52 Tests)"
+    subgraph "100% Complete System E2E Suite (53 Tests)"
         S1[e2e/multiplayer.spec.ts]
         S2[e2e/options-modal.spec.ts]
         S3[e2e/game-modes.spec.ts]
@@ -83,7 +83,7 @@ flowchart TD
 
 ---
 
-### E2E Test Suite Specification Directory (52 Tests across 35 Spec Files)
+### E2E Test Suite Specification Directory (53 Tests across 36 Spec Files)
 
 | # | Spec File | Purpose & User Flow Tested | Key Verification & Assertions |
 |---|---|---|---|
@@ -122,8 +122,9 @@ flowchart TD
 | 33 | `multi-impostor-hotword.spec.ts` | Multi-Impostor `HOT_WORD` Game Journey | 5-player `HOT_WORD` mode with 2 Inkpostors ➔ Round 1 ejection ➔ Word Reveal phase for new secret word ➔ Round 2 final ejection |
 | 34 | `multi-impostor-customword.spec.ts` | Multi-Impostor `CUSTOM_WORD` Chaos Journey | 5-player Chaos mode ➔ Word Selection excludes words from BOTH Inkpostors ➔ Round 1 ejection ➔ Round 2 victory |
 | 35 | `multi-impostor-original.spec.ts` | Multi-Impostor `ORIGINAL` Spoken Journey | 5-player Spoken mode ➔ Teammate role reveal ➔ ORDER_INFO phase ➔ Round 1 ejection ➔ ORDER_INFO Round 2 ➔ Round 2 victory |
+| 36 | `impostor-count-shrinks.spec.ts` | Inkpostor Count Follows The Room | 2 Inkpostors saved in a 5-player lobby ➔ one player leaves ➔ count comes back down to 1 for the host and for a guest reading the modal, with both steppers disabled |
 
-> 🎨 **Multi-Client Game Flow Diagrams**: Detailed phase-by-phase state machine diagrams for Multi-Impostor games, Classic mode, Spoken modes, and all 35 E2E test files are available in **[docs/E2E_FLOWS.md](./E2E_FLOWS.md)**.
+> 🎨 **Multi-Client Game Flow Diagrams**: Detailed phase-by-phase state machine diagrams for Multi-Impostor games, Classic mode, Spoken modes, and all 36 E2E test files are available in **[docs/E2E_FLOWS.md](./E2E_FLOWS.md)**.
 
 ---
 

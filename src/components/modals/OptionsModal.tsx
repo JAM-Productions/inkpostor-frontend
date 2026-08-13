@@ -12,12 +12,13 @@ import { ToggleOptionSection } from "./options/ToggleOptionSection";
 import { TurnOrderSection } from "./options/TurnOrderSection";
 import {
   applyModeLockedOptions,
+  clampImpostorCount,
   DEFAULT_GAME_MODE,
   DEFAULT_GAME_OPTIONS,
   DRAWING_OPTION_SECTIONS,
+  getMaxImpostors,
   MAX_IMPOSTOR_GUESSES,
   MIN_IMPOSTOR_GUESSES,
-  MIN_IMPOSTORS,
   MODE_LOCKED_OPTIONS,
   MODE_OPTION_SECTIONS,
   type OptionSection,
@@ -76,11 +77,17 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
 
   const isHost = myId === hostId;
   const playerCount = players?.length || 0;
-  const maxImpostors = Math.max(1, Math.floor((playerCount - 1) / 2));
-  const effectiveImpostorCount = Math.min(
-    maxImpostors,
-    Math.max(MIN_IMPOSTORS, impostorCount),
-  );
+  const maxImpostors = getMaxImpostors(playerCount);
+  const effectiveImpostorCount = clampImpostorCount(impostorCount, playerCount);
+
+  // Someone leaving while the modal is open lowers the ceiling, so the choice
+  // follows it down and stays there: it must not spring back up on its own when
+  // a new player takes the free seat. Adjusted while rendering rather than in an
+  // effect, which is what React prescribes for state that has to follow
+  // something outside of it.
+  if (impostorCount > maxImpostors) {
+    setImpostorCount(maxImpostors);
+  }
   // The carousel is staged with the rest of the form, so it controls the
   // settings shown in the modal without changing the room until it is saved.
   const gameMode = isHost ? stagedGameMode : savedGameMode;
@@ -114,13 +121,20 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
         turnOrderMode,
       }
     : hostGameOptions;
-  const displayed = applyModeLockedOptions(stagedOptions, gameMode);
+  const locked = applyModeLockedOptions(stagedOptions, gameMode);
+  // A guest reads the room's saved options, which nobody has corrected yet in
+  // the moment between a player leaving and the host's update landing, so the
+  // clamp goes on what is shown rather than only on what the host is editing.
+  const displayed: GameOptions = {
+    ...locked,
+    impostorCount: clampImpostorCount(locked.impostorCount, playerCount),
+  };
   const isClearCanvasLocked = "clearCanvasEachRound" in lockedOptions;
   const isImpostorGuessLocked = "impostorGuessEnabled" in lockedOptions;
 
   const changeImpostorCount = (delta: number) => {
     setImpostorCount((previous) =>
-      Math.min(maxImpostors, Math.max(MIN_IMPOSTORS, previous + delta)),
+      clampImpostorCount(previous + delta, playerCount),
     );
   };
 

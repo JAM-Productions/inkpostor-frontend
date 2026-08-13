@@ -1,8 +1,10 @@
 import { describe, it, expect } from "vitest";
 import {
   applyModeLockedOptions,
+  clampImpostorCount,
   DEFAULT_GAME_MODE,
   DEFAULT_GAME_OPTIONS,
+  getMaxImpostors,
   MODE_LOCKED_OPTIONS,
 } from "../../src/lib/constants";
 import type { GameOptions } from "../../src/store/gameState";
@@ -54,6 +56,43 @@ describe("the options the client mirrors from the server", () => {
       ORIGINAL: spokenLocks,
       ORIGINAL_CHAOS: spokenLocks,
     });
+  });
+});
+
+// The same rule the server applies when it picks the impostors, so a room never
+// shows a count it would then cut on start.
+describe("getMaxImpostors", () => {
+  it.each([
+    [0, 1],
+    [3, 1],
+    [4, 1],
+    [5, 2],
+    [6, 2],
+    [7, 3],
+    [10, 4],
+  ])("allows %i players %i impostors", (playerCount, expected) => {
+    expect(getMaxImpostors(playerCount)).toBe(expected);
+  });
+
+  it("never goes below one, not even in an empty room", () => {
+    expect(getMaxImpostors(-1)).toBe(1);
+  });
+});
+
+describe("clampImpostorCount", () => {
+  it("leaves a count the room can hold alone", () => {
+    expect(clampImpostorCount(2, 5)).toBe(2);
+    expect(clampImpostorCount(3, 7)).toBe(3);
+  });
+
+  it("cuts a count the players no longer allow", () => {
+    // The five players it was chosen for are down to four
+    expect(clampImpostorCount(2, 4)).toBe(1);
+    expect(clampImpostorCount(3, 5)).toBe(2);
+  });
+
+  it("keeps at least one impostor", () => {
+    expect(clampImpostorCount(0, 7)).toBe(1);
   });
 });
 

@@ -13,6 +13,21 @@ export const DEFAULT_IMPOSTOR_GUESSES = 1;
 export const MIN_IMPOSTORS = 1;
 export const DEFAULT_IMPOSTOR_COUNT = 1;
 export const REPEAT_IMPOSTOR_WEIGHT = 0.2;
+
+// Impostors a room of this size can hold: they always have to be outnumbered.
+// The server recomputes it from its own player list when the game starts, so a
+// count that drifted past it is silently cut there — this is that same rule, so
+// the room never advertises a count it would not play with.
+export const getMaxImpostors = (playerCount: number): number =>
+  Math.max(MIN_IMPOSTORS, Math.floor((playerCount - 1) / 2));
+
+// Clamps a saved count to what the current players allow, both ways.
+export const clampImpostorCount = (
+  count: number,
+  playerCount: number,
+): number =>
+  Math.min(getMaxImpostors(playerCount), Math.max(MIN_IMPOSTORS, count));
+
 // Word players write in CUSTOM_WORD mode. Must match the server-side bounds.
 export const MIN_CUSTOM_WORD_LENGTH = 2;
 export const MAX_CUSTOM_WORD_LENGTH = 40;
