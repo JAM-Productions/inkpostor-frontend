@@ -45,27 +45,31 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
   return (
     <div
       style={{ animationDelay: `${index * 100}ms` }}
-      className={`flex items-center justify-between p-3 sm:p-4 rounded-xl border animate-fade-in-right ${player.id === myId ? "bg-white/20 border-white/40" : "bg-stone-900 border-stone-700/50"}`}
+      className={`flex items-center justify-between p-3.5 sm:p-4 rounded-[18px_6px_20px_8px] border-2 transition-all animate-fade-in-right ${
+        player.id === myId
+          ? "bg-white/20 border-white/40 shadow-[3px_3px_0px_#000]"
+          : "bg-[#181512] border-stone-800 shadow-[2px_2px_0px_#000]"
+      }`}
     >
       <div className="flex items-center gap-3">
         <div
-          className={`size-8 sm:size-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-lg ${getPlayerIconColorClass(player.id, hostId, players)}`}
+          className={`size-9 sm:size-11 rounded-full flex items-center justify-center font-bold text-base sm:text-xl border-2 border-stone-950 shadow-[2px_2px_0px_#000] ${getPlayerIconColorClass(player.id, hostId, players)}`}
         >
           {player.isConnected === false ? (
-            <LoaderCircle className="size-4 sm:size-5 text-white animate-spin opacity-60" />
+            <LoaderCircle className="size-5 sm:size-6 text-white animate-spin opacity-80" />
           ) : (
             player.name.charAt(0).toUpperCase()
           )}
         </div>
         <div
-          className={`flex items-center gap-2 ${player.isConnected === false ? "animate-pulse" : ""}`}
+          className={`flex items-center gap-2 ${player.isConnected === false ? "animate-pulse opacity-60" : ""}`}
         >
-          <span className="font-semibold text-white text-sm sm:text-lg">
+          <span className="font-handwritten font-bold text-white text-lg sm:text-xl tracking-wide">
             {player.name}
           </span>
           {player.isConnected === false && (
             <Unplug
-              className="size-4 text-white/80"
+              className="size-4 text-amber-400"
               aria-label={t("lobby.disconnectedAria", { name: player.name })}
             />
           )}
@@ -73,9 +77,9 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
       </div>
 
       {player.id === hostId && (
-        <div className="flex items-center text-amber-500 gap-1 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
-          <Crown className="size-4" />
-          <span className="text-xs font-bold uppercase tracking-wider">
+        <div className="flex items-center text-amber-300 gap-1.5 bg-amber-950/60 px-3 py-1 rounded-[12px_4px_14px_5px] border-2 border-amber-400/50 shadow-[2px_2px_0px_#000]">
+          <Crown className="size-4 text-amber-400" />
+          <span className="text-xs font-handwritten font-bold uppercase tracking-wider">
             {t("lobby.host")}
           </span>
         </div>
@@ -89,7 +93,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
                 type="button"
                 data-testid={`confirm-lobby-kick-btn-${player.id}`}
                 onClick={handleKickConfirm}
-                className="inline-flex size-8 items-center justify-center rounded-full border border-green-500/40 bg-green-500/10 text-green-400 transition-colors hover:bg-green-500/20 cursor-pointer animate-fade-in-left animate-duration-fast"
+                className="inline-flex size-8 items-center justify-center rounded-full border-2 border-green-500 bg-green-950/80 text-green-300 transition-transform hover:scale-105 cursor-pointer animate-fade-in-left animate-duration-fast shadow-[2px_2px_0px_#000]"
                 aria-label={t("lobby.confirmKickAria", {
                   name: player.name,
                 })}
@@ -99,7 +103,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
               <button
                 type="button"
                 onClick={() => setIsPendingKick(false)}
-                className="inline-flex size-8 items-center justify-center rounded-full border border-red-500/40 bg-red-500/10 text-red-400 transition-colors hover:bg-red-500/20 cursor-pointer"
+                className="inline-flex size-8 items-center justify-center rounded-full border-2 border-red-500 bg-red-950/80 text-red-300 transition-transform hover:scale-105 cursor-pointer shadow-[2px_2px_0px_#000]"
                 aria-label={t("lobby.cancelKickAria", {
                   name: player.name,
                 })}
@@ -112,7 +116,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
               type="button"
               data-testid={`lobby-kick-btn-${player.id}`}
               onClick={() => setIsPendingKick(true)}
-              className="group relative inline-flex size-8 items-center justify-center rounded-full border border-stone-600 bg-stone-800 text-stone-400 transition-colors hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 cursor-pointer"
+              className="group relative inline-flex size-8 items-center justify-center rounded-full border-2 border-stone-700 bg-[#26221d] text-stone-300 transition-colors hover:border-red-500 hover:bg-red-950/60 hover:text-red-300 cursor-pointer shadow-[2px_2px_0px_#000]"
               aria-label={t("lobby.kickPlayerAria", {
                 name: player.name,
               })}

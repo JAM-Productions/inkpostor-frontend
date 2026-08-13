@@ -1,19 +1,21 @@
-@import url("https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap");
 @import "tailwindcss";
 @import "tailwind-animations";
 
 @theme {
-  /* Dynamic vibrant palette for Web App */
-  --color-ink-bg: #1c1917;
-  --color-ink-surface: #292524;
-  --color-ink-primary: #8e0000;
-  --color-ink-primary-accent: #a60000;
-  --color-ink-secondary: #f8f6e7;
-  --color-ink-text: #fafaf9;
+  /* Warm Cartoon Ink & Paper Studio Palette */
+  --color-ink-bg: #161412;
+  --color-ink-surface: #26221d;
+  --color-ink-paper: #fbf7ee;
+  --color-ink-primary: #dc2626;
+  --color-ink-primary-accent: #b91c1c;
+  --color-ink-secondary: #fef08a;
+  --color-ink-text: #fefefe;
 
-  --font-sans:
-    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: "Patrick Hand", "Short Stack", "Fredoka", cursive, ui-sans-serif, system-ui, sans-serif;
+  --font-handwritten: "Patrick Hand", cursive, sans-serif;
+  --font-short-stack: "Short Stack", cursive, sans-serif;
+  --font-caveat: "Caveat", cursive, sans-serif;
+  --font-fredoka: "Fredoka", sans-serif;
   --font-rubik-wet-paint: "Rubik Wet Paint", system-ui;
 }
 

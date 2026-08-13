@@ -35,33 +35,33 @@ export const OrderPlayerCard: React.FC<OrderPlayerCardProps> = ({
   return (
     <div
       style={stagger}
-      className={`flex items-center gap-3 rounded-2xl animate-fade-in-right ${
+      className={`flex items-center gap-3 rounded-[18px_6px_20px_8px] animate-fade-in-right ${
         isStarterCard
-          ? `justify-center p-5 ${getActivePlayerCardColorClass(player.id, hostId, players)}`
-          : `border p-3 sm:p-4 ${
+          ? `justify-center p-5 border-3 border-stone-950 shadow-[5px_5px_0px_#0c0b09] ${getActivePlayerCardColorClass(player.id, hostId, players)}`
+          : `border-2 p-3.5 sm:p-4 shadow-[2px_2px_0px_#000] ${
               player.id === myId
                 ? "bg-white/20 border-white/40"
-                : "bg-stone-900 border-stone-700/50"
+                : "bg-stone-900 bg-[#181512] border-stone-800"
             }`
       }`}
     >
       {!isStarterCard && (
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-stone-600 bg-stone-950/60 text-sm font-bold tabular-nums text-white">
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-stone-950 bg-stone-900 text-sm font-handwritten font-bold tabular-nums text-amber-200 shadow-[1px_1px_0px_#000]">
           {position}
         </span>
       )}
       <div
-        className={`flex items-center justify-center rounded-full font-bold ${
+        className={`flex items-center justify-center rounded-full font-handwritten font-bold border-2 border-stone-950 shadow-[2px_2px_0px_#000] ${
           isStarterCard
-            ? "size-12 text-xl"
-            : "size-8 sm:size-10 text-sm sm:text-lg"
+            ? "size-14 text-2xl"
+            : "size-9 sm:size-11 text-base sm:text-xl"
         } ${getPlayerIconColorClass(player.id, hostId, players)}`}
       >
         {player.name.charAt(0).toUpperCase()}
       </div>
       <span
-        className={`font-semibold text-white ${
-          isStarterCard ? "text-2xl" : "text-sm sm:text-lg"
+        className={`font-handwritten font-bold text-white tracking-wide ${
+          isStarterCard ? "text-3xl" : "text-lg sm:text-xl"
         }`}
       >
         {player.name}

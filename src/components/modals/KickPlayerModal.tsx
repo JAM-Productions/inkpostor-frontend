@@ -54,7 +54,7 @@ export const KickPlayerModal: React.FC<KickPlayerModalProps> = ({
             type="button"
             data-testid="cancel-kick-button"
             onClick={onClose}
-            className="flex-1 px-4 py-3 rounded-xl font-bold bg-stone-700 text-stone-200 hover:bg-stone-600 transition-colors"
+            className="flex-1 px-4 py-3 rounded-[16px_5px_18px_6px] font-handwritten font-bold text-lg bg-[#181512] text-amber-200 hover:bg-stone-800 border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer"
           >
             {t("canvas.cancel", "Cancel")}
           </button>
@@ -62,7 +62,7 @@ export const KickPlayerModal: React.FC<KickPlayerModalProps> = ({
             type="button"
             data-testid="confirm-kick-button"
             onClick={handleConfirm}
-            className="flex-1 px-4 py-3 rounded-xl font-bold bg-red-500 text-white hover:bg-red-600 transition-colors"
+            className="flex-1 px-4 py-3 rounded-[16px_5px_18px_6px] font-rubik-wet-paint text-lg text-white bg-red-600 hover:bg-red-500 uppercase tracking-wider border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer"
           >
             {t("canvas.kickConfirm", "Vote to Kick")}
           </button>

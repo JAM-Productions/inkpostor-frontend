@@ -28,23 +28,32 @@ export const RoleReveal: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-950 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#161412] px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
       {/* Background ambient light */}
       <div
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[120px] rounded-full opacity-20 pointer-events-none transition-colors duration-1000 ${revealed ? (amIImpostor ? "bg-red-500" : "bg-emerald-500") : "bg-blue-500"}`}
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[130px] rounded-full opacity-30 pointer-events-none transition-colors duration-1000 ${
+          revealed
+            ? amIImpostor
+              ? "bg-red-600"
+              : "bg-emerald-600"
+            : "bg-amber-600"
+        }`}
       />
 
-      <div className="z-10 max-w-md w-full text-center space-y-8">
+      <div className="z-10 max-w-md w-full text-center space-y-6">
         <div className="space-y-2">
-          <h2 className="text-xl font-medium text-stone-400">
+          <h2 className="text-xl font-handwritten font-bold text-amber-200/70 uppercase tracking-widest">
             {t("roleReveal.phase1")}
           </h2>
-          <h1 className="text-4xl font-semibold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-rubik-wet-paint text-white tracking-wide">
             {t("roleReveal.yourSecretRole")}
           </h1>
         </div>
 
         <div className="relative">
+          {/* Taped top corner accent */}
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-32 h-6 bg-amber-100/30 border border-stone-400/40 rounded-sm transform -rotate-1 z-20 pointer-events-none shadow-sm" />
+
           <button
             type="button"
             data-testid="reveal-role-card"
@@ -55,38 +64,38 @@ export const RoleReveal: React.FC = () => {
             onMouseDown={() => handleReveal()}
             onMouseUp={() => setRevealed(false)}
             onMouseLeave={() => setRevealed(false)}
-            className={`w-full aspect-video rounded-3xl border-2 transition-[background-color,border-color,box-shadow] duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in
+            className={`w-full aspect-video rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 transition-all duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in shadow-[6px_6px_0px_#0c0b09]
               ${
                 revealed
                   ? amIImpostor
-                    ? "border-red-500/50 bg-red-950/40 shadow-[0_0_50px_rgba(239,68,68,0.2)]"
-                    : "border-emerald-500/50 bg-emerald-950/40 shadow-[0_0_50px_rgba(16,185,129,0.2)]"
-                  : "border-stone-700 bg-stone-800 hover:bg-stone-750 hover:border-stone-600"
+                    ? "border-red-600 bg-red-950/80 shadow-[0_0_40px_rgba(220,38,38,0.3)]"
+                    : "border-emerald-600 bg-emerald-950/80 shadow-[0_0_40px_rgba(16,185,129,0.3)]"
+                  : "border-stone-950 bg-[#26221d] hover:bg-stone-800 hover:-rotate-1"
               }`}
           >
             {revealed ? (
-              <div className="animate-in zoom-in-95 duration-200 fade-in flex flex-col items-center gap-y-4 my-4">
+              <div className="animate-in zoom-in-95 duration-200 fade-in flex flex-col items-center gap-y-3 my-4 px-4">
                 {amIImpostor ? (
                   <>
                     <img
                       src="/inkpostor-character.webp"
                       alt="Inkpostor Logo"
-                      className="h-20"
+                      className="h-20 drop-shadow-md"
                     />
-                    <h3 className="text-3xl font-semibold text-white tracking-widest uppercase">
+                    <h3 className="text-2xl sm:text-3xl font-rubik-wet-paint text-white tracking-widest uppercase">
                       {t("roleReveal.youAreInkpostor")} <br />
                       <span className="text-red-500">
                         {t("roleReveal.inkpostor")}
                       </span>
                     </h3>
-                    <p className="text-red-500 font-medium px-4 py-1 bg-red-900/50 rounded-full border border-red-500/30 text-sm ">
+                    <p className="text-red-200 font-handwritten font-bold text-base px-4 py-1 bg-red-900/60 rounded-[14px_4px_16px_4px] border-2 border-red-500/50 shadow-[2px_2px_0px_#000]">
                       {secretCategory
                         ? t("roleReveal.hint", { category: secretCategory })
                         : t("roleReveal.noHint")}
                     </p>
                     {impostorTeammates && impostorTeammates.length > 0 && (
                       <p
-                        className="text-red-400 font-medium text-xs sm:text-sm px-4 py-1.5 bg-red-950/60 rounded-xl border border-red-500/30 max-w-xs text-center"
+                        className="text-red-300 font-handwritten font-bold text-sm px-4 py-1.5 bg-red-950/80 rounded-[14px_4px_16px_4px] border-2 border-red-500/40 max-w-xs text-center shadow-[2px_2px_0px_#000]"
                         data-testid="impostor-teammates"
                       >
                         {t("roleReveal.otherImpostors", {
@@ -100,15 +109,15 @@ export const RoleReveal: React.FC = () => {
                     <img
                       src="/no-inkpostor-character.webp"
                       alt="No Inkpostor Logo"
-                      className="h-20"
+                      className="h-20 drop-shadow-md"
                     />
-                    <p className="text-emerald-200/80 font-medium mb-0 uppercase tracking-widest text-sm">
+                    <p className="text-emerald-200/90 font-handwritten font-bold mb-0 uppercase tracking-widest text-base">
                       {t("roleReveal.theWordIs")}
                     </p>
-                    <h3 className="text-4xl font-semibold text-white">
+                    <h3 className="text-3xl sm:text-4xl font-handwritten font-extrabold text-white drop-shadow-md">
                       {secretWord || ""}
                     </h3>
-                    <p className="text-emerald-400  font-medium px-4 py-1 bg-emerald-900/50 rounded-full border border-emerald-500/30 text-sm">
+                    <p className="text-emerald-300 font-handwritten font-bold px-4 py-1 bg-emerald-900/60 rounded-[14px_4px_16px_4px] border-2 border-emerald-500/50 text-base shadow-[2px_2px_0px_#000]">
                       {t("roleReveal.category", {
                         category: secretCategory || "",
                       })}
@@ -117,9 +126,9 @@ export const RoleReveal: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="flex flex-col items-center text-stone-400 gap-4 transition-transform group-hover:scale-105">
-                <Eye className="size-12" />
-                <span className="text-lg font-medium">
+              <div className="flex flex-col items-center text-amber-200/80 gap-3 transition-transform group-hover:scale-105">
+                <Eye className="size-12 text-amber-400" />
+                <span className="text-xl font-handwritten font-bold tracking-wide">
                   {t("roleReveal.pressHold")}
                 </span>
               </div>
@@ -127,27 +136,27 @@ export const RoleReveal: React.FC = () => {
           </button>
         </div>
 
-        <div className="pt-3" style={{ minHeight: "4rem" }}>
+        <div className="pt-2" style={{ minHeight: "4rem" }}>
           {(isContinueButtonVisible || hasPlayerRevealedRoleAndContinued) &&
             (!hasPlayerRevealedRoleAndContinued ? (
               <button
                 type="button"
                 data-testid="proceed-to-drawing-btn"
                 onClick={actions.proceedToDrawing}
-                className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-[background-color,transform] hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
+                className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
               >
                 {isSpoken ? (
-                  <Play className="size-5 fill-current" />
+                  <Play className="size-6 fill-current text-stone-950" />
                 ) : (
-                  <Brush className="size-5" />
+                  <Brush className="size-6 text-stone-950" />
                 )}
                 {t(isSpoken ? "roleReveal.start" : "roleReveal.startDrawing")}
               </button>
             ) : (
-              <div className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in">
-                <span className="relative flex size-2 sm:size-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full size-2 sm:size-3 bg-stone-500"></span>
+              <div className="text-amber-200/70 font-handwritten text-lg font-bold flex items-center justify-center gap-3 py-3.5 animate-fade-in">
+                <span className="relative flex size-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full size-3 bg-amber-500"></span>
                 </span>
                 {t("roleReveal.waitingPlayers", {
                   count: players.filter((p) => p.hasRevealedRole).length,

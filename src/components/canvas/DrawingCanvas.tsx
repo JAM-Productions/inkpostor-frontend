@@ -33,7 +33,7 @@ export const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
     <div className="relative group">
       <div
         ref={containerRef}
-        className="w-full h-[70vh] sm:aspect-video sm:h-auto bg-[#E9DEB9] rounded-2xl overflow-hidden shadow-2xl relative"
+        className="w-full h-[70vh] sm:aspect-video sm:h-auto bg-[#F4ECD8] rounded-[255px_15px_225px_15px/15px_225px_15px_255px] overflow-hidden border-4 border-stone-950 shadow-[8px_8px_0px_#0c0b09] relative"
       >
         <canvas
           ref={canvasRef}
@@ -45,8 +45,8 @@ export const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
         />
 
         {isMyTurn && isOutOfInk && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-            <span className="text-red-500 animate-zoom-in text-4xl md:text-6xl uppercase drop-shadow-lg font-rubik-wet-paint font-extralight">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 bg-black/40 backdrop-blur-xs">
+            <span className="text-red-500 animate-zoom-in text-4xl md:text-6xl uppercase drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)] font-rubik-wet-paint">
               {t("canvas.outOfInk")}
             </span>
           </div>
@@ -55,10 +55,10 @@ export const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
 
       {/* Mobile Time indicator (floats over canvas on small screens) */}
       <div
-        className={`absolute top-2.5 right-2.5 bg-stone-900/80 backdrop-blur-md rounded-xl p-2 border border-stone-700 shadow-xl pointer-events-none flex items-center gap-2 ${isMyTurn ? "sm:hidden" : "hidden"}`}
+        className={`absolute top-3 right-3 bg-[#26221d] rounded-[14px_4px_16px_4px] p-2 border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] pointer-events-none flex items-center gap-2 ${isMyTurn ? "sm:hidden" : "hidden"}`}
       >
-        <Clock className="size-4 text-emerald-400" />
-        <span className="text-xl font-black text-white tabular-nums text-right min-w-[44px]">
+        <Clock className="size-4 text-amber-400" />
+        <span className="text-xl font-short-stack font-black text-white tabular-nums text-right min-w-[44px]">
           {(timeLeft / 1000).toFixed(1)}
         </span>
       </div>

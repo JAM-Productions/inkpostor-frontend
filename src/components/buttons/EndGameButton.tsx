@@ -21,11 +21,11 @@ export function EndGameButton() {
     <button
       type="button"
       data-testid="end-game-btn"
-      className="p-2 sm:p-2.5 rounded-full bg-stone-800 hover:bg-stone-700 border border-stone-700 text-white transition-[background-color,transform] cursor-pointer shadow-lg active:scale-95"
+      className="p-2.5 rounded-[14px_4px_16px_5px] bg-[#26221d] hover:bg-stone-800 border-2 border-stone-950 text-white transition-all cursor-pointer shadow-[3px_3px_0px_#0c0b09] hover:rotate-2 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09]"
       onClick={() => modalActions.openModal("END_GAME")}
       aria-label={t("endGame.open")}
     >
-      <Flag className="size-3 sm:size-3.5 fill-white" />
+      <Flag className="size-4 text-amber-300 fill-amber-300" />
     </button>
   );
 }

@@ -61,29 +61,35 @@ export const JoinScreen: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-900">
-      <div className="max-w-md w-full text-center space-y-8">
-        <div className="inline-flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#161412] px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
+      {/* Background ambient ink glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-amber-900/20 blur-[130px] rounded-full pointer-events-none" />
+
+      <div className="z-10 max-w-md w-full text-center space-y-8">
+        <div className="inline-flex items-center justify-center relative">
           <img
             src="/inkpostor-logo.webp"
             alt="Inkpostor Logo"
-            className=" h-42 animate-zoom-in"
+            className="h-44 animate-zoom-in drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]"
           />
         </div>
 
         {errorMessage && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg text-sm">
+          <div className="bg-red-950/80 border-2 border-red-500 text-red-200 p-3.5 rounded-[18px_6px_20px_8px] text-base font-handwritten shadow-[3px_3px_0px_#000]">
             {errorMessage}
           </div>
         )}
 
         {serviceOnline || isCheckingHealth ? (
-          <div className="bg-stone-800 p-6 rounded-2xl shadow-xl border border-stone-700 space-y-6 animate-fade-in-up">
+          <div className="relative bg-[#26221d] p-6 sm:p-8 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 border-stone-950 shadow-[6px_6px_0px_0px_#0c0b09] space-y-6 animate-fade-in-up">
+            {/* Taped top corner accent */}
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-28 h-6 bg-amber-100/30 border border-stone-400/40 rounded-sm transform -rotate-1 pointer-events-none shadow-sm" />
+
             <div className="space-y-4">
               <div>
                 <label
                   htmlFor="player-name"
-                  className="block text-sm font-medium text-stone-400 mb-1 text-left"
+                  className="block text-lg font-handwritten font-bold text-amber-100/90 mb-1.5 text-left tracking-wide"
                 >
                   {t("join.yourName")}
                 </label>
@@ -91,7 +97,7 @@ export const JoinScreen: React.FC = () => {
                   id="player-name"
                   type="text"
                   placeholder={t("join.enterName")}
-                  className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-ink-primary focus:border-transparent transition-[box-shadow,border-color] outline-none text-white placeholder-stone-500 disabled:opacity-50"
+                  className="w-full px-4 py-3 bg-[#181512] border-2 border-stone-700 focus:border-amber-400 rounded-[18px_6px_22px_7px] outline-none text-white text-xl font-handwritten placeholder-stone-500 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-all disabled:opacity-50"
                   value={playerName}
                   onChange={(e) => setPlayerName(e.target.value)}
                   maxLength={15}
@@ -105,20 +111,20 @@ export const JoinScreen: React.FC = () => {
                   data-testid="create-room-btn"
                   onClick={handleCreate}
                   disabled={!playerName || isCheckingHealth}
-                  className="w-full relative group overflow-hidden rounded-xl bg-ink-primary px-4 py-3 font-semibold text-white transition-[background-color,transform] hover:bg-ink-primary-accent active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full relative group rounded-[22px_7px_18px_9px] border-2 border-stone-950 bg-red-600 hover:bg-red-500 px-5 py-3.5 text-xl font-bold text-white shadow-[4px_4px_0px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#0c0b09] transition-all disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 flex items-center justify-center gap-2.5 cursor-pointer font-handwritten tracking-wide"
                 >
-                  <Users className="size-5" />
+                  <Users className="size-6" />
                   <span>{t("join.createGame")}</span>
                 </button>
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative my-2">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-stone-700"></div>
+                <div className="w-full border-t-2 border-dashed border-stone-700"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-stone-800 text-stone-500">
+              <div className="relative flex justify-center text-base">
+                <span className="px-3 bg-[#26221d] text-amber-200/60 font-handwritten font-bold">
                   {t("join.or")}
                 </span>
               </div>
@@ -128,7 +134,7 @@ export const JoinScreen: React.FC = () => {
               <div>
                 <label
                   htmlFor="room-code"
-                  className="block text-sm font-medium text-stone-400 mb-1 text-left"
+                  className="block text-lg font-handwritten font-bold text-amber-100/90 mb-1.5 text-left tracking-wide"
                 >
                   {t("join.roomCode")}
                 </label>
@@ -136,7 +142,7 @@ export const JoinScreen: React.FC = () => {
                   id="room-code"
                   type="text"
                   placeholder={t("join.roomCodePlaceholder")}
-                  className="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl focus:ring-2 focus:ring-ink-secondary focus:border-transparent transition-[box-shadow,border-color] outline-none text-center uppercase tracking-widest text-white placeholder-stone-600 disabled:opacity-50"
+                  className="w-full px-4 py-3 bg-[#181512] border-2 border-stone-700 focus:border-amber-400 rounded-[16px_8px_20px_6px] outline-none text-center uppercase tracking-widest text-white text-2xl font-short-stack placeholder-stone-600 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-all disabled:opacity-50"
                   value={roomId}
                   onChange={(e) => setRoomId(e.target.value)}
                   maxLength={6}
@@ -147,15 +153,15 @@ export const JoinScreen: React.FC = () => {
                 type="submit"
                 data-testid="join-room-btn"
                 disabled={!playerName || !roomId || isCheckingHealth}
-                className="w-full rounded-xl bg-ink-secondary px-4 py-3 font-semibold text-black transition-[background-color,transform] hover:bg-white active:scale-95 disabled:opacity-50 disabled:active:scale-100 cursor-pointer"
+                className="w-full rounded-[18px_8px_20px_6px] border-2 border-stone-950 bg-amber-300 hover:bg-amber-200 px-5 py-3.5 text-xl font-bold text-stone-950 shadow-[4px_4px_0px_0px_#0c0b09] hover:rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#0c0b09] transition-all disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer font-handwritten tracking-wide"
               >
                 {t("join.joinGame")}
               </button>
             </form>
           </div>
         ) : (
-          <div className="flex  gap-3 justify-center animate-fade-in animate-duration-slower animate-delay-400 min-h-100.5">
-            <span className="text-xl font-rubik-wet-paint font-extralight text-red-700 mt-10 ">
+          <div className="flex gap-3 justify-center animate-fade-in animate-duration-slower animate-delay-400 min-h-100.5">
+            <span className="text-2xl font-rubik-wet-paint text-red-500 mt-10 tracking-wider">
               {t("join.serviceOffline")}
             </span>
           </div>
@@ -163,9 +169,9 @@ export const JoinScreen: React.FC = () => {
       </div>
       <div className="flex items-center justify-center animate-fade-in animate-delay-600 min-h-10">
         {isCheckingHealth && (
-          <div className="flex items-center gap-2 mt-2.5">
-            <div className="size-2 bg-yellow-400 rounded-full animate-pulse"></div>
-            <span className="text-sm text-stone-400">
+          <div className="flex items-center gap-2.5 mt-3 px-4 py-1.5 bg-[#26221d] border border-stone-700 rounded-full shadow-sm">
+            <div className="size-2.5 bg-amber-400 rounded-full animate-pulse"></div>
+            <span className="text-base font-handwritten text-amber-100/70">
               {t("join.checkingService")}
             </span>
           </div>

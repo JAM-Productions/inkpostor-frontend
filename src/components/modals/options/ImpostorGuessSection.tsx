@@ -33,22 +33,22 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
   const { t } = useTranslation();
 
   return (
-    <section className="rounded-2xl border border-stone-800 bg-stone-800/40 p-4 sm:p-5">
+    <section className="rounded-[18px_6px_20px_7px] border-2 border-stone-950 bg-[#181512] p-4 sm:p-5 shadow-[3px_3px_0px_#0c0b09]">
       <div className="flex items-center justify-between gap-4">
         <div className="flex gap-3 items-start">
-          <div className="rounded-xl bg-purple-500/10 p-2 text-purple-400 h-fit">
+          <div className="rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-purple-950/80 p-2.5 text-purple-300 h-fit shadow-[2px_2px_0px_#000]">
             <PenLine className="size-5" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+            <h3 className="text-base font-handwritten font-bold uppercase tracking-wider text-white">
               {t("options.impostorGuess.title")}
             </h3>
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-0.5 text-base font-handwritten text-amber-200/70">
               {t("options.impostorGuess.description")}
             </p>
             {isLocked && (
               <p
-                className="mt-2 text-sm font-medium text-amber-400/90"
+                className="mt-2 text-base font-handwritten font-bold text-amber-400/90"
                 data-testid="impostor-guess-unavailable"
               >
                 {t("options.impostorGuess.unavailableInMode", {
@@ -60,7 +60,7 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
         </div>
         {isLocked ? (
           <div
-            className="flex h-8 w-14 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 text-stone-500"
+            className="flex h-8 w-14 shrink-0 items-center justify-center rounded-full border-2 border-stone-950 bg-[#26221d] text-stone-500 shadow-[2px_2px_0px_#000]"
             data-testid="impostor-guess-locked"
             aria-hidden="true"
           >
@@ -78,8 +78,8 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
       </div>
 
       {enabled && (
-        <div className="mt-4 flex items-center justify-between gap-4 rounded-2xl border border-stone-700 bg-stone-900 px-4 py-3 animate-in fade-in slide-in-from-top-2 duration-200">
-          <span className="text-sm font-semibold text-stone-300">
+        <div className="mt-4 flex items-center justify-between gap-4 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] px-4 py-3 shadow-[2px_2px_0px_#000] animate-in fade-in slide-in-from-top-2 duration-200">
+          <span className="text-base font-handwritten font-bold text-amber-100">
             {t("options.impostorGuess.attempts")}
           </span>
           <div className="flex items-center gap-3">
@@ -87,14 +87,14 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
               type="button"
               disabled={!isHost || attempts <= MIN_IMPOSTOR_GUESSES}
               onClick={() => onAttemptsChange(-1)}
-              className="flex size-8 items-center justify-center rounded-lg border border-stone-600 bg-stone-800 text-white transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+              className="flex size-9 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-[#181512] text-purple-300 shadow-[2px_2px_0px_#000] hover:-rotate-3 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0 cursor-pointer"
               aria-label={t("options.impostorGuess.decrease")}
               data-testid="decrease-guesses-btn"
             >
-              <Minus className="size-4" />
+              <Minus className="size-5 stroke-[3]" />
             </button>
             <span
-              className="w-6 text-center text-lg font-bold tabular-nums text-white"
+              className="w-6 text-center text-xl font-handwritten font-extrabold tabular-nums text-white"
               aria-live="polite"
               data-testid="impostor-guess-attempts-value"
             >
@@ -104,11 +104,11 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
               type="button"
               disabled={!isHost || attempts >= MAX_IMPOSTOR_GUESSES}
               onClick={() => onAttemptsChange(1)}
-              className="flex size-8 items-center justify-center rounded-lg border border-stone-600 bg-stone-800 text-white transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+              className="flex size-9 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 bg-[#181512] text-purple-300 shadow-[2px_2px_0px_#000] hover:rotate-3 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:rotate-0 cursor-pointer"
               aria-label={t("options.impostorGuess.increase")}
               data-testid="increase-guesses-btn"
             >
-              <Plus className="size-4" />
+              <Plus className="size-5 stroke-[3]" />
             </button>
           </div>
         </div>
@@ -116,14 +116,14 @@ export const ImpostorGuessSection: React.FC<ImpostorGuessSectionProps> = ({
 
       {enabled && (
         <div
-          className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-stone-700 bg-stone-900 px-4 py-3 animate-in fade-in slide-in-from-top-2 duration-200"
+          className="mt-3 flex items-center justify-between gap-4 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] px-4 py-3 shadow-[2px_2px_0px_#000] animate-in fade-in slide-in-from-top-2 duration-200"
           data-testid="impostor-lose-on-last-attempt"
         >
-          <div className="min-w-0">
-            <span className="text-sm font-semibold text-stone-300">
+          <div className="min-w-0 font-handwritten">
+            <span className="text-base font-bold text-amber-100">
               {t("options.impostorGuess.loseWhenOutOfGuesses.title")}
             </span>
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-0.5 text-base text-amber-200/70">
               {t("options.impostorGuess.loseWhenOutOfGuesses.description")}
             </p>
           </div>

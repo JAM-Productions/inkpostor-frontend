@@ -73,38 +73,52 @@ export const GameResult: React.FC = () => {
   const ejectedName = players.find((p) => p.id === ejectedId)?.name;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-950">
-      <div className="max-w-2xl w-full text-center space-y-8 z-10">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 bg-[#161412] relative overflow-hidden">
+      {/* Background ambient light */}
+      <div
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[130px] rounded-full opacity-30 pointer-events-none transition-colors duration-1000 ${
+          isGameOver
+            ? allImpostorsDefeated
+              ? "bg-emerald-600"
+              : "bg-red-600"
+            : "bg-amber-600"
+        }`}
+      />
+
+      <div className="max-w-2xl w-full text-center space-y-6 z-10">
         <div
-          className={`p-8 rounded-3xl border-2 transition-colors animate-fade-in animate-delay-200 animate-duration-slower ${
+          className={`relative p-6 sm:p-8 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 shadow-[6px_6px_0px_#0c0b09] transition-colors animate-fade-in animate-delay-200 animate-duration-slower ${
             isGameOver
               ? allImpostorsDefeated
-                ? "border-emerald-500/50 bg-emerald-950/40 shadow-[0_0_50px_rgba(16,185,129,0.2)]"
-                : "border-red-500/50 bg-red-950/40 shadow-[0_0_50px_rgba(239,68,68,0.2)]"
-              : "bg-stone-900/60 border-stone-700"
+                ? "border-emerald-600 bg-emerald-950/80 shadow-[0_0_50px_rgba(16,185,129,0.3)]"
+                : "border-red-600 bg-red-950/80 shadow-[0_0_50px_rgba(220,38,38,0.3)]"
+              : "bg-[#26221d] border-stone-950"
           }`}
         >
+          {/* Taped top corner accent */}
+          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-32 h-6 bg-amber-100/30 border border-stone-400/40 rounded-sm transform rotate-1 pointer-events-none shadow-sm z-20" />
+
           <div className="flex justify-center mb-4">
             {isGameOver ? (
               allImpostorsDefeated ? (
                 <img
                   src="/no-inkpostor-character.webp"
                   alt="Inkpostor"
-                  className="sm:h-28 h-22"
+                  className="sm:h-28 h-22 drop-shadow-md"
                 />
               ) : (
                 <img
                   src="/inkpostor-character.webp"
                   alt="Inkpostor"
-                  className="sm:h-28 h-22"
+                  className="sm:h-28 h-22 drop-shadow-md"
                 />
               )
             ) : (
-              <CircleQuestionMark className="sm:size-16 size-14 text-stone-400" />
+              <CircleQuestionMark className="sm:size-16 size-14 text-amber-300" />
             )}
           </div>
 
-          <h1 className="text-4xl md:text-5xl text-white uppercase tracking-tight mb-8 font-rubik-wet-paint font-extralight">
+          <h1 className="text-3xl md:text-5xl text-white uppercase mb-6 font-rubik-wet-paint tracking-wide">
             {isGameOver
               ? allImpostorsDefeated
                 ? t("result.impostorDefeated")
@@ -112,19 +126,19 @@ export const GameResult: React.FC = () => {
               : t("result.voteResult")}
           </h1>
 
-          <div className="text-xl md:text-2xl text-stone-300 font-medium space-y-2">
+          <div className="text-xl md:text-2xl text-amber-100 font-handwritten font-bold space-y-2">
             {ejectedId ? (
               <p>{t("result.wasEjected", { name: ejectedName })}</p>
             ) : (
               !gameEnded && (
-                <p className="text-stone-400 italic">
+                <p className="text-amber-200/70 italic">
                   {t("result.nobodyEjected")}
                 </p>
               )
             )}
             {!isGameOver && isEjectedImpostor && (
               <p
-                className="text-amber-400 font-semibold italic"
+                className="text-amber-300 font-extrabold italic"
                 data-testid="impostor-ejected-remaining"
               >
                 {t("result.impostorEjectedMoreLeft", {
@@ -134,7 +148,7 @@ export const GameResult: React.FC = () => {
               </p>
             )}
             {!isGameOver && ejectedId && !isEjectedImpostor && (
-              <p className="text-stone-400 italic">
+              <p className="text-amber-200/70 italic">
                 {t("result.stillAmongUs")}
               </p>
             )}
@@ -148,7 +162,7 @@ export const GameResult: React.FC = () => {
             )}
 
             {impostorGuessedCorrectly && (
-              <p className="text-purple-300 font-semibold">
+              <p className="text-purple-300 font-bold">
                 {t("result.impostorGuessedWord", { name: impostorNames })}
               </p>
             )}
@@ -156,21 +170,19 @@ export const GameResult: React.FC = () => {
         </div>
 
         {isGameOver && (
-          <div className="bg-stone-800 rounded-2xl p-6 border border-stone-700 shadow-xl animate-fade-in animate-delay-1000 animate-duration-slower">
+          <div className="relative bg-[#26221d] rounded-[20px_6px_22px_7px] p-6 border-3 border-stone-950 shadow-[5px_5px_0px_#0c0b09] animate-fade-in animate-delay-1000 animate-duration-slower">
             {secretWord ? (
               <>
-                <p className="text-stone-400 mb-2 uppercase tracking-wider text-sm font-semibold">
+                <p className="text-amber-200/80 mb-1 uppercase tracking-wider text-base font-handwritten font-bold">
                   {t("result.secretWord")}
                 </p>
-                <div className="text-3xl font-black text-white">
+                <div className="text-3xl sm:text-4xl font-handwritten font-extrabold text-white drop-shadow-sm">
                   {secretWord}
                 </div>
               </>
             ) : (
-              /* The game can end before a word exists — e.g. the host ends it
-                 while the players are still writing theirs. */
               <div
-                className="flex items-center justify-center gap-2 text-xl font-semibold text-stone-500"
+                className="flex items-center justify-center gap-2 text-xl font-handwritten font-bold text-stone-400"
                 data-testid="no-secret-word"
               >
                 {t("result.noSecretWord")}
@@ -185,19 +197,17 @@ export const GameResult: React.FC = () => {
               type="button"
               data-testid="play-again-btn"
               onClick={actions.playAgain}
-              className="w-full cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-[background-color,transform] hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-primary hover:bg-ink-primary-accent "
+              className="w-full cursor-pointer group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] bg-red-600 hover:bg-red-500 text-white animate-fade-in animate-delay-2000 animate-duration-slower"
             >
-              <div
-                className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 `}
-              >
-                <span className="text-xl sm:text-2xl tracking-wide uppercase font-rubik-wet-paint font-extralight">
+              <div className="flex h-full w-full items-center justify-center gap-2 px-8 py-3.5">
+                <span className="text-2xl sm:text-3xl tracking-wider uppercase font-rubik-wet-paint">
                   {t("result.playAgain")}
                 </span>
               </div>
             </button>
           ) : (
             <div className="animate-fade-in animate-delay-2000 animate-duration-slower">
-              <div className="text-stone-500 animate-pulse mt-8 ">
+              <div className="text-amber-200/70 font-handwritten font-bold text-lg animate-pulse mt-6">
                 {t("result.waitingRestart")}
               </div>
             </div>
@@ -207,22 +217,20 @@ export const GameResult: React.FC = () => {
             type="button"
             data-testid="next-round-btn"
             onClick={actions.nextRound}
-            className="w-full min-h-14 cursor-pointer group relative overflow-hidden rounded-2xl p-0.5 transition-[background-color,transform] hover:scale-[1.02] active:scale-[0.98] animate-fade-in animate-delay-2000 animate-duration-slower bg-ink-secondary hover:bg-white text-black"
+            className="w-full min-h-14 cursor-pointer group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] bg-amber-300 hover:bg-amber-200 text-stone-950 animate-fade-in animate-delay-2000 animate-duration-slower"
           >
-            <div
-              className={`flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 `}
-            >
-              <Play className="fill-current size-5" />
-              <span className="sm:text-xl text-lg font-extrabold uppercase">
+            <div className="flex h-full w-full items-center justify-center gap-2.5 px-8 py-3.5">
+              <Play className="fill-stone-950 size-6 text-stone-950" />
+              <span className="sm:text-2xl text-xl font-handwritten font-bold uppercase">
                 {t("result.nextRound")}
               </span>
             </div>
           </button>
         ) : (
-          <div className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in min-h-14">
-            <span className="relative flex size-2 sm:size-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full size-2 sm:size-3 bg-stone-500"></span>
+          <div className="text-amber-200/70 font-handwritten font-bold text-lg flex items-center justify-center gap-3 py-3.5 animate-fade-in min-h-14">
+            <span className="relative flex size-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full size-3 bg-amber-500"></span>
             </span>
             {t("result.waitingPlayers", {
               count: players.filter(
@@ -238,10 +246,10 @@ export const GameResult: React.FC = () => {
             type="button"
             aria-label="Return to Home"
             onClick={actions.exitGame}
-            className="mt-6 px-6 py-2.5 rounded-xl border border-stone-800 text-stone-400 hover:text-white hover:bg-stone-900 transition-[background-color,transform] cursor-pointer font-semibold text-sm flex items-center justify-center gap-2 mx-auto shadow-sm active:scale-95"
+            className="mt-6 px-6 py-2.5 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] text-amber-200 hover:text-white hover:bg-stone-800 transition-all cursor-pointer font-handwritten font-bold text-lg flex items-center justify-center gap-2 mx-auto shadow-[3px_3px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09]"
             data-testid="return-home-button"
           >
-            <Home className="size-4 text-stone-400" />
+            <Home className="size-5 text-amber-400" />
             {t("result.returnToHome")}
           </button>
         )}

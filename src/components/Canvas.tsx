@@ -24,8 +24,11 @@ export const Canvas: React.FC = () => {
   const drawing = useCanvasDrawing();
 
   return (
-    <div className="flex flex-col items-center bg-stone-900 p-2 md:p-6 pb-24 sm:justify-center mt-12">
-      <div className="w-full max-w-4xl space-y-4">
+    <div className="flex flex-col items-center bg-[#161412] px-3 pt-16 pb-24 sm:px-6 sm:pt-20 md:pt-24 md:pb-28 sm:justify-center min-h-screen relative overflow-hidden">
+      {/* Ambient background light */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[130px] rounded-full opacity-20 pointer-events-none bg-amber-700" />
+
+      <div className="w-full max-w-4xl space-y-4 z-10">
         <CanvasHeader timeLeft={timeLeft} />
 
         <DrawingCanvas

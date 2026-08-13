@@ -29,7 +29,7 @@ export const ExitGameModal: React.FC<ExitGameModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-white font-bold rounded-xl transition-[background-color,transform] active:scale-[0.98] cursor-pointer"
+            className="flex-1 py-3 bg-[#181512] hover:bg-stone-800 text-amber-200 font-handwritten text-lg font-bold rounded-[16px_5px_18px_6px] border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer"
           >
             {t("exitGame.cancel")}
           </button>
@@ -40,7 +40,7 @@ export const ExitGameModal: React.FC<ExitGameModalProps> = ({
               actions.exitGame();
               onClose();
             }}
-            className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-[background-color,transform] active:scale-[0.98] cursor-pointer uppercase"
+            className="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white font-rubik-wet-paint text-lg uppercase tracking-wider rounded-[16px_5px_18px_6px] border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] transition-all hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer"
           >
             {t("exitGame.confirm")}
           </button>

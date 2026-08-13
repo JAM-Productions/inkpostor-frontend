@@ -64,15 +64,17 @@ export const BaseModal: React.FC<BaseModalProps> = ({
       <div
         ref={modalRef}
         tabIndex={-1}
-        className="relative w-full h-full sm:h-auto sm:max-h-[calc(100vh-4rem)] sm:max-w-2xl bg-stone-900 sm:rounded-3xl border-0 sm:border border-stone-800 shadow-2xl flex flex-col overflow-hidden outline-none"
+        className="relative w-full h-full sm:h-auto sm:max-h-[calc(100vh-4rem)] sm:max-w-2xl bg-[#26221d] sm:rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-0 sm:border-3 border-stone-950 shadow-[8px_8px_0px_#0c0b09] flex flex-col overflow-hidden outline-none z-10"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-stone-800 bg-stone-900/50">
+        <div className="flex items-center justify-between p-5 sm:p-6 border-b-2 border-dashed border-stone-700 bg-[#181512]/50">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-ink-primary/10 rounded-lg">{icon}</div>
+            <div className="p-2.5 bg-red-950/80 border-2 border-stone-950 rounded-[12px_4px_14px_4px] text-amber-300 shadow-[2px_2px_0px_#000]">
+              {icon}
+            </div>
             <h2
               id={`${id}-title`}
-              className="text-2xl font-extralight text-white font-rubik-wet-paint tracking-wide"
+              className="text-2xl sm:text-3xl text-white font-rubik-wet-paint tracking-wide"
             >
               {title}
             </h2>
@@ -80,22 +82,22 @@ export const BaseModal: React.FC<BaseModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 hover:bg-stone-800 rounded-full transition-colors text-stone-400 hover:text-white cursor-pointer"
+            className="p-2 hover:bg-stone-800 rounded-full border-2 border-stone-950 bg-[#181512] transition-transform hover:-rotate-6 active:scale-95 text-stone-300 hover:text-white cursor-pointer shadow-[2px_2px_0px_#000]"
             aria-label={closeLabel}
             data-testid="close-modal-button"
           >
-            <X className="size-6" />
+            <X className="size-6 text-amber-300" />
           </button>
         </div>
 
         {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 custom-scrollbar font-handwritten">
           {children}
         </div>
 
         {/* Footer */}
         {footer && (
-          <div className="p-6 border-t border-stone-800 bg-stone-900/50">
+          <div className="p-5 sm:p-6 border-t-2 border-dashed border-stone-700 bg-[#181512]/50">
             {footer}
           </div>
         )}
