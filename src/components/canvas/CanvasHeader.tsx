@@ -34,47 +34,47 @@ export const CanvasHeader: React.FC<CanvasHeaderProps> = ({ timeLeft }) => {
 
   return (
     <div
-      className={`relative flex items-center justify-between p-3 sm:p-4 min-h-21.5 rounded-2xl shadow-xl ${getActivePlayerCardColorClass(isMyTurn ? myId : null, hostId, players)}`}
+      className={`relative flex items-center justify-between p-3.5 sm:p-4 min-h-21.5 rounded-[22px_7px_20px_8px] border-3 border-stone-950 shadow-[5px_5px_0px_#0c0b09] ${getActivePlayerCardColorClass(isMyTurn ? myId : null, hostId, players)}`}
     >
       <div className="flex items-center gap-3 min-w-0">
         <div className="relative shrink-0">
           <div
-            className={`size-12 rounded-full flex items-center justify-center font-bold text-xl uppercase text-white shadow-lg ${getPlayerIconColorClass(currentTurnPlayerId, hostId, players)} ${isMyTurn ? "animate-pulse" : ""}`}
+            className={`size-12 sm:size-13 rounded-full flex items-center justify-center font-handwritten font-extrabold text-2xl uppercase text-white border-2 border-stone-950 shadow-[2px_2px_0px_#000] ${getPlayerIconColorClass(currentTurnPlayerId, hostId, players)} ${isMyTurn ? "animate-pulse" : ""}`}
           >
             {activePlayer?.isConnected !== false
               ? activePlayer?.name.charAt(0) || "?"
               : null}
           </div>
           {activePlayer?.isConnected === false && (
-            <div className="absolute inset-0 size-12 rounded-full bg-black/50 flex items-center justify-center">
-              <LoaderCircle className="size-6 text-white animate-spin opacity-60" />
+            <div className="absolute inset-0 size-12 sm:size-13 rounded-full bg-black/60 flex items-center justify-center border-2 border-stone-950">
+              <LoaderCircle className="size-6 text-white animate-spin opacity-80" />
             </div>
           )}
         </div>
         {isMyTurn ? (
           <div className="animate-pulse">
-            <p className="text-lg sm:text-2xl font-extrabold text-white uppercase tracking-wider">
+            <p className="text-xl sm:text-3xl font-handwritten font-extrabold text-white uppercase tracking-wider drop-shadow-sm">
               {t("canvas.yourTurn")}
             </p>
           </div>
         ) : (
           <div className="min-w-0">
             <p
-              className={`text-sm font-bold text-stone-400 uppercase tracking-widest truncate ${activePlayer?.isConnected ? "" : "animate-pulse"}`}
+              className={`text-xs sm:text-sm font-handwritten font-bold text-amber-200/80 uppercase tracking-widest truncate ${activePlayer?.isConnected ? "" : "animate-pulse"}`}
             >
               {activePlayer?.isConnected
                 ? t("canvas.nowDrawing")
                 : t("canvas.notConnected")}
             </p>
-            <h2 className="text-lg font-semibold text-white truncate">
+            <h2 className="text-xl sm:text-2xl font-handwritten font-bold text-white truncate">
               {activePlayer?.name || t("canvas.someone")}
             </h2>
           </div>
         )}
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-6 shrink-0">
-        <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2 sm:gap-5 shrink-0">
+        <div className="flex items-center gap-1.5">
           <ImpostorGuessControl />
           <SuspectsPopover />
           {/* Alert Dropdown */}
@@ -83,10 +83,10 @@ export const CanvasHeader: React.FC<CanvasHeaderProps> = ({ timeLeft }) => {
         <div
           className={`flex flex-col items-end ${isMyTurn ? "hidden sm:flex" : "block sm:flex"}`}
         >
-          <p className="text-xs text-stone-400 font-semibold uppercase mb-1 flex items-center gap-1">
-            <Clock className="size-3" /> {t("canvas.time")}
+          <p className="text-xs font-handwritten text-amber-200/80 font-bold uppercase mb-1 flex items-center gap-1">
+            <Clock className="size-3.5 text-amber-400" /> {t("canvas.time")}
           </p>
-          <div className="text-2xl font-black text-white px-3 py-1 bg-stone-900 rounded-lg min-w-[86px] text-right tabular-nums">
+          <div className="text-2xl font-short-stack font-black text-white px-3 py-1 bg-[#181512] rounded-[12px_4px_14px_4px] border-2 border-stone-950 shadow-[2px_2px_0px_#000] min-w-[86px] text-right tabular-nums">
             {(timeLeft / 1000).toFixed(1)}s
           </div>
         </div>
@@ -95,9 +95,9 @@ export const CanvasHeader: React.FC<CanvasHeaderProps> = ({ timeLeft }) => {
           <button
             type="button"
             onClick={() => actions.endTurn()}
-            className="bg-ink-secondary hover:bg-white text-black px-5 py-3 rounded-xl font-bold transition-[background-color,transform] active:scale-95 shadow-lg shadow-ink-secondary/20 cursor-pointer flex items-center gap-2"
+            className="bg-amber-300 hover:bg-amber-200 text-stone-950 border-3 border-stone-950 px-5 py-3 rounded-[16px_5px_18px_6px] font-handwritten font-bold text-xl transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] cursor-pointer flex items-center gap-2"
           >
-            <CheckSquare className="size-5" />
+            <CheckSquare className="size-6 text-stone-950" />
             <span>{t("canvas.done")}</span>
           </button>
         )}

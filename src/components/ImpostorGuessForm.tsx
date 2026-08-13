@@ -33,8 +33,8 @@ export const ImpostorGuessForm: React.FC<ImpostorGuessFormProps> = ({
       className={`flex flex-col gap-2 ${className ?? ""}`}
     >
       {typeof attemptsLeft === "number" && (
-        <p className="text-xs font-bold uppercase tracking-wider text-purple-300/90 flex items-center gap-1.5">
-          <Sparkles className="size-3.5" />
+        <p className="text-sm font-handwritten font-bold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
+          <Sparkles className="size-4" />
           {t("impostorGuess.attemptsLeft", { count: attemptsLeft })}
         </p>
       )}
@@ -48,15 +48,15 @@ export const ImpostorGuessForm: React.FC<ImpostorGuessFormProps> = ({
           placeholder={t("impostorGuess.placeholder")}
           aria-label={t("impostorGuess.placeholder")}
           maxLength={40}
-          className="min-w-0 flex-1 rounded-xl border-2 border-purple-500/40 bg-stone-900 px-4 py-2.5 text-white placeholder-stone-500 focus:border-purple-400 focus:outline-none"
+          className="min-w-0 flex-1 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#181512] px-4 py-2.5 text-white font-handwritten text-lg placeholder-amber-200/50 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.6)] focus:border-purple-400 focus:outline-none"
         />
         <button
           type="submit"
           data-testid="submit-guess-btn"
           disabled={!guess.trim()}
-          className="shrink-0 rounded-xl bg-purple-600 px-4 py-2.5 font-bold text-white transition-[background-color,transform] hover:bg-purple-500 active:scale-95 disabled:opacity-50 cursor-pointer"
+          className="shrink-0 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-purple-600 px-4 py-2.5 font-bold text-white shadow-[3px_3px_0px_#000] transition-colors transition-transform hover:bg-purple-500 hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
-          <CornerDownRight className="size-5" />
+          <CornerDownRight className="size-5 stroke-[3]" />
         </button>
       </div>
     </form>

@@ -26,16 +26,18 @@ export const EmergencyAlertButton = () => {
         type="button"
         data-testid="emergency-alert-btn"
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`flex items-center justify-center size-11 sm:h-12 sm:w-16 md:h-13 rounded-xl font-bold transition-[background-color,transform] active:scale-95 shadow-lg shadow-red-900/50 cursor-pointer ${isOpen ? "bg-ink-primary-accent" : "bg-ink-primary"} ${isDisabled ? "opacity-50" : "hover:bg-ink-primary-accent"}`}
+        className={`flex items-center justify-center size-11 sm:h-12 sm:w-16 md:h-13 rounded-[14px_4px_16px_5px] border-3 border-stone-950 font-bold transition-colors transition-transform shadow-[4px_4px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer text-white ${
+          isOpen ? "bg-red-700" : "bg-red-600 hover:bg-red-500"
+        } ${isDisabled ? "opacity-50 hover:rotate-0" : ""}`}
         aria-label="Alert"
         disabled={isDisabled}
       >
-        <TriangleAlert className="size-5" />
+        <TriangleAlert className="size-6 text-amber-300 drop-shadow-sm" />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full inset-x-0 sm:inset-x-auto sm:left-auto sm:right-0 mt-3 p-3 bg-stone-800 rounded-2xl border border-stone-700 shadow-2xl flex flex-col gap-4 sm:min-w-60 animate-in fade-in slide-in-from-top-4 zoom-in-95 duration-200 z-50">
-          <p className="text-sm text-white font-semibold text-center">
+        <div className="absolute top-full inset-x-0 sm:inset-x-auto sm:left-auto sm:right-0 mt-3 p-4 bg-[#26221d] rounded-[20px_8px_18px_6px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-4 sm:min-w-64 animate-slide-pop-in z-50">
+          <p className="text-base text-amber-100 font-handwritten font-bold text-center">
             {t("canvas.emergencyVotingPrompt")}
           </p>
           <button
@@ -46,7 +48,7 @@ export const EmergencyAlertButton = () => {
               actions.startEmergencyVoting();
             }}
             disabled={isDisabled}
-            className="px-4 py-2 bg-ink-primary hover:bg-ink-primary-accent cursor-pointer text-white font-bold rounded-xl transition-[background-color,transform]"
+            className="px-4 py-2.5 bg-red-600 hover:bg-red-500 border-2 border-stone-950 text-white font-handwritten text-lg font-bold rounded-[14px_5px_16px_4px] shadow-[3px_3px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] transition-colors transition-transform cursor-pointer"
           >
             {t("canvas.confirm")}
           </button>

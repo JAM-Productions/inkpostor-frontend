@@ -60,7 +60,7 @@ function App() {
   return (
     <>
       <ExitGameButton />
-      <div className="fixed top-4 right-4 flex items-center justify-between gap-4 z-50">
+      <div className="fixed top-3 right-3 sm:top-4 sm:right-4 flex items-center justify-between gap-3 sm:gap-4 z-50">
         <EndGameButton />
         {showLanguageSwitcher && <LanguageSwitcher />}
       </div>

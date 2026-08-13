@@ -56,10 +56,10 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
       data-testid="vote-kick-btn"
       data-testid-player={player.id}
       onClick={handleVoteKick}
-      className={`flex shrink-0 items-center justify-center rounded-xl transition-colors cursor-pointer px-2 gap-1.5 ${
+      className={`flex shrink-0 items-center justify-center rounded-[12px_4px_14px_4px] border-2 border-stone-950 transition-colors transition-transform cursor-pointer px-2 py-1 gap-1.5 shadow-[2px_2px_0px_#000] hover:-rotate-3 active:translate-x-0.5 active:translate-y-0.5 ${
         hasVoted
-          ? "bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500/30"
-          : "bg-stone-900/50 text-stone-400 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/30"
+          ? "bg-red-600 text-white font-bold"
+          : "bg-[#181512] text-amber-200 hover:bg-red-950/80 hover:text-red-300"
       }`}
       title={t("canvas.kickPlayerAria", {
         name: player.name,
@@ -71,7 +71,7 @@ export const VoteKickButton: React.FC<VoteKickButtonProps> = ({
       })}
     >
       <UserMinus className="size-4" />
-      <span className="text-xs font-bold font-mono">
+      <span className="text-xs font-handwritten font-extrabold">
         {activeKickVotesCount}/{requiredVotes}
       </span>
     </button>

@@ -36,19 +36,19 @@ export const OrderInfo: React.FC = () => {
   const showsFullOrder = FULL_ORDER_MODES.includes(turnOrderMode);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-stone-950 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#161412] px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
       {/* Background ambient light */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[120px] rounded-full opacity-20 pointer-events-none bg-ink-primary" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[130px] rounded-full opacity-30 pointer-events-none bg-red-950" />
 
       <div className="z-10 max-w-md w-full text-center space-y-6">
         <div className="space-y-2">
-          <h2 className="text-xl font-medium text-stone-400">
+          <h2 className="text-xl font-handwritten font-bold text-amber-200/70 uppercase tracking-widest">
             {t("orderInfo.round", { round: currentRound })}
           </h2>
-          <h1 className="text-4xl font-semibold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-rubik-wet-paint text-white tracking-wide">
             {t("orderInfo.title")}
           </h1>
-          <p className="text-sm text-stone-400">
+          <p className="text-amber-200/80 font-handwritten text-lg pt-1">
             {showsFullOrder
               ? t("orderInfo.followOrder")
               : t("orderInfo.youDecideRest")}
@@ -57,7 +57,7 @@ export const OrderInfo: React.FC = () => {
 
         {showsFullOrder ? (
           <div
-            className="space-y-2 text-left max-h-[45vh] overflow-y-auto custom-scrollbar pr-1"
+            className="space-y-2.5 text-left max-h-[45vh] overflow-y-auto custom-scrollbar p-3.5 sm:p-4 bg-[#26221d] rounded-[24px_10px_22px_12px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09]"
             data-testid="turn-order-list"
           >
             {orderedPlayers.map((player, index) => (
@@ -72,20 +72,25 @@ export const OrderInfo: React.FC = () => {
           </div>
         ) : (
           starter && (
-            <div data-testid="starting-player">
+            <div
+              data-testid="starting-player"
+              className="bg-[#26221d] p-3.5 sm:p-4 rounded-[24px_10px_22px_12px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09]"
+            >
               <OrderPlayerCard player={starter} hostId={hostId} myId={myId} />
             </div>
           )
         )}
 
-        <p className="text-sm text-stone-500">{t("orderInfo.sayOneWord")}</p>
+        <p className="text-base font-handwritten text-amber-200/60">
+          {t("orderInfo.sayOneWord")}
+        </p>
 
         <div className="pt-1" style={{ minHeight: "4rem" }}>
           {isEjected || hasConfirmed ? (
-            <div className="text-stone-500 flex items-center justify-center gap-3 text-sm sm:text-base py-3.5 animate-fade-in">
-              <span className="relative flex size-2 sm:size-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full size-2 sm:size-3 bg-stone-500"></span>
+            <div className="text-amber-200/70 font-handwritten text-lg font-bold flex items-center justify-center gap-3 py-3.5 animate-fade-in">
+              <span className="relative flex size-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full size-3 bg-amber-500"></span>
               </span>
               {t("orderInfo.waitingPlayers", {
                 count: pendingPlayers.filter((p) => p.hasConfirmedOrder).length,
@@ -97,9 +102,9 @@ export const OrderInfo: React.FC = () => {
               type="button"
               data-testid="confirm-order-btn"
               onClick={actions.confirmOrder}
-              className="animate-fade-in-up flex items-center justify-center gap-2 w-full rounded-2xl bg-ink-secondary text-stone-900 px-8 py-3 font-bold text-lg transition-[background-color,scale] hover:bg-white cursor-pointer active:scale-95 shadow-lg shadow-white/10"
+              className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
             >
-              <Vote className="size-5" />
+              <Vote className="size-6 text-stone-950" />
               {t("orderInfo.confirm")}
             </button>
           )}

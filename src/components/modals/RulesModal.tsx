@@ -32,7 +32,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
         <button
           type="button"
           onClick={onClose}
-          className="w-full py-3 bg-stone-800 hover:bg-stone-700 text-white font-bold rounded-xl transition-[background-color,transform] active:scale-[0.98] cursor-pointer"
+          className="w-full py-3 bg-[#181512] hover:bg-stone-800 text-amber-200 font-handwritten text-xl font-bold rounded-[16px_5px_18px_6px] border-2 border-stone-950 shadow-[4px_4px_0px_#0c0b09] transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer"
         >
           {t("rules.gotIt")}
         </button>

@@ -51,10 +51,13 @@ export const Lobby: React.FC = () => {
     Number(gameMode !== "CLASSIC") + changedModeOptions;
 
   return (
-    <div className="flex flex-col items-center justify-center max-h-screen p-4 pb-12 pt-20 bg-stone-900">
-      <div className="max-w-lg w-full space-y-4 sm:space-y-8">
-        <div className="text-center space-y-2 sm:space-y-4">
-          <h2 className="text-stone-400 font-medium tracking-widest uppercase text-sm">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#161412] px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
+      {/* Ambient background glow */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-red-950/20 blur-[130px] rounded-full pointer-events-none" />
+
+      <div className="z-10 max-w-lg w-full space-y-4 sm:space-y-6">
+        <div className="text-center space-y-2">
+          <h2 className="text-amber-200/70 font-handwritten font-bold tracking-widest uppercase text-base sm:text-lg">
             {t("lobby.roomCode")}
           </h2>
           <CopyCodeButton roomId={roomId} />
@@ -66,11 +69,14 @@ export const Lobby: React.FC = () => {
           )}
         </div>
 
-        <div className="bg-stone-800 rounded-3xl p-6 shadow-xl border border-stone-700 flex flex-col max-h-[70vh]">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex justify-center items-center gap-4">
-              <h3 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
-                <Users className="text-ink-secondary size-5 sm:size-6" />
+        <div className="relative bg-[#26221d] rounded-[255px_15px_225px_15px/15px_225px_15px_255px] p-6 sm:p-7 shadow-[6px_6px_0px_0px_#0c0b09] border-3 border-stone-950 flex flex-col max-h-[70vh]">
+          {/* Taped top corner accent */}
+          <div className="absolute -top-3 right-10 w-24 h-5 bg-amber-100/30 border border-stone-400/40 transform rotate-2 pointer-events-none shadow-sm" />
+
+          <div className="flex items-center justify-between mb-5 pb-3 border-b-2 border-dashed border-stone-700">
+            <div className="flex justify-center items-center gap-3">
+              <h3 className="text-xl sm:text-2xl font-handwritten font-bold text-white flex items-center gap-2">
+                <Users className="text-amber-300 size-6" />
                 {t("lobby.players")}
               </h3>
               <button
@@ -81,28 +87,28 @@ export const Lobby: React.FC = () => {
                     : t("options.open")
                 }
                 onClick={() => modalActions.openModal("OPTIONS")}
-                className="relative"
+                className="relative p-1.5 rounded-lg border border-stone-700 bg-[#181512] hover:bg-stone-800 transition-transform active:scale-95 cursor-pointer shadow-[2px_2px_0px_#000]"
               >
-                <Settings className="size-5 sm:size-5.5 text-stone-400 hover:text-stone-300 cursor-pointer" />
+                <Settings className="size-5 text-amber-200" />
                 {optionsChangedCount > 0 && (
                   <span
-                    className="absolute -right-0.5 -top-0.5 block size-1 rounded-full bg-amber-400 ring-1 ring-amber-300 shadow-sm shadow-amber-300/50"
+                    className="absolute -right-1 -top-1 block size-2.5 rounded-full bg-amber-400 border border-stone-950 shadow-sm"
                     aria-hidden="true"
                   />
                 )}
               </button>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <button
                 type="button"
                 aria-label={t("rules.open")}
                 onClick={() => modalActions.openModal("RULES")}
-                className="flex items-center gap-2 font-bold cursor-pointer"
+                className="flex items-center gap-1.5 font-bold cursor-pointer p-1.5 rounded-lg border border-stone-700 bg-[#181512] hover:bg-stone-800 transition-transform active:scale-95 shadow-[2px_2px_0px_#000]"
                 data-testid="how-to-play-btn"
               >
-                <HelpCircle className="size-5 sm:size-5.5 text-ink-primary hover:text-ink-primary-accent" />
+                <HelpCircle className="size-5 text-red-400 hover:text-red-300" />
               </button>
-              <span className="bg-stone-700 text-stone-300 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full">
+              <span className="bg-[#181512] border-2 border-stone-700 text-amber-200/90 text-sm font-handwritten font-bold px-3 py-1 rounded-[12px_4px_14px_4px] shadow-[2px_2px_0px_#000]">
                 {players.length < MAX_PLAYERS ? (
                   <span>
                     {t("lobby.joined", {
@@ -117,7 +123,7 @@ export const Lobby: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-2 sm:space-y-3 mb-8 overflow-y-auto flex-1 pr-2 custom-scrollbar">
+          <div className="space-y-2.5 sm:space-y-3 mb-6 overflow-y-auto flex-1 pr-1 custom-scrollbar">
             {players.map((player, index) => (
               <LobbyPlayerCard
                 key={player.id}
@@ -130,10 +136,12 @@ export const Lobby: React.FC = () => {
             ))}
 
             {players.length < MIN_PLAYERS && (
-              <div className="p-4 rounded-xl border border-dashed border-stone-600 bg-stone-800/50 text-center flex flex-col items-center gap-2">
-                <Loader2 className="size-6 text-stone-500 animate-spin" />
-                <p className="text-stone-400">{t("lobby.waitingPlayers")}</p>
-                <p className="text-xs text-stone-500">
+              <div className="p-4 rounded-[18px_6px_20px_8px] border-2 border-dashed border-stone-700 bg-[#181512]/60 text-center flex flex-col items-center gap-2">
+                <Loader2 className="size-6 text-amber-400 animate-spin" />
+                <p className="text-amber-200/80 font-handwritten text-lg">
+                  {t("lobby.waitingPlayers")}
+                </p>
+                <p className="text-sm font-handwritten text-stone-400">
                   {t("lobby.needMore", { min: MIN_PLAYERS })}
                 </p>
               </div>
@@ -146,17 +154,17 @@ export const Lobby: React.FC = () => {
               data-testid="start-game-btn"
               onClick={actions.startGame}
               disabled={!canStart}
-              className="w-full shrink-0 group relative overflow-hidden rounded-2xl transition-[background-color,transform] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer bg-ink-primary hover:bg-ink-primary-accent"
+              className="w-full shrink-0 group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer bg-red-600 hover:bg-red-500 shadow-[4px_4px_0px_#000]"
             >
-              <div className="flex h-full w-full items-center justify-center gap-2 rounded-2xl px-8 py-3 font-bold text-white">
-                <span className="text-xl sm:text-2xl tracking-wide font-rubik-wet-paint font-extralight">
+              <div className="flex h-full w-full items-center justify-center gap-2 px-8 py-3.5 font-bold text-white">
+                <span className="text-2xl sm:text-3xl tracking-wider font-rubik-wet-paint">
                   {t("lobby.startGame")}
                 </span>
               </div>
             </button>
           ) : (
-            <div className="text-center p-4 bg-stone-900 rounded-xl border border-stone-700 animate-pulse">
-              <span className="text-stone-400 font-medium">
+            <div className="text-center p-4 bg-[#181512] rounded-[18px_6px_20px_8px] border-2 border-stone-700 animate-pulse shadow-[3px_3px_0px_#000]">
+              <span className="text-amber-200/80 font-handwritten text-lg font-bold">
                 {t("lobby.waitingHost")}
               </span>
             </div>
