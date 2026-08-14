@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, ChevronRight, Users } from "lucide-react";
-import type { GameMode } from "../../store/gameState";
-import { GAME_MODES } from "../../lib/gameModes";
+import type { GameMode } from "../../../store/gameState";
+import { GAME_MODES } from "../../../lib/gameModes";
 
 interface GameModeCarouselProps {
   isHost: boolean;

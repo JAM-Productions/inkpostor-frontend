@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { GameModeCarousel } from "../../../src/components/modals/GameModeCarousel";
+import { GameModeCarousel } from "../../../src/components/modals/options/GameModeCarousel";
 import { GAME_MODES } from "../../../src/lib/gameModes";
 import type { GameMode } from "../../../src/store/gameState";
 
