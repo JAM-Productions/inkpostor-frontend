@@ -41,7 +41,7 @@ export const OrderPlayerCard: React.FC<OrderPlayerCardProps> = ({
           : `border-2 p-3.5 sm:p-4 shadow-[2px_2px_0px_#000] ${
               player.id === myId
                 ? "bg-white/20 border-white/40"
-                : "bg-stone-900 bg-[#181512] border-stone-800"
+                : "bg-stone-900 border-stone-800"
             }`
       }`}
     >

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Droplets, EyeOff, Palette, Settings } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { BaseModal } from "./BaseModal";
-import { GameModeCarousel } from "./GameModeCarousel";
+import { GameModeCarousel } from "./options/GameModeCarousel";
 import { ClearCanvasSection } from "./options/ClearCanvasSection";
 import { ImpostorCountSection } from "./options/ImpostorCountSection";
 import { ImpostorGuessSection } from "./options/ImpostorGuessSection";

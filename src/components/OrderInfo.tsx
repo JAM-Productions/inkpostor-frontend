@@ -36,7 +36,7 @@ export const OrderInfo: React.FC = () => {
   const showsFullOrder = FULL_ORDER_MODES.includes(turnOrderMode);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#161412] px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-ink-bg px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
       {/* Background ambient light */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[130px] rounded-full opacity-30 pointer-events-none bg-red-950" />
 
@@ -57,7 +57,7 @@ export const OrderInfo: React.FC = () => {
 
         {showsFullOrder ? (
           <div
-            className="space-y-2.5 text-left max-h-[45vh] overflow-y-auto custom-scrollbar p-3.5 sm:p-4 bg-[#26221d] rounded-[24px_10px_22px_12px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09]"
+            className="space-y-2.5 text-left p-3.5 sm:p-4 bg-ink-surface rounded-[24px_10px_22px_12px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09]"
             data-testid="turn-order-list"
           >
             {orderedPlayers.map((player, index) => (
@@ -74,7 +74,7 @@ export const OrderInfo: React.FC = () => {
           starter && (
             <div
               data-testid="starting-player"
-              className="bg-[#26221d] p-3.5 sm:p-4 rounded-[24px_10px_22px_12px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09]"
+              className="bg-ink-surface p-3.5 sm:p-4 rounded-[24px_10px_22px_12px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09]"
             >
               <OrderPlayerCard player={starter} hostId={hostId} myId={myId} />
             </div>
@@ -102,7 +102,7 @@ export const OrderInfo: React.FC = () => {
               type="button"
               data-testid="confirm-order-btn"
               onClick={actions.confirmOrder}
-              className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
+              className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
             >
               <Vote className="size-6 text-stone-950" />
               {t("orderInfo.confirm")}

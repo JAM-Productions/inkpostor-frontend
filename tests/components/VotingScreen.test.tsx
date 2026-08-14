@@ -52,6 +52,34 @@ describe("VotingScreen", () => {
     expect(screen.getByText("Skip Vote")).toBeInTheDocument();
   });
 
+  it.each([
+    ["socket-123", "border-blue-500/40"],
+    ["socket-456", "border-emerald-500/40"],
+    ["socket-789", "border-violet-500/40"],
+    ["socket-abc", "border-rose-500/40"],
+  ])("keeps the assigned border color for player %s", (myId, borderClass) => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        myId,
+        hostId: null,
+        players: [
+          { id: "socket-123", name: "Me", hasVoted: false },
+          { id: "socket-456", name: "Player 2", hasVoted: false },
+          { id: "socket-789", name: "Player 3", hasVoted: false },
+          { id: "socket-abc", name: "Player 4", hasVoted: false },
+        ],
+      }),
+    );
+
+    const { unmount } = render(<VotingScreen />);
+    const ownCard = screen.getByTestId(`vote-card-${myId}`);
+
+    expect(ownCard).toHaveClass(borderClass);
+    expect(ownCard).not.toHaveClass("border-stone-800");
+    unmount();
+  });
+
   it("disables confirm button initially and enables it when a player is selected", () => {
     (useGameStore as any).mockImplementation((selector: any) => {
       const state = { ...mockStateBase };
@@ -129,9 +157,6 @@ describe("VotingScreen", () => {
     render(<VotingScreen />);
 
     expect(screen.getByText("Vote Cast!")).toBeInTheDocument();
-    expect(
-      screen.getByText("Waiting for other players to vote..."),
-    ).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /confirm vote/i }),
     ).not.toBeInTheDocument();
@@ -229,6 +254,11 @@ describe("VotingScreen", () => {
     expect(
       screen.queryByRole("button", { name: /confirm vote/i }),
     ).not.toBeInTheDocument();
+
+    const ownCard = screen.getByTestId("vote-card-socket-123");
+    expect(ownCard).toHaveClass("border-stone-950", "bg-[#181512]/60");
+    expect(ownCard).not.toHaveClass("bg-blue-500/20");
+    expect(screen.getByText("M")).toHaveClass("bg-stone-700");
 
     // Other players should be disabled
     const otherPlayerBtn = screen.getByText("Player 2").closest("button");

@@ -121,7 +121,7 @@ describe("CanvasHeader", () => {
   it("renders the countdown from the timeLeft prop", () => {
     mockStore();
     render(<CanvasHeader timeLeft={12300} />);
-    expect(screen.getByText("12.3s")).toBeInTheDocument();
+    expect(screen.getByText("12.3")).toBeInTheDocument();
   });
 
   it("hides the suspects and alert controls on my turn", () => {

@@ -26,11 +26,11 @@ export const ImpostorFinalGuess: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#161412] px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-ink-bg px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
       {/* Background ambient light */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[130px] rounded-full opacity-30 pointer-events-none bg-purple-950" />
 
-      <div className="z-10 w-full max-w-md space-y-6 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 border-stone-950 bg-[#26221d] p-8 text-center shadow-[6px_6px_0px_#0c0b09] animate-fade-in relative">
+      <div className="z-10 w-full max-w-md space-y-6 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 border-stone-950 bg-ink-surface p-8 text-center shadow-[6px_6px_0px_#0c0b09] animate-fade-in relative">
         {/* Taped corner accent */}
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-32 h-6 bg-amber-100/30 border border-stone-400/40 rounded-sm transform -rotate-1 pointer-events-none shadow-sm z-20" />
 
@@ -60,7 +60,7 @@ export const ImpostorFinalGuess: React.FC = () => {
           type="button"
           data-testid="skip-guess-btn"
           onClick={actions.skipImpostorGuess}
-          className="w-full rounded-[16px_5px_18px_6px] border-2 border-stone-950 bg-[#181512] px-4 py-3 font-handwritten text-lg font-bold text-amber-200 hover:bg-stone-800 transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] shadow-[3px_3px_0px_#0c0b09] cursor-pointer"
+          className="w-full rounded-[16px_5px_18px_6px] border-2 border-stone-950 bg-[#181512] px-4 py-3 font-handwritten text-lg font-bold text-amber-200 hover:bg-stone-800 transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] shadow-[3px_3px_0px_#0c0b09] cursor-pointer"
         >
           {t("impostorGuess.skip")}
         </button>

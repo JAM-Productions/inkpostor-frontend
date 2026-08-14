@@ -86,8 +86,11 @@ export const CanvasHeader: React.FC<CanvasHeaderProps> = ({ timeLeft }) => {
           <p className="text-xs font-handwritten text-amber-200/80 font-bold uppercase mb-1 flex items-center gap-1">
             <Clock className="size-3.5 text-amber-400" /> {t("canvas.time")}
           </p>
-          <div className="text-2xl font-short-stack font-black text-white px-3 py-1 bg-[#181512] rounded-[12px_4px_14px_4px] border-2 border-stone-950 shadow-[2px_2px_0px_#000] min-w-[86px] text-right tabular-nums">
-            {(timeLeft / 1000).toFixed(1)}s
+          <div
+            data-testid="timer"
+            className="text-2xl font-short-stack font-black text-white px-3 py-1 bg-[#181512] rounded-[12px_4px_14px_4px] border-2 border-stone-950 shadow-[2px_2px_0px_#000] w-20 text-right tabular-nums"
+          >
+            {(timeLeft / 1000).toFixed(1)}
           </div>
         </div>
 
@@ -95,7 +98,7 @@ export const CanvasHeader: React.FC<CanvasHeaderProps> = ({ timeLeft }) => {
           <button
             type="button"
             onClick={() => actions.endTurn()}
-            className="bg-amber-300 hover:bg-amber-200 text-stone-950 border-3 border-stone-950 px-5 py-3 rounded-[16px_5px_18px_6px] font-handwritten font-bold text-xl transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] cursor-pointer flex items-center gap-2"
+            className="bg-amber-300 hover:bg-amber-200 text-stone-950 border-3 border-stone-950 px-5 py-3 rounded-[16px_5px_18px_6px] font-handwritten font-bold text-xl transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] shadow-[4px_4px_0px_#0c0b09] cursor-pointer flex items-center gap-2"
           >
             <CheckSquare className="size-6 text-stone-950" />
             <span>{t("canvas.done")}</span>

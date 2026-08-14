@@ -41,6 +41,11 @@
       "impostorEjectedMoreLeft_other": "{{name}} was an Inkpostor! There are still {{count}} Inkpostors left among us.",
       "wasImpostor": "{{name}} was the Inkpostor!",
       "wereImpostors": "The Inkpostors were {{names}}!",
+      "ejectedAndWasImpostor": "{{name}} was ejected and was the Inkpostor!",
+      "ejectedAndWereImpostors": "{{name}} was ejected! The Inkpostors were {{names}}!",
+      "ejectedCrewmateWasImpostor": "{{name}} was ejected. {{impostorName}} was the Inkpostor!",
+      "ejectedCrewmateWereImpostors": "{{name}} was ejected. The Inkpostors were {{names}}!",
+      "ejectedBadge": "EJECTED",
       "impostorGuessedWord": "{{name}} guessed the word!",
       "secretWord": "The secret word was",
       "noSecretWord": "No word was chosen",
@@ -58,7 +63,6 @@
       "skipVote": "Skip Vote",
       "confirmVote": "Confirm Vote",
       "ejected": "You have been ejected",
-      "waitingOthers": "Waiting for other players to vote...",
       "voteCast": "Vote Cast!",
       "votesRecorded": "{{count}} / {{total}} votes recorded"
     },
@@ -127,7 +131,7 @@
       "submit": "Confirm Word",
       "submitted": "Your word is locked in",
       "hint": "Once confirmed you cannot change it.",
-      "waitingPlayers": "{{count}} of {{total}} players have written their word"
+      "waitingPlayers": "{{count}}/{{total}} have confirmed"
     },
     "roleReveal": {
       "phase1": "Phase 1",

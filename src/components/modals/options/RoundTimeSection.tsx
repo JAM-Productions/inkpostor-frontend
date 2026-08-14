@@ -46,10 +46,10 @@ export const RoundTimeSection: React.FC<RoundTimeSectionProps> = ({
                     key={value}
                     type="button"
                     onClick={() => onChange(value)}
-                    className={`flex items-center justify-between rounded-[14px_4px_16px_5px] border-2 px-4 py-3 text-left transition-colors transition-transform cursor-pointer font-handwritten text-lg font-bold ${
+                    className={`flex items-center justify-between rounded-[14px_4px_16px_5px] border-2 px-4 py-3 text-left transition-colors cursor-pointer font-handwritten text-lg font-bold ${
                       isSelected
                         ? "border-stone-950 bg-amber-400 text-stone-950 shadow-[3px_3px_0px_#000] -rotate-1"
-                        : "border-stone-950 bg-[#26221d] text-amber-100 shadow-[2px_2px_0px_#000] hover:border-amber-400/60 hover:-rotate-1"
+                        : "border-stone-950 bg-ink-surface text-amber-100 shadow-[2px_2px_0px_#000] hover:border-amber-400/60 hover:-rotate-1"
                     }`}
                     role="radio"
                     aria-checked={isSelected}
@@ -63,7 +63,7 @@ export const RoundTimeSection: React.FC<RoundTimeSectionProps> = ({
                       }`}
                     >
                       {isSelected && (
-                        <Check className="size-3.5 stroke-[3] text-amber-400" />
+                        <Check className="size-3.5 stroke-3 text-amber-400" />
                       )}
                     </span>
                   </button>
@@ -71,10 +71,10 @@ export const RoundTimeSection: React.FC<RoundTimeSectionProps> = ({
               })}
             </div>
           ) : (
-            <div className="mt-4 flex items-center justify-between rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] px-4 py-3 text-white font-handwritten text-lg font-bold shadow-[2px_2px_0px_#000]">
+            <div className="mt-4 flex items-center justify-between rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-ink-surface px-4 py-3 text-white font-handwritten text-lg font-bold shadow-[2px_2px_0px_#000]">
               <span>{t(`options.time.options.${selectedRoundTime}`)}</span>
               <span className="flex size-5 items-center justify-center rounded-full border-2 border-stone-950 bg-amber-400 text-stone-950">
-                <Check className="size-3.5 stroke-[3] text-stone-950" />
+                <Check className="size-3.5 stroke-3 text-stone-950" />
               </span>
             </div>
           )}

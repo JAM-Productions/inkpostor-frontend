@@ -72,10 +72,10 @@ export const TurnOrderSection: React.FC<TurnOrderSectionProps> = ({
                     key={option.value}
                     type="button"
                     onClick={() => onChange(option.value)}
-                    className={`flex items-center justify-between rounded-[14px_4px_16px_5px] border-2 px-4 py-3 text-left transition-colors transition-transform cursor-pointer font-handwritten ${
+                    className={`flex items-center justify-between rounded-[14px_4px_16px_5px] border-2 px-4 py-3 text-left transition-colors cursor-pointer font-handwritten ${
                       isSelected
                         ? "border-stone-950 bg-teal-400 text-stone-950 shadow-[3px_3px_0px_#000] -rotate-1"
-                        : "border-stone-950 bg-[#26221d] text-teal-100 shadow-[2px_2px_0px_#000] hover:border-teal-400/60 hover:-rotate-1"
+                        : "border-stone-950 bg-ink-surface text-teal-100 shadow-[2px_2px_0px_#000] hover:border-teal-400/60 hover:-rotate-1"
                     }`}
                     role="radio"
                     aria-checked={isSelected}
@@ -99,7 +99,7 @@ export const TurnOrderSection: React.FC<TurnOrderSectionProps> = ({
                       }`}
                     >
                       {isSelected && (
-                        <Check className="size-3.5 stroke-[3] text-teal-400" />
+                        <Check className="size-3.5 stroke-3 text-teal-400" />
                       )}
                     </span>
                   </button>
@@ -107,7 +107,7 @@ export const TurnOrderSection: React.FC<TurnOrderSectionProps> = ({
               })}
             </div>
           ) : (
-            <div className="mt-4 flex items-center justify-between rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-[#26221d] px-4 py-3 text-white font-handwritten shadow-[2px_2px_0px_#000]">
+            <div className="mt-4 flex items-center justify-between rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-ink-surface px-4 py-3 text-white font-handwritten shadow-[2px_2px_0px_#000]">
               <span className="min-w-0">
                 <span className="flex items-center gap-2 text-lg font-bold text-teal-300">
                   {selectedOption.icon}
@@ -118,7 +118,7 @@ export const TurnOrderSection: React.FC<TurnOrderSectionProps> = ({
                 </span>
               </span>
               <span className="flex size-5 shrink-0 items-center justify-center rounded-full border-2 border-stone-950 bg-teal-400 text-stone-950">
-                <Check className="size-3.5 stroke-[3] text-stone-950" />
+                <Check className="size-3.5 stroke-3 text-stone-950" />
               </span>
             </div>
           )}

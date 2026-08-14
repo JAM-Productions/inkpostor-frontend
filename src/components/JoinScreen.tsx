@@ -61,7 +61,7 @@ export const JoinScreen: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#161412] px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-ink-bg px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
       {/* Background ambient ink glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-amber-900/20 blur-[130px] rounded-full pointer-events-none" />
 
@@ -81,7 +81,7 @@ export const JoinScreen: React.FC = () => {
         )}
 
         {serviceOnline || isCheckingHealth ? (
-          <div className="relative bg-[#26221d] p-6 sm:p-8 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 border-stone-950 shadow-[6px_6px_0px_0px_#0c0b09] space-y-6 animate-fade-in-up">
+          <div className="relative bg-ink-surface p-6 sm:p-8 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 border-stone-950 shadow-[6px_6px_0px_0px_#0c0b09] space-y-6 animate-fade-in-up">
             {/* Taped top corner accent */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-28 h-6 bg-amber-100/30 border border-stone-400/40 rounded-sm transform -rotate-1 pointer-events-none shadow-sm" />
 
@@ -97,7 +97,7 @@ export const JoinScreen: React.FC = () => {
                   id="player-name"
                   type="text"
                   placeholder={t("join.enterName")}
-                  className="w-full px-4 py-3 bg-[#181512] border-2 border-stone-700 focus:border-amber-400 rounded-[18px_6px_22px_7px] outline-none text-white text-xl font-handwritten placeholder-stone-500 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-colors transition-transform disabled:opacity-50"
+                  className="w-full px-4 py-3 bg-[#181512] border-2 border-stone-700 focus:border-amber-400 rounded-[18px_6px_22px_7px] outline-none text-white text-xl font-handwritten placeholder-stone-500 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-colors disabled:opacity-50"
                   value={playerName}
                   onChange={(e) => setPlayerName(e.target.value)}
                   maxLength={15}
@@ -111,7 +111,7 @@ export const JoinScreen: React.FC = () => {
                   data-testid="create-room-btn"
                   onClick={handleCreate}
                   disabled={!playerName || isCheckingHealth}
-                  className="w-full relative group rounded-[22px_7px_18px_9px] border-2 border-stone-950 bg-red-600 hover:bg-red-500 px-5 py-3.5 text-xl font-bold text-white shadow-[4px_4px_0px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#0c0b09] transition-colors transition-transform disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 flex items-center justify-center gap-2.5 cursor-pointer font-handwritten tracking-wide"
+                  className="w-full relative group rounded-[22px_7px_18px_9px] border-2 border-stone-950 bg-red-600 hover:bg-red-500 px-5 py-3.5 text-xl font-bold text-white shadow-[4px_4px_0px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#0c0b09] transition-colors disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 flex items-center justify-center gap-2.5 cursor-pointer font-handwritten tracking-wide"
                 >
                   <Users className="size-6" />
                   <span>{t("join.createGame")}</span>
@@ -124,7 +124,7 @@ export const JoinScreen: React.FC = () => {
                 <div className="w-full border-t-2 border-dashed border-stone-700"></div>
               </div>
               <div className="relative flex justify-center text-base">
-                <span className="px-3 bg-[#26221d] text-amber-200/60 font-handwritten font-bold">
+                <span className="px-3 bg-ink-surface text-amber-200/60 font-handwritten font-bold">
                   {t("join.or")}
                 </span>
               </div>
@@ -142,7 +142,7 @@ export const JoinScreen: React.FC = () => {
                   id="room-code"
                   type="text"
                   placeholder={t("join.roomCodePlaceholder")}
-                  className="w-full px-4 py-3 bg-[#181512] border-2 border-stone-700 focus:border-amber-400 rounded-[16px_8px_20px_6px] outline-none text-center uppercase tracking-widest text-white text-2xl font-short-stack placeholder-stone-600 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-colors transition-transform disabled:opacity-50"
+                  className="w-full px-4 py-3 bg-[#181512] border-2 border-stone-700 focus:border-amber-400 rounded-[16px_8px_20px_6px] outline-none text-center uppercase tracking-widest text-white text-2xl font-short-stack placeholder-stone-600 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)] transition-colors disabled:opacity-50"
                   value={roomId}
                   onChange={(e) => setRoomId(e.target.value)}
                   maxLength={6}
@@ -153,25 +153,38 @@ export const JoinScreen: React.FC = () => {
                 type="submit"
                 data-testid="join-room-btn"
                 disabled={!playerName || !roomId || isCheckingHealth}
-                className="w-full rounded-[18px_8px_20px_6px] border-2 border-stone-950 bg-amber-300 hover:bg-amber-200 px-5 py-3.5 text-xl font-bold text-stone-950 shadow-[4px_4px_0px_0px_#0c0b09] hover:rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#0c0b09] transition-colors transition-transform disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer font-handwritten tracking-wide"
+                className="w-full rounded-[18px_8px_20px_6px] border-2 border-stone-950 bg-amber-300 hover:bg-amber-200 px-5 py-3.5 text-xl font-bold text-stone-950 shadow-[4px_4px_0px_0px_#0c0b09] hover:rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#0c0b09] transition-colors disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer font-handwritten tracking-wide"
               >
                 {t("join.joinGame")}
               </button>
             </form>
           </div>
         ) : (
-          <div className="flex gap-3 justify-center animate-fade-in animate-duration-slower animate-delay-400 min-h-100.5">
-            <span className="text-2xl font-rubik-wet-paint text-red-500 mt-10 tracking-wider">
-              {t("join.serviceOffline")}
-            </span>
+          <div className="flex items-center justify-center animate-fade-in animate-duration-slower animate-delay-400 min-h-129.5">
+            <div className="relative flex flex-col items-center">
+              {/* Mancha de tinta */}
+              <div className="absolute -inset-0.5 -top-53 bg-red-950/30 blur-2xl rounded-full" />
+
+              <span className="relative -top-33 mt-6 text-3xl font-rubik-wet-paint text-red-400 tracking-wide rotate-1">
+                {t("join.serviceOffline")}
+              </span>
+            </div>
           </div>
         )}
       </div>
       <div className="flex items-center justify-center animate-fade-in animate-delay-600 min-h-10">
         {isCheckingHealth && (
-          <div className="flex items-center gap-2.5 mt-3 px-4 py-1.5 bg-[#26221d] border border-stone-700 rounded-full shadow-sm">
-            <div className="size-2.5 bg-amber-400 rounded-full animate-pulse"></div>
-            <span className="text-base font-handwritten text-amber-100/70">
+          <div className="relative flex items-center gap-3 mt-10 px-5 py-2.5 bg-ink-surface border-2 border-stone-800 rounded-[12px_5px_14px_7px] shadow-[3px_3px_0px_#0c0b09] -rotate-1">
+            {/* Pequeño trozo de cinta */}
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-16 h-3 bg-amber-100/20 border border-stone-500/30 rotate-1" />
+
+            {/* Indicador */}
+            <div className="relative size-3">
+              <div className="absolute inset-0 rounded-full bg-amber-400/30 animate-ping" />
+              <div className="absolute inset-0.75 rounded-full bg-amber-400" />
+            </div>
+
+            <span className="text-base font-handwritten font-bold tracking-wide text-amber-100/70">
               {t("join.checkingService")}
             </span>
           </div>

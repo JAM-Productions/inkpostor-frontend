@@ -109,9 +109,7 @@ describe("WordSelection", () => {
     render(<WordSelection />);
 
     expect(screen.getByText("Your word is locked in")).toBeInTheDocument();
-    expect(
-      screen.getByText("2 of 3 players have written their word"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("2/3 have confirmed")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /confirm word/i }),
     ).not.toBeInTheDocument();
