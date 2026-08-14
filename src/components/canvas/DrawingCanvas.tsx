@@ -55,10 +55,10 @@ export const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
 
       {/* Mobile Time indicator (floats over canvas on small screens) */}
       <div
-        className={`absolute top-3 right-3 bg-[#26221d] rounded-[14px_4px_16px_4px] p-2 border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] pointer-events-none flex items-center gap-2 ${isMyTurn ? "sm:hidden" : "hidden"}`}
+        className={`absolute top-3 right-3 bg-ink-surface rounded-[14px_4px_16px_4px] p-2 border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] pointer-events-none flex items-center gap-2 ${isMyTurn ? "sm:hidden" : "hidden"}`}
       >
         <Clock className="size-4 text-amber-400" />
-        <span className="text-xl font-short-stack font-black text-white tabular-nums text-right min-w-[44px]">
+        <span className="text-xl font-short-stack font-black text-white tabular-nums text-right min-w-11">
           {(timeLeft / 1000).toFixed(1)}
         </span>
       </div>

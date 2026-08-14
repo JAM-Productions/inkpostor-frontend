@@ -53,7 +53,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-stone-950/80 backdrop-blur-sm w-full h-full cursor-default"
+        className="absolute inset-0 h-full w-full animate-fade-in bg-stone-950/80 backdrop-blur-sm animate-duration-fast motion-reduce:animate-none cursor-default"
         onClick={onClose}
         role="presentation"
         aria-hidden="true"
@@ -64,7 +64,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
       <div
         ref={modalRef}
         tabIndex={-1}
-        className="relative w-full h-full sm:h-auto sm:max-h-[calc(100vh-4rem)] sm:max-w-2xl bg-[#26221d] sm:rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-0 sm:border-3 border-stone-950 shadow-[8px_8px_0px_#0c0b09] flex flex-col overflow-hidden outline-none z-10"
+        className="relative z-10 flex h-full w-full flex-col overflow-hidden bg-ink-surface shadow-[8px_8px_0px_#0c0b09] outline-none animate-fade-in-up animate-duration-fast animate-bezier-back-out motion-reduce:animate-none sm:h-auto sm:max-h-[calc(100vh-4rem)] sm:max-w-2xl sm:rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-0 border-stone-950 sm:border-3"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-5 sm:p-6 border-b-2 border-dashed border-stone-700 bg-[#181512]/50">

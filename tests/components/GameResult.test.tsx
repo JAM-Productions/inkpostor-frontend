@@ -51,8 +51,10 @@ describe("GameResult", () => {
 
     expect(screen.getByText("Inkpostor Defeated")).toBeInTheDocument();
 
-    expect(screen.getByText("Impostor was ejected.")).toBeInTheDocument();
-    expect(screen.getByText("Impostor was the Inkpostor!")).toBeInTheDocument();
+    expect(
+      screen.getByText("Impostor was ejected and was the Inkpostor!"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("ejected-player-card")).toBeInTheDocument();
 
     expect(screen.getByText("Apple")).toBeInTheDocument();
   });
@@ -79,8 +81,10 @@ describe("GameResult", () => {
     render(<GameResult />);
 
     expect(screen.getByText("Inkpostor Won")).toBeInTheDocument();
-    expect(screen.getByText("Player 3 was ejected.")).toBeInTheDocument();
-    expect(screen.getByText("Impostor was the Inkpostor!")).toBeInTheDocument();
+    expect(
+      screen.getByText("Player 3 was ejected. Impostor was the Inkpostor!"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("ejected-player-card")).toBeInTheDocument();
   });
 
   it("shows Impostor Won when the impostor guessed the word, even after being ejected", () => {
@@ -228,6 +232,7 @@ describe("GameResult", () => {
     render(<GameResult />);
 
     expect(screen.getByText("Nobody was ejected...")).toBeInTheDocument();
+    expect(screen.getByTestId("vote-result-question-icon")).toBeInTheDocument();
   });
 
   it("shows was ejected message when gameEnded is false and ejectedId exists", () => {
@@ -246,6 +251,19 @@ describe("GameResult", () => {
     expect(
       screen.getByText("Inkpostor is still among us..."),
     ).toBeInTheDocument();
+    const resultTitle = screen.getByRole("heading", {
+      name: "Result of the vote",
+    });
+    const ejectedPlayerCard = screen.getByTestId("ejected-player-card");
+
+    expect(ejectedPlayerCard).toHaveTextContent("Player 3");
+    expect(resultTitle.compareDocumentPosition(ejectedPlayerCard)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(screen.queryByText("Ejected")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("vote-result-question-icon"),
+    ).not.toBeInTheDocument();
   });
 
   it("shows Next Round button when game is not over and player hasn't confirmed", () => {

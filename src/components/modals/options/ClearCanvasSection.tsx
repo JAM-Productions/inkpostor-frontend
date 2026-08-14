@@ -30,7 +30,7 @@ export const ClearCanvasSection: React.FC<ClearCanvasSectionProps> = ({
       notice={
         isLocked && (
           <p
-            className="mt-2 text-sm font-medium text-amber-400/90"
+            className="mt-2 text-base font-handwritten font-bold text-amber-400/90"
             data-testid="clear-canvas-locked-notice"
           >
             {t("options.clearCanvas.alwaysOnInMode", { mode: modeName })}

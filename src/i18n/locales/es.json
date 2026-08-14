@@ -41,6 +41,11 @@
       "impostorEjectedMoreLeft_other": "¡{{name}} era un Inkpostor! Todavía quedan {{count}} Inkpostores entre nosotros.",
       "wasImpostor": "¡{{name}} era el Inkpostor!",
       "wereImpostors": "¡Los Inkpostores eran {{names}}!",
+      "ejectedAndWasImpostor": "¡{{name}} ha sido expulsado/a y era el Inkpostor!",
+      "ejectedAndWereImpostors": "¡{{name}} ha sido expulsado/a! Los Inkpostores eran {{names}}.",
+      "ejectedCrewmateWasImpostor": "{{name}} ha sido expulsado/a. ¡{{impostorName}} era el Inkpostor!",
+      "ejectedCrewmateWereImpostors": "{{name}} ha sido expulsado/a. ¡Los Inkpostores eran {{names}}!",
+      "ejectedBadge": "EXPULSADO/A",
       "impostorGuessedWord": "¡{{name}} adivinó la palabra!",
       "secretWord": "La palabra secreta era",
       "noSecretWord": "No se llegó a elegir palabra",
@@ -58,7 +63,6 @@
       "skipVote": "Omitir Voto",
       "confirmVote": "Confirmar Voto",
       "ejected": "Has sido expulsado",
-      "waitingOthers": "Esperando a que otros voten...",
       "voteCast": "¡Voto Enviado!",
       "votesRecorded": "{{count}} / {{total}} votos registrados"
     },
@@ -127,7 +131,7 @@
       "submit": "Confirmar palabra",
       "submitted": "Tu palabra está confirmada",
       "hint": "Una vez confirmada no podrás cambiarla.",
-      "waitingPlayers": "{{count}} de {{total}} jugadores han escrito su palabra"
+      "waitingPlayers": "{{count}}/{{total}} han confirmado"
     },
     "roleReveal": {
       "phase1": "Fase 1",

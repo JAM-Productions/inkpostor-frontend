@@ -9,9 +9,7 @@ import { Canvas } from "./components/Canvas";
 import { VotingScreen } from "./components/VotingScreen";
 import { ImpostorFinalGuess } from "./components/ImpostorFinalGuess";
 import { GameResult } from "./components/GameResult";
-import { LanguageSwitcher } from "./components/LanguageSwitcher";
-import { EndGameButton } from "./components/buttons/EndGameButton";
-import { ExitGameButton } from "./components/buttons/ExitGameButton";
+import { Topbar } from "./components/Topbar";
 import { ModalRenderer } from "./components/modals/ModalRenderer";
 
 // App orchestrates the current phase of the game
@@ -21,7 +19,6 @@ function App() {
   const myName = useGameStore((state) => state.myName);
 
   const isJoinScreen = !roomId || !myName;
-  const showLanguageSwitcher = isJoinScreen || phase === "LOBBY";
 
   // Switch between game screens depending on current state of the room
   const renderPhase = () => {
@@ -59,11 +56,7 @@ function App() {
 
   return (
     <>
-      <ExitGameButton />
-      <div className="fixed top-3 right-3 sm:top-4 sm:right-4 flex items-center justify-between gap-3 sm:gap-4 z-50">
-        <EndGameButton />
-        {showLanguageSwitcher && <LanguageSwitcher />}
-      </div>
+      <Topbar />
       {renderPhase()}
       <ModalRenderer />
     </>

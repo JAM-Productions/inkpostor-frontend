@@ -41,6 +41,11 @@
       "impostorEjectedMoreLeft_other": "{{name}} era un Inkpostor! Encara queden {{count}} Inkpostors entre nosaltres.",
       "wasImpostor": "{{name}} era l'Inkpostor!",
       "wereImpostors": "Els Inkpostors eren {{names}}!",
+      "ejectedAndWasImpostor": "{{name}} ha estat expulsat/da i era l'Inkpostor!",
+      "ejectedAndWereImpostors": "{{name}} ha estat expulsat/da! Els Inkpostors eren {{names}}!",
+      "ejectedCrewmateWasImpostor": "{{name}} ha estat expulsat/da. {{impostorName}} era l'Inkpostor!",
+      "ejectedCrewmateWereImpostors": "{{name}} ha estat expulsat/da. Els Inkpostors eren {{names}}!",
+      "ejectedBadge": "EXPULSAT/DA",
       "impostorGuessedWord": "{{name}} ha encertat la paraula!",
       "secretWord": "La paraula secreta era",
       "noSecretWord": "No es va arribar a triar cap paraula",
@@ -58,7 +63,6 @@
       "skipVote": "Demanar Omissió",
       "confirmVote": "Confirmar Vot",
       "ejected": "Has estat expulsat",
-      "waitingOthers": "Esperant que altres votin...",
       "voteCast": "Vot Enviat!",
       "votesRecorded": "{{count}} / {{total}} vots registrats"
     },
@@ -127,7 +131,7 @@
       "submit": "Confirmar paraula",
       "submitted": "La teva paraula està confirmada",
       "hint": "Un cop confirmada no la podràs canviar.",
-      "waitingPlayers": "{{count}} de {{total}} jugadors han escrit la seva paraula"
+      "waitingPlayers": "{{count}}/{{total}} han confirmat"
     },
     "roleReveal": {
       "phase1": "Fase 1",

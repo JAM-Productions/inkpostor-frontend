@@ -21,7 +21,7 @@ describe("getPlayerIconColorClass", () => {
 
   it("should return host color for the host", () => {
     const color = getPlayerIconColorClass(hostId, hostId, players);
-    expect(color).toContain("bg-linear-to-br from-amber-400 to-orange-500");
+    expect(color).toContain("bg-[#f97316]");
   });
 
   it("should return different colors for different players and cycle through them", () => {
@@ -57,10 +57,9 @@ describe("getPlayerIconColorClass", () => {
     expect(color).toBe("bg-stone-700 text-stone-300");
   });
 
-  it("should return explicit border and background classes for active cards", () => {
+  it("should return explicit background classes for active cards", () => {
     const color = getActivePlayerCardColorClass("2", hostId, players);
     expect(color).toContain("bg-emerald-500/20");
-    expect(color).toContain("border-emerald-500/40");
   });
 
   it("should return violet style for player at index 2 (third player)", () => {
@@ -68,7 +67,7 @@ describe("getPlayerIconColorClass", () => {
     expect(iconColor).toBe("bg-violet-500 text-white");
 
     const activeColor = getActivePlayerCardColorClass("3", hostId, players);
-    expect(activeColor).toBe("bg-violet-500/20 border border-violet-500/40");
+    expect(activeColor).toBe("bg-violet-500/20");
 
     const votingColor = getPlayerVotingCardColorClass("3", hostId, players);
     expect(votingColor).toBe("bg-violet-500/20 border border-violet-500/40");

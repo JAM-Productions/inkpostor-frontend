@@ -40,21 +40,13 @@ export const KickPlayerModal: React.FC<KickPlayerModalProps> = ({
       closeLabel={t("canvas.cancel", "Cancel")}
       title={t("canvas.kickTitle", "Vote to Kick Player")}
       icon={<UserMinus className="size-5 text-red-400" />}
-    >
-      <div className="space-y-6">
-        <p className="text-stone-300 text-lg">
-          {t("canvas.kickConfirmationText", {
-            name: playerToKick.name,
-            defaultValue: "Are you sure you want to vote to kick {{name}}?",
-          })}
-        </p>
-
+      footer={
         <div className="flex gap-4">
           <button
             type="button"
             data-testid="cancel-kick-button"
             onClick={onClose}
-            className="flex-1 px-4 py-3 rounded-[16px_5px_18px_6px] font-handwritten font-bold text-lg bg-[#181512] text-amber-200 hover:bg-stone-800 border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer"
+            className="flex-1 px-4 py-3 rounded-[16px_5px_18px_6px] font-handwritten font-bold text-lg bg-[#181512] text-amber-200 hover:bg-stone-800 border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer"
           >
             {t("canvas.cancel", "Cancel")}
           </button>
@@ -62,11 +54,20 @@ export const KickPlayerModal: React.FC<KickPlayerModalProps> = ({
             type="button"
             data-testid="confirm-kick-button"
             onClick={handleConfirm}
-            className="flex-1 px-4 py-3 rounded-[16px_5px_18px_6px] font-rubik-wet-paint text-lg text-white bg-red-600 hover:bg-red-500 uppercase tracking-wider border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer"
+            className="flex-1 px-4 py-3 rounded-[16px_5px_18px_6px] font-rubik-wet-paint text-lg text-white bg-red-600 hover:bg-red-500 uppercase tracking-wider border-2 border-stone-950 shadow-[3px_3px_0px_#0c0b09] transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer"
           >
             {t("canvas.kickConfirm", "Vote to Kick")}
           </button>
         </div>
+      }
+    >
+      <div className="space-y-6">
+        <p className="text-xl leading-relaxed text-stone-300 sm:text-2xl">
+          {t("canvas.kickConfirmationText", {
+            name: playerToKick.name,
+            defaultValue: "Are you sure you want to vote to kick {{name}}?",
+          })}
+        </p>
       </div>
     </BaseModal>
   );

@@ -51,7 +51,7 @@ export const Lobby: React.FC = () => {
     Number(gameMode !== "CLASSIC") + changedModeOptions;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#161412] px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-ink-bg px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
       {/* Ambient background glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-red-950/20 blur-[130px] rounded-full pointer-events-none" />
 
@@ -69,7 +69,7 @@ export const Lobby: React.FC = () => {
           )}
         </div>
 
-        <div className="relative bg-[#26221d] rounded-[255px_15px_225px_15px/15px_225px_15px_255px] p-6 sm:p-7 shadow-[6px_6px_0px_0px_#0c0b09] border-3 border-stone-950 flex flex-col max-h-[70vh]">
+        <div className="relative bg-ink-surface rounded-[255px_15px_225px_15px/15px_225px_15px_255px] p-6 sm:p-7 shadow-[6px_6px_0px_0px_#0c0b09] border-3 border-stone-950 flex flex-col">
           {/* Taped top corner accent */}
           <div className="absolute -top-3 right-10 w-24 h-5 bg-amber-100/30 border border-stone-400/40 transform rotate-2 pointer-events-none shadow-sm" />
 
@@ -123,7 +123,7 @@ export const Lobby: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-2.5 sm:space-y-3 mb-6 overflow-y-auto flex-1 pr-1 custom-scrollbar">
+          <div className="space-y-2.5 sm:space-y-3 mb-6 flex-1 pr-1 custom-scrollbar">
             {players.map((player, index) => (
               <LobbyPlayerCard
                 key={player.id}
@@ -154,10 +154,10 @@ export const Lobby: React.FC = () => {
               data-testid="start-game-btn"
               onClick={actions.startGame}
               disabled={!canStart}
-              className="w-full shrink-0 group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer bg-red-600 hover:bg-red-500 shadow-[4px_4px_0px_#000]"
+              className="w-full shrink-0 group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer bg-red-600 hover:bg-red-500 shadow-[4px_4px_0px_#000]"
             >
               <div className="flex h-full w-full items-center justify-center gap-2 px-8 py-3.5 font-bold text-white">
-                <span className="text-2xl sm:text-3xl tracking-wider font-rubik-wet-paint">
+                <span className="text-xl sm:text-2xl md:text-3xl tracking-wider font-rubik-wet-paint">
                   {t("lobby.startGame")}
                 </span>
               </div>

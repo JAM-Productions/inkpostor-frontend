@@ -42,10 +42,10 @@ export const ImpostorGuessControl: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsGuessOpen(!isGuessOpen)}
-        className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-[14px_4px_16px_5px] font-handwritten font-bold text-lg transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 shadow-[3px_3px_0px_#0c0b09] cursor-pointer border-2 border-stone-950 ${
+        className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-[14px_4px_16px_5px] font-handwritten font-bold text-lg transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 shadow-[3px_3px_0px_#0c0b09] cursor-pointer border-2 border-stone-950 ${
           isGuessOpen
             ? "bg-purple-500 text-white -rotate-1"
-            : "bg-[#26221d] text-purple-300 hover:bg-stone-800"
+            : "bg-ink-surface text-purple-300 hover:bg-stone-800"
         }`}
         aria-label={t("impostorGuess.guessWord")}
       >
@@ -54,7 +54,7 @@ export const ImpostorGuessControl: React.FC = () => {
       </button>
 
       {isGuessOpen && (
-        <div className="absolute top-full inset-x-0 md:inset-x-auto md:left-auto md:right-0 md:min-w-87.5 mt-3 p-4 bg-[#26221d] rounded-[20px_6px_22px_7px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-2 z-50">
+        <div className="absolute top-full inset-x-0 md:inset-x-auto md:left-auto md:right-0 md:min-w-87.5 mt-3 p-4 bg-ink-surface rounded-[20px_6px_22px_7px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-2 z-50">
           <div className="flex items-center gap-2 text-base font-handwritten font-bold uppercase tracking-wider text-purple-300">
             <PenLine className="size-5" />
             {t("impostorGuess.title")}

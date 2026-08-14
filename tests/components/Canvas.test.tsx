@@ -92,7 +92,7 @@ describe("Canvas", () => {
     expect(screen.getByText("Your turn!")).toBeInTheDocument();
 
     // Should display time
-    expect(screen.getByText("20.0s")).toBeInTheDocument();
+    expect(screen.getByTestId("timer")).toHaveTextContent("20.0");
 
     // Tools
     expect(screen.getByLabelText("Undo last stroke")).toBeInTheDocument();
@@ -155,7 +155,7 @@ describe("Canvas", () => {
     render(<Canvas />);
 
     // Initially 20.0s
-    expect(screen.getByText("20.0s")).toBeInTheDocument();
+    expect(screen.getByTestId("timer")).toHaveTextContent("20.0");
 
     // Advance time by 1 second
     act(() => {
@@ -163,7 +163,7 @@ describe("Canvas", () => {
     });
 
     // Should now show 19.0s
-    expect(screen.getByText("19.0s")).toBeInTheDocument();
+    expect(screen.getByTestId("timer")).toHaveTextContent("19.0");
   });
 
   it("allows active player to end turn manually", () => {

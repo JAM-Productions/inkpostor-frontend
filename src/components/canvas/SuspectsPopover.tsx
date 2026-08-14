@@ -47,10 +47,10 @@ export const SuspectsPopover: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsSusListOpen(!isSusListOpen)}
-        className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-[14px_4px_16px_5px] font-handwritten font-bold text-lg transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 shadow-[3px_3px_0px_#0c0b09] cursor-pointer border-2 border-stone-950 ${
+        className={`flex items-center justify-center gap-2 p-2.5 sm:px-5 sm:py-3 rounded-[14px_4px_16px_5px] font-handwritten font-bold text-lg transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 shadow-[3px_3px_0px_#0c0b09] cursor-pointer border-2 border-stone-950 ${
           isSusListOpen
             ? "bg-amber-400 text-stone-950 -rotate-1"
-            : "bg-[#26221d] text-amber-200 hover:bg-stone-800"
+            : "bg-ink-surface text-amber-200 hover:bg-stone-800"
         }`}
         aria-label={t("canvas.players")}
       >
@@ -61,7 +61,7 @@ export const SuspectsPopover: React.FC = () => {
       </button>
 
       {isSusListOpen && (
-        <div className="absolute top-full inset-x-0 sm:inset-x-auto sm:left-auto sm:right-0 mt-3 p-3.5 bg-[#26221d] rounded-[20px_6px_22px_7px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-2 sm:min-w-[240px] animate-slide-pop-in z-50">
+        <div className="absolute top-full inset-x-0 sm:inset-x-auto sm:left-auto sm:right-0 mt-3 p-3.5 bg-ink-surface rounded-[20px_6px_22px_7px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-2 sm:min-w-60 animate-slide-pop-in z-50">
           <div className="text-sm font-handwritten font-bold text-amber-300 uppercase tracking-wider mb-1 px-1">
             {t("canvas.suspects")}
           </div>
@@ -75,7 +75,7 @@ export const SuspectsPopover: React.FC = () => {
                 }}
                 disabled={player.id === myId || player.isEjected}
                 title={player.name}
-                className={`flex items-center gap-3 px-3 py-2 rounded-[14px_4px_16px_5px] border-2 border-stone-950 transition-colors transition-transform flex-1 text-left ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-[14px_4px_16px_5px] border-2 border-stone-950 transition-colors flex-1 text-left ${
                   player.isEjected
                     ? "bg-[#181512]/50 opacity-50 cursor-default"
                     : player.isSuspected
@@ -100,11 +100,11 @@ export const SuspectsPopover: React.FC = () => {
                     className={`size-6 rounded-full border-2 border-stone-950 flex items-center justify-center transition-colors ${
                       player.isSuspected
                         ? "bg-red-500 text-stone-950"
-                        : "bg-[#26221d] text-transparent"
+                        : "bg-ink-surface text-transparent"
                     }`}
                   >
                     {player.isSuspected && (
-                      <Search className="size-3.5 stroke-[3]" />
+                      <Search className="size-3.5 stroke-3" />
                     )}
                   </div>
                 )}

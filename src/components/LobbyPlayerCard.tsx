@@ -45,7 +45,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
   return (
     <div
       style={{ animationDelay: `${index * 100}ms` }}
-      className={`flex items-center justify-between p-3.5 sm:p-4 rounded-[18px_6px_20px_8px] border-2 transition-colors transition-transform animate-fade-in-right ${
+      className={`flex items-center justify-between p-3.5 sm:p-4 rounded-[18px_6px_20px_8px] border-2 transition-colors animate-fade-in-right ${
         player.id === myId
           ? "bg-white/20 border-white/40 shadow-[3px_3px_0px_#000]"
           : "bg-[#181512] border-stone-800 shadow-[2px_2px_0px_#000]"
@@ -116,7 +116,7 @@ export const LobbyPlayerCard: React.FC<LobbyPlayerCardProps> = ({
               type="button"
               data-testid={`lobby-kick-btn-${player.id}`}
               onClick={() => setIsPendingKick(true)}
-              className="group relative inline-flex size-8 items-center justify-center rounded-full border-2 border-stone-700 bg-[#26221d] text-stone-300 transition-colors hover:border-red-500 hover:bg-red-950/60 hover:text-red-300 cursor-pointer shadow-[2px_2px_0px_#000]"
+              className="group relative inline-flex size-8 items-center justify-center rounded-full border-2 border-stone-700 bg-ink-surface text-stone-300 transition-colors hover:border-red-500 hover:bg-red-950/60 hover:text-red-300 cursor-pointer shadow-[2px_2px_0px_#000]"
               aria-label={t("lobby.kickPlayerAria", {
                 name: player.name,
               })}

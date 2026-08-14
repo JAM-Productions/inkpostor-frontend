@@ -30,7 +30,7 @@ export const WordReveal: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#161412] px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-ink-bg px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
       {/* Background ambient light */}
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[130px] rounded-full opacity-30 pointer-events-none transition-colors duration-1000 ${
@@ -62,11 +62,11 @@ export const WordReveal: React.FC = () => {
             onMouseDown={() => handleReveal()}
             onMouseUp={() => setRevealed(false)}
             onMouseLeave={() => setRevealed(false)}
-            className={`w-full aspect-video rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 transition-colors transition-transform duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in shadow-[6px_6px_0px_#0c0b09]
+            className={`w-full aspect-video rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 transition-colors duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in shadow-[6px_6px_0px_#0c0b09]
               ${
                 revealed
                   ? "border-amber-500 bg-amber-950/80 shadow-[0_0_40px_rgba(245,158,11,0.3)]"
-                  : "border-stone-950 bg-[#26221d] hover:bg-stone-800 hover:-rotate-1"
+                  : "border-stone-950 bg-ink-surface hover:bg-stone-800 hover:-rotate-1"
               }`}
           >
             {revealed ? (
@@ -110,9 +110,9 @@ export const WordReveal: React.FC = () => {
           </button>
         </div>
 
-        <div className="pt-2" style={{ minHeight: "4rem" }}>
+        <div className="pt-2" style={{ minHeight: "5rem" }}>
           {isEjected || hasConfirmed ? (
-            <div className="text-amber-200/70 font-handwritten text-lg font-bold flex items-center justify-center gap-3 py-3.5 animate-fade-in">
+            <div className="text-amber-200/70 font-handwritten text-lg font-bold flex items-center justify-center gap-3 py-4.25 animate-fade-in">
               <span className="relative flex size-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full size-3 bg-amber-500"></span>
@@ -129,7 +129,7 @@ export const WordReveal: React.FC = () => {
                 type="button"
                 data-testid="confirm-word-btn"
                 onClick={actions.confirmNewWord}
-                className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-colors transition-transform hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
+                className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
               >
                 <Brush className="size-6 text-stone-950" />
                 {t("wordReveal.startDrawing")}
