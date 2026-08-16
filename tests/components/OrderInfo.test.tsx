@@ -32,7 +32,7 @@ describe("OrderInfo", () => {
     gameOptions: {
       turnOrderMode: "RANDOM_STARTER",
       virtualVotingEnabled: true,
-      ...((overrides.gameOptions as Record<string, unknown>) ?? {}),
+      ...(overrides.gameOptions as Record<string, unknown>),
     },
   });
 
