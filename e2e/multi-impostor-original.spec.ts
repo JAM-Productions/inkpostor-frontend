@@ -80,6 +80,11 @@ test.describe("Multi-Impostor ORIGINAL Spoken Mode E2E Suite", () => {
       hostPage.locator('[data-testid="impostor-count-value"]'),
     ).toHaveText("2");
 
+    // The virtual voting is off by default and this flow votes in the app
+    await hostPage
+      .getByRole("switch", { name: /toggle virtual voting/i })
+      .click();
+
     await hostPage.locator('[data-testid="confirm-options-button"]').click();
     await expect(hostPage.getByRole("dialog")).toBeHidden();
 

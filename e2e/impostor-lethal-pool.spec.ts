@@ -111,6 +111,14 @@ test.describe("Deep E2E: Impostor Loses On The Last Attempt", () => {
         /Inkpostor Defeated|Inkpostor Derrotado|Inkpostor Derrotat/i,
         { timeout: 15000 },
       );
+      // Nobody was ejected, so the Inkpostor is revealed as a card, with the
+      // reason the game ended written under it
+      await expect(
+        page.locator('[data-testid="impostor-result-card"]').first(),
+      ).toBeVisible();
+      await expect(
+        page.locator('[data-testid="impostor-out-of-guesses"]'),
+      ).toBeVisible();
       await expect(page.locator('[data-testid="play-again-btn"]')).toHaveCount(
         page === pageHost ? 1 : 0,
       );

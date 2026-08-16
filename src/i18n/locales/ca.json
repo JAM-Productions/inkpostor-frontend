@@ -46,13 +46,16 @@
       "ejectedCrewmateWasImpostor": "{{name}} ha estat expulsat/da. {{impostorName}} era l'Inkpostor!",
       "ejectedCrewmateWereImpostors": "{{name}} ha estat expulsat/da. Els Inkpostors eren {{names}}!",
       "ejectedBadge": "EXPULSAT/DA",
+      "impostorBadge": "INKPOSTOR",
+      "impostorsTitle_one": "L'Inkpostor",
+      "impostorsTitle_other": "Els Inkpostors",
       "impostorGuessedWord": "{{name}} ha encertat la paraula!",
+      "impostorFailedGuesses": "{{name}} ha gastat tots els intents i no ha encertat la paraula!",
       "secretWord": "La paraula secreta era",
       "noSecretWord": "No es va arribar a triar cap paraula",
       "playAgain": "Tornar a Jugar",
       "nextRound": "Següent Ronda",
       "waitingRestart": "Esperant a l'amfitrió per reiniciar...",
-      "waitingContinue": "Esperant a l'amfitrió per continuar...",
       "waitingPlayers": "{{count}} de {{total}} jugadors han confirmat seguir",
       "returnToHome": "Tornar a l'inici"
     },
@@ -168,6 +171,8 @@
       "followOrder": "Digueu la vostra paraula en aquest ordre",
       "sayOneWord": "Cada jugador diu una paraula relacionada amb la paraula secreta.",
       "confirm": "Començar la votació",
+      "revealResults": "Revelar resultats",
+      "waitingHostReveal": "Esperant a l'amfitrió per revelar els resultats...",
       "waitingPlayers": "{{count}} de {{total}} jugadors estan preparats"
     },
     "rules": {
@@ -338,6 +343,11 @@
         "fixedOrderHint": "Es sorteja l'ordre complet i es manté a totes les rondes.",
         "randomOrder": "Ordre aleatori",
         "randomOrderHint": "Es sorteja l'ordre complet a cada ronda."
+      },
+      "virtualVoting": {
+        "title": "Votació virtual",
+        "description": "Voteu a l'app en comptes de a taula. Desactivada, l'amfitrió revela els Inkpostors quan acabeu de discutir.",
+        "toggle": "Activar o desactivar la votació virtual"
       }
     }
   }

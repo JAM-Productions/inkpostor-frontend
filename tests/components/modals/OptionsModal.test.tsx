@@ -28,6 +28,7 @@ describe("OptionsModal", () => {
     impostorLosesWhenOutOfGuesses: false,
     hideHint: false,
     turnOrderMode: "RANDOM_STARTER",
+    virtualVotingEnabled: false,
   };
 
   // `gameOptions` are what the mode makes of the host's choices and
@@ -117,6 +118,7 @@ describe("OptionsModal", () => {
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
       preventRepeatImpostors: true,
+      virtualVotingEnabled: false,
     });
     expect(mockOnClose).toHaveBeenCalled();
   });
@@ -188,6 +190,7 @@ describe("OptionsModal", () => {
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
       preventRepeatImpostors: true,
+      virtualVotingEnabled: false,
     });
   });
 
@@ -369,6 +372,7 @@ describe("OptionsModal", () => {
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
       preventRepeatImpostors: true,
+      virtualVotingEnabled: false,
     });
   });
 
@@ -613,6 +617,44 @@ describe("OptionsModal", () => {
         playerColorsEnabled: true,
       }),
     );
+  });
+
+  it.each(["ORIGINAL", "ORIGINAL_CHAOS"])(
+    "offers the virtual voting in %s, off until the host turns it on",
+    async (gameMode) => {
+      const user = userEvent.setup();
+      (useGameStore as any).mockImplementation((selector: any) =>
+        selector(createState({ gameMode })),
+      );
+
+      render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+      const toggle = screen.getByRole("switch", {
+        name: /toggle virtual voting/i,
+      });
+      expect(screen.getByTestId("virtual-voting-section")).toBeInTheDocument();
+      expect(toggle).toHaveAttribute("aria-checked", "false");
+
+      await user.click(toggle);
+      await user.click(screen.getByTestId("confirm-options-button"));
+
+      expect(mockUpdateGameOptions).toHaveBeenCalledWith(
+        expect.objectContaining({ gameMode, virtualVotingEnabled: true }),
+      );
+    },
+  );
+
+  it("keeps the virtual voting out of the modes that draw", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector(createState()),
+    );
+
+    render(<OptionsModal isOpen={true} onClose={mockOnClose} />);
+
+    // Those modes always vote in the app, so there is nothing to choose
+    expect(
+      screen.queryByTestId("virtual-voting-section"),
+    ).not.toBeInTheDocument();
   });
 
   it("hides the turn order outside the spoken modes, but keeps the hint option", () => {

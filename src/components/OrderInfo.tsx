@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Vote } from "lucide-react";
+import { Eye, Vote } from "lucide-react";
 import { useGameStore, type Player } from "../store/gameState";
 import { OrderPlayerCard } from "./OrderPlayerCard";
 import { FULL_ORDER_MODES } from "../lib/constants";
@@ -14,6 +14,10 @@ export const OrderInfo: React.FC = () => {
   const turnOrder = useGameStore((state) => state.turnOrder);
   const turnOrderMode = useGameStore(
     (state) => state.gameOptions.turnOrderMode,
+  );
+
+  const virtualVotingEnabled = useGameStore(
+    (state) => state.gameOptions.virtualVotingEnabled,
   );
   const currentRound = useGameStore((state) => state.currentRound);
   const myId = useGameStore((state) => state.myId);
@@ -34,6 +38,7 @@ export const OrderInfo: React.FC = () => {
   const starter = orderedPlayers[0];
 
   const showsFullOrder = FULL_ORDER_MODES.includes(turnOrderMode);
+  const isHost = myId === hostId;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-ink-bg px-4 pt-16 pb-8 sm:px-6 sm:pt-20 md:pt-24 relative overflow-hidden">
@@ -42,9 +47,11 @@ export const OrderInfo: React.FC = () => {
 
       <div className="z-10 max-w-md w-full text-center space-y-6">
         <div className="space-y-2">
-          <h2 className="text-xl font-handwritten font-bold text-amber-200/70 uppercase tracking-widest">
-            {t("orderInfo.round", { round: currentRound })}
-          </h2>
+          {virtualVotingEnabled && (
+            <h2 className="text-xl font-handwritten font-bold text-amber-200/70 uppercase tracking-widest">
+              {t("orderInfo.round", { round: currentRound })}
+            </h2>
+          )}
           <h1 className="text-3xl sm:text-4xl font-rubik-wet-paint text-white tracking-wide">
             {t("orderInfo.title")}
           </h1>
@@ -86,7 +93,27 @@ export const OrderInfo: React.FC = () => {
         </p>
 
         <div className="pt-1" style={{ minHeight: "4rem" }}>
-          {isEjected || hasConfirmed ? (
+          {!virtualVotingEnabled ? (
+            isHost ? (
+              <button
+                type="button"
+                data-testid="reveal-results-btn"
+                onClick={actions.revealResults}
+                className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
+              >
+                <Eye className="size-6 text-stone-950" />
+                {t("orderInfo.revealResults")}
+              </button>
+            ) : (
+              <div className="text-amber-200/70 font-handwritten text-lg font-bold flex items-center justify-center gap-3 py-3.5 animate-fade-in">
+                <span className="relative flex size-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full size-3 bg-amber-500"></span>
+                </span>
+                {t("orderInfo.waitingHostReveal")}
+              </div>
+            )
+          ) : isEjected || hasConfirmed ? (
             <div className="text-amber-200/70 font-handwritten text-lg font-bold flex items-center justify-center gap-3 py-3.5 animate-fade-in">
               <span className="relative flex size-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>

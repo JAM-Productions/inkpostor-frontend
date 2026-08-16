@@ -3,6 +3,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { EndGameButton } from "./buttons/EndGameButton";
 import { ExitGameButton } from "./buttons/ExitGameButton";
 import { RoomCodeButton } from "./buttons/RoomCodeButton";
+import { ReturnHomeButton } from "./buttons/ReturnHomeButton";
 
 export function Topbar() {
   const phase = useGameStore((state) => state.phase);
@@ -13,8 +14,9 @@ export function Topbar() {
   const isJoinScreen = !roomId || !myName;
   const showLanguageSwitcher = isJoinScreen || phase === "LOBBY";
   const showRoomCode = !isJoinScreen && phase !== "LOBBY" && !gameEnded;
+  const showReturnHome = !isJoinScreen && phase === "RESULTS" && gameEnded;
   const hasVisibleControls =
-    showLanguageSwitcher || (!isJoinScreen && !gameEnded);
+    showLanguageSwitcher || showReturnHome || (!isJoinScreen && !gameEnded);
 
   if (!hasVisibleControls) {
     return null;
@@ -34,6 +36,7 @@ export function Topbar() {
       <div className="fixed top-3 left-3 sm:top-4 sm:left-4 flex items-center gap-3 z-50">
         <ExitGameButton />
         {showRoomCode && <RoomCodeButton roomId={roomId} />}
+        <ReturnHomeButton />
       </div>
       <div className="fixed top-3 right-3 sm:top-4 sm:right-4 flex items-center justify-between gap-3 sm:gap-4 z-50">
         <EndGameButton />

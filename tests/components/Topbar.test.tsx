@@ -19,6 +19,10 @@ vi.mock("../../src/components/buttons/ExitGameButton", () => ({
   ExitGameButton: () => <div data-testid="exit-game-button" />,
 }));
 
+vi.mock("../../src/components/buttons/ReturnHomeButton", () => ({
+  ReturnHomeButton: () => <div data-testid="return-home-button" />,
+}));
+
 vi.mock("../../src/components/buttons/RoomCodeButton", () => ({
   RoomCodeButton: ({ roomId }: { roomId: string }) => (
     <div data-testid="room-code-button">{roomId}</div>
@@ -74,5 +78,20 @@ describe("Topbar", () => {
     expect(screen.queryByTestId("topbar")).not.toBeInTheDocument();
     expect(screen.queryByTestId("topbar-background")).not.toBeInTheDocument();
     expect(screen.queryByTestId("room-code-button")).not.toBeInTheDocument();
+  });
+
+  it("keeps itself alive for the way out of a finished game", () => {
+    (useGameStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (selector: (state: typeof mockState) => unknown) =>
+        selector({ ...mockState, phase: "RESULTS", gameEnded: true }),
+    );
+
+    render(<Topbar />);
+
+    expect(screen.getByTestId("topbar")).toBeInTheDocument();
+    // ...and it is the only thing left up there
+    expect(screen.getByTestId("return-home-button")).toBeInTheDocument();
+    expect(screen.queryByTestId("room-code-button")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
   });
 });

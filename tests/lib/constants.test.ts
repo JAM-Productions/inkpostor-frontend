@@ -6,6 +6,8 @@ import {
   DEFAULT_GAME_OPTIONS,
   getMaxImpostors,
   MODE_LOCKED_OPTIONS,
+  MODE_OPTION_SECTIONS,
+  usesVotingPhase,
 } from "../../src/lib/constants";
 import type { GameOptions } from "../../src/store/gameState";
 
@@ -31,6 +33,7 @@ describe("the options the client mirrors from the server", () => {
       hideHint: false,
       turnOrderMode: "RANDOM_STARTER",
       preventRepeatImpostors: true,
+      virtualVotingEnabled: false,
     });
     expect(DEFAULT_GAME_MODE).toBe("CLASSIC");
   });
@@ -56,6 +59,34 @@ describe("the options the client mirrors from the server", () => {
       ORIGINAL: spokenLocks,
       ORIGINAL_CHAOS: spokenLocks,
     });
+  });
+});
+
+describe("usesVotingPhase", () => {
+  it("always plays the voting phase in a mode that draws", () => {
+    // The option exists for the table, not for the canvas: a drawing round ends
+    // in VOTING whatever it says.
+    const options = { ...DEFAULT_GAME_OPTIONS, virtualVotingEnabled: false };
+
+    expect(usesVotingPhase("CLASSIC", options)).toBe(true);
+    expect(usesVotingPhase("CUSTOM_WORD", options)).toBe(true);
+    expect(usesVotingPhase("HOT_WORD", options)).toBe(true);
+  });
+
+  it("only plays it in a spoken mode when the host turned it on", () => {
+    const off = { ...DEFAULT_GAME_OPTIONS, virtualVotingEnabled: false };
+    const on = { ...DEFAULT_GAME_OPTIONS, virtualVotingEnabled: true };
+
+    expect(usesVotingPhase("ORIGINAL", off)).toBe(false);
+    expect(usesVotingPhase("ORIGINAL_CHAOS", off)).toBe(false);
+    expect(usesVotingPhase("ORIGINAL", on)).toBe(true);
+    expect(usesVotingPhase("ORIGINAL_CHAOS", on)).toBe(true);
+  });
+
+  it("is only offered as an option where it means something", () => {
+    expect(MODE_OPTION_SECTIONS.ORIGINAL).toContain("virtualVoting");
+    expect(MODE_OPTION_SECTIONS.ORIGINAL_CHAOS).toContain("virtualVoting");
+    expect(MODE_OPTION_SECTIONS.CLASSIC).not.toContain("virtualVoting");
   });
 });
 

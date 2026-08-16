@@ -10,20 +10,30 @@ vi.mock("../../src/store/gameState", () => ({
 
 describe("OrderInfo", () => {
   const mockConfirmOrder = vi.fn();
+  const mockRevealResults = vi.fn();
 
   const createState = (overrides: Record<string, unknown> = {}) => ({
     myId: "player-1",
     hostId: "player-1",
     currentRound: 2,
     turnOrder: ["player-2", "player-1", "player-3"],
-    gameOptions: { turnOrderMode: "RANDOM_STARTER" },
     players: [
       { id: "player-1", name: "Alice", hasConfirmedOrder: false },
       { id: "player-2", name: "Bob", hasConfirmedOrder: false },
       { id: "player-3", name: "Charlie", hasConfirmedOrder: false },
     ],
-    actions: { confirmOrder: mockConfirmOrder },
+    actions: {
+      confirmOrder: mockConfirmOrder,
+      revealResults: mockRevealResults,
+    },
     ...overrides,
+    // Merged rather than replaced: most of these cases are about the order, and
+    // the confirmation gate they exercise only exists with the voting on.
+    gameOptions: {
+      turnOrderMode: "RANDOM_STARTER",
+      virtualVotingEnabled: true,
+      ...((overrides.gameOptions as Record<string, unknown>) ?? {}),
+    },
   });
 
   const mockStore = (overrides: Record<string, unknown> = {}) => {
@@ -153,6 +163,36 @@ describe("OrderInfo", () => {
       "2CCharlie",
     ]);
     expect(screen.getByText("1 of 2 players are ready")).toBeInTheDocument();
+  });
+
+  it("lets the host reveal the results when the voting is not played in the app", async () => {
+    const user = userEvent.setup();
+    mockStore({ gameOptions: { virtualVotingEnabled: false } });
+
+    render(<OrderInfo />);
+
+    // Nothing to confirm and no round counter: the game ends on this screen
+    expect(
+      screen.queryByRole("button", { name: /start voting/i }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Round 2")).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId("reveal-results-btn"));
+    expect(mockRevealResults).toHaveBeenCalledTimes(1);
+  });
+
+  it("makes everyone else wait for the host to reveal the results", () => {
+    mockStore({
+      hostId: "player-2",
+      gameOptions: { virtualVotingEnabled: false },
+    });
+
+    render(<OrderInfo />);
+
+    expect(screen.queryByTestId("reveal-results-btn")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("Waiting for host to reveal the results..."),
+    ).toBeInTheDocument();
   });
 
   it("shows an ejected player the waiting message instead of the button", () => {

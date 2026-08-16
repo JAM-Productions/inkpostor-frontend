@@ -65,6 +65,13 @@ Phase where players submit or write their secret word candidate.
 Screen displaying the turn order sequence for the upcoming drawing round.
 ![Order Info Screen](./screens/9.%20Order%20Info%20Screen.png)
 
+### Order Info Screen - Without Virtual Voting
+Default shape of the spoken modes: the table votes out loud, so this screen has
+no confirmation gate and no round counter. The host closes the game from here
+with **Reveal Results** while everybody else waits — the voting screen is never
+reached. Turning **Virtual Voting** on in the options brings the gate and the
+voting screen back.
+
 ---
 
 ## 4. Canvas & Drawing Phase
@@ -117,6 +124,9 @@ Voting interface view tailored for the Inkpostor with word guessing shortcuts.
 
 ## 6. Results & Game Over
 
+> Every case this screen can be in, and every text it can print, is catalogued in
+> **[docs/GAME_RESULT.md](./GAME_RESULT.md)**.
+
 ### Impostor Word Guess Screen
 Dedicated screen for the Inkpostor's final attempt at guessing the secret word.
 ![Inkpostor Guess Screen](./screens/7.%20Inkpostor%20Guess%20Screen.png)
@@ -136,6 +146,14 @@ End of game result screen celebrating an Inkpostor win.
 ### Game Over - Crewmate Victory
 End of game result screen celebrating a Crewmate win after defeating the Inkpostor.
 ![Results Screen Win](./screens/6.1%20Results%20Screen%20Win.png)
+
+### Game Over - Impostors Revealed
+Shown whenever the game was closed instead of played out: the host ended it with
+the End Game button (**in any mode**), or revealed the results of a spoken round
+with the virtual voting off. There is no verdict, since nobody won — the title
+names the Inkpostors and the cards below it list them, stamped with the INKPOSTOR
+badge. The rest of the screen is the usual one — the secret word, Play Again for
+the host, Return to Home.
 
 ---
 

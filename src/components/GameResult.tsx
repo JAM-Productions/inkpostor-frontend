@@ -1,8 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useGameStore } from "../store/gameState";
-import { CircleQuestionMark, Home, Play } from "lucide-react";
+import { useGameStore, type Player } from "../store/gameState";
+import { CircleQuestionMark, Play } from "lucide-react";
 import { getPlayerIconColorClass } from "../lib/playerColors";
+import { isSpokenMode } from "../lib/constants";
+import { ImpostorPlayerCard } from "./ImpostorPlayerCard";
 
 export const GameResult: React.FC = () => {
   const { t } = useTranslation();
@@ -17,8 +19,25 @@ export const GameResult: React.FC = () => {
           : [];
     return new Set(list);
   }, [rawImpostorIds, impostorId]);
-  const impostorIds = Array.from(impostorIdSet);
-  const players = useGameStore((state) => state.players) || [];
+  const roomPlayers = useGameStore((state) => state.players);
+  const kickedOutPlayers = useGameStore((state) => state.kickedOutPlayers);
+  const players: Player[] = React.useMemo(() => {
+    const list = roomPlayers || [];
+    const missing = (kickedOutPlayers ?? []).filter(
+      (kicked) => !list.some((p) => p.id === kicked.id),
+    );
+    if (missing.length === 0) return list;
+    return [
+      ...list,
+      ...missing.map((kicked) => ({
+        ...kicked,
+        isConnected: false,
+        isEjected: true,
+        score: 0,
+        hasStartedEmergencyVoting: false,
+      })),
+    ];
+  }, [roomPlayers, kickedOutPlayers]);
   const secretWord = useGameStore((state) => state.secretWord);
   const myId = useGameStore((state) => state.myId);
   const hostId = useGameStore((state) => state.hostId);
@@ -32,6 +51,7 @@ export const GameResult: React.FC = () => {
   const impostorOutOfGuesses = useGameStore(
     (state) => state.impostorOutOfGuesses,
   );
+  const guessingImpostorId = useGameStore((state) => state.guessingImpostorId);
 
   const ejectedWasImpostorState = useGameStore(
     (state) => state.ejectedWasImpostor,
@@ -40,37 +60,40 @@ export const GameResult: React.FC = () => {
     (state) => state.remainingImpostorCount,
   );
 
+  const gameMode = useGameStore((state) => state.gameMode);
+  const virtualVotingEnabled = useGameStore(
+    (state) => state.gameOptions.virtualVotingEnabled,
+  );
+  const endedByHost = useGameStore((state) => state.endedByHost);
+
   const me = players.find((p) => p.id === myId);
   const hasConfirmedNewRound = me?.hasConfirmedNewRound;
 
-  // Active (non-ejected) players
+  const isRevealOnly =
+    endedByHost || (isSpokenMode(gameMode) && !virtualVotingEnabled);
+  const impostorPlayers = players.filter((p) => impostorIdSet.has(p.id));
+
   const activeImpostors = players.filter(
     (p) => impostorIdSet.has(p.id) && !p.isEjected && p.id !== ejectedId,
   );
   const isEjectedImpostor =
     ejectedWasImpostorState ??
     (ejectedId ? impostorIdSet.has(ejectedId) : false);
-  const remainingImpostorCount =
-    remainingImpostorCountState ?? activeImpostors.length;
 
-  const hasKnownImpostors = impostorIdSet.size > 0;
-
-  // Crewmates win if all known impostors are eliminated or out of guesses (and no correct guess)
   const allImpostorsDefeated =
-    hasKnownImpostors &&
     (activeImpostors.length === 0 || impostorOutOfGuesses) &&
     !impostorGuessedCorrectly;
 
   const isGameOver = gameEnded;
   const impostorNames =
-    players
-      .reduce<string[]>((acc, p) => {
-        if (impostorIdSet.has(p.id)) acc.push(p.name);
-        return acc;
-      }, [])
-      .join(", ") ||
-    players.find((p) => p.id === impostorId)?.name ||
-    "Unknown";
+    impostorPlayers.map((p) => p.name).join(", ") || "Unknown";
+
+  const guessingImpostorName =
+    players.find((p) => p.id === guessingImpostorId)?.name ?? impostorNames;
+  const impostorsWereLine =
+    impostorIdSet.size > 1
+      ? t("result.wereImpostors", { names: impostorNames })
+      : t("result.wasImpostor", { name: impostorNames });
   const ejectedPlayer = players.find((p) => p.id === ejectedId);
   const ejectedName = ejectedPlayer?.name;
 
@@ -79,7 +102,7 @@ export const GameResult: React.FC = () => {
       {/* Background ambient light */}
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[130px] rounded-full opacity-30 pointer-events-none transition-colors duration-1000 ${
-          isGameOver
+          isGameOver && !isRevealOnly
             ? allImpostorsDefeated
               ? "bg-emerald-600"
               : "bg-red-600"
@@ -90,7 +113,7 @@ export const GameResult: React.FC = () => {
       <div className="max-w-2xl w-full text-center space-y-6 z-10">
         <div
           className={`relative p-6 sm:p-8 rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 shadow-[6px_6px_0px_#0c0b09] transition-colors animate-fade-in animate-delay-200 animate-duration-slower ${
-            isGameOver
+            isGameOver && !isRevealOnly
               ? allImpostorsDefeated
                 ? "border-emerald-600 bg-emerald-950/80 shadow-[0_0_50px_rgba(16,185,129,0.3)]"
                 : "border-red-600 bg-red-950/80 shadow-[0_0_50px_rgba(220,38,38,0.3)]"
@@ -101,119 +124,157 @@ export const GameResult: React.FC = () => {
           <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-32 h-6 bg-amber-100/30 border border-stone-400/40 rounded-sm transform rotate-1 pointer-events-none shadow-sm z-20" />
 
           <h1 className="mb-6 text-3xl font-rubik-wet-paint uppercase tracking-wide text-white md:text-5xl">
-            {isGameOver
-              ? allImpostorsDefeated
-                ? t("result.impostorDefeated")
-                : t("result.impostorWon")
-              : t("result.voteResult")}
+            {isRevealOnly
+              ? t("result.impostorsTitle", { count: impostorPlayers.length })
+              : isGameOver
+                ? allImpostorsDefeated
+                  ? t("result.impostorDefeated")
+                  : t("result.impostorWon")
+                : t("result.voteResult")}
           </h1>
 
-          <div className="mb-4 flex justify-center">
-            {ejectedPlayer ? (
+          {isRevealOnly ? (
+            <>
               <div
-                data-testid="ejected-player-card"
-                className="relative flex items-center gap-3.5 rounded-[18px_6px_20px_8px] border-2 border-stone-700 bg-[#181512] px-4 py-3.5 text-left shadow-[4px_4px_0px_#000] animate-pop-in overflow-hidden max-w-full"
+                className="grid grid-cols-1 gap-2.5 p-1 sm:grid-cols-2 w-full"
+                data-testid="impostor-reveal-list"
               >
-                <div
-                  className={`flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-stone-950 font-handwritten text-xl font-bold shadow-[2px_2px_0px_#000] ${getPlayerIconColorClass(
-                    ejectedPlayer.id,
-                    hostId,
-                    players,
-                  )}`}
-                >
-                  {ejectedPlayer.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="min-w-0 pr-20">
-                  <p className="truncate font-handwritten text-xl font-bold tracking-wide text-stone-200">
-                    {ejectedPlayer.name}
-                  </p>
-                </div>
-                <span className="absolute right-3 top-1/2 rounded border border-red-500/80 bg-red-950/80 px-2.5 py-0.5 font-rubik-wet-paint text-xs sm:text-sm text-red-400 uppercase tracking-widest pointer-events-none animate-stamp-in-centered animate-delay-500">
-                  {t("result.ejectedBadge")}
-                </span>
+                {impostorPlayers.map((player, index) => (
+                  <ImpostorPlayerCard
+                    key={player.id}
+                    player={player}
+                    hostId={hostId}
+                    index={index}
+                    total={impostorPlayers.length}
+                  />
+                ))}
               </div>
-            ) : isGameOver ? (
-              allImpostorsDefeated ? (
-                <img
-                  src="/no-inkpostor-character.webp"
-                  alt="Inkpostor"
-                  className="sm:h-28 h-22 drop-shadow-md"
-                />
-              ) : (
-                <img
-                  src="/inkpostor-character.webp"
-                  alt="Inkpostor"
-                  className="sm:h-28 h-22 drop-shadow-md"
-                />
-              )
-            ) : (
-              <CircleQuestionMark
-                data-testid="vote-result-question-icon"
-                className="sm:size-16 size-14 text-amber-300"
-              />
-            )}
-          </div>
 
-          <div className="text-xl md:text-2xl text-amber-100 font-handwritten font-bold space-y-2">
-            {isGameOver ? (
-              ejectedId ? (
-                <p>
-                  {isEjectedImpostor
-                    ? impostorIdSet.size > 1
-                      ? t("result.ejectedAndWereImpostors", {
-                          name: ejectedName,
-                          names: impostorNames,
-                        })
-                      : t("result.ejectedAndWasImpostor", { name: ejectedName })
-                    : impostorIdSet.size > 1
-                      ? t("result.ejectedCrewmateWereImpostors", {
-                          name: ejectedName,
-                          names: impostorNames,
-                        })
-                      : t("result.ejectedCrewmateWasImpostor", {
-                          name: ejectedName,
-                          impostorName: impostorNames,
-                          names: impostorNames,
-                        })}
-                </p>
-              ) : (
-                <p>
-                  {impostorIds.length > 1
-                    ? t("result.wereImpostors", { names: impostorNames })
-                    : t("result.wasImpostor", { name: impostorNames })}
-                </p>
-              )
-            ) : ejectedId ? (
-              <p>{t("result.wasEjected", { name: ejectedName })}</p>
-            ) : (
-              <p className="text-amber-200/70 italic">
-                {t("result.nobodyEjected")}
+              <p className="mt-5 text-xl md:text-2xl text-amber-100 font-handwritten font-bold">
+                {impostorsWereLine}
               </p>
-            )}
+            </>
+          ) : (
+            <>
+              <div className="mb-4 flex justify-center">
+                {ejectedPlayer ? (
+                  <div
+                    data-testid="ejected-player-card"
+                    className="relative flex items-center gap-3.5 rounded-[18px_6px_20px_8px] border-2 border-stone-700 bg-[#181512] px-4 py-3.5 text-left shadow-[4px_4px_0px_#000] animate-pop-in overflow-hidden max-w-full"
+                  >
+                    <div
+                      className={`flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-stone-950 font-handwritten text-xl font-bold shadow-[2px_2px_0px_#000] ${getPlayerIconColorClass(
+                        ejectedPlayer.id,
+                        hostId,
+                        players,
+                      )}`}
+                    >
+                      {ejectedPlayer.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 pr-20">
+                      <p className="truncate font-handwritten text-xl font-bold tracking-wide text-stone-200">
+                        {ejectedPlayer.name}
+                      </p>
+                    </div>
+                    <span className="absolute right-3 top-1/2 rounded border border-red-500/80 bg-red-950/80 px-2.5 py-0.5 font-rubik-wet-paint text-xs sm:text-sm text-red-400 uppercase tracking-widest pointer-events-none animate-stamp-in-centered animate-delay-500">
+                      {t("result.ejectedBadge")}
+                    </span>
+                  </div>
+                ) : isGameOver ? (
+                  <div
+                    className="grid w-full grid-cols-1 gap-2.5 p-1 sm:grid-cols-2"
+                    data-testid="impostor-reveal-list"
+                  >
+                    {impostorPlayers.map((player, index) => (
+                      <ImpostorPlayerCard
+                        key={player.id}
+                        player={player}
+                        hostId={hostId}
+                        index={index}
+                        total={impostorPlayers.length}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <CircleQuestionMark
+                    data-testid="vote-result-question-icon"
+                    className="sm:size-16 size-14 text-amber-300"
+                  />
+                )}
+              </div>
 
-            {!isGameOver && isEjectedImpostor && (
-              <p
-                className="text-amber-300 font-extrabold italic"
-                data-testid="impostor-ejected-remaining"
-              >
-                {t("result.impostorEjectedMoreLeft", {
-                  name: ejectedName,
-                  count: remainingImpostorCount,
-                })}
-              </p>
-            )}
-            {!isGameOver && ejectedId && !isEjectedImpostor && (
-              <p className="text-amber-200/70 italic">
-                {t("result.stillAmongUs")}
-              </p>
-            )}
+              <div className="text-xl md:text-2xl text-amber-100 font-handwritten font-bold space-y-2">
+                {isGameOver ? (
+                  ejectedPlayer ? (
+                    <p>
+                      {isEjectedImpostor
+                        ? impostorIdSet.size > 1
+                          ? t("result.ejectedAndWereImpostors", {
+                              name: ejectedName,
+                              names: impostorNames,
+                            })
+                          : t("result.ejectedAndWasImpostor", {
+                              name: ejectedName,
+                            })
+                        : impostorIdSet.size > 1
+                          ? t("result.ejectedCrewmateWereImpostors", {
+                              name: ejectedName,
+                              names: impostorNames,
+                            })
+                          : t("result.ejectedCrewmateWasImpostor", {
+                              name: ejectedName,
+                              impostorName: impostorNames,
+                            })}
+                    </p>
+                  ) : (
+                    <p>{impostorsWereLine}</p>
+                  )
+                ) : ejectedPlayer ? (
+                  <p>{t("result.wasEjected", { name: ejectedName })}</p>
+                ) : (
+                  <p className="text-amber-200/70 italic">
+                    {t("result.nobodyEjected")}
+                  </p>
+                )}
 
-            {impostorGuessedCorrectly && (
-              <p className="text-purple-300 font-bold">
-                {t("result.impostorGuessedWord", { name: impostorNames })}
-              </p>
-            )}
-          </div>
+                {!isGameOver && ejectedPlayer && isEjectedImpostor && (
+                  <p
+                    className="text-amber-300 font-extrabold italic"
+                    data-testid="impostor-ejected-remaining"
+                  >
+                    {t("result.impostorEjectedMoreLeft", {
+                      name: ejectedName,
+                      count: remainingImpostorCountState ?? 0,
+                    })}
+                  </p>
+                )}
+                {!isGameOver && ejectedPlayer && !isEjectedImpostor && (
+                  <p className="text-amber-200/70 italic">
+                    {t("result.stillAmongUs")}
+                  </p>
+                )}
+
+                {impostorOutOfGuesses && (
+                  <p
+                    className="text-purple-300 font-bold"
+                    data-testid="impostor-out-of-guesses"
+                  >
+                    {t("result.impostorFailedGuesses", {
+                      name: guessingImpostorName,
+                    })}
+                  </p>
+                )}
+
+                {impostorGuessedCorrectly && (
+                  <p className="text-purple-300 font-bold">
+                    {t("result.impostorGuessedWord", {
+                      name: guessingImpostorName,
+                    })}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         {isGameOver && (
@@ -287,18 +348,6 @@ export const GameResult: React.FC = () => {
                 .length,
             })}
           </div>
-        )}
-        {isGameOver && (
-          <button
-            type="button"
-            aria-label="Return to Home"
-            onClick={actions.exitGame}
-            className="mt-6 px-6 py-2.5 rounded-[14px_4px_16px_5px] border-2 border-stone-950 bg-ink-surface text-amber-200 hover:text-white hover:bg-stone-800 transition-colors cursor-pointer font-handwritten font-bold text-lg flex items-center justify-center gap-2 mx-auto shadow-[3px_3px_0px_#0c0b09] hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09]"
-            data-testid="return-home-button"
-          >
-            <Home className="size-5 text-amber-400" />
-            {t("result.returnToHome")}
-          </button>
         )}
       </div>
     </div>

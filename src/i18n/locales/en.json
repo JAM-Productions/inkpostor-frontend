@@ -46,13 +46,16 @@
       "ejectedCrewmateWasImpostor": "{{name}} was ejected. {{impostorName}} was the Inkpostor!",
       "ejectedCrewmateWereImpostors": "{{name}} was ejected. The Inkpostors were {{names}}!",
       "ejectedBadge": "EJECTED",
+      "impostorBadge": "INKPOSTOR",
+      "impostorsTitle_one": "The Inkpostor",
+      "impostorsTitle_other": "The Inkpostors",
       "impostorGuessedWord": "{{name}} guessed the word!",
+      "impostorFailedGuesses": "{{name}} used up every guess and never found the word!",
       "secretWord": "The secret word was",
       "noSecretWord": "No word was chosen",
       "playAgain": "Play Again",
       "nextRound": "Next Round",
       "waitingRestart": "Waiting for host to restart...",
-      "waitingContinue": "Waiting for host to continue...",
       "waitingPlayers": "{{count}} of {{total}} players have confirmed to continue",
       "returnToHome": "Return to Home Screen"
     },
@@ -168,6 +171,8 @@
       "followOrder": "Say your word in this order",
       "sayOneWord": "Each player says one word related to the secret word.",
       "confirm": "Start Voting",
+      "revealResults": "Reveal Results",
+      "waitingHostReveal": "Waiting for host to reveal the results...",
       "waitingPlayers": "{{count}} of {{total}} players are ready"
     },
     "rules": {
@@ -338,6 +343,11 @@
         "fixedOrderHint": "The full order is drawn once and kept every round.",
         "randomOrder": "Random order",
         "randomOrderHint": "The full order is drawn again on every round."
+      },
+      "virtualVoting": {
+        "title": "Virtual Voting",
+        "description": "Vote in the app instead of around the table. With it off, the host reveals the Inkpostors when you are done arguing.",
+        "toggle": "Toggle virtual voting"
       }
     }
   }

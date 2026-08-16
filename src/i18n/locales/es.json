@@ -46,13 +46,16 @@
       "ejectedCrewmateWasImpostor": "{{name}} ha sido expulsado/a. ¡{{impostorName}} era el Inkpostor!",
       "ejectedCrewmateWereImpostors": "{{name}} ha sido expulsado/a. ¡Los Inkpostores eran {{names}}!",
       "ejectedBadge": "EXPULSADO/A",
+      "impostorBadge": "INKPOSTOR",
+      "impostorsTitle_one": "El Inkpostor",
+      "impostorsTitle_other": "Los Inkpostores",
       "impostorGuessedWord": "¡{{name}} adivinó la palabra!",
+      "impostorFailedGuesses": "¡{{name}} gastó todos sus intentos y no dio con la palabra!",
       "secretWord": "La palabra secreta era",
       "noSecretWord": "No se llegó a elegir palabra",
       "playAgain": "Volver a Jugar",
       "nextRound": "Siguiente Ronda",
       "waitingRestart": "Esperando al anfitrión para reiniciar...",
-      "waitingContinue": "Esperando al anfitrión para continuar...",
       "waitingPlayers": "{{count}} de {{total}} jugadores han confirmado seguir",
       "returnToHome": "Volver al inicio"
     },
@@ -168,6 +171,8 @@
       "followOrder": "Decid vuestra palabra en este orden",
       "sayOneWord": "Cada jugador dice una palabra relacionada con la palabra secreta.",
       "confirm": "Empezar votación",
+      "revealResults": "Revelar resultados",
+      "waitingHostReveal": "Esperando al anfitrión para revelar los resultados...",
       "waitingPlayers": "{{count}} de {{total}} jugadores están listos"
     },
     "rules": {
@@ -338,6 +343,11 @@
         "fixedOrderHint": "Se sortea el orden completo y se mantiene en todas las rondas.",
         "randomOrder": "Orden aleatorio",
         "randomOrderHint": "Se sortea el orden completo en cada ronda."
+      },
+      "virtualVoting": {
+        "title": "Votación virtual",
+        "description": "Votad en la app en vez de en la mesa. Desactivada, el anfitrión revela a los Inkpostores cuando terminéis de discutir.",
+        "toggle": "Activar o desactivar la votación virtual"
       }
     }
   }
