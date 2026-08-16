@@ -4,10 +4,11 @@ Every game reaches the same screen, but it is really **three layouts in one**,
 and each of them has its own set of texts. This document lists every case the
 screen can be in, what puts it there, and exactly which strings it can print.
 
-Source: [`src/components/GameResult.tsx`](../src/components/GameResult.tsx),
-[`src/components/ImpostorPlayerCard.tsx`](../src/components/ImpostorPlayerCard.tsx)
-and the `result.*` keys in [`src/i18n/locales`](../src/i18n/locales) (`en`, `es`,
-`ca` — the English text is quoted throughout this file).
+Source: [`src/components/GameResult.tsx`](../src/components/GameResult.tsx) and
+the pieces in [`src/components/result`](../src/components/result) — §8 maps each
+case below to the file that draws it — plus the `result.*` keys in
+[`src/i18n/locales`](../src/i18n/locales) (`en`, `es`, `ca` — the English text is
+quoted throughout this file).
 
 ---
 
@@ -190,11 +191,37 @@ it has no name for.
 | B5 | [`e2e/impostor-inphase-guess.spec.ts`](../e2e/impostor-inphase-guess.spec.ts) |
 | B6 | [`e2e/impostor-lethal-pool.spec.ts`](../e2e/impostor-lethal-pool.spec.ts) |
 | C1 | the `multi-impostor*` specs, which assert the remaining-Inkpostor line between rounds |
-| Layouts A and B, C2, C3, and the missing-player fallbacks | [`tests/components/GameResult.test.tsx`](../tests/components/GameResult.test.tsx) |
+| Every layout, end to end through the screen | [`tests/components/GameResult.test.tsx`](../tests/components/GameResult.test.tsx) |
+| Each piece on its own | [`tests/components/result`](../tests/components/result) |
 | The Inkpostor card itself | [`tests/components/ImpostorPlayerCard.test.tsx`](../tests/components/ImpostorPlayerCard.test.tsx) |
-
-> Gap worth knowing: C1's `impostorEjectedMoreLeft` line has **no unit test** —
-> it is only exercised end to end.
 
 The server side of these endings — who wins, what is revealed, and what the room
 records — is documented in the backend's `docs/game_states.md`.
+
+---
+
+## 8. Which file draws what
+
+The screen is a composition: [`GameResult.tsx`](../src/components/GameResult.tsx)
+picks a body and hands it plain data, and
+[`useGameResult`](../src/hooks/useGameResult.ts) is where the room state becomes
+that data. Nothing below reads the store except the pieces that need the player
+palette or a socket action.
+
+| File | Draws |
+|---|---|
+| [`useGameResult.ts`](../src/hooks/useGameResult.ts) | §1: every answer this screen keys off, including the players a kick removed |
+| [`ResultPanel.tsx`](../src/components/result/ResultPanel.tsx) | The taped panel, its tone and the title |
+| [`RevealBody.tsx`](../src/components/result/RevealBody.tsx) | Layout **A** — cases A1-A3 |
+| [`VerdictBody.tsx`](../src/components/result/VerdictBody.tsx) | Layout **B** — cases B1-B9, including the purple guess lines |
+| [`RoundBody.tsx`](../src/components/result/RoundBody.tsx) | Layout **C** — cases C1-C3 |
+| [`ImpostorRevealList.tsx`](../src/components/result/ImpostorRevealList.tsx) | The grid of Inkpostor cards, shared by A and B |
+| [`EjectedPlayerCard.tsx`](../src/components/result/EjectedPlayerCard.tsx) | The ejected player, shared by B and C |
+| [`SecretWordPanel.tsx`](../src/components/result/SecretWordPanel.tsx) | The word, or "no word was chosen" |
+| [`GameOverActions.tsx`](../src/components/result/GameOverActions.tsx) | Play Again / waiting for the host |
+| [`NextRoundActions.tsx`](../src/components/result/NextRoundActions.tsx) | Next Round / the confirmation counter |
+| [`ReturnHomeButton.tsx`](../src/components/buttons/ReturnHomeButton.tsx) | The way out — it lives in the topbar, not here |
+
+> `RoundBody` deliberately has no guess lines. The server only reports a guess
+> with the game already over, which is a verdict; printing one between rounds
+> would name an impostor while the game is still running.
