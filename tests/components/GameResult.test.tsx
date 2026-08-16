@@ -178,7 +178,9 @@ describe("GameResult", () => {
       render(<GameResult />);
 
       expect(screen.getAllByTestId("impostor-result-card")).toHaveLength(2);
-      expect(screen.getByText("Player 4 guessed the word!")).toBeInTheDocument();
+      expect(
+        screen.getByText("Player 4 guessed the word!"),
+      ).toBeInTheDocument();
       expect(
         screen.queryByText("Impostor, Player 4 guessed the word!"),
       ).not.toBeInTheDocument();
