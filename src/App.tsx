@@ -13,16 +13,6 @@ import { GameResult } from "./components/GameResult";
 import { Topbar } from "./components/Topbar";
 import { ModalRenderer } from "./components/modals/ModalRenderer";
 
-// The screens are imported eagerly on purpose. Splitting them out saved about
-// 20 KB gzip and cost a loading state on a phase change — which, in a game where
-// the server moves everyone at once, is exactly the wrong place for one: a
-// player still fetching a chunk sits on a spinner while the round carries on
-// without them. Prefetching only narrowed that window, and prefetching them all
-// on mount fetches the same bytes anyway, so the saving was never real.
-//
-// The modals do still split (see ModalRenderer). Those open on a deliberate
-// tap, which is a moment that can absorb a fetch.
-
 // App orchestrates the current phase of the game
 function App() {
   const phase = useGameStore((state) => state.phase);
