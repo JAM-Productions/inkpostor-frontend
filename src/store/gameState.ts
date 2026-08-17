@@ -69,6 +69,10 @@ export interface GameOptions {
   hideHint: boolean; // Keeps the category from the impostor
   turnOrderMode: TurnOrderMode;
   preventRepeatImpostors: boolean;
+  // Spoken modes only: whether the app runs the VOTING phase at all. Off by
+  // default — the table votes out loud and the host reveals the impostors from
+  // ORDER_INFO, so the voting screen is never reached.
+  virtualVotingEnabled: boolean;
 }
 
 export interface GameState {
@@ -99,15 +103,13 @@ export interface GameState {
   currentRound: number;
   ejectedId: string | null;
   gameEnded: boolean;
+  endedByHost: boolean;
+  kickedOutPlayers: { id: string; name: string }[];
   ejectedWasImpostor?: boolean | null;
   remainingImpostorCount?: number | null;
-
-  // Impostor guess feature
   impostorGuessesUsed: number;
   impostorGuessedCorrectly: boolean;
-  // The impostor lost by spending the whole pool (impostorLosesWhenOutOfGuesses).
-  // Comes from the server: it ends the game without an ejection, so the result
-  // screen cannot infer it.
+  guessingImpostorId: string | null;
   impostorOutOfGuesses: boolean;
 
   // Local only state
@@ -128,6 +130,7 @@ export interface GameState {
     proceedToDrawing: () => void;
     confirmNewWord: () => void;
     confirmOrder: () => void;
+    revealResults: () => void;
     drawStroke: (stroke: StrokeData) => void;
     undoStroke: () => void;
     endTurn: () => void;
@@ -170,10 +173,13 @@ export const useGameStore = create<GameState>()((set, get) => ({
   currentRound: 1,
   ejectedId: null,
   gameEnded: false,
+  endedByHost: false,
+  kickedOutPlayers: [],
   ejectedWasImpostor: null,
   remainingImpostorCount: null,
   impostorGuessesUsed: 0,
   impostorGuessedCorrectly: false,
+  guessingImpostorId: null,
   impostorOutOfGuesses: false,
   myId: null,
   myName: getSavedPlayerName(),
@@ -259,6 +265,9 @@ export const useGameStore = create<GameState>()((set, get) => ({
       socket.emit("confirmOrder");
       // Optimistic update to prevent multiple clicks to proceed
       set((state) => patchMyPlayer(state, { hasConfirmedOrder: true }));
+    },
+    revealResults: () => {
+      socket.emit("revealResults");
     },
     drawStroke: (stroke) => {
       socket.emit("drawStroke", stroke);
@@ -361,8 +370,11 @@ export const useGameStore = create<GameState>()((set, get) => ({
         currentRound: 1,
         ejectedId: null,
         gameEnded: false,
+        endedByHost: false,
+        kickedOutPlayers: [],
         impostorGuessesUsed: 0,
         impostorGuessedCorrectly: false,
+        guessingImpostorId: null,
         impostorOutOfGuesses: false,
         gameOptions: { ...DEFAULT_GAME_OPTIONS },
         hostGameOptions: { ...DEFAULT_GAME_OPTIONS },
@@ -447,6 +459,8 @@ socket.on("gameStateUpdate", (newState) => {
     currentRound: newState.currentRound,
     ejectedId: newState.ejectedId,
     gameEnded: newState.gameEnded,
+    endedByHost: newState.endedByHost ?? false,
+    kickedOutPlayers: newState.kickedOutPlayers ?? [],
     ejectedWasImpostor: newState.ejectedWasImpostor ?? null,
     remainingImpostorCount: newState.remainingImpostorCount ?? null,
     gameOptions: newState.gameOptions,
@@ -455,6 +469,7 @@ socket.on("gameStateUpdate", (newState) => {
     gameMode: newState.gameMode ?? "CLASSIC",
     impostorGuessesUsed: newState.impostorGuessesUsed ?? 0,
     impostorGuessedCorrectly: newState.impostorGuessedCorrectly ?? false,
+    guessingImpostorId: newState.guessingImpostorId ?? null,
     impostorOutOfGuesses: newState.impostorOutOfGuesses ?? false,
   });
 });
@@ -529,8 +544,11 @@ socket.on("kicked", (msg: string) => {
     currentRound: 1,
     ejectedId: null,
     gameEnded: false,
+    endedByHost: false,
+    kickedOutPlayers: [],
     impostorGuessesUsed: 0,
     impostorGuessedCorrectly: false,
+    guessingImpostorId: null,
     impostorOutOfGuesses: false,
     amIImpostor: null,
     errorMessage: msg,

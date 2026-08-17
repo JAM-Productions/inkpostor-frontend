@@ -58,6 +58,7 @@ export const DEFAULT_GAME_OPTIONS: GameOptions = {
   hideHint: false,
   turnOrderMode: DEFAULT_TURN_ORDER_MODE,
   preventRepeatImpostors: true,
+  virtualVotingEnabled: false,
 };
 
 // The guessing sub-option means nothing while the feature itself is off, so
@@ -74,6 +75,15 @@ const GUESS_SUB_OPTION_DEFAULTS: Partial<GameOptions> = {
 const SPOKEN_GAME_MODES: GameMode[] = ["ORIGINAL", "ORIGINAL_CHAOS"];
 export const isSpokenMode = (mode: GameMode): boolean =>
   SPOKEN_GAME_MODES.includes(mode);
+
+// Whether the round goes through the VOTING phase. The modes that draw always
+// do; a spoken mode only does it when the host turned the virtual voting on,
+// since the whole point of the in-person game is voting at the table. Mirrors
+// the server, which is what actually enforces it.
+export const usesVotingPhase = (
+  mode: GameMode,
+  options: GameOptions,
+): boolean => !isSpokenMode(mode) || options.virtualVotingEnabled;
 
 // Modes where the secret word is written by the players, so it opens on
 // WORD_SELECTION and is never treated as a translation key.
@@ -132,7 +142,8 @@ export type OptionSection =
   | "impostorCount"
   | "impostorGuess"
   | "hideHint"
-  | "turnOrder";
+  | "turnOrder"
+  | "virtualVoting";
 
 export const DRAWING_OPTION_SECTIONS: OptionSection[] = [
   "impostorCount",
@@ -148,6 +159,7 @@ export const DRAWING_OPTION_SECTIONS: OptionSection[] = [
 const SPOKEN_OPTION_SECTIONS: OptionSection[] = [
   "impostorCount",
   "turnOrder",
+  "virtualVoting",
   "hideHint",
 ];
 
@@ -172,6 +184,7 @@ export const SECTION_OPTION_KEYS: Record<OptionSection, (keyof GameOptions)[]> =
     ],
     hideHint: ["hideHint"],
     turnOrder: ["turnOrderMode"],
+    virtualVoting: ["virtualVotingEnabled"],
   };
 
 export const MODE_OPTION_SECTIONS: Record<GameMode, OptionSection[]> = {

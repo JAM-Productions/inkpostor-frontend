@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Droplets, EyeOff, Palette, Settings } from "lucide-react";
+import { Droplets, EyeOff, Palette, Settings, Vote } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { BaseModal } from "./BaseModal";
 import { GameModeCarousel } from "./options/GameModeCarousel";
@@ -73,6 +73,9 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   const [turnOrderMode, setTurnOrderMode] = useState(
     hostGameOptions.turnOrderMode,
   );
+  const [virtualVotingEnabled, setVirtualVotingEnabled] = useState(
+    hostGameOptions.virtualVotingEnabled,
+  );
   const [stagedGameMode, setStagedGameMode] = useState(savedGameMode);
 
   const isHost = myId === hostId;
@@ -119,6 +122,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
           : DEFAULT_GAME_OPTIONS.impostorLosesWhenOutOfGuesses,
         hideHint,
         turnOrderMode,
+        virtualVotingEnabled,
       }
     : hostGameOptions;
   const locked = applyModeLockedOptions(stagedOptions, gameMode);
@@ -199,6 +203,20 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
             isHost={isHost}
             turnOrderMode={displayed.turnOrderMode}
             onChange={setTurnOrderMode}
+          />
+        )}
+        {shows("virtualVoting") && (
+          <ToggleOptionSection
+            checked={displayed.virtualVotingEnabled}
+            disabled={!isHost}
+            icon={<Vote className="size-5" />}
+            iconClassName="bg-emerald-500/10 text-emerald-400"
+            title={t("options.virtualVoting.title")}
+            description={t("options.virtualVoting.description")}
+            label={t("options.virtualVoting.toggle")}
+            onChange={() => setVirtualVotingEnabled(!virtualVotingEnabled)}
+            testId="virtual-voting-section"
+            tone="emerald"
           />
         )}
         {shows("time") && (

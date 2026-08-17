@@ -712,6 +712,17 @@ describe("useGameStore", () => {
       expect(useGameStore.getState().players[0].hasConfirmedOrder).toBe(true);
     });
 
+    it("should emit revealResults without touching the phase itself", () => {
+      useGameStore.setState({ phase: "ORDER_INFO", gameEnded: false });
+
+      useGameStore.getState().actions.revealResults();
+
+      expect(socket.emit).toHaveBeenCalledWith("revealResults");
+      // This one ends the game, so the screen only moves on the server's word
+      expect(useGameStore.getState().phase).toBe("ORDER_INFO");
+      expect(useGameStore.getState().gameEnded).toBe(false);
+    });
+
     it("should reset gameMode when kicked is received", () => {
       useGameStore.setState({ gameMode: "CUSTOM_WORD" });
       const kicked = getSocketListener("kicked");

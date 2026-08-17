@@ -72,6 +72,7 @@ flowchart TD
         S28[e2e/original-mode.spec.ts]
         S29[e2e/original-chaos-mode.spec.ts]
         S30[e2e/original-turn-order.spec.ts]
+        S31[e2e/original-virtual-voting.spec.ts]
     end
 
     subgraph "Total 100% Production Qualification"
@@ -83,7 +84,7 @@ flowchart TD
 
 ---
 
-### E2E Test Suite Specification Directory (53 Tests across 36 Spec Files)
+### E2E Test Suite Specification Directory (55 Tests across 37 Spec Files)
 
 | # | Spec File | Purpose & User Flow Tested | Key Verification & Assertions |
 |---|---|---|---|
@@ -123,8 +124,9 @@ flowchart TD
 | 34 | `multi-impostor-customword.spec.ts` | Multi-Impostor `CUSTOM_WORD` Chaos Journey | 5-player Chaos mode ➔ Word Selection excludes words from BOTH Inkpostors ➔ Round 1 ejection ➔ Round 2 victory |
 | 35 | `multi-impostor-original.spec.ts` | Multi-Impostor `ORIGINAL` Spoken Journey | 5-player Spoken mode ➔ Teammate role reveal ➔ ORDER_INFO phase ➔ Round 1 ejection ➔ ORDER_INFO Round 2 ➔ Round 2 victory |
 | 36 | `impostor-count-shrinks.spec.ts` | Inkpostor Count Follows The Room | 2 Inkpostors saved in a 5-player lobby ➔ one player leaves ➔ count comes back down to 1 for the host and for a guest reading the modal, with both steppers disabled |
+| 37 | `original-virtual-voting.spec.ts` | Spoken Modes Without The Virtual Voting | The default: no confirmation gate and no voting screen ➔ only the host gets Reveal Results ➔ RESULTS lists the Inkpostors with the secret word and Play Again, in `ORIGINAL` and in `ORIGINAL_CHAOS` |
 
-> 🎨 **Multi-Client Game Flow Diagrams**: Detailed phase-by-phase state machine diagrams for Multi-Impostor games, Classic mode, Spoken modes, and all 36 E2E test files are available in **[docs/E2E_FLOWS.md](./E2E_FLOWS.md)**.
+> 🎨 **Multi-Client Game Flow Diagrams**: Detailed phase-by-phase state machine diagrams for Multi-Impostor games, Classic mode, Spoken modes, and all 37 E2E test files are available in **[docs/E2E_FLOWS.md](./E2E_FLOWS.md)**.
 
 ---
 

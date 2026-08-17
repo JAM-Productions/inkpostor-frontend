@@ -29,6 +29,10 @@ test.describe("Deep E2E: ORIGINAL Turn Order Options", () => {
       .getByRole("radio")
       .filter({ hasText: turnOrderLabel })
       .click();
+    // Off by default, and these rounds run through the voting screen
+    await pageHost
+      .getByRole("switch", { name: /toggle virtual voting/i })
+      .click();
     await pageHost.locator('[data-testid="confirm-options-button"]').click();
 
     const playerNames = [`Host${suffix}`, `P2${suffix}`, `P3${suffix}`];

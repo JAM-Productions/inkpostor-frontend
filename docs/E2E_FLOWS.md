@@ -1,6 +1,6 @@
 # Inkpostor E2E Test Flow Diagrams
 
-This document provides visual Mermaid flow diagrams for all 34 End-to-End (E2E) spec files in the Inkpostor test suite. Each diagram maps the multi-client state machine, phase transitions, and assertions executed by Playwright.
+This document provides visual Mermaid flow diagrams for all 35 End-to-End (E2E) spec files in the Inkpostor test suite. Each diagram maps the multi-client state machine, phase transitions, and assertions executed by Playwright.
 
 ---
 
@@ -13,6 +13,7 @@ This document provides visual Mermaid flow diagrams for all 34 End-to-End (E2E) 
    - `original-mode.spec.ts`
    - `original-chaos-mode.spec.ts`
    - `original-turn-order.spec.ts`
+   - `original-virtual-voting.spec.ts`
 2. [Multi-Impostor Suites](#2-multi-impostor-suites)
    - `multi-impostor.spec.ts`
    - `multi-impostor-hotword.spec.ts`
@@ -92,7 +93,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Start["Host Starts Game in ORIGINAL Mode"] --> RoleReveal["ROLE_REVEAL: Spoken Mode Roles"]
+    Start["Host Starts Game in ORIGINAL Mode (Virtual Voting ON)"] --> RoleReveal["ROLE_REVEAL: Spoken Mode Roles"]
     RoleReveal --> OrderInfo["ORDER_INFO: Turn Direction & Speaker Order Announced"]
     OrderInfo --> Voting["VOTING: Skip Canvas to Direct Voting"]
     Voting --> Results["RESULTS: Round Outcome"]
@@ -102,11 +103,24 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Start["Host Starts ORIGINAL_CHAOS Mode"] --> WordSel["WORD_SELECTION: Players Submit Custom Words"]
+    Start["Host Starts ORIGINAL_CHAOS Mode (Virtual Voting ON)"] --> WordSel["WORD_SELECTION: Players Submit Custom Words"]
     WordSel --> RoleReveal["ROLE_REVEAL: Role & Secret Custom Word Revealed"]
     RoleReveal --> OrderInfo["ORDER_INFO: Spoken Speaker Order Announced"]
     OrderInfo --> Voting["VOTING: Spoken Discussion to Ejection Vote"]
     Voting --> Results["RESULTS: Victory Screen & Word Display"]
+```
+
+### `original-virtual-voting.spec.ts` — Spoken Modes Without The Virtual Voting (Default)
+
+```mermaid
+flowchart TD
+    Start["Host Starts a Spoken Game (Virtual Voting OFF)"] --> RoleReveal["ROLE_REVEAL: Spoken Mode Roles"]
+    RoleReveal --> OrderInfo["ORDER_INFO: Speaker Order, No Confirmation Gate"]
+    OrderInfo --> Guests["Guests: Waiting For The Host To Reveal"]
+    OrderInfo --> HostBtn["Host Only: Reveal Results"]
+    HostBtn --> Results["RESULTS: Inkpostors Listed, Secret Word, Play Again"]
+    Guests -.-> Results
+    OrderInfo -.->|Never Reached| Voting["VOTING"]
 ```
 
 ### `original-turn-order.spec.ts` — ORIGINAL Mode FIXED_ORDER vs RANDOM_ORDER

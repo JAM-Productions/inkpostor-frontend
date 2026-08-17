@@ -30,6 +30,10 @@ test.describe("Deep E2E: ORIGINAL + CHAOS Mode", () => {
     await expect(
       pageHost.locator('[data-testid="turn-order-section"]'),
     ).toBeVisible();
+    // Off by default, and this flow goes through the voting screen
+    await pageHost
+      .getByRole("switch", { name: /toggle virtual voting/i })
+      .click();
     await pageHost.locator('[data-testid="confirm-options-button"]').click();
 
     const contexts = [ctxHost];

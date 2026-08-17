@@ -23,6 +23,11 @@ test.describe("Deep E2E: ORIGINAL Mode", () => {
     await pageHost
       .getByRole("button", { name: /Select Original mode/i })
       .click();
+    // The virtual voting is off by default, and this file is about the voting
+    // screen, so the host turns it on (see original-virtual-voting.spec.ts).
+    await pageHost
+      .getByRole("switch", { name: /toggle virtual voting/i })
+      .click();
 
     return { ctxHost, pageHost, roomCode };
   };

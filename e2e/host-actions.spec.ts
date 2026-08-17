@@ -68,11 +68,18 @@ test.describe("Production Qualification: Host Actions & Exit Game", () => {
     await expect(confirmEndBtn).toBeVisible({ timeout: 15000 });
     await confirmEndBtn.click();
 
-    // 3. All players transition to RESULTS screen immediately
+    // 3. All players transition to RESULTS immediately. The game was cut short
+    // rather than played out, so nobody won: the screen reveals the Inkpostors.
     for (const page of pages) {
       await expect(page.locator("body")).toContainText(
-        /Inkpostor Won|Inkpostor Defeated|Defeated|Won|Result|Victoria|Derrota|Resultado/i,
+        /The Inkpostors?|Los Inkpostores|El Inkpostor|L'Inkpostor|Els Inkpostors/i,
         { timeout: 15000 },
+      );
+      await expect(
+        page.locator('[data-testid="impostor-result-card"]').first(),
+      ).toBeVisible();
+      await expect(page.locator("body")).not.toContainText(
+        /Inkpostor Won|Inkpostor Defeated/i,
       );
     }
 
