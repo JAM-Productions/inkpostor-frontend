@@ -1,16 +1,62 @@
+import { lazy, Suspense, useEffect } from "react";
 import { useGameStore } from "./store/gameState";
 import { JoinScreen } from "./components/JoinScreen";
-import { Lobby } from "./components/Lobby";
-import { WordSelection } from "./components/WordSelection";
-import { RoleReveal } from "./components/RoleReveal";
-import { WordReveal } from "./components/WordReveal";
-import { OrderInfo } from "./components/OrderInfo";
-import { Canvas } from "./components/Canvas";
-import { VotingScreen } from "./components/VotingScreen";
-import { ImpostorFinalGuess } from "./components/ImpostorFinalGuess";
-import { GameResult } from "./components/GameResult";
+import { PhaseFallback } from "./components/PhaseFallback";
 import { Topbar } from "./components/Topbar";
 import { ModalRenderer } from "./components/modals/ModalRenderer";
+
+// Only the join screen ships in the initial bundle; every screen behind it is
+// fetched on its own. To keep a phase change from ever waiting on the network,
+// the chunks are prefetched ahead of the moment they are needed: the lobby as
+// soon as the app mounts, the rest once the player is actually in a room.
+const loadLobby = () => import("./components/Lobby");
+const loadWordSelection = () => import("./components/WordSelection");
+const loadRoleReveal = () => import("./components/RoleReveal");
+const loadWordReveal = () => import("./components/WordReveal");
+const loadOrderInfo = () => import("./components/OrderInfo");
+const loadCanvas = () => import("./components/Canvas");
+const loadVotingScreen = () => import("./components/VotingScreen");
+const loadImpostorFinalGuess = () => import("./components/ImpostorFinalGuess");
+const loadGameResult = () => import("./components/GameResult");
+
+const Lobby = lazy(() => loadLobby().then((m) => ({ default: m.Lobby })));
+const WordSelection = lazy(() =>
+  loadWordSelection().then((m) => ({ default: m.WordSelection })),
+);
+const RoleReveal = lazy(() =>
+  loadRoleReveal().then((m) => ({ default: m.RoleReveal })),
+);
+const WordReveal = lazy(() =>
+  loadWordReveal().then((m) => ({ default: m.WordReveal })),
+);
+const OrderInfo = lazy(() =>
+  loadOrderInfo().then((m) => ({ default: m.OrderInfo })),
+);
+const Canvas = lazy(() => loadCanvas().then((m) => ({ default: m.Canvas })));
+const VotingScreen = lazy(() =>
+  loadVotingScreen().then((m) => ({ default: m.VotingScreen })),
+);
+const ImpostorFinalGuess = lazy(() =>
+  loadImpostorFinalGuess().then((m) => ({ default: m.ImpostorFinalGuess })),
+);
+const GameResult = lazy(() =>
+  loadGameResult().then((m) => ({ default: m.GameResult })),
+);
+
+// Warms every screen a running game can reach. Failures are ignored on purpose:
+// this is only a head start, and Suspense still covers the real load.
+const prefetchGameScreens = () => {
+  void Promise.allSettled([
+    loadWordSelection(),
+    loadRoleReveal(),
+    loadWordReveal(),
+    loadOrderInfo(),
+    loadCanvas(),
+    loadVotingScreen(),
+    loadImpostorFinalGuess(),
+    loadGameResult(),
+  ]);
+};
 
 // App orchestrates the current phase of the game
 function App() {
@@ -19,6 +65,16 @@ function App() {
   const myName = useGameStore((state) => state.myName);
 
   const isJoinScreen = !roomId || !myName;
+
+  // The lobby is the one screen every player reaches, so it starts downloading
+  // while they are still typing their name.
+  useEffect(() => {
+    void loadLobby().catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (roomId) prefetchGameScreens();
+  }, [roomId]);
 
   // Switch between game screens depending on current state of the room
   const renderPhase = () => {
@@ -57,7 +113,7 @@ function App() {
   return (
     <>
       <Topbar />
-      {renderPhase()}
+      <Suspense fallback={<PhaseFallback />}>{renderPhase()}</Suspense>
       <ModalRenderer />
     </>
   );

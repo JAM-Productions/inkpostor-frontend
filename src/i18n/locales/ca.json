@@ -1,5 +1,8 @@
 {
   "translation": {
+    "common": {
+      "loading": "Carregant..."
+    },
     "join": {
       "yourName": "El teu nom",
       "enterName": "Introdueix el teu nom",
