@@ -255,6 +255,45 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
     ],
   );
 
+  // Pointer moves arrive at whatever rate the panel runs at — up to 120 or 240
+  // times a second on a modern phone — and each one used to be its own socket
+  // message and its own store update. They are collected here and sent once per
+  // frame instead, as one message the server forwards whole.
+  const pendingPoints = useRef<StrokeData[]>([]);
+  const flushHandle = useRef<number | null>(null);
+
+  const flushPoints = useCallback(() => {
+    flushHandle.current = null;
+    const points = pendingPoints.current;
+    pendingPoints.current = [];
+    // The ink meter catches up with the frame rather than with every event.
+    setInkUsed(inkUsedRef.current);
+    if (points.length === 0) return;
+    actions.drawStroke(points);
+  }, [actions]);
+
+  const queuePoint = useCallback(
+    (point: StrokeData) => {
+      pendingPoints.current.push(point);
+      if (flushHandle.current !== null) return;
+      if (typeof requestAnimationFrame === "undefined") {
+        flushPoints();
+        return;
+      }
+      flushHandle.current = requestAnimationFrame(flushPoints);
+    },
+    [flushPoints],
+  );
+
+  useEffect(
+    () => () => {
+      if (flushHandle.current !== null) {
+        cancelAnimationFrame(flushHandle.current);
+      }
+    },
+    [],
+  );
+
   const draw = useCallback(
     (e: MouseEvent | TouchEvent | React.MouseEvent | React.TouchEvent) => {
       if (!isDrawing || !isMyTurn || !lastPoint.current) return;
@@ -270,6 +309,9 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
 
       const used = inkUsedRef.current;
 
+      // The cut-off stays exact and immediate — it reads the ref, not the
+      // state — so running dry still stops the stroke on the very event that
+      // exhausts it, whatever the frame is doing.
       if (!hasUnlimitedInk && used + distance > MAX_INK) {
         inkCosts.current[inkCosts.current.length - 1] += MAX_INK - used;
         setInk(MAX_INK);
@@ -279,28 +321,34 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
       }
 
       if (!hasUnlimitedInk) {
-        setInk(used + distance);
+        inkUsedRef.current = used + distance;
         inkCosts.current[inkCosts.current.length - 1] += distance;
       }
       lastPoint.current = { x, y };
 
-      actions.drawStroke({ x, y, color: effectiveColor, isNewStroke: false });
+      queuePoint({ x, y, color: effectiveColor, isNewStroke: false });
     },
     [
       isDrawing,
       isMyTurn,
       hasUnlimitedInk,
       effectiveColor,
-      actions,
       getCoordinates,
       setInk,
+      queuePoint,
     ],
   );
 
   const stopDrawing = useCallback(() => {
     setIsDrawing(false);
     lastPoint.current = null;
-  }, []);
+    // Send the tail of the stroke now rather than waiting on a frame that may
+    // not come for a while once the finger is off the screen.
+    if (flushHandle.current !== null) {
+      cancelAnimationFrame(flushHandle.current);
+    }
+    flushPoints();
+  }, [flushPoints]);
 
   const undoLastStroke = useCallback(() => {
     if (inkCosts.current.length > 0) {

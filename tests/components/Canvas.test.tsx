@@ -284,7 +284,7 @@ describe("Canvas", () => {
     expect(bigIndicator).toBeInTheDocument();
   });
 
-  it("does not run out of ink when unlimited ink is enabled", () => {
+  it("does not run out of ink when unlimited ink is enabled", async () => {
     mockStore({
       gameOptions: {
         ...mockStateBase.gameOptions,
@@ -311,18 +311,29 @@ describe("Canvas", () => {
     fireEvent.mouseMove(canvasElement, { clientX: 800, clientY: 600 });
 
     expect(screen.queryByText("OUT OF INK!")).not.toBeInTheDocument();
+    // The point that opens a stroke goes out on its own, immediately.
     expect(mockDrawStroke).toHaveBeenNthCalledWith(1, {
       x: 0,
       y: 0,
       color: DEFAULT_CANVAS_COLOR,
       isNewStroke: true,
     });
-    expect(mockDrawStroke).toHaveBeenNthCalledWith(2, {
-      x: 800,
-      y: 600,
-      color: DEFAULT_CANVAS_COLOR,
-      isNewStroke: false,
+
+    // The moves that follow are collected and sent once per frame, so they
+    // arrive as a batch rather than one message each. Timers are faked here, and
+    // the animation frame rides on them, so it has to be advanced by hand.
+    await act(async () => {
+      vi.advanceTimersByTime(20);
     });
+
+    expect(mockDrawStroke).toHaveBeenNthCalledWith(2, [
+      {
+        x: 800,
+        y: 600,
+        color: DEFAULT_CANVAS_COLOR,
+        isNewStroke: false,
+      },
+    ]);
   });
 
   describe("active player connection status", () => {

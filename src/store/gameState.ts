@@ -9,6 +9,7 @@ import {
   getOrCreateUserId,
   clearRoomUrlParam,
   patchMyPlayer,
+  keepIfEqual,
 } from "../lib/gameStateUtils";
 
 export type GamePhase =
@@ -100,6 +101,10 @@ export interface GameState {
   votes: Record<string, string>;
   kickVotes: Record<string, string[]>;
   canvasStrokes: StrokeData[];
+  // Which wipe of the canvas the local strokes belong to. The server no longer
+  // sends the drawing with every state update, so this is how a client learns
+  // its canvas was cleared (see `resolveCanvasStrokes`).
+  canvasEpoch: number;
   currentRound: number;
   ejectedId: string | null;
   gameEnded: boolean;
@@ -131,7 +136,8 @@ export interface GameState {
     confirmNewWord: () => void;
     confirmOrder: () => void;
     revealResults: () => void;
-    drawStroke: (stroke: StrokeData) => void;
+    // Takes a whole frame's worth of points, or a single one.
+    drawStroke: (stroke: StrokeData | StrokeData[]) => void;
     undoStroke: () => void;
     endTurn: () => void;
     vote: (votedForId: string) => void;
@@ -170,6 +176,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
   votes: {},
   kickVotes: {},
   canvasStrokes: [],
+  canvasEpoch: 0,
   currentRound: 1,
   ejectedId: null,
   gameEnded: false,
@@ -270,8 +277,10 @@ export const useGameStore = create<GameState>()((set, get) => ({
       socket.emit("revealResults");
     },
     drawStroke: (stroke) => {
+      const points = Array.isArray(stroke) ? stroke : [stroke];
+      if (points.length === 0) return;
       socket.emit("drawStroke", stroke);
-      set((state) => ({ canvasStrokes: [...state.canvasStrokes, stroke] }));
+      set((state) => ({ canvasStrokes: [...state.canvasStrokes, ...points] }));
     },
     undoStroke: () => {
       socket.emit("undoStroke");
@@ -367,6 +376,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
         votes: {},
         kickVotes: {},
         canvasStrokes: [],
+        canvasEpoch: 0,
         currentRound: 1,
         ejectedId: null,
         gameEnded: false,
@@ -402,6 +412,52 @@ socket.on("connect", () => {
   }
 });
 
+/**
+ * Works out what the canvas should hold after a state update.
+ *
+ * The drawing used to ride along with every update, which meant one `endTurn` in
+ * a full room re-sent it once per player. It now arrives point by point through
+ * `strokeUpdate` and in full through `canvasSync`; an update only carries the
+ * epoch and the stroke count, which is enough to notice the two things a client
+ * cannot derive on its own: that the canvas was wiped, and that it fell behind.
+ */
+function resolveCanvasStrokes(
+  prevState: GameState,
+  newState: {
+    canvasStrokes?: StrokeData[];
+    canvasEpoch?: number;
+    canvasStrokeCount?: number;
+  },
+): StrokeData[] {
+  // A server that predates this still sends the whole drawing inline.
+  if (Array.isArray(newState.canvasStrokes)) return newState.canvasStrokes;
+
+  const epoch =
+    typeof newState.canvasEpoch === "number" ? newState.canvasEpoch : null;
+  const count =
+    typeof newState.canvasStrokeCount === "number"
+      ? newState.canvasStrokeCount
+      : null;
+  // Joining a room already gets a `canvasSync` of its own, so a mismatch on the
+  // very first update is expected rather than a sign of trouble.
+  const established = !!prevState.roomId;
+
+  if (epoch !== null && epoch !== prevState.canvasEpoch) {
+    // The canvas was wiped. If points have been drawn since, this client never
+    // saw the wipe land, so the drawing is pulled rather than guessed at.
+    if (established && count) socket.emit("requestCanvasSync");
+    return [];
+  }
+
+  // Holding fewer points than the server means a `strokeUpdate` went missing.
+  // Holding more is just this client's own optimistic append, still in flight.
+  if (established && count !== null && count > prevState.canvasStrokes.length) {
+    socket.emit("requestCanvasSync");
+  }
+
+  return prevState.canvasStrokes;
+}
+
 socket.on("gameStateUpdate", (newState) => {
   if (!socket.connected) return;
 
@@ -415,23 +471,29 @@ socket.on("gameStateUpdate", (newState) => {
     return;
   }
 
-  // Sync all service-provided state that exists on client state
+  const nextPlayers = newState.players.map((p: any) => {
+    const prevPlayer = prevState.players.find((pp) => pp.id === p.id);
+    const isNewGamePhase =
+      newState.phase === "LOBBY" ||
+      newState.phase === "WORD_SELECTION" ||
+      newState.phase === "ROLE_REVEAL";
+    return {
+      ...p,
+      isSuspected:
+        isNewGamePhase || p.isEjected ? false : prevPlayer?.isSuspected,
+    };
+  });
+
+  // Sync all service-provided state that exists on client state.
+  //
+  // The collections go through `keepIfEqual`: an update rebuilds every field it
+  // carries, so without it a vote by one player re-renders every component
+  // watching `players` or `gameOptions`, whose contents did not change at all.
   useGameStore.setState({
     roomId: newState.roomId,
     hostId: newState.hostId,
     phase: newState.phase,
-    players: newState.players.map((p: any) => {
-      const prevPlayer = prevState.players.find((pp) => pp.id === p.id);
-      const isNewGamePhase =
-        newState.phase === "LOBBY" ||
-        newState.phase === "WORD_SELECTION" ||
-        newState.phase === "ROLE_REVEAL";
-      return {
-        ...p,
-        isSuspected:
-          isNewGamePhase || p.isEjected ? false : prevPlayer?.isSuspected,
-      };
-    }),
+    players: keepIfEqual(prevState.players, nextPlayers),
     impostorId: newState.impostorId ?? newState.impostorIds?.[0] ?? null,
     impostorIds:
       newState.impostorIds ??
@@ -451,11 +513,12 @@ socket.on("gameStateUpdate", (newState) => {
           ? newState.secretCategory
           : prevState.secretCategory,
     currentTurnPlayerId: newState.currentTurnPlayerId,
-    turnOrder: newState.turnOrder,
+    turnOrder: keepIfEqual(prevState.turnOrder, newState.turnOrder),
     turnIndex: newState.turnIndex,
-    votes: newState.votes,
-    kickVotes: newState.kickVotes || {},
-    canvasStrokes: newState.canvasStrokes,
+    votes: keepIfEqual(prevState.votes, newState.votes),
+    kickVotes: keepIfEqual(prevState.kickVotes, newState.kickVotes || {}),
+    canvasStrokes: resolveCanvasStrokes(prevState, newState),
+    canvasEpoch: newState.canvasEpoch ?? prevState.canvasEpoch,
     currentRound: newState.currentRound,
     ejectedId: newState.ejectedId,
     gameEnded: newState.gameEnded,
@@ -463,9 +526,12 @@ socket.on("gameStateUpdate", (newState) => {
     kickedOutPlayers: newState.kickedOutPlayers ?? [],
     ejectedWasImpostor: newState.ejectedWasImpostor ?? null,
     remainingImpostorCount: newState.remainingImpostorCount ?? null,
-    gameOptions: newState.gameOptions,
+    gameOptions: keepIfEqual(prevState.gameOptions, newState.gameOptions),
     // A server that doesn't split them yet reports only the effective ones
-    hostGameOptions: newState.hostGameOptions ?? newState.gameOptions,
+    hostGameOptions: keepIfEqual(
+      prevState.hostGameOptions,
+      newState.hostGameOptions ?? newState.gameOptions,
+    ),
     gameMode: newState.gameMode ?? "CLASSIC",
     impostorGuessesUsed: newState.impostorGuessesUsed ?? 0,
     impostorGuessedCorrectly: newState.impostorGuessedCorrectly ?? false,
@@ -492,12 +558,29 @@ socket.on(
   },
 );
 
-socket.on("strokeUpdate", (stroke: StrokeData) => {
+// A current client sends a frame's worth of points at a time; an older one sends
+// them one by one, and the server forwards whichever shape it received.
+socket.on("strokeUpdate", (stroke: StrokeData | StrokeData[]) => {
   if (!socket.connected) return;
+  const points = Array.isArray(stroke) ? stroke : [stroke];
+  if (points.length === 0) return;
   useGameStore.setState((state) => ({
-    canvasStrokes: [...state.canvasStrokes, stroke],
+    canvasStrokes: [...state.canvasStrokes, ...points],
   }));
 });
+
+// The whole drawing, sent on joining a room and whenever this client works out
+// it has fallen behind. The only message that carries it.
+socket.on(
+  "canvasSync",
+  (payload: { epoch?: number; strokes?: StrokeData[] }) => {
+    if (!socket.connected) return;
+    useGameStore.setState({
+      canvasEpoch: typeof payload?.epoch === "number" ? payload.epoch : 0,
+      canvasStrokes: Array.isArray(payload?.strokes) ? payload.strokes : [],
+    });
+  },
+);
 
 socket.on("strokeUndone", () => {
   if (!socket.connected) return;
@@ -541,6 +624,7 @@ socket.on("kicked", (msg: string) => {
     votes: {},
     kickVotes: {},
     canvasStrokes: [],
+    canvasEpoch: 0,
     currentRound: 1,
     ejectedId: null,
     gameEnded: false,
