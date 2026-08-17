@@ -1298,8 +1298,9 @@ describe("useGameStore", () => {
       listener(payload);
       const first = useGameStore.getState();
 
-      // The same room, reported again as brand new objects.
-      listener(JSON.parse(JSON.stringify(payload)));
+      // The same room, reported again as brand new objects. A deep clone is the
+      // whole point here: identical contents, not one shared reference in sight.
+      listener(structuredClone(payload));
       const second = useGameStore.getState();
 
       expect(second.players).toBe(first.players);
