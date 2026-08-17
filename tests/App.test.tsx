@@ -51,9 +51,11 @@ vi.mock("../src/components/modals/ModalRenderer", () => ({
   ModalRenderer: () => <div data-testid="modal-renderer">Modal Renderer</div>,
 }));
 
-// Mock the store
+// Mock the store. App warms the socket chunk on mount, so `loadSocket` has to
+// be there too — it just resolves to nothing here.
 vi.mock("../src/store/gameState", () => ({
   useGameStore: vi.fn(),
+  loadSocket: vi.fn(() => Promise.resolve({})),
 }));
 
 describe("App LanguageSwitcher Visibility", () => {

@@ -11,11 +11,13 @@
   --color-ink-secondary: #fef08a;
   --color-ink-text: #fefefe;
 
-  --font-sans: "Patrick Hand", "Short Stack", "Fredoka", cursive, ui-sans-serif, system-ui, sans-serif;
+  /* Caveat and Fredoka used to be declared and loaded here too. Neither was
+     used by a single component, and Fredoka only sat third in the sans stack,
+     behind two faces that are always loaded — so it could never have rendered.
+     Dropping both takes 102 KB of woff2 off the first load. */
+  --font-sans: "Patrick Hand", "Short Stack", cursive, ui-sans-serif, system-ui, sans-serif;
   --font-handwritten: "Patrick Hand", cursive, sans-serif;
   --font-short-stack: "Short Stack", cursive, sans-serif;
-  --font-caveat: "Caveat", cursive, sans-serif;
-  --font-fredoka: "Fredoka", sans-serif;
   --font-rubik-wet-paint: "Rubik Wet Paint", system-ui;
 
   --animate-pop-in: pop-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;

@@ -34,9 +34,16 @@ export const BaseModal: React.FC<BaseModalProps> = ({
         if (e.key === "Escape") onClose();
       };
 
+      // On phones the modal covers the whole screen, and the page behind it
+      // kept scrolling underneath — so closing it could leave the player
+      // somewhere else entirely.
+      const { overflow } = document.body.style;
+      document.body.style.overflow = "hidden";
+
       window.addEventListener("keydown", handleEscape);
       return () => {
         window.removeEventListener("keydown", handleEscape);
+        document.body.style.overflow = overflow;
         previousFocus.current?.focus();
       };
     }

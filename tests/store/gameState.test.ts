@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import {
+  loadSocket,
   useGameStore,
   type GameMode,
   type GameOptions,
@@ -31,6 +32,12 @@ vi.mock("../../src/socket", () => ({
       reconnection: vi.fn(),
     },
   },
+  SERVICE_URL: "http://localhost:3000",
+}));
+
+// The service URL moved out of the socket module so that reading it does not
+// pull socket.io-client in with it.
+vi.mock("../../src/config", () => ({
   SERVICE_URL: "http://localhost:3000",
 }));
 
@@ -67,6 +74,13 @@ const baseServerState = {
 };
 
 describe("useGameStore", () => {
+  // socket.io-client is loaded on demand now, and the store's listeners are
+  // registered with it, so the socket has to be in place before a test can
+  // reach for one. It is memoized, so this only really happens once.
+  beforeEach(async () => {
+    await loadSocket();
+  });
+
   beforeEach(() => {
     // Reset store state before each test
     useGameStore.setState({
@@ -1187,7 +1201,11 @@ describe("useGameStore", () => {
     it("stays quiet on the first update of a join, which brings its own sync", () => {
       // No roomId yet: this is the update that puts the player in the room, and
       // the server sends a canvasSync right behind it.
-      useGameStore.setState({ roomId: null, canvasStrokes: [], canvasEpoch: 0 });
+      useGameStore.setState({
+        roomId: null,
+        canvasStrokes: [],
+        canvasEpoch: 0,
+      });
 
       getSocketListener("gameStateUpdate")(
         leanState({ canvasEpoch: 7, canvasStrokeCount: 12 }),

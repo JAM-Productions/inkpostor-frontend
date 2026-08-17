@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
-import { useGameStore } from "./store/gameState";
+import { loadSocket, useGameStore } from "./store/gameState";
 import { JoinScreen } from "./components/JoinScreen";
 import { PhaseFallback } from "./components/PhaseFallback";
 import { Topbar } from "./components/Topbar";
@@ -66,10 +66,13 @@ function App() {
 
   const isJoinScreen = !roomId || !myName;
 
-  // The lobby is the one screen every player reaches, so it starts downloading
-  // while they are still typing their name.
+  // The lobby is the one screen every player reaches, and socket.io is needed
+  // the moment anyone joins a room. Both start downloading while the player is
+  // still typing their name, so neither is on the critical path for first paint
+  // nor on the one for the click that follows.
   useEffect(() => {
     void loadLobby().catch(() => {});
+    void loadSocket().catch(() => {});
   }, []);
 
   useEffect(() => {
