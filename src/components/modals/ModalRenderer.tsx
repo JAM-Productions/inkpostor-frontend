@@ -2,9 +2,6 @@ import React, { lazy, Suspense, useEffect } from "react";
 import { useModalStore, type ModalPayloads } from "../../store/modalStore";
 import { useGameStore } from "../../store/gameState";
 
-// Modals only ever open on a deliberate tap, so they stay out of the initial
-// bundle and are prefetched once the player is in a room — by which point every
-// one of them is reachable from the topbar, the lobby or the canvas header.
 const loadRulesModal = () => import("./RulesModal");
 const loadEndGameModal = () => import("./EndGameModal");
 const loadOptionsModal = () => import("./OptionsModal");

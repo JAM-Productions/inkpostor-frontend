@@ -11,10 +11,6 @@
   --color-ink-secondary: #fef08a;
   --color-ink-text: #fefefe;
 
-  /* Caveat and Fredoka used to be declared and loaded here too. Neither was
-     used by a single component, and Fredoka only sat third in the sans stack,
-     behind two faces that are always loaded — so it could never have rendered.
-     Dropping both takes 102 KB of woff2 off the first load. */
   --font-sans: "Patrick Hand", "Short Stack", cursive, ui-sans-serif, system-ui, sans-serif;
   --font-handwritten: "Patrick Hand", cursive, sans-serif;
   --font-short-stack: "Short Stack", cursive, sans-serif;
