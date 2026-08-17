@@ -1,8 +1,5 @@
 {
   "translation": {
-    "common": {
-      "loading": "Loading..."
-    },
     "join": {
       "yourName": "Your Name",
       "enterName": "Enter your name",

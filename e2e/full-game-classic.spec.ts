@@ -110,9 +110,16 @@ test.describe("Deep E2E: Full CLASSIC Game Loop & Play Again", () => {
     await skipBtn.click();
     await pageP3.locator('[data-testid="confirm-vote-btn"]').click();
 
-    // If Impostor Final Guess phase triggered, skip the guess
+    // Ejecting the impostor opens their final guess before the results, so this
+    // screen may or may not appear. `isVisible()` never waits — handing it a
+    // timeout does not change that — so give the screen a real chance to arrive
+    // before concluding it is not coming. Missing the guess parks the game in
+    // IMPOSTOR_GUESS and every assertion after this point fails.
     const skipGuessBtn = pageP3.locator('[data-testid="skip-guess-btn"]');
-    if (await skipGuessBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await skipGuessBtn
+      .waitFor({ state: "visible", timeout: 10000 })
+      .catch(() => {});
+    if (await skipGuessBtn.isVisible()) {
       await skipGuessBtn.click();
     }
 

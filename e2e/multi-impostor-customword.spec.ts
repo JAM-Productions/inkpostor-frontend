@@ -189,7 +189,15 @@ test.describe("Multi-Impostor CUSTOM_WORD Mode E2E Suite", () => {
     }
 
     const skipGuessBtn1 = imp1.page.locator('[data-testid="skip-guess-btn"]');
-    if (await skipGuessBtn1.isVisible({ timeout: 5000 }).catch(() => false)) {
+    // Ejecting an impostor opens their final guess before the results, so this
+    // screen may or may not appear. `isVisible()` never waits — handing it a
+    // timeout does not change that — so give the screen a real chance to arrive
+    // before concluding it is not coming. Missing the guess parks the game in
+    // IMPOSTOR_GUESS and every assertion after this point fails.
+    await skipGuessBtn1
+      .waitFor({ state: "visible", timeout: 10000 })
+      .catch(() => {});
+    if (await skipGuessBtn1.isVisible()) {
       await skipGuessBtn1.click();
     }
 
@@ -243,7 +251,10 @@ test.describe("Multi-Impostor CUSTOM_WORD Mode E2E Suite", () => {
     }
 
     const skipGuessBtn2 = imp2.page.locator('[data-testid="skip-guess-btn"]');
-    if (await skipGuessBtn2.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await skipGuessBtn2
+      .waitFor({ state: "visible", timeout: 10000 })
+      .catch(() => {});
+    if (await skipGuessBtn2.isVisible()) {
       await skipGuessBtn2.click();
     }
 
