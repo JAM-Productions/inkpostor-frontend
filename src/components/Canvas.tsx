@@ -20,7 +20,8 @@ export const Canvas: React.FC = () => {
   );
   const isMyTurn = currentTurnPlayerId === myId;
 
-  const timeLeft = useTurnTimer();
+  // Publishes the countdown to its own store; nothing here re-renders on a tick.
+  useTurnTimer();
   const drawing = useCanvasDrawing();
 
   return (
@@ -29,7 +30,7 @@ export const Canvas: React.FC = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[130px] rounded-full opacity-20 pointer-events-none bg-amber-700" />
 
       <div className="w-full max-w-4xl space-y-4 z-10">
-        <CanvasHeader timeLeft={timeLeft} />
+        <CanvasHeader />
 
         <DrawingCanvas
           canvasRef={drawing.canvasRef}
@@ -37,7 +38,6 @@ export const Canvas: React.FC = () => {
           isMyTurn={isMyTurn}
           isOutOfInk={drawing.isOutOfInk}
           onStartDrawing={drawing.startDrawing}
-          timeLeft={timeLeft}
         />
 
         {isMyTurn && (

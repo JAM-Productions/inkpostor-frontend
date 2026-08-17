@@ -1,5 +1,7 @@
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Clock } from "lucide-react";
+import { TurnCountdown } from "./TurnCountdown";
 
 interface DrawingCanvasProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -7,8 +9,6 @@ interface DrawingCanvasProps {
   isMyTurn: boolean;
   isOutOfInk: boolean;
   onStartDrawing: (e: React.MouseEvent | React.TouchEvent) => void;
-  /** Remaining turn time in milliseconds. */
-  timeLeft: number;
 }
 
 /**
@@ -19,13 +19,12 @@ interface DrawingCanvasProps {
  * All drawing state/handlers are owned by the {@link useCanvasDrawing} hook and
  * passed in as props.
  */
-export const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
+const DrawingCanvasComponent: React.FC<DrawingCanvasProps> = ({
   canvasRef,
   containerRef,
   isMyTurn,
   isOutOfInk,
   onStartDrawing,
-  timeLeft,
 }) => {
   const { t } = useTranslation();
 
@@ -59,9 +58,12 @@ export const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
       >
         <Clock className="size-4 text-amber-400" />
         <span className="text-xl font-short-stack font-black text-white tabular-nums text-right min-w-11">
-          {(timeLeft / 1000).toFixed(1)}
+          <TurnCountdown />
         </span>
       </div>
     </div>
   );
 };
+
+export const DrawingCanvas = React.memo(DrawingCanvasComponent);
+DrawingCanvas.displayName = "DrawingCanvas";

@@ -1,45 +1,49 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useGameStore } from "../store/gameState";
+import { useTurnTimerStore } from "../store/turnTimerStore";
 
 /**
- * Counts down the remaining time for the current drawing turn.
+ * Drives the countdown for the current drawing turn.
  *
  * The countdown restarts whenever the active player changes and, when the local
  * player owns the turn, the turn is ended automatically once the time runs out.
  *
- * @returns The remaining turn time in milliseconds.
+ * The remaining time is published to {@link useTurnTimerStore} instead of being
+ * returned, so a tick only re-renders the components that display the clock.
+ * Mount this exactly once, from the drawing screen.
  */
-export const useTurnTimer = (): number => {
+export const useTurnTimer = (): void => {
   const currentTurnPlayerId = useGameStore(
     (state) => state.currentTurnPlayerId,
   );
   const myId = useGameStore((state) => state.myId);
-  const gameOptions = useGameStore((state) => state.gameOptions);
+  const roundTime = useGameStore((state) => state.gameOptions.roundTime);
   const actions = useGameStore((state) => state.actions);
 
-  const roundTimeMs = gameOptions.roundTime * 1000;
+  const roundTimeMs = roundTime * 1000;
   const isMyTurn = currentTurnPlayerId === myId;
 
-  const [timeLeft, setTimeLeft] = useState(roundTimeMs);
-
   useEffect(() => {
+    const { setTimeLeftMs } = useTurnTimerStore.getState();
+
+    setTimeLeftMs(roundTimeMs);
     if (!currentTurnPlayerId) return;
 
-    setTimeLeft(roundTimeMs);
     const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 100) {
-          clearInterval(interval);
-          if (isMyTurn) {
-            actions.endTurn();
-          }
-          return 0;
+      const remaining = useTurnTimerStore.getState().timeLeftMs;
+
+      if (remaining <= 100) {
+        clearInterval(interval);
+        setTimeLeftMs(0);
+        if (isMyTurn) {
+          actions.endTurn();
         }
-        return prev - 100;
-      });
+        return;
+      }
+
+      setTimeLeftMs(remaining - 100);
     }, 100);
+
     return () => clearInterval(interval);
   }, [currentTurnPlayerId, isMyTurn, actions, roundTimeMs]);
-
-  return timeLeft;
 };
