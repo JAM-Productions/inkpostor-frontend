@@ -1,7 +1,6 @@
 import React, {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -9,6 +8,12 @@ import React, {
 import type { StrokeData } from "../store/gameState";
 import { findRunAt, type AuthorRun } from "../lib/strokeAuthors";
 import { getFitTransform, getStrokeBounds } from "../lib/strokeGeometry";
+import {
+  getPreviewLineWidth,
+  paintStrokes,
+  STROKE_PADDING,
+} from "../lib/paintStrokes";
+import { useCanvasBox } from "./useCanvasBox";
 
 export type ReplayStatus = "playing" | "finished";
 
@@ -26,11 +31,6 @@ const MAX_DURATION_MS = 4500;
 /** Floor, so a drawing of six points is still a drawing and not a flash. */
 const MIN_DURATION_MS = 900;
 const MS_PER_POINT = 6;
-
-/** Line width the canvas was drawn with, before it is scaled to the preview. */
-const SOURCE_LINE_WIDTH = 4;
-const MIN_LINE_WIDTH = 1.5;
-const PADDING = 16;
 
 /** What is left of the other players once someone is singled out. */
 const DIMMED_ALPHA = 0.14;
@@ -71,11 +71,7 @@ export const useCanvasReplay = (
   backdrop: StrokeData[] = EMPTY_STROKES,
 ): UseCanvasReplay => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const [size, setSize] = useState<{ width: number; height: number } | null>(
-    null,
-  );
+  const { containerRef, size } = useCanvasBox();
   const [status, setStatus] = useState<ReplayStatus>("playing");
   const [currentAuthorId, setCurrentAuthorId] = useState<string | null>(null);
   // Bumped by `replay`, which is the only thing that restarts the animation
@@ -104,36 +100,10 @@ export const useCanvasReplay = (
         getStrokeBounds(framing),
         size?.width ?? 0,
         size?.height ?? 0,
-        PADDING,
+        STROKE_PADDING,
       ),
     [framing, size],
   );
-
-  // Keep the canvas buffer the size of its CSS box. Resizing it wipes what is
-  // on it, so a new size means the replay starts over rather than resuming into
-  // a canvas that no longer holds the first half.
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const measure = () => {
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      if (width === 0 || height === 0) return;
-      setSize((current) =>
-        current?.width === width && current?.height === height
-          ? current
-          : { width, height },
-      );
-    };
-
-    measure();
-
-    if (typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, []);
 
   /**
    * Paints `points[from, to)` onto the canvas at one opacity.
@@ -153,39 +123,7 @@ export const useCanvasReplay = (
       from: number,
       to: number,
       alpha: number,
-    ) => {
-      if (to <= from) return;
-      const { scale, offsetX, offsetY } = transform;
-      const projectX = (x: number) => x * scale + offsetX;
-      const projectY = (y: number) => y * scale + offsetY;
-
-      ctx.globalAlpha = alpha;
-      let pen = from > 0 && !points[from].isNewStroke ? points[from - 1] : null;
-      let openPath = false;
-      let pathColor = "";
-
-      for (let i = from; i < to; i++) {
-        const stroke = points[i];
-        const previous = stroke.isNewStroke ? null : pen;
-
-        if (!openPath || stroke.color !== pathColor || !previous) {
-          if (openPath) ctx.stroke();
-          ctx.beginPath();
-          ctx.strokeStyle = stroke.color;
-          pathColor = stroke.color;
-          openPath = true;
-          ctx.moveTo(
-            projectX(previous ? previous.x : stroke.x),
-            projectY(previous ? previous.y : stroke.y),
-          );
-        }
-
-        ctx.lineTo(projectX(stroke.x), projectY(stroke.y));
-        pen = stroke;
-      }
-      if (openPath) ctx.stroke();
-      ctx.globalAlpha = 1;
-    },
+    ) => paintStrokes(ctx, points, from, to, alpha, transform),
     [transform],
   );
 
@@ -219,10 +157,7 @@ export const useCanvasReplay = (
     if (!ctx) return null;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.lineWidth = Math.max(
-      MIN_LINE_WIDTH,
-      SOURCE_LINE_WIDTH * transform.scale,
-    );
+    ctx.lineWidth = getPreviewLineWidth(transform.scale);
     return ctx;
   }, [size, transform]);
 
