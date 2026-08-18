@@ -58,13 +58,14 @@ describe("ModalRenderer", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("renders RulesModal when activeModal is RULES", () => {
+  // The modals are code-split, so they resolve a tick after render.
+  it("renders RulesModal when activeModal is RULES", async () => {
     setupMocks(
       { activeModal: "RULES", modalData: null },
       { players: [], phase: "LOBBY" },
     );
-    const { getByTestId } = render(<ModalRenderer />);
-    expect(getByTestId("rules-modal")).toBeInTheDocument();
+    const { findByTestId } = render(<ModalRenderer />);
+    expect(await findByTestId("rules-modal")).toBeInTheDocument();
   });
 
   it("closes KICK_PLAYER modal if player no longer exists", () => {
@@ -85,13 +86,13 @@ describe("ModalRenderer", () => {
     expect(queryByTestId("kick-player-modal")).not.toBeInTheDocument();
   });
 
-  it("renders KICK_PLAYER modal if player exists", () => {
+  it("renders KICK_PLAYER modal if player exists", async () => {
     setupMocks(
       { activeModal: "KICK_PLAYER", modalData: { playerId: "player-1" } },
       { players: [{ id: "player-1" }], phase: "LOBBY" },
     );
-    const { getByTestId } = render(<ModalRenderer />);
-    expect(getByTestId("kick-player-modal")).toBeInTheDocument();
+    const { findByTestId } = render(<ModalRenderer />);
+    expect(await findByTestId("kick-player-modal")).toBeInTheDocument();
   });
 
   it("closes OPTIONS modal if phase is not LOBBY", () => {
@@ -112,12 +113,12 @@ describe("ModalRenderer", () => {
     expect(queryByTestId("options-modal")).not.toBeInTheDocument();
   });
 
-  it("renders OPTIONS modal if phase is LOBBY", () => {
+  it("renders OPTIONS modal if phase is LOBBY", async () => {
     setupMocks(
       { activeModal: "OPTIONS", modalData: null },
       { players: [], phase: "LOBBY" },
     );
-    const { getByTestId } = render(<ModalRenderer />);
-    expect(getByTestId("options-modal")).toBeInTheDocument();
+    const { findByTestId } = render(<ModalRenderer />);
+    expect(await findByTestId("options-modal")).toBeInTheDocument();
   });
 });

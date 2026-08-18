@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import {
+  loadSocket,
   useGameStore,
   type GameMode,
   type GameOptions,
@@ -31,6 +32,12 @@ vi.mock("../../src/socket", () => ({
       reconnection: vi.fn(),
     },
   },
+  SERVICE_URL: "http://localhost:3000",
+}));
+
+// The service URL moved out of the socket module so that reading it does not
+// pull socket.io-client in with it.
+vi.mock("../../src/config", () => ({
   SERVICE_URL: "http://localhost:3000",
 }));
 
@@ -67,6 +74,13 @@ const baseServerState = {
 };
 
 describe("useGameStore", () => {
+  // socket.io-client is loaded on demand now, and the store's listeners are
+  // registered with it, so the socket has to be in place before a test can
+  // reach for one. It is memoized, so this only really happens once.
+  beforeEach(async () => {
+    await loadSocket();
+  });
+
   beforeEach(() => {
     // Reset store state before each test
     useGameStore.setState({
@@ -1122,6 +1136,189 @@ describe("useGameStore", () => {
 
       state = useGameStore.getState();
       expect(state.impostorIds).toEqual(["imp-1"]);
+    });
+  });
+
+  // The drawing no longer travels with state updates: it is built from
+  // `strokeUpdate` and pulled with `canvasSync`. What an update carries is the
+  // epoch and the count, and these cover what the client infers from them.
+  describe("canvas sync protocol", () => {
+    const stroke = (x: number, isNewStroke = false) => ({
+      x,
+      y: x,
+      color: "#000",
+      isNewStroke,
+    });
+
+    // A payload from a current server: no strokes, epoch and count instead.
+    const leanState = (over: Record<string, unknown> = {}) => {
+      const { canvasStrokes: _drop, ...rest } = baseServerState;
+      return { ...rest, canvasEpoch: 0, canvasStrokeCount: 0, ...over };
+    };
+
+    const inRoom = (canvasStrokes: any[], canvasEpoch = 0) =>
+      useGameStore.setState({ roomId: "ROOM42", canvasStrokes, canvasEpoch });
+
+    it("keeps the local drawing when an update does not carry it", () => {
+      const strokes = [stroke(0, true), stroke(1)];
+      inRoom(strokes);
+
+      getSocketListener("gameStateUpdate")(leanState({ canvasStrokeCount: 2 }));
+
+      expect(useGameStore.getState().canvasStrokes).toBe(strokes);
+      expect(socket.emit).not.toHaveBeenCalledWith("requestCanvasSync");
+    });
+
+    it("wipes the drawing when the epoch moves on", () => {
+      inRoom([stroke(0, true), stroke(1)], 3);
+
+      getSocketListener("gameStateUpdate")(
+        leanState({ canvasEpoch: 4, canvasStrokeCount: 0 }),
+      );
+
+      const state = useGameStore.getState();
+      expect(state.canvasStrokes).toEqual([]);
+      expect(state.canvasEpoch).toBe(4);
+    });
+
+    it("asks for the drawing when it is holding fewer points than the server", () => {
+      inRoom([stroke(0, true)]);
+
+      getSocketListener("gameStateUpdate")(leanState({ canvasStrokeCount: 5 }));
+
+      expect(socket.emit).toHaveBeenCalledWith("requestCanvasSync");
+    });
+
+    it("stays quiet when it is holding more, which is its own optimistic append", () => {
+      inRoom([stroke(0, true), stroke(1), stroke(2)]);
+
+      getSocketListener("gameStateUpdate")(leanState({ canvasStrokeCount: 1 }));
+
+      expect(socket.emit).not.toHaveBeenCalledWith("requestCanvasSync");
+      expect(useGameStore.getState().canvasStrokes).toHaveLength(3);
+    });
+
+    it("stays quiet on the first update of a join, which brings its own sync", () => {
+      // No roomId yet: this is the update that puts the player in the room, and
+      // the server sends a canvasSync right behind it.
+      useGameStore.setState({
+        roomId: null,
+        canvasStrokes: [],
+        canvasEpoch: 0,
+      });
+
+      getSocketListener("gameStateUpdate")(
+        leanState({ canvasEpoch: 7, canvasStrokeCount: 12 }),
+      );
+
+      expect(socket.emit).not.toHaveBeenCalledWith("requestCanvasSync");
+    });
+
+    it("takes the whole drawing from canvasSync", () => {
+      inRoom([stroke(99, true)], 1);
+
+      getSocketListener("canvasSync")({
+        epoch: 5,
+        strokes: [stroke(0, true), stroke(1)],
+      });
+
+      const state = useGameStore.getState();
+      expect(state.canvasStrokes).toEqual([stroke(0, true), stroke(1)]);
+      expect(state.canvasEpoch).toBe(5);
+    });
+
+    it("appends a whole batch of points from strokeUpdate", () => {
+      inRoom([stroke(0, true)]);
+
+      getSocketListener("strokeUpdate")([stroke(1), stroke(2)]);
+
+      expect(useGameStore.getState().canvasStrokes).toEqual([
+        stroke(0, true),
+        stroke(1),
+        stroke(2),
+      ]);
+    });
+
+    it("still appends a single point, as an older server forwards it", () => {
+      inRoom([stroke(0, true)]);
+
+      getSocketListener("strokeUpdate")(stroke(1));
+
+      expect(useGameStore.getState().canvasStrokes).toHaveLength(2);
+    });
+
+    it("still takes the drawing inline from a server that predates the split", () => {
+      inRoom([stroke(0, true)]);
+
+      getSocketListener("gameStateUpdate")({
+        ...baseServerState,
+        canvasStrokes: [stroke(7, true), stroke(8)],
+      });
+
+      expect(useGameStore.getState().canvasStrokes).toEqual([
+        stroke(7, true),
+        stroke(8),
+      ]);
+    });
+
+    it("sends a batch of points in one message", () => {
+      useGameStore
+        .getState()
+        .actions.drawStroke([stroke(0, true), stroke(1), stroke(2)]);
+
+      expect(socket.emit).toHaveBeenCalledWith("drawStroke", [
+        stroke(0, true),
+        stroke(1),
+        stroke(2),
+      ]);
+      expect(useGameStore.getState().canvasStrokes).toHaveLength(3);
+    });
+  });
+
+  // A room update rebuilds every field it carries, so identity alone would make
+  // every subscriber re-render on an update that changed nothing they watch.
+  describe("reference stability across updates", () => {
+    it("keeps the previous collections when their contents are unchanged", () => {
+      const listener = getSocketListener("gameStateUpdate");
+      const payload = {
+        ...baseServerState,
+        players: [
+          {
+            id: "p1",
+            name: "One",
+            isConnected: true,
+            score: 0,
+            hasStartedEmergencyVoting: false,
+          },
+        ],
+        votes: { p1: "p2" },
+        turnOrder: ["p1"],
+      };
+
+      listener(payload);
+      const first = useGameStore.getState();
+
+      // The same room, reported again as brand new objects. A deep clone is the
+      // whole point here: identical contents, not one shared reference in sight.
+      listener(structuredClone(payload));
+      const second = useGameStore.getState();
+
+      expect(second.players).toBe(first.players);
+      expect(second.votes).toBe(first.votes);
+      expect(second.turnOrder).toBe(first.turnOrder);
+      expect(second.gameOptions).toBe(first.gameOptions);
+    });
+
+    it("still swaps in a new collection when something actually changed", () => {
+      const listener = getSocketListener("gameStateUpdate");
+      listener({ ...baseServerState, votes: { p1: "p2" } });
+      const first = useGameStore.getState();
+
+      listener({ ...baseServerState, votes: { p1: "p3" } });
+      const second = useGameStore.getState();
+
+      expect(second.votes).not.toBe(first.votes);
+      expect(second.votes).toEqual({ p1: "p3" });
     });
   });
 });

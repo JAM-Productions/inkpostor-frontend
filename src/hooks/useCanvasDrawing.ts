@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useGameStore } from "../store/gameState";
+import { useGameStore, type StrokeData } from "../store/gameState";
 import { MAX_INK, DOT_INK_COST } from "../lib/constants";
 import { DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
 import { getPlayerCanvasColor } from "../lib/playerColors";
@@ -41,6 +41,15 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
   const [inkUsed, setInkUsed] = useState(0);
   const [color, setColor] = useState(DEFAULT_CANVAS_COLOR);
 
+  // The ink total is mirrored in a ref so the pointer handlers can read it
+  // without listing it as a dependency. That keeps their identity stable across
+  // a stroke, which is what lets the memoized children skip the re-render.
+  const inkUsedRef = useRef(0);
+  const setInk = useCallback((next: number) => {
+    inkUsedRef.current = next;
+    setInkUsed(next);
+  }, []);
+
   const canvasStrokes = useGameStore((state) => state.canvasStrokes);
   const currentTurnPlayerId = useGameStore(
     (state) => state.currentTurnPlayerId,
@@ -49,114 +58,241 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
   const hostId = useGameStore((state) => state.hostId);
   const players = useGameStore((state) => state.players);
   const actions = useGameStore((state) => state.actions);
-  const gameOptions = useGameStore((state) => state.gameOptions);
-  const hasUnlimitedInk = gameOptions.unlimitedInk;
+  // Field selectors rather than the whole options object: this hook runs on the
+  // hot path and must not wake up for an unrelated option change.
+  const hasUnlimitedInk = useGameStore(
+    (state) => state.gameOptions.unlimitedInk,
+  );
+  const playerColorsEnabled = useGameStore(
+    (state) => state.gameOptions.playerColorsEnabled,
+  );
 
   const isMyTurn = currentTurnPlayerId === myId;
   // With the palette disabled the picked color is ignored in favour of the one
   // that identifies this player everywhere else in the UI. The picked color is
   // kept around so it comes back if the host turns the palette on again.
-  const effectiveColor = gameOptions.playerColorsEnabled
+  const effectiveColor = playerColorsEnabled
     ? getPlayerCanvasColor(myId, hostId, players)
     : color;
 
-  // Resize canvas to match CSS layout
+  // How much of `canvasStrokes` is already on the canvas, and the stroke that
+  // sits at that boundary. Together they answer the only question the painter
+  // needs: is the new array a continuation of what we drew, or something else?
+  const paintedCount = useRef(0);
+  const paintedTail = useRef<StrokeData | null>(null);
+  // Where the pen currently rests, so an appended point knows what to join to.
+  const penPoint = useRef<{ x: number; y: number } | null>(null);
+  // Bumped when the canvas buffer is cleared out from under us by a resize.
+  const [repaintToken, setRepaintToken] = useState(0);
+
+  // Keep the canvas buffer the size of its CSS box. Resizing the buffer wipes
+  // it, so every resize also forces a full repaint.
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
 
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
+    const applySize = () => {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (canvas.width === width && canvas.height === height) return;
+
+      canvas.width = width;
+      canvas.height = height;
+      paintedCount.current = 0;
+      paintedTail.current = null;
+      penPoint.current = null;
+      setRepaintToken((token) => token + 1);
+    };
+
+    applySize();
+
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(applySize);
+    observer.observe(container);
+    return () => observer.disconnect();
   }, []);
 
   // Reset the ink supply whenever a new turn of mine starts
   useEffect(() => {
     if (currentTurnPlayerId && isMyTurn) {
-      setInkUsed(0);
+      setInk(0);
       inkCosts.current = [];
     }
-  }, [currentTurnPlayerId, isMyTurn]);
+  }, [currentTurnPlayerId, isMyTurn, setInk]);
 
-  // Redraw all strokes whenever they change
+  // Paint the strokes that are not on the canvas yet.
+  //
+  // While a turn runs the array only ever grows, so the common case is drawing
+  // the handful of points that arrived since the last render. Redrawing the
+  // whole array on every point is what made a long turn quadratic: at 4.000
+  // points it cost ~772ms of canvas work spread over the turn, against well
+  // under a millisecond this way.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.lineWidth = 4;
 
-    let currentPathStart: null | { x: number; y: number } = null;
+    // An undo, a new round or a fresh array off a state update all mean what is
+    // on screen is no longer a prefix of the truth, so the canvas is rebuilt.
+    const painted = paintedCount.current;
+    const isAppend =
+      canvasStrokes.length >= painted &&
+      (painted === 0 || canvasStrokes[painted - 1] === paintedTail.current);
 
-    canvasStrokes.forEach((stroke) => {
-      if (stroke.isNewStroke || !currentPathStart) {
-        ctx.beginPath();
-        ctx.strokeStyle = stroke.color;
-        ctx.moveTo(stroke.x, stroke.y);
-        ctx.lineTo(stroke.x, stroke.y);
-        ctx.stroke();
-        currentPathStart = { x: stroke.x, y: stroke.y };
+    let from = painted;
+    if (!isAppend) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      penPoint.current = null;
+      from = 0;
+    }
+
+    for (let i = from; i < canvasStrokes.length; i++) {
+      const stroke = canvasStrokes[i];
+      const pen = stroke.isNewStroke ? null : penPoint.current;
+
+      ctx.beginPath();
+      ctx.strokeStyle = stroke.color;
+      if (pen) {
+        ctx.moveTo(pen.x, pen.y);
       } else {
-        ctx.beginPath();
-        ctx.strokeStyle = stroke.color;
-        ctx.moveTo(currentPathStart.x, currentPathStart.y);
-        ctx.lineTo(stroke.x, stroke.y);
-        ctx.stroke();
-        currentPathStart = { x: stroke.x, y: stroke.y };
+        ctx.moveTo(stroke.x, stroke.y);
       }
-    });
-  }, [canvasStrokes]);
+      ctx.lineTo(stroke.x, stroke.y);
+      ctx.stroke();
 
-  const getCoordinates = (
-    e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent,
-  ) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
-    const rect = canvas.getBoundingClientRect();
-
-    // Scale the coordinates based on actual dimension vs CSS dimension
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-
-    let clientX, clientY;
-    if ("touches" in e) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = (e as React.MouseEvent).clientX;
-      clientY = (e as React.MouseEvent).clientY;
+      penPoint.current = { x: stroke.x, y: stroke.y };
     }
 
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY,
+    paintedCount.current = canvasStrokes.length;
+    paintedTail.current = canvasStrokes[canvasStrokes.length - 1] ?? null;
+  }, [canvasStrokes, repaintToken]);
+
+  // The canvas box only moves on a resize or a scroll, but reading it back per
+  // pointer event forces the browser to recompute layout every time. It is
+  // measured once per stroke instead, and dropped when the page moves.
+  const canvasRect = useRef<DOMRect | null>(null);
+
+  useEffect(() => {
+    const invalidate = () => {
+      canvasRect.current = null;
     };
-  };
+    window.addEventListener("resize", invalidate);
+    window.addEventListener("scroll", invalidate, true);
+    return () => {
+      window.removeEventListener("resize", invalidate);
+      window.removeEventListener("scroll", invalidate, true);
+    };
+  }, []);
 
-  const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isMyTurn || (!hasUnlimitedInk && inkUsed >= MAX_INK)) return;
-    e.preventDefault();
-    setIsDrawing(true);
-    const { x, y } = getCoordinates(e);
-    lastPoint.current = { x, y };
+  const getCoordinates = useCallback(
+    (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return { x: 0, y: 0 };
 
-    if (hasUnlimitedInk) {
-      inkCosts.current.push(0);
-    } else if (inkUsed + DOT_INK_COST >= MAX_INK) {
-      const addedCost = MAX_INK - inkUsed;
-      setInkUsed(MAX_INK);
-      inkCosts.current.push(addedCost);
-    } else {
-      setInkUsed((prev) => prev + DOT_INK_COST);
-      inkCosts.current.push(DOT_INK_COST);
-    }
+      if (!canvasRect.current) {
+        canvasRect.current = canvas.getBoundingClientRect();
+      }
+      const rect = canvasRect.current;
 
-    actions.drawStroke({ x, y, color: effectiveColor, isNewStroke: true });
-  };
+      // Scale the coordinates based on actual dimension vs CSS dimension
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
+      let clientX, clientY;
+      if ("touches" in e) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = (e as React.MouseEvent).clientX;
+        clientY = (e as React.MouseEvent).clientY;
+      }
+
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY,
+      };
+    },
+    [],
+  );
+
+  const startDrawing = useCallback(
+    (e: React.MouseEvent | React.TouchEvent) => {
+      const used = inkUsedRef.current;
+      if (!isMyTurn || (!hasUnlimitedInk && used >= MAX_INK)) return;
+      e.preventDefault();
+      setIsDrawing(true);
+      // A stroke is the one moment the box is worth re-measuring: the layout may
+      // have shifted since the last one without firing resize or scroll.
+      canvasRect.current = null;
+      const { x, y } = getCoordinates(e);
+      lastPoint.current = { x, y };
+
+      if (hasUnlimitedInk) {
+        inkCosts.current.push(0);
+      } else if (used + DOT_INK_COST >= MAX_INK) {
+        setInk(MAX_INK);
+        inkCosts.current.push(MAX_INK - used);
+      } else {
+        setInk(used + DOT_INK_COST);
+        inkCosts.current.push(DOT_INK_COST);
+      }
+
+      actions.drawStroke({ x, y, color: effectiveColor, isNewStroke: true });
+    },
+    [
+      isMyTurn,
+      hasUnlimitedInk,
+      effectiveColor,
+      actions,
+      getCoordinates,
+      setInk,
+    ],
+  );
+
+  // Pointer moves arrive at whatever rate the panel runs at — up to 120 or 240
+  // times a second on a modern phone — and each one used to be its own socket
+  // message and its own store update. They are collected here and sent once per
+  // frame instead, as one message the server forwards whole.
+  const pendingPoints = useRef<StrokeData[]>([]);
+  const flushHandle = useRef<number | null>(null);
+
+  const flushPoints = useCallback(() => {
+    flushHandle.current = null;
+    const points = pendingPoints.current;
+    pendingPoints.current = [];
+    // The ink meter catches up with the frame rather than with every event.
+    setInkUsed(inkUsedRef.current);
+    if (points.length === 0) return;
+    actions.drawStroke(points);
+  }, [actions]);
+
+  const queuePoint = useCallback(
+    (point: StrokeData) => {
+      pendingPoints.current.push(point);
+      if (flushHandle.current !== null) return;
+      if (typeof requestAnimationFrame === "undefined") {
+        flushPoints();
+        return;
+      }
+      flushHandle.current = requestAnimationFrame(flushPoints);
+    },
+    [flushPoints],
+  );
+
+  useEffect(
+    () => () => {
+      if (flushHandle.current !== null) {
+        cancelAnimationFrame(flushHandle.current);
+      }
+    },
+    [],
+  );
 
   const draw = useCallback(
     (e: MouseEvent | TouchEvent | React.MouseEvent | React.TouchEvent) => {
@@ -171,38 +307,56 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
           Math.pow(y - lastPoint.current.y, 2),
       );
 
-      if (!hasUnlimitedInk && inkUsed + distance > MAX_INK) {
-        const allowedDistance = MAX_INK - inkUsed;
-        inkCosts.current[inkCosts.current.length - 1] += allowedDistance;
-        setInkUsed(MAX_INK);
+      const used = inkUsedRef.current;
+
+      // The cut-off stays exact and immediate — it reads the ref, not the
+      // state — so running dry still stops the stroke on the very event that
+      // exhausts it, whatever the frame is doing.
+      if (!hasUnlimitedInk && used + distance > MAX_INK) {
+        inkCosts.current[inkCosts.current.length - 1] += MAX_INK - used;
+        setInk(MAX_INK);
         setIsDrawing(false);
         lastPoint.current = null;
         return;
       }
 
       if (!hasUnlimitedInk) {
-        setInkUsed((prev) => prev + distance);
+        inkUsedRef.current = used + distance;
         inkCosts.current[inkCosts.current.length - 1] += distance;
       }
       lastPoint.current = { x, y };
 
-      actions.drawStroke({ x, y, color: effectiveColor, isNewStroke: false });
+      queuePoint({ x, y, color: effectiveColor, isNewStroke: false });
     },
-    [isDrawing, isMyTurn, inkUsed, hasUnlimitedInk, effectiveColor, actions],
+    [
+      isDrawing,
+      isMyTurn,
+      hasUnlimitedInk,
+      effectiveColor,
+      getCoordinates,
+      setInk,
+      queuePoint,
+    ],
   );
 
-  const stopDrawing = () => {
+  const stopDrawing = useCallback(() => {
     setIsDrawing(false);
     lastPoint.current = null;
-  };
+    // Send the tail of the stroke now rather than waiting on a frame that may
+    // not come for a while once the finger is off the screen.
+    if (flushHandle.current !== null) {
+      cancelAnimationFrame(flushHandle.current);
+    }
+    flushPoints();
+  }, [flushPoints]);
 
-  const undoLastStroke = () => {
+  const undoLastStroke = useCallback(() => {
     if (inkCosts.current.length > 0) {
       const restoredInk = inkCosts.current.pop() || 0;
-      setInkUsed((prev) => Math.max(0, prev - restoredInk));
+      setInk(Math.max(0, inkUsedRef.current - restoredInk));
       actions.undoStroke();
     }
-  };
+  }, [actions, setInk]);
 
   // Attach global listeners for draw to prevent "sticking" if mouse leaves canvas
   useEffect(() => {

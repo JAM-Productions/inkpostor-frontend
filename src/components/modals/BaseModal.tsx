@@ -34,9 +34,13 @@ export const BaseModal: React.FC<BaseModalProps> = ({
         if (e.key === "Escape") onClose();
       };
 
+      const { overflow } = document.body.style;
+      document.body.style.overflow = "hidden";
+
       window.addEventListener("keydown", handleEscape);
       return () => {
         window.removeEventListener("keydown", handleEscape);
+        document.body.style.overflow = overflow;
         previousFocus.current?.focus();
       };
     }

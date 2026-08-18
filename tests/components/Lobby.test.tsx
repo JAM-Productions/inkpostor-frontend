@@ -179,7 +179,10 @@ describe("Lobby", () => {
     const howToPlayBtn = screen.getByTestId("how-to-play-btn");
     await user.click(howToPlayBtn);
 
-    expect(screen.getByText("How to Play Inkpostor")).toBeInTheDocument();
+    // The modal is code-split, so it arrives a tick after the click.
+    expect(
+      await screen.findByText("How to Play Inkpostor"),
+    ).toBeInTheDocument();
     expect(screen.getByText("Objective")).toBeInTheDocument();
 
     const closeBtn = screen.getByText("GOT IT!");
@@ -207,7 +210,7 @@ describe("Lobby", () => {
     });
     await user.click(optionsButton);
 
-    expect(screen.getByText("Options")).toBeInTheDocument();
+    expect(await screen.findByText("Options")).toBeInTheDocument();
     expect(screen.getByText("Drawing Time per Round")).toBeInTheDocument();
     expect(screen.getByText("Save Options")).toBeInTheDocument();
   });

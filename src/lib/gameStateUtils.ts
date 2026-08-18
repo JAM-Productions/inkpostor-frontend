@@ -65,6 +65,48 @@ export function clearRoomUrlParam(): void {
 }
 
 /**
+ * Deep equality for the plain data a room update is made of: primitives, arrays
+ * and object literals. Deliberately narrow — no dates, maps, sets or cycles,
+ * because none of that travels over the wire.
+ */
+function isDeepEqual(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  if (typeof a !== "object" || typeof b !== "object" || !a || !b) return false;
+
+  if (Array.isArray(a) || Array.isArray(b)) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) {
+      return false;
+    }
+    return a.every((item, i) => isDeepEqual(item, b[i]));
+  }
+
+  const aKeys = Object.keys(a as Record<string, unknown>);
+  const bKeys = Object.keys(b as Record<string, unknown>);
+  if (aKeys.length !== bKeys.length) return false;
+
+  return aKeys.every(
+    (key) =>
+      Object.prototype.hasOwnProperty.call(b, key) &&
+      isDeepEqual(
+        (a as Record<string, unknown>)[key],
+        (b as Record<string, unknown>)[key],
+      ),
+  );
+}
+
+/**
+ * Hands back the previous value when the new one only differs by identity.
+ *
+ * A room update rebuilds every field it carries, so `players`, `gameOptions` and
+ * the vote maps arrive as fresh objects even when nothing about them changed.
+ * The store compares by identity, so without this every subscriber re-renders on
+ * every update from the server.
+ */
+export function keepIfEqual<T>(previous: T, next: T): T {
+  return isDeepEqual(previous, next) ? previous : next;
+}
+
+/**
  * Returns a partial state that applies `patch` to the local player (`myId`)
  * inside the `players` array. Used for optimistic updates that flip a flag on
  * the current player. Returns the unchanged state if there is no local id.

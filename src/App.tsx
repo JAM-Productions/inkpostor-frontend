@@ -1,4 +1,5 @@
-import { useGameStore } from "./store/gameState";
+import { useEffect } from "react";
+import { loadSocket, useGameStore } from "./store/gameState";
 import { JoinScreen } from "./components/JoinScreen";
 import { Lobby } from "./components/Lobby";
 import { WordSelection } from "./components/WordSelection";
@@ -19,6 +20,13 @@ function App() {
   const myName = useGameStore((state) => state.myName);
 
   const isJoinScreen = !roomId || !myName;
+
+  // socket.io is needed the moment anyone joins a room, so it starts
+  // downloading while the player is still typing their name: off the
+  // render-blocking path, but warm before the click that needs it.
+  useEffect(() => {
+    void loadSocket().catch(() => {});
+  }, []);
 
   // Switch between game screens depending on current state of the room
   const renderPhase = () => {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Maximize2, Minimize2 } from "lucide-react";
 import { useGameStore } from "../../store/gameState";
@@ -23,7 +23,7 @@ interface DrawingToolbarProps {
  * shrinks to the undo button plus the ink meter (or just undo when ink is
  * unlimited) and the compress toggle goes away with it.
  */
-export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
+const DrawingToolbarComponent: React.FC<DrawingToolbarProps> = ({
   color,
   onColorChange,
   onUndo,
@@ -32,9 +32,14 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
 }) => {
   const { t } = useTranslation();
   const isMobile = useGameStore((state) => state.isMobile);
-  const gameOptions = useGameStore((state) => state.gameOptions);
-  const hasUnlimitedInk = gameOptions.unlimitedInk;
-  const hasPalette = !gameOptions.playerColorsEnabled;
+  // Field selectors: the toolbar re-renders on every ink change already, and
+  // must not also wake up for an unrelated option.
+  const hasUnlimitedInk = useGameStore(
+    (state) => state.gameOptions.unlimitedInk,
+  );
+  const hasPalette = useGameStore(
+    (state) => !state.gameOptions.playerColorsEnabled,
+  );
 
   const [isCompressed, setIsCompressed] = useState(false);
 
@@ -147,3 +152,6 @@ export const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
     </div>
   );
 };
+
+export const DrawingToolbar = React.memo(DrawingToolbarComponent);
+DrawingToolbar.displayName = "DrawingToolbar";

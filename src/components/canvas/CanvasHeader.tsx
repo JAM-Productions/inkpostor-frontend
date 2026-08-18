@@ -1,3 +1,4 @@
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { CheckSquare, Clock, LoaderCircle } from "lucide-react";
 import { useGameStore } from "../../store/gameState";
@@ -8,18 +9,17 @@ import {
 import { EmergencyAlertButton } from "../buttons/EmergencyAlertButton";
 import { ImpostorGuessControl } from "./ImpostorGuessControl";
 import { SuspectsPopover } from "./SuspectsPopover";
-
-interface CanvasHeaderProps {
-  /** Remaining turn time in milliseconds. */
-  timeLeft: number;
-}
+import { TurnCountdown } from "./TurnCountdown";
 
 /**
  * Banner at the top of the drawing screen. Shows whose turn it is, the per-turn
  * action buttons (guess word, suspects list, emergency alert), the countdown
  * clock and the "Done" button used by the active player to end their turn.
+ *
+ * Memoized and prop-free: it takes everything from the store, so a pointer move
+ * on the canvas below cannot drag it into a re-render.
  */
-export const CanvasHeader: React.FC<CanvasHeaderProps> = ({ timeLeft }) => {
+const CanvasHeaderComponent: React.FC = () => {
   const { t } = useTranslation();
   const currentTurnPlayerId = useGameStore(
     (state) => state.currentTurnPlayerId,
@@ -90,7 +90,7 @@ export const CanvasHeader: React.FC<CanvasHeaderProps> = ({ timeLeft }) => {
             data-testid="timer"
             className="text-2xl font-short-stack font-black text-white px-3 py-1 bg-[#181512] rounded-[12px_4px_14px_4px] border-2 border-stone-950 shadow-[2px_2px_0px_#000] w-20 text-right tabular-nums"
           >
-            {(timeLeft / 1000).toFixed(1)}
+            <TurnCountdown />
           </div>
         </div>
 
@@ -108,3 +108,6 @@ export const CanvasHeader: React.FC<CanvasHeaderProps> = ({ timeLeft }) => {
     </div>
   );
 };
+
+export const CanvasHeader = React.memo(CanvasHeaderComponent);
+CanvasHeader.displayName = "CanvasHeader";

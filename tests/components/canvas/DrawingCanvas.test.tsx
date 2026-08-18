@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { createRef } from "react";
 import { DrawingCanvas } from "../../../src/components/canvas/DrawingCanvas";
+import { useTurnTimerStore } from "../../../src/store/turnTimerStore";
 
 describe("DrawingCanvas", () => {
   const renderCanvas = (
@@ -13,7 +14,6 @@ describe("DrawingCanvas", () => {
       isMyTurn: true,
       isOutOfInk: false,
       onStartDrawing: vi.fn(),
-      timeLeft: 12300,
     };
     return render(<DrawingCanvas {...defaultProps} {...props} />);
   };
@@ -60,7 +60,6 @@ describe("DrawingCanvas", () => {
         isMyTurn={false}
         isOutOfInk={false}
         onStartDrawing={vi.fn()}
-        timeLeft={1000}
       />,
     );
     expect(container.querySelector("canvas")!.className).toContain(
@@ -69,7 +68,8 @@ describe("DrawingCanvas", () => {
   });
 
   it("renders the floating timer with the remaining seconds", () => {
-    renderCanvas({ timeLeft: 5300 });
+    useTurnTimerStore.setState({ timeLeftMs: 5300 });
+    renderCanvas();
     expect(screen.getByText("5.3")).toBeInTheDocument();
   });
 });

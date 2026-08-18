@@ -11,11 +11,9 @@
   --color-ink-secondary: #fef08a;
   --color-ink-text: #fefefe;
 
-  --font-sans: "Patrick Hand", "Short Stack", "Fredoka", cursive, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Patrick Hand", "Short Stack", cursive, ui-sans-serif, system-ui, sans-serif;
   --font-handwritten: "Patrick Hand", cursive, sans-serif;
   --font-short-stack: "Short Stack", cursive, sans-serif;
-  --font-caveat: "Caveat", cursive, sans-serif;
-  --font-fredoka: "Fredoka", sans-serif;
   --font-rubik-wet-paint: "Rubik Wet Paint", system-ui;
 
   --animate-pop-in: pop-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;

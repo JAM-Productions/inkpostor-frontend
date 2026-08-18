@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { CanvasHeader } from "../../../src/components/canvas/CanvasHeader";
 import { useGameStore } from "../../../src/store/gameState";
 import { useModalStore } from "../../../src/store/modalStore";
+import { useTurnTimerStore } from "../../../src/store/turnTimerStore";
 
 vi.mock("../../../src/store/gameState", () => ({
   useGameStore: vi.fn(),
@@ -70,7 +71,7 @@ describe("CanvasHeader", () => {
 
   it("shows 'Your turn!' and ends the turn when clicking Done", () => {
     mockStore();
-    render(<CanvasHeader timeLeft={20000} />);
+    render(<CanvasHeader />);
 
     expect(screen.getByText("Your turn!")).toBeInTheDocument();
 
@@ -80,7 +81,7 @@ describe("CanvasHeader", () => {
 
   it("shows the active player's name and 'Now Drawing' when waiting", () => {
     mockStore({ myId: "socket-456", currentTurnPlayerId: "socket-123" });
-    render(<CanvasHeader timeLeft={20000} />);
+    render(<CanvasHeader />);
 
     expect(screen.getByText("Now Drawing")).toBeInTheDocument();
     expect(screen.getByText("Host")).toBeInTheDocument();
@@ -112,21 +113,22 @@ describe("CanvasHeader", () => {
         },
       ],
     });
-    const { container } = render(<CanvasHeader timeLeft={20000} />);
+    const { container } = render(<CanvasHeader />);
 
     expect(screen.getByText("Offline")).toBeInTheDocument();
     expect(container.querySelector(".animate-spin")).toBeInTheDocument();
   });
 
-  it("renders the countdown from the timeLeft prop", () => {
+  it("renders the countdown published by the turn timer", () => {
     mockStore();
-    render(<CanvasHeader timeLeft={12300} />);
+    useTurnTimerStore.setState({ timeLeftMs: 12300 });
+    render(<CanvasHeader />);
     expect(screen.getByText("12.3")).toBeInTheDocument();
   });
 
   it("hides the suspects and alert controls on my turn", () => {
     mockStore();
-    render(<CanvasHeader timeLeft={20000} />);
+    render(<CanvasHeader />);
 
     expect(screen.queryByLabelText("Players")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Alert")).not.toBeInTheDocument();

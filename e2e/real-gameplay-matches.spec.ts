@@ -258,11 +258,21 @@ test.describe("Real Gameplay Match Simulations", () => {
       await page.locator('[data-testid="confirm-vote-btn"]').click();
     }
 
-    // Handle IMPOSTOR_GUESS phase if triggered
-    for (const page of pages) {
-      const skipGuessBtn = page.locator('[data-testid="skip-guess-btn"]');
-      if (await skipGuessBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await skipGuessBtn.click();
+    // Handle IMPOSTOR_GUESS phase if triggered. Only the ejected impostor sees
+    // this screen, and `isVisible()` never waits — handing it a timeout does not
+    // change that — so wait once for it to turn up on whichever page has it,
+    // rather than sampling each page in turn and missing it entirely.
+    const guessButtons = pages.map((page) =>
+      page.locator('[data-testid="skip-guess-btn"]'),
+    );
+    await Promise.race(
+      guessButtons.map((btn) =>
+        btn.waitFor({ state: "visible", timeout: 10000 }).catch(() => {}),
+      ),
+    );
+    for (const btn of guessButtons) {
+      if (await btn.isVisible()) {
+        await btn.click();
       }
     }
 

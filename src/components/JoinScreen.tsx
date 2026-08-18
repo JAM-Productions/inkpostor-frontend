@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { Users } from "lucide-react";
-import { SERVICE_URL } from "../socket";
+import { SERVICE_URL } from "../config";
 
 export const JoinScreen: React.FC = () => {
   const { t } = useTranslation();

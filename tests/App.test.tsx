@@ -51,9 +51,11 @@ vi.mock("../src/components/modals/ModalRenderer", () => ({
   ModalRenderer: () => <div data-testid="modal-renderer">Modal Renderer</div>,
 }));
 
-// Mock the store
+// Mock the store. App warms the socket chunk on mount, so `loadSocket` has to
+// be there too — it just resolves to nothing here.
 vi.mock("../src/store/gameState", () => ({
   useGameStore: vi.fn(),
+  loadSocket: vi.fn(() => Promise.resolve({})),
 }));
 
 describe("App LanguageSwitcher Visibility", () => {
@@ -90,59 +92,63 @@ describe("App LanguageSwitcher Visibility", () => {
     expect(screen.getByTestId("join-screen")).toBeInTheDocument();
   });
 
-  it("shows LanguageSwitcher in LOBBY phase", () => {
+  // The in-game screens are code-split, so they land a tick after render and
+  // have to be awaited before the topbar assertion means anything.
+  it("shows LanguageSwitcher in LOBBY phase", async () => {
     mockStore("LOBBY", "ROOM123");
     render(<App />);
+    expect(await screen.findByTestId("lobby-screen")).toBeInTheDocument();
     expect(screen.getByTestId("language-switcher")).toBeInTheDocument();
-    expect(screen.getByTestId("lobby-screen")).toBeInTheDocument();
   });
 
-  it("hides LanguageSwitcher in RESULTS phase", () => {
+  it("hides LanguageSwitcher in RESULTS phase", async () => {
     mockStore("RESULTS", "ROOM123");
     render(<App />);
+    expect(await screen.findByTestId("game-result-screen")).toBeInTheDocument();
     expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
-    expect(screen.getByTestId("game-result-screen")).toBeInTheDocument();
   });
 
-  it("renders WordSelection and hides LanguageSwitcher in WORD_SELECTION phase", () => {
+  it("renders WordSelection and hides LanguageSwitcher in WORD_SELECTION phase", async () => {
     mockStore("WORD_SELECTION", "ROOM123");
     render(<App />);
+    expect(
+      await screen.findByTestId("word-selection-screen"),
+    ).toBeInTheDocument();
     expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
-    expect(screen.getByTestId("word-selection-screen")).toBeInTheDocument();
   });
 
-  it("hides LanguageSwitcher in ROLE_REVEAL phase", () => {
+  it("hides LanguageSwitcher in ROLE_REVEAL phase", async () => {
     mockStore("ROLE_REVEAL", "ROOM123");
     render(<App />);
+    expect(await screen.findByTestId("role-reveal-screen")).toBeInTheDocument();
     expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
-    expect(screen.getByTestId("role-reveal-screen")).toBeInTheDocument();
   });
 
-  it("renders WordReveal and hides LanguageSwitcher in WORD_REVEAL phase", () => {
+  it("renders WordReveal and hides LanguageSwitcher in WORD_REVEAL phase", async () => {
     mockStore("WORD_REVEAL", "ROOM123");
     render(<App />);
+    expect(await screen.findByTestId("word-reveal-screen")).toBeInTheDocument();
     expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
-    expect(screen.getByTestId("word-reveal-screen")).toBeInTheDocument();
   });
 
-  it("renders OrderInfo and hides LanguageSwitcher in ORDER_INFO phase", () => {
+  it("renders OrderInfo and hides LanguageSwitcher in ORDER_INFO phase", async () => {
     mockStore("ORDER_INFO", "ROOM123");
     render(<App />);
+    expect(await screen.findByTestId("order-info-screen")).toBeInTheDocument();
     expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
-    expect(screen.getByTestId("order-info-screen")).toBeInTheDocument();
   });
 
-  it("hides LanguageSwitcher in DRAWING phase", () => {
+  it("hides LanguageSwitcher in DRAWING phase", async () => {
     mockStore("DRAWING", "ROOM123");
     render(<App />);
+    expect(await screen.findByTestId("canvas-screen")).toBeInTheDocument();
     expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
-    expect(screen.getByTestId("canvas-screen")).toBeInTheDocument();
   });
 
-  it("hides LanguageSwitcher in VOTING phase", () => {
+  it("hides LanguageSwitcher in VOTING phase", async () => {
     mockStore("VOTING", "ROOM123");
     render(<App />);
+    expect(await screen.findByTestId("voting-screen")).toBeInTheDocument();
     expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
-    expect(screen.getByTestId("voting-screen")).toBeInTheDocument();
   });
 });
