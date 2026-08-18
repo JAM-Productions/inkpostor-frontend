@@ -146,7 +146,7 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
       (painted === 0 || canvasStrokes[painted - 1] === paintedTail.current);
 
     let from = painted;
-    if (!isAppend) {
+    if (!isAppend || from === 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       penPoint.current = null;
       from = 0;

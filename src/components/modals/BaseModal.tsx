@@ -12,6 +12,28 @@ interface BaseModalProps {
   closeLabel: string;
 }
 
+let bodyScrollLockCount = 0;
+let originalBodyOverflow = "";
+
+function lockBodyScroll(): () => void {
+  if (bodyScrollLockCount === 0) {
+    originalBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+  }
+  bodyScrollLockCount++;
+
+  let unlocked = false;
+  return () => {
+    if (unlocked) return;
+    unlocked = true;
+    bodyScrollLockCount--;
+    if (bodyScrollLockCount <= 0) {
+      bodyScrollLockCount = 0;
+      document.body.style.overflow = originalBodyOverflow;
+    }
+  };
+}
+
 export const BaseModal: React.FC<BaseModalProps> = ({
   isOpen,
   onClose,
@@ -34,13 +56,12 @@ export const BaseModal: React.FC<BaseModalProps> = ({
         if (e.key === "Escape") onClose();
       };
 
-      const { overflow } = document.body.style;
-      document.body.style.overflow = "hidden";
+      const unlock = lockBodyScroll();
 
       window.addEventListener("keydown", handleEscape);
       return () => {
         window.removeEventListener("keydown", handleEscape);
-        document.body.style.overflow = overflow;
+        unlock();
         previousFocus.current?.focus();
       };
     }

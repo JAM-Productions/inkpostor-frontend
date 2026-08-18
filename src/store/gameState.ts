@@ -166,12 +166,17 @@ let socketLoading: Promise<Socket> | null = null;
 
 export function loadSocket(): Promise<Socket> {
   if (!socketLoading) {
-    socketLoading = import("../socket").then(({ socket }) => {
-      socketRef = socket;
-      // Registered before anything connects, so no event can arrive unheard.
-      registerSocketListeners(socket);
-      return socket;
-    });
+    socketLoading = import("../socket")
+      .then(({ socket }) => {
+        socketRef = socket;
+        // Registered before anything connects, so no event can arrive unheard.
+        registerSocketListeners(socket);
+        return socket;
+      })
+      .catch((err) => {
+        socketLoading = null;
+        throw err;
+      });
   }
   return socketLoading;
 }
@@ -179,7 +184,13 @@ export function loadSocket(): Promise<Socket> {
 // Every action that talks to the server goes through here. Before a player has
 // joined there is nothing to talk to, and nothing worth saying.
 function emit(event: string, ...args: unknown[]): void {
-  socketRef?.emit(event, ...args);
+  if (!socketRef) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`emit('${event}') called before socket was initialized`);
+    }
+    return;
+  }
+  socketRef.emit(event, ...args);
 }
 
 export const useGameStore = create<GameState>()((set, get) => ({
@@ -432,6 +443,10 @@ export const useGameStore = create<GameState>()((set, get) => ({
  * `strokeUpdate` and in full through `canvasSync`; an update only carries the
  * epoch and the stroke count, which is enough to notice the two things a client
  * cannot derive on its own: that the canvas was wiped, and that it fell behind.
+ *
+ * Note: Falling-behind detection triggers during `gameStateUpdate` (e.g. at
+ * endTurn or phase changes). In practice over TCP, actual packet loss manifests
+ * as a connection drop that reconnects and calls `joinRoom` -> `canvasSync`.
  */
 function resolveCanvasStrokes(
   prevState: GameState,
@@ -440,9 +455,11 @@ function resolveCanvasStrokes(
     canvasEpoch?: number;
     canvasStrokeCount?: number;
   },
-): StrokeData[] {
+): { strokes: StrokeData[]; needsSync: boolean } {
   // A server that predates this still sends the whole drawing inline.
-  if (Array.isArray(newState.canvasStrokes)) return newState.canvasStrokes;
+  if (Array.isArray(newState.canvasStrokes)) {
+    return { strokes: newState.canvasStrokes, needsSync: false };
+  }
 
   const epoch =
     typeof newState.canvasEpoch === "number" ? newState.canvasEpoch : null;
@@ -457,17 +474,21 @@ function resolveCanvasStrokes(
   if (epoch !== null && epoch !== prevState.canvasEpoch) {
     // The canvas was wiped. If points have been drawn since, this client never
     // saw the wipe land, so the drawing is pulled rather than guessed at.
-    if (established && count) emit("requestCanvasSync");
-    return [];
+    return {
+      strokes: [],
+      needsSync: established && Boolean(count),
+    };
   }
 
   // Holding fewer points than the server means a `strokeUpdate` went missing.
   // Holding more is just this client's own optimistic append, still in flight.
-  if (established && count !== null && count > prevState.canvasStrokes.length) {
-    emit("requestCanvasSync");
-  }
+  const needsSync =
+    established && count !== null && count > prevState.canvasStrokes.length;
 
-  return prevState.canvasStrokes;
+  return {
+    strokes: prevState.canvasStrokes,
+    needsSync,
+  };
 }
 
 /**
@@ -507,7 +528,7 @@ function registerSocketListeners(socket: Socket) {
       return;
     }
 
-    const nextPlayers = newState.players.map((p: any) => {
+    const nextPlayers = newState.players.map((p: Player) => {
       const prevPlayer = prevState.players.find((pp) => pp.id === p.id);
       const isNewGamePhase =
         newState.phase === "LOBBY" ||
@@ -519,6 +540,8 @@ function registerSocketListeners(socket: Socket) {
           isNewGamePhase || p.isEjected ? false : prevPlayer?.isSuspected,
       };
     });
+
+    const canvasResolution = resolveCanvasStrokes(prevState, newState);
 
     // Sync all service-provided state that exists on client state.
     //
@@ -553,7 +576,7 @@ function registerSocketListeners(socket: Socket) {
       turnIndex: newState.turnIndex,
       votes: keepIfEqual(prevState.votes, newState.votes),
       kickVotes: keepIfEqual(prevState.kickVotes, newState.kickVotes || {}),
-      canvasStrokes: resolveCanvasStrokes(prevState, newState),
+      canvasStrokes: canvasResolution.strokes,
       canvasEpoch: newState.canvasEpoch ?? prevState.canvasEpoch,
       currentRound: newState.currentRound,
       ejectedId: newState.ejectedId,
@@ -574,6 +597,10 @@ function registerSocketListeners(socket: Socket) {
       guessingImpostorId: newState.guessingImpostorId ?? null,
       impostorOutOfGuesses: newState.impostorOutOfGuesses ?? false,
     });
+
+    if (canvasResolution.needsSync) {
+      emit("requestCanvasSync");
+    }
   });
 
   socket.on(
@@ -697,5 +724,6 @@ function registerSocketListeners(socket: Socket) {
 }
 
 if (typeof window !== "undefined" && import.meta.env.DEV) {
-  (window as any).__GAME_STORE__ = useGameStore;
+  (window as unknown as { __GAME_STORE__?: unknown }).__GAME_STORE__ =
+    useGameStore;
 }

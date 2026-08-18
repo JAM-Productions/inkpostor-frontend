@@ -3,8 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 // Vendors that change on their own schedule, split out so an app-only deploy
-// doesn't invalidate them in the browser cache. The in-game screens split
-// themselves through the dynamic imports in App.tsx.
+// doesn't invalidate them in the browser cache.
 function manualChunks(id: string): string | undefined {
   if (id.includes('src/i18n/locales')) return 'locales'
   if (!id.includes('node_modules')) return undefined

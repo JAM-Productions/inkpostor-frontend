@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useEffect } from "react";
 import { useModalStore, type ModalPayloads } from "../../store/modalStore";
 import { useGameStore } from "../../store/gameState";
+import { ModalErrorBoundary } from "./ModalErrorBoundary";
 
 const loadRulesModal = () => import("./RulesModal");
 const loadEndGameModal = () => import("./EndGameModal");
@@ -94,5 +95,10 @@ export const ModalRenderer: React.FC = () => {
 
   // No fallback: the chunks are already warm, and flashing a spinner where a
   // modal is about to appear reads worse than the extra frame it saves.
-  return <Suspense fallback={null}>{renderModal()}</Suspense>;
+  // Wrapped in ErrorBoundary to isolate any chunk network failure to the modal itself.
+  return (
+    <ModalErrorBoundary resetKey={activeModal} onError={() => closeModal()}>
+      <Suspense fallback={null}>{renderModal()}</Suspense>
+    </ModalErrorBoundary>
+  );
 };
