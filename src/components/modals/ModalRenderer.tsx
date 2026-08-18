@@ -93,11 +93,31 @@ export const ModalRenderer: React.FC = () => {
     }
   };
 
-  // No fallback: the chunks are already warm, and flashing a spinner where a
-  // modal is about to appear reads worse than the extra frame it saves.
+  const fallback = (
+    <div
+      role="alert"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-sm animate-fade-in"
+    >
+      <div className="flex max-w-sm flex-col items-center gap-3 rounded-2xl border-2 border-stone-800 bg-[#181512] p-6 text-center shadow-xl">
+        <p className="text-sm font-medium text-stone-200 font-sans">
+          Failed to load modal. Please check your connection.
+        </p>
+        <button
+          type="button"
+          onClick={closeModal}
+          className="rounded-lg border border-stone-700 bg-stone-800 px-4 py-2 text-xs font-semibold text-stone-200 hover:bg-stone-700 active:scale-95 transition-all cursor-pointer font-sans"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+
+  // No fallback on Suspense: the chunks are already warm, and flashing a spinner
+  // where a modal is about to appear reads worse than the extra frame it saves.
   // Wrapped in ErrorBoundary to isolate any chunk network failure to the modal itself.
   return (
-    <ModalErrorBoundary resetKey={activeModal} onError={() => closeModal()}>
+    <ModalErrorBoundary resetKey={activeModal} fallback={fallback}>
       <Suspense fallback={null}>{renderModal()}</Suspense>
     </ModalErrorBoundary>
   );
