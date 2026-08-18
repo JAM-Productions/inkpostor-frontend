@@ -58,7 +58,6 @@ describe("ModalRenderer", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  // The modals are code-split, so they resolve a tick after render.
   it("renders RulesModal when activeModal is RULES", async () => {
     setupMocks(
       { activeModal: "RULES", modalData: null },
