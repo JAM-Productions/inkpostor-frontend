@@ -55,13 +55,9 @@ export const BaseModal: React.FC<BaseModalProps> = ({
       aria-modal="true"
       aria-labelledby={`${id}-title`}
     >
+      {/* Backdrop */}
       <div
-        className="absolute inset-0 hidden pointer-events-none sm:block sm:backdrop-blur-sm"
-        aria-hidden="true"
-      />
-
-      <div
-        className="absolute inset-0 h-full w-full animate-fade-in bg-stone-950/80 animate-duration-fast motion-reduce:animate-none cursor-default"
+        className="absolute inset-0 h-full w-full animate-fade-in bg-stone-950/80 backdrop-blur-sm animate-duration-fast motion-reduce:animate-none cursor-default"
         onClick={onClose}
         role="presentation"
         aria-hidden="true"
