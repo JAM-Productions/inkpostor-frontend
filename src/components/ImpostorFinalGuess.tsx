@@ -14,9 +14,8 @@ export const ImpostorFinalGuess: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-stone-950 p-4">
         <div className="flex w-full max-w-md sm:max-w-3xl flex-col items-center gap-6">
-
           <CanvasSnapshot heightClass="h-[50vh]" />
-          
+
           <div className="text-stone-500 flex flex-col items-center gap-4 text-center">
             <span className="relative flex size-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-75"></span>

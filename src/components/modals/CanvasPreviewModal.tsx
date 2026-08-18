@@ -86,7 +86,9 @@ export const CanvasPreviewModal: React.FC<CanvasPreviewModalProps> = ({
       title={t("canvasPreview.title")}
       icon={<Scroll className="size-6" />}
       closeLabel={t("canvasPreview.closeDialog")}
-      footer={<CanvasReplayButton isPlaying={isPlaying} onClick={handleReplay} />}
+      footer={
+        <CanvasReplayButton isPlaying={isPlaying} onClick={handleReplay} />
+      }
     >
       {canvasStrokes.length === 0 ? (
         <p
@@ -120,7 +122,6 @@ export const CanvasPreviewModal: React.FC<CanvasPreviewModalProps> = ({
             isPlaying={isPlaying}
             onIsolate={setIsolatedPlayerId}
           />
-
         </div>
       )}
     </BaseModal>
