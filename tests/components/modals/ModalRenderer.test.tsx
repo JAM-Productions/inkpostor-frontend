@@ -29,6 +29,9 @@ vi.mock("../../../src/components/modals/KickPlayerModal", () => ({
 vi.mock("../../../src/components/modals/ExitGameModal", () => ({
   ExitGameModal: () => <div data-testid="exit-game-modal" />,
 }));
+vi.mock("../../../src/components/modals/CanvasPreviewModal", () => ({
+  CanvasPreviewModal: () => <div data-testid="canvas-preview-modal" />,
+}));
 
 describe("ModalRenderer", () => {
   const mockCloseModal = vi.fn();
@@ -119,5 +122,26 @@ describe("ModalRenderer", () => {
     );
     const { findByTestId } = render(<ModalRenderer />);
     expect(await findByTestId("options-modal")).toBeInTheDocument();
+  });
+
+  it("renders CANVAS_PREVIEW modal during the vote", async () => {
+    setupMocks(
+      { activeModal: "CANVAS_PREVIEW", modalData: null },
+      { players: [], phase: "VOTING" },
+    );
+    const { findByTestId } = render(<ModalRenderer />);
+    expect(await findByTestId("canvas-preview-modal")).toBeInTheDocument();
+  });
+
+  it("closes CANVAS_PREVIEW modal once the vote is over", () => {
+    // The round moves on whether or not this player was still looking.
+    setupMocks(
+      { activeModal: "CANVAS_PREVIEW", modalData: null },
+      { players: [], phase: "RESULTS" },
+    );
+    const { queryByTestId } = render(<ModalRenderer />);
+
+    expect(mockCloseModal).toHaveBeenCalled();
+    expect(queryByTestId("canvas-preview-modal")).not.toBeInTheDocument();
   });
 });

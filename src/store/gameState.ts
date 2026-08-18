@@ -54,6 +54,8 @@ export interface StrokeData {
   y: number;
   color: string;
   isNewStroke: boolean; // True if it's the first point of a line
+  playerId?: string;
+  round?: number;
 }
 
 export interface GameOptions {
@@ -308,7 +310,21 @@ export const useGameStore = create<GameState>()((set, get) => ({
       const points = Array.isArray(stroke) ? stroke : [stroke];
       if (points.length === 0) return;
       emit("drawStroke", stroke);
-      set((state) => ({ canvasStrokes: [...state.canvasStrokes, ...points] }));
+      // The server stamps the batch on its way to everyone else, but its echo
+      // never comes back to the sender. So the optimistic copy is stamped here,
+      // or this client would be the one player unable to tell its own strokes
+      // apart, or to say which round they belong to.
+      const { myId, currentRound } = get();
+      set((state) => ({
+        canvasStrokes: [
+          ...state.canvasStrokes,
+          ...points.map((point, index) =>
+            index === 0 && myId
+              ? { ...point, playerId: myId, round: currentRound }
+              : point,
+          ),
+        ],
+      }));
     },
     undoStroke: () => {
       emit("undoStroke");
@@ -601,7 +617,25 @@ function registerSocketListeners(socket: Socket) {
     const points = Array.isArray(stroke) ? stroke : [stroke];
     if (points.length === 0) return;
     useGameStore.setState((state) => ({
-      canvasStrokes: [...state.canvasStrokes, ...points],
+      canvasStrokes: [
+        ...state.canvasStrokes,
+        // A server that does not stamp the batch yet leaves the drawing
+        // unattributable, so the turn holder and the round on record stand in.
+        // Only a batch that arrives unstamped is patched; a stamped one is
+        // always taken at its word, since it knows about turn and round changes
+        // this client may not have seen yet.
+        ...(points[0].playerId || !state.currentTurnPlayerId
+          ? points
+          : points.map((point, index) =>
+              index === 0
+                ? {
+                    ...point,
+                    playerId: state.currentTurnPlayerId!,
+                    round: state.currentRound,
+                  }
+                : point,
+            )),
+      ],
     }));
   });
 

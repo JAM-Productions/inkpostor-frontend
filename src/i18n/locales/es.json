@@ -67,7 +67,24 @@
       "confirmVote": "Confirmar Voto",
       "ejected": "Has sido expulsado",
       "voteCast": "¡Voto Enviado!",
-      "votesRecorded": "{{count}} / {{total}} votos registrados"
+      "votesRecorded": "{{count}} / {{total}} votos registrados",
+      "viewCanvas": "Ver el Dibujo"
+    },
+    "canvasPreview": {
+      "title": "El Dibujo",
+      "round": "Ronda {{round}}",
+      "earlierRound": "Antes",
+      "previousRound": "Ronda anterior",
+      "nextRound": "Ronda siguiente",
+      "selectRound": "Ver {{round}}",
+      "closeDialog": "Cerrar el dibujo",
+      "drawingNow": "Mira quién dibuja cada parte...",
+      "isolateHint": "Toca a un jugador para ver solo sus trazos",
+      "showAllHint": "Toca otra vez para recuperar al resto",
+      "replay": "Repetir",
+      "playing": "Dibujando...",
+      "unknownArtist": "Desconocido",
+      "empty": "Esta ronda no se dibujó nada"
     },
     "impostorGuess": {
       "title": "Adivina la palabra secreta",

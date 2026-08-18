@@ -67,7 +67,24 @@
       "confirmVote": "Confirm Vote",
       "ejected": "You have been ejected",
       "voteCast": "Vote Cast!",
-      "votesRecorded": "{{count}} / {{total}} votes recorded"
+      "votesRecorded": "{{count}} / {{total}} votes recorded",
+      "viewCanvas": "See the Drawing"
+    },
+    "canvasPreview": {
+      "title": "The Drawing",
+      "round": "Round {{round}}",
+      "earlierRound": "Earlier",
+      "previousRound": "Previous round",
+      "nextRound": "Next round",
+      "selectRound": "Show {{round}}",
+      "closeDialog": "Close the drawing",
+      "drawingNow": "Watch who draws what...",
+      "isolateHint": "Tap a player to see only their strokes",
+      "showAllHint": "Tap again to bring the others back",
+      "replay": "Play Again",
+      "playing": "Drawing...",
+      "unknownArtist": "Unknown",
+      "empty": "Nothing was drawn this round"
     },
     "impostorGuess": {
       "title": "Guess the secret word",

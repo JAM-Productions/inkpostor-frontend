@@ -1273,6 +1273,88 @@ describe("useGameStore", () => {
       ]);
       expect(useGameStore.getState().canvasStrokes).toHaveLength(3);
     });
+
+    // Who drew what is what the voting screen replays the round from. The server
+    // names the first point of every batch; these cover the two batches it never
+    // gets to name — the player's own, and one from a server that predates this.
+    describe("authorship", () => {
+      it("stamps its own batch, since the server's echo never comes back", () => {
+        useGameStore.setState({
+          myId: "me",
+          canvasStrokes: [],
+          currentRound: 2,
+        });
+
+        useGameStore
+          .getState()
+          .actions.drawStroke([stroke(0, true), stroke(1)]);
+
+        expect(useGameStore.getState().canvasStrokes).toEqual([
+          { ...stroke(0, true), playerId: "me", round: 2 },
+          stroke(1),
+        ]);
+      });
+
+      it("sends the batch as it was drawn, leaving the naming to the server", () => {
+        useGameStore.setState({ myId: "me", canvasStrokes: [] });
+
+        useGameStore.getState().actions.drawStroke([stroke(0, true)]);
+
+        expect(socket.emit).toHaveBeenCalledWith("drawStroke", [
+          stroke(0, true),
+        ]);
+      });
+
+      it("takes the server's word over the turn it thinks is running", () => {
+        useGameStore.setState({
+          roomId: "ROOM42",
+          canvasStrokes: [],
+          currentTurnPlayerId: "alice",
+        });
+
+        // A turn change this client has not been told about yet: the name on the
+        // batch is the server's, and it is the one that knows.
+        getSocketListener("strokeUpdate")([
+          { ...stroke(0, true), playerId: "bob" },
+          stroke(1),
+        ]);
+
+        expect(useGameStore.getState().canvasStrokes).toEqual([
+          { ...stroke(0, true), playerId: "bob" },
+          stroke(1),
+        ]);
+      });
+
+      it("falls back to the turn and round on record for an unstamped batch", () => {
+        useGameStore.setState({
+          roomId: "ROOM42",
+          canvasStrokes: [],
+          currentTurnPlayerId: "alice",
+          currentRound: 3,
+        });
+
+        getSocketListener("strokeUpdate")([stroke(0, true), stroke(1)]);
+
+        expect(useGameStore.getState().canvasStrokes).toEqual([
+          { ...stroke(0, true), playerId: "alice", round: 3 },
+          stroke(1),
+        ]);
+      });
+
+      it("leaves a batch unattributed when nobody holds the turn", () => {
+        useGameStore.setState({
+          roomId: "ROOM42",
+          canvasStrokes: [],
+          currentTurnPlayerId: null,
+        });
+
+        getSocketListener("strokeUpdate")([stroke(0, true)]);
+
+        expect(useGameStore.getState().canvasStrokes).toEqual([
+          stroke(0, true),
+        ]);
+      });
+    });
   });
 
   // A room update rebuilds every field it carries, so identity alone would make

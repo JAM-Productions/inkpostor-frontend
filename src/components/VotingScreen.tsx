@@ -4,6 +4,7 @@ import { useGameStore } from "../store/gameState";
 import { SkipForward, CheckCircle2, Search, PenLine } from "lucide-react";
 import { VoteDotsPreview } from "./VoteDotsPreview";
 import { ImpostorGuessForm } from "./ImpostorGuessForm";
+import { CanvasPreviewButton } from "./buttons/CanvasPreviewButton";
 import {
   getPlayerIconColorClass,
   getPlayerVotingCardColorClass,
@@ -22,6 +23,8 @@ export const VotingScreen: React.FC = () => {
   const impostorGuessesUsed = useGameStore(
     (state) => state.impostorGuessesUsed,
   );
+
+  const hasDrawing = useGameStore((state) => state.canvasStrokes.length > 0);
 
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -84,6 +87,12 @@ export const VotingScreen: React.FC = () => {
         <div className="relative bg-ink-surface rounded-[255px_15px_225px_15px/15px_225px_15px_255px] p-6 sm:p-8 border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09]">
           {/* Taped corner accent */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-36 h-6 bg-amber-100/30 border border-stone-400/40 rounded-sm transform -rotate-1 pointer-events-none shadow-sm z-20" />
+
+          {hasDrawing && (
+            <div className="mb-5">
+              <CanvasPreviewButton />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-1 ">
             {players.map((player, index) => (
