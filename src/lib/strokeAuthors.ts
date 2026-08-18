@@ -50,12 +50,16 @@ export const getAuthorOrder = (
   runs: AuthorRun[],
 ): { playerIds: string[]; hasUnknown: boolean } => {
   const playerIds: string[] = [];
+  // The list doubles as the answer, so first appearance decides the order; what
+  // it cannot do is answer "seen already" without walking itself every time.
+  const seen = new Set<string>();
   let hasUnknown = false;
 
   for (const run of runs) {
     if (run.playerId === null) {
       hasUnknown = true;
-    } else if (!playerIds.includes(run.playerId)) {
+    } else if (!seen.has(run.playerId)) {
+      seen.add(run.playerId);
       playerIds.push(run.playerId);
     }
   }

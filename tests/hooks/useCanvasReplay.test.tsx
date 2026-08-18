@@ -41,10 +41,14 @@ describe("useCanvasReplay", () => {
   }> = ({ strokes, isolatedPlayerId, report }) => {
     const runs = React.useMemo(() => buildAuthorRuns(strokes), [strokes]);
     const replay = useCanvasReplay(strokes, runs, isolatedPlayerId);
-    report({
-      status: replay.status,
-      currentAuthorId: replay.currentAuthorId,
-      replay: replay.replay,
+    // Reported after the commit, never during the render: React may replay or
+    // throw away render work, and this hands a value out of the component.
+    React.useEffect(() => {
+      report({
+        status: replay.status,
+        currentAuthorId: replay.currentAuthorId,
+        replay: replay.replay,
+      });
     });
     return (
       <div ref={replay.containerRef}>
@@ -311,10 +315,12 @@ describe("useCanvasReplay", () => {
     const Framed: React.FC = () => {
       const runs = React.useMemo(() => buildAuthorRuns(oneRound), []);
       const replay = useCanvasReplay(oneRound, runs, null, whole);
-      latest = {
-        status: replay.status,
-        currentAuthorId: replay.currentAuthorId,
-      };
+      React.useEffect(() => {
+        latest = {
+          status: replay.status,
+          currentAuthorId: replay.currentAuthorId,
+        };
+      });
       return (
         <div ref={replay.containerRef}>
           <canvas ref={replay.canvasRef} />
@@ -378,7 +384,9 @@ describe("useCanvasReplay", () => {
     const WithBackdrop: React.FC = () => {
       const runs = React.useMemo(() => buildAuthorRuns(thisRound), []);
       const replay = useCanvasReplay(thisRound, runs, null, thisRound, earlier);
-      latest = { status: replay.status };
+      React.useEffect(() => {
+        latest = { status: replay.status };
+      });
       return (
         <div ref={replay.containerRef}>
           <canvas ref={replay.canvasRef} />
