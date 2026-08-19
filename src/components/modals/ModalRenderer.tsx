@@ -6,6 +6,7 @@ import { EndGameModal } from "./EndGameModal";
 import { OptionsModal } from "./OptionsModal";
 import { KickPlayerModal } from "./KickPlayerModal";
 import { ExitGameModal } from "./ExitGameModal";
+import { CanvasPreviewModal } from "./CanvasPreviewModal";
 
 export const ModalRenderer: React.FC = () => {
   const activeModal = useModalStore((state) => state.activeModal);
@@ -22,6 +23,8 @@ export const ModalRenderer: React.FC = () => {
         closeModal();
       }
     } else if (activeModal === "OPTIONS" && phase !== "LOBBY") {
+      closeModal();
+    } else if (activeModal === "CANVAS_PREVIEW" && phase !== "VOTING") {
       closeModal();
     }
   }, [activeModal, modalData, players, phase, closeModal]);
@@ -54,6 +57,9 @@ export const ModalRenderer: React.FC = () => {
     }
     case "EXIT_GAME":
       return <ExitGameModal isOpen={true} onClose={closeModal} />;
+    case "CANVAS_PREVIEW":
+      if (phase !== "VOTING") return null;
+      return <CanvasPreviewModal isOpen={true} onClose={closeModal} />;
     default:
       return null;
   }

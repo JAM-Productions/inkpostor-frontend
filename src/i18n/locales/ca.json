@@ -67,7 +67,24 @@
       "confirmVote": "Confirmar Vot",
       "ejected": "Has estat expulsat",
       "voteCast": "Vot Enviat!",
-      "votesRecorded": "{{count}} / {{total}} vots registrats"
+      "votesRecorded": "{{count}} / {{total}} vots registrats",
+      "viewCanvas": "Veure el Dibuix"
+    },
+    "canvasPreview": {
+      "title": "El Dibuix",
+      "round": "Ronda {{round}}",
+      "earlierRound": "Abans",
+      "previousRound": "Ronda anterior",
+      "nextRound": "Ronda següent",
+      "selectRound": "Veure {{round}}",
+      "closeDialog": "Tancar el dibuix",
+      "drawingNow": "Mira qui dibuixa cada part...",
+      "isolateHint": "Toca un jugador per veure només els seus traços",
+      "showAllHint": "Toca un altre cop per recuperar la resta",
+      "replay": "Repetir",
+      "playing": "Dibuixant...",
+      "unknownArtist": "Desconegut",
+      "empty": "Aquesta ronda no s'ha dibuixat res"
     },
     "impostorGuess": {
       "title": "Endevina la paraula secreta",

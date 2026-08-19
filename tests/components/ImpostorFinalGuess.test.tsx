@@ -11,10 +11,13 @@ describe("ImpostorFinalGuess", () => {
   const mockSkip = vi.fn();
   const mockSubmit = vi.fn();
 
-  const mockStore = (amIImpostor: boolean | null) => {
+  const stroke = { x: 0, y: 0, color: "#000", isNewStroke: true };
+
+  const mockStore = (amIImpostor: boolean | null, canvasStrokes = [stroke]) => {
     (useGameStore as any).mockImplementation((selector: any) =>
       selector({
         amIImpostor,
+        canvasStrokes,
         actions: {
           skipImpostorGuess: mockSkip,
           submitImpostorGuess: mockSubmit,
@@ -54,5 +57,28 @@ describe("ImpostorFinalGuess", () => {
     expect(
       screen.queryByPlaceholderText("Type the secret word..."),
     ).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ["the impostor making the guess", true],
+    ["everyone waiting on it", false],
+  ])("shows the drawing to %s", (_who, amIImpostor) => {
+    mockStore(amIImpostor);
+
+    render(<ImpostorFinalGuess />);
+
+    expect(screen.getByTestId("canvas-snapshot")).toBeInTheDocument();
+  });
+
+  it.each([
+    ["the impostor", true],
+    ["everyone else", false],
+  ])("leaves the sheet out for %s when nothing was drawn", (_who, amI) => {
+    // Spoken modes reach this screen with a canvas nobody ever touched.
+    mockStore(amI, []);
+
+    render(<ImpostorFinalGuess />);
+
+    expect(screen.queryByTestId("canvas-snapshot")).not.toBeInTheDocument();
   });
 });

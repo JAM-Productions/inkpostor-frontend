@@ -19,6 +19,7 @@ describe("VotingScreen", () => {
       { id: "socket-789", name: "Player 3", hasVoted: true },
     ],
     votes: { "socket-789": "socket-123" },
+    canvasStrokes: [],
     actions: { vote: mockVote },
     amIImpostor: null,
     impostorGuessesUsed: 0,
@@ -323,6 +324,32 @@ describe("VotingScreen", () => {
     render(<VotingScreen />);
 
     expect(screen.queryByText("Guess the secret word")).not.toBeInTheDocument();
+  });
+
+  it("offers the drawing when there is one to look at", () => {
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({
+        ...mockStateBase,
+        canvasStrokes: [{ x: 0, y: 0, color: "#000", isNewStroke: true }],
+      }),
+    );
+
+    render(<VotingScreen />);
+
+    expect(screen.getByTestId("open-canvas-preview-btn")).toBeInTheDocument();
+  });
+
+  it("leaves the drawing out when nothing was drawn", () => {
+    // Spoken modes never touch the canvas, so there is nothing to open.
+    (useGameStore as any).mockImplementation((selector: any) =>
+      selector({ ...mockStateBase }),
+    );
+
+    render(<VotingScreen />);
+
+    expect(
+      screen.queryByTestId("open-canvas-preview-btn"),
+    ).not.toBeInTheDocument();
   });
 
   it("hides the impostor guess form once attempts are exhausted", () => {
