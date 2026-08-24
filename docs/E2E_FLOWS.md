@@ -1,6 +1,6 @@
 # Inkpostor E2E Test Flow Diagrams
 
-This document provides visual Mermaid flow diagrams for all 35 End-to-End (E2E) spec files in the Inkpostor test suite. Each diagram maps the multi-client state machine, phase transitions, and assertions executed by Playwright.
+This document provides visual Mermaid flow diagrams for all 37 End-to-End (E2E) spec files in the Inkpostor test suite. Each diagram maps the multi-client state machine, phase transitions, and assertions executed by Playwright.
 
 ---
 
@@ -27,6 +27,7 @@ This document provides visual Mermaid flow diagrams for all 35 End-to-End (E2E) 
 4. [Canvas & Real-Time Sync](#4-canvas--real-time-sync)
    - `canvas-drawing-sync.spec.ts`
    - `canvas-undo-sync.spec.ts`
+   - `canvas-preview.spec.ts`
    - `suspects-marker.spec.ts`
    - `canvas-features.spec.ts`
 5. [Network Resilience & Edge Cases](#5-network-resilience--edge-cases)
@@ -37,6 +38,7 @@ This document provides visual Mermaid flow diagrams for all 35 End-to-End (E2E) 
 6. [Room Configuration & UI Guards](#6-room-configuration--ui-guards)
    - `multiplayer.spec.ts`
    - `options-modal.spec.ts`
+   - `prevent-repeat-impostors.spec.ts`
    - `impostor-count-shrinks.spec.ts`
    - `game-mode-staging.spec.ts`
    - `non-host-permissions.spec.ts`
@@ -248,6 +250,18 @@ flowchart TD
     Draw3["Drawer Draws 3 Strokes"] --> Undo2["Drawer Clicks Undo Twice"]
     Undo2 --> SyncUndo["Backend Broadcasts Stack Update"]
     SyncUndo --> PixelMatch["All Clients Match Exact canvas.toDataURL() Pixel Hash"]
+```
+
+### `canvas-preview.spec.ts` — Canvas Preview & Drawing Authorship Sync
+
+```mermaid
+flowchart TD
+    DrawTurns["DRAWING Phase: Players Draw Strokes on Canvas"] --> VotingPhase["Phase Transitions to VOTING"]
+    VotingPhase --> Reload["Player Reloads Page & Rejoins Room"]
+    Reload --> SyncState["Server Sends Full Canvas State via canvasSync"]
+    SyncState --> OpenPreview["Player Opens Canvas Preview Modal"]
+    OpenPreview --> ReplayDone["Replay Finishes & Legend Displays Drawer Names"]
+    ReplayDone --> VerifyAuthor["Verify Server-Stamped Authorship Preserved (No 'Unknown' Drawers)"]
 ```
 
 ### `suspects-marker.spec.ts` — Suspect Marker Persistence
