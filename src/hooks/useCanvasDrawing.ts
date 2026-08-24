@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { useGameStore, type StrokeData } from "../store/gameState";
+import { useSoundStore } from "../store/soundStore";
 import { MAX_INK, DOT_INK_COST } from "../lib/constants";
 import { DEFAULT_CANVAS_COLOR } from "../lib/canvasColors";
 import { getPlayerCanvasColor } from "../lib/playerColors";
@@ -36,10 +37,13 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
   const inkCosts = useRef<number[]>([]);
+  const lastStrokeSoundTime = useRef<number>(0);
 
   const [isDrawing, setIsDrawing] = useState(false);
   const [inkUsed, setInkUsed] = useState(0);
   const [color, setColor] = useState(DEFAULT_CANVAS_COLOR);
+
+  const playSound = useSoundStore((state) => state.actions.playSound);
 
   // The ink total is mirrored in a ref so the pointer handlers can read it
   // without listing it as a dependency. That keeps their identity stable across
@@ -243,6 +247,9 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
         inkCosts.current.push(DOT_INK_COST);
       }
 
+      playSound("inkStroke");
+      lastStrokeSoundTime.current = Date.now();
+
       actions.drawStroke({ x, y, color: effectiveColor, isNewStroke: true });
     },
     [
@@ -252,6 +259,7 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
       actions,
       getCoordinates,
       setInk,
+      playSound,
     ],
   );
 
@@ -326,6 +334,12 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
       }
       lastPoint.current = { x, y };
 
+      const now = Date.now();
+      if (distance > 3 && now - lastStrokeSoundTime.current > 120) {
+        lastStrokeSoundTime.current = now;
+        playSound("inkStroke");
+      }
+
       queuePoint({ x, y, color: effectiveColor, isNewStroke: false });
     },
     [
@@ -336,6 +350,7 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
       getCoordinates,
       setInk,
       queuePoint,
+      playSound,
     ],
   );
 

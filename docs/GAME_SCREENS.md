@@ -26,8 +26,11 @@ Lobby view with multiple connected players ready to start the game.
 ![Medium Lobby](./screens/1.1%20Medium%20Lobby.png)
 
 ### Game Options Modal
-Host options modal for configuring round timers, impostor counts, and gameplay rules.
+Host options modal for configuring round timers, impostor counts, gameplay rules, and audio preferences.
 ![Modal Options Lobby](./screens/1.2%20Modal%20Options%20Lobby.png)
+
+### Sound & Volume Options Section
+Integrated section in the Options Modal allowing all players (hosts and guests) to customize master sound effects volume, mute/unmute audio, and preview audio with the "Test Sound" button. Audio preferences are saved locally and accessible throughout gameplay. Quick mute/unmute is also available via the speaker icon in the Topbar.
 
 ### Advanced Options Modal
 Extended gameplay options including guess attempt limits and canvas clearing options.

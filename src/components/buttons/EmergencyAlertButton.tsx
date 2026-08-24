@@ -3,6 +3,7 @@ import { TriangleAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useGameStore } from "../../store/gameState";
+import { useSoundStore } from "../../store/soundStore";
 
 export const EmergencyAlertButton = () => {
   const { t } = useTranslation();
@@ -12,6 +13,7 @@ export const EmergencyAlertButton = () => {
   const actions = useGameStore((state) => state.actions);
   const players = useGameStore((state) => state.players);
   const myId = useGameStore((state) => state.myId);
+  const playSound = useSoundStore((state) => state.actions.playSound);
 
   const me = players.find((p) => p.id === myId);
   const isDisabled = me?.hasStartedEmergencyVoting;
@@ -45,6 +47,7 @@ export const EmergencyAlertButton = () => {
             data-testid="confirm-emergency-btn"
             onClick={() => {
               setIsOpen(false);
+              playSound("emergencyAlert");
               actions.startEmergencyVoting();
             }}
             disabled={isDisabled}

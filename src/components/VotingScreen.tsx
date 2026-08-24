@@ -5,6 +5,7 @@ import { SkipForward, CheckCircle2, Search, PenLine } from "lucide-react";
 import { VoteDotsPreview } from "./VoteDotsPreview";
 import { ImpostorGuessForm } from "./ImpostorGuessForm";
 import { CanvasPreviewButton } from "./buttons/CanvasPreviewButton";
+import { useSoundStore } from "../store/soundStore";
 import {
   getPlayerIconColorClass,
   getPlayerVotingCardColorClass,
@@ -23,6 +24,7 @@ export const VotingScreen: React.FC = () => {
   const impostorGuessesUsed = useGameStore(
     (state) => state.impostorGuessesUsed,
   );
+  const playSound = useSoundStore((state) => state.actions.playSound);
 
   const hasDrawing = useGameStore((state) => state.canvasStrokes.length > 0);
 
@@ -58,6 +60,7 @@ export const VotingScreen: React.FC = () => {
       if (typeof navigator !== "undefined" && navigator.vibrate) {
         navigator.vibrate(50);
       }
+      playSound("voteCast");
       actions.vote(selectedPlayer);
     }
   };

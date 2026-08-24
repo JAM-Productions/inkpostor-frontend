@@ -365,7 +365,20 @@
         "title": "Votación virtual",
         "description": "Votad en la app en vez de en la mesa. Desactivada, el anfitrión revela a los Inkpostores cuando terminéis de discutir.",
         "toggle": "Activar o desactivar la votación virtual"
+      },
+      "sound": {
+        "title": "Sonido y Volumen",
+        "description": "Ajusta los efectos de sonido del juego y el volumen general.",
+        "mute": "Silenciar sonidos",
+        "toggleMute": "Alternar silenciar sonidos",
+        "volume": "Volumen",
+        "volumeSlider": "Control deslizante de volumen",
+        "test": "Probar sonido"
       }
+    },
+    "topbar": {
+      "mute": "Silenciar sonido",
+      "unmute": "Activar sonido"
     }
   }
 }

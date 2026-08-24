@@ -8,6 +8,7 @@ import { ImpostorCountSection } from "./options/ImpostorCountSection";
 import { ImpostorGuessSection } from "./options/ImpostorGuessSection";
 import { OptionsFooter } from "./options/OptionsFooter";
 import { RoundTimeSection } from "./options/RoundTimeSection";
+import { SoundSection } from "./options/SoundSection";
 import { ToggleOptionSection } from "./options/ToggleOptionSection";
 import { TurnOrderSection } from "./options/TurnOrderSection";
 import {
@@ -292,6 +293,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
             tone="indigo"
           />
         )}
+
+        <SoundSection />
       </div>
     </BaseModal>
   );

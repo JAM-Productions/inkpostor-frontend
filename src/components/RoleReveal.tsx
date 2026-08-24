@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
+import { useSoundStore } from "../store/soundStore";
 import { isSpokenMode } from "../lib/constants";
 import { Brush, Eye, Play } from "lucide-react";
 
@@ -16,6 +17,7 @@ export const RoleReveal: React.FC = () => {
   const myId = useGameStore((state) => state.myId);
   const gameMode = useGameStore((state) => state.gameMode);
   const actions = useGameStore((state) => state.actions);
+  const playSound = useSoundStore((state) => state.actions.playSound);
 
   const me = players.find((p) => p.id === myId);
   const hasPlayerRevealedRoleAndContinued = me?.hasRevealedRole;
@@ -23,6 +25,9 @@ export const RoleReveal: React.FC = () => {
   const isSpoken = isSpokenMode(gameMode);
 
   const handleReveal = () => {
+    if (!revealed) {
+      playSound("roleReveal");
+    }
     setRevealed(true);
     setIsContinueButtonVisible(true);
   };

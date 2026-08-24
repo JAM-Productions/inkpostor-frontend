@@ -365,7 +365,20 @@
         "title": "Virtual Voting",
         "description": "Vote in the app instead of around the table. With it off, the host reveals the Inkpostors when you are done arguing.",
         "toggle": "Toggle virtual voting"
+      },
+      "sound": {
+        "title": "Sound & Volume",
+        "description": "Adjust game sound effects and master volume.",
+        "mute": "Mute Sounds",
+        "toggleMute": "Toggle sound mute",
+        "volume": "Volume",
+        "volumeSlider": "Sound volume slider",
+        "test": "Test Sound"
       }
+    },
+    "topbar": {
+      "mute": "Mute sound",
+      "unmute": "Unmute sound"
     }
   }
 }

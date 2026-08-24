@@ -44,6 +44,7 @@ This document provides visual Mermaid flow diagrams for all 35 End-to-End (E2E) 
    - `timer-expirations.spec.ts`
    - `validations-errors.spec.ts`
    - `i18n-language.spec.ts`
+   - `sound-options.spec.ts`
 7. [Match Simulations](#7-match-simulations)
    - `real-gameplay-matches.spec.ts`
    - `extended-real-gameplay.spec.ts`
@@ -403,6 +404,34 @@ flowchart TD
 ```mermaid
 flowchart TD
     ToggleLang["User Toggles Language Selector (EN -> ES -> CA)"] --> Dynamici18n["UI Text Updates Instantly Across All Screens"]
+```
+
+### `sound-options.spec.ts` — Sound Effects & Volume Option Controls
+
+```mermaid
+flowchart TD
+    subgraph Topbar & Quick Toggle
+        HostStart["Host Creates Room"] --> TopbarAudio["Topbar Speaker Button (Mute/Unmute)"]
+        TopbarAudio --> QuickMute["Click Mutes Audio & Persists in LocalStorage"]
+    end
+
+    subgraph Options Modal Sound Controls
+        OpenOptions["Open Options Modal"] --> SoundSec["Sound & Volume Section Rendered"]
+        SoundSec --> Slider["Adjust Volume Slider (0% - 100%)"]
+        SoundSec --> TestBtn["Click 'Test Sound' Audio Preview"]
+        SoundSec --> ModalMute["Toggle Mute Switch in Modal"]
+        ModalMute --> DisableSlider["Volume Slider & Test Button Disabled"]
+    end
+
+    subgraph Multi-Player & Reload Persistence
+        PageReload["Reload Page"] --> RestoreSettings["Restores Volume & Mute State from LocalStorage"]
+        GuestJoin["Player 2 (Guest) Joins Room"] --> GuestOptions["Guest Opens Options Modal"]
+        GuestOptions --> GuestIndependentAudio["Guest Configures Personal Volume & Audio Independently"]
+    end
+
+    QuickMute --> OpenOptions
+    DisableSlider --> PageReload
+    RestoreSettings --> GuestJoin
 ```
 
 ---

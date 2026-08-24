@@ -73,18 +73,19 @@ flowchart TD
         S29[e2e/original-chaos-mode.spec.ts]
         S30[e2e/original-turn-order.spec.ts]
         S31[e2e/original-virtual-voting.spec.ts]
+        S32[e2e/sound-options.spec.ts]
     end
 
     subgraph "Total 100% Production Qualification"
-        Qualification["Multiplayer Sync ➔ Modes ➔ Loops ➔ Reconnection ➔ Guesses ➔ Drawing Sync ➔ Suspects ➔ i18n ➔ 15 Real Matches ➔ Limit Guards ➔ 100% Full System Parity"]
+        Qualification["Multiplayer Sync ➔ Modes ➔ Loops ➔ Reconnection ➔ Guesses ➔ Drawing Sync ➔ Suspects ➔ i18n ➔ 15 Real Matches ➔ Limit Guards ➔ Sound & Volume Options ➔ 100% Full System Parity"]
     end
 
-    S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 & S9 & S10 & S11 & S12 & S13 & S14 & S15 & S16 & S17 & S18 & S19 & S20 & S21 & S22 & S23 & S24 & S25 & S26 & S27 & S28 & S29 & S30 --> Qualification
+    S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 & S9 & S10 & S11 & S12 & S13 & S14 & S15 & S16 & S17 & S18 & S19 & S20 & S21 & S22 & S23 & S24 & S25 & S26 & S27 & S28 & S29 & S30 & S31 & S32 --> Qualification
 ```
 
 ---
 
-### E2E Test Suite Specification Directory (55 Tests across 37 Spec Files)
+### E2E Test Suite Specification Directory (56 Tests across 38 Spec Files)
 
 | # | Spec File | Purpose & User Flow Tested | Key Verification & Assertions |
 |---|---|---|---|
@@ -125,8 +126,9 @@ flowchart TD
 | 35 | `multi-impostor-original.spec.ts` | Multi-Impostor `ORIGINAL` Spoken Journey | 5-player Spoken mode ➔ Teammate role reveal ➔ ORDER_INFO phase ➔ Round 1 ejection ➔ ORDER_INFO Round 2 ➔ Round 2 victory |
 | 36 | `impostor-count-shrinks.spec.ts` | Inkpostor Count Follows The Room | 2 Inkpostors saved in a 5-player lobby ➔ one player leaves ➔ count comes back down to 1 for the host and for a guest reading the modal, with both steppers disabled |
 | 37 | `original-virtual-voting.spec.ts` | Spoken Modes Without The Virtual Voting | The default: no confirmation gate and no voting screen ➔ only the host gets Reveal Results ➔ RESULTS lists the Inkpostors with the secret word and Play Again, in `ORIGINAL` and in `ORIGINAL_CHAOS` |
+| 38 | `sound-options.spec.ts` | Sound & Volume Controls | Topbar mute toggle, Options modal volume slider adjustment, test sound button, and localStorage persistence |
 
-> 🎨 **Multi-Client Game Flow Diagrams**: Detailed phase-by-phase state machine diagrams for Multi-Impostor games, Classic mode, Spoken modes, and all 37 E2E test files are available in **[docs/E2E_FLOWS.md](./E2E_FLOWS.md)**.
+> 🎨 **Multi-Client Game Flow Diagrams**: Detailed phase-by-phase state machine diagrams for Multi-Impostor games, Classic mode, Spoken modes, and all 38 E2E test files are available in **[docs/E2E_FLOWS.md](./E2E_FLOWS.md)**.
 
 ---
 

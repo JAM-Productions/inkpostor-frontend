@@ -4,6 +4,7 @@ import { EndGameButton } from "./buttons/EndGameButton";
 import { ExitGameButton } from "./buttons/ExitGameButton";
 import { RoomCodeButton } from "./buttons/RoomCodeButton";
 import { ReturnHomeButton } from "./buttons/ReturnHomeButton";
+import { SoundToggleButton } from "./buttons/SoundToggleButton";
 
 export function Topbar() {
   const phase = useGameStore((state) => state.phase);
@@ -40,6 +41,7 @@ export function Topbar() {
       </div>
       <div className="fixed top-3 right-3 sm:top-4 sm:right-4 flex items-center justify-between gap-3 sm:gap-4 z-50">
         <EndGameButton />
+        <SoundToggleButton />
         {showLanguageSwitcher && <LanguageSwitcher />}
       </div>
     </header>
