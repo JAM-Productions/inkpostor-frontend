@@ -365,7 +365,21 @@
         "title": "Votació virtual",
         "description": "Voteu a l'app en comptes de a taula. Desactivada, l'amfitrió revela els Inkpostors quan acabeu de discutir.",
         "toggle": "Activar o desactivar la votació virtual"
+      },
+      "sound": {
+        "title": "So i Volum",
+        "description": "Ajusta els efectes de so del joc i el volum general.",
+        "mute": "Silenciar sons",
+        "toggleMute": "Alternar efectes de so",
+        "volume": "Volum",
+        "volumeSlider": "Control lliscant de volum",
+        "test": "Provar so"
       }
+    },
+    "topbar": {
+      "soundSettings": "Ajustos de so",
+      "mute": "Silenciar so",
+      "unmute": "Activar so"
     }
   }
 }
