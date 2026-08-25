@@ -1,6 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { isSpokenMode } from "../lib/constants";
+import {
+  areAllImpostorsDefeated,
+  resolveImpostorIds,
+} from "../lib/gameOutcome";
 import { useGameStore, type Player } from "../store/gameState";
 
 /**
@@ -84,15 +88,10 @@ export function useGameResult(): GameResultState {
     (state) => state.gameOptions.virtualVotingEnabled,
   );
 
-  const impostorIdSet = React.useMemo(() => {
-    const list =
-      rawImpostorIds && rawImpostorIds.length > 0
-        ? rawImpostorIds
-        : impostorId
-          ? [impostorId]
-          : [];
-    return new Set(list);
-  }, [rawImpostorIds, impostorId]);
+  const impostorIdSet = React.useMemo(
+    () => resolveImpostorIds(rawImpostorIds, impostorId),
+    [rawImpostorIds, impostorId],
+  );
 
   // A vote-kick takes its target out of the room, and that target may well be
   // an impostor this screen has to name — a game with several of them keeps
@@ -118,9 +117,6 @@ export function useGameResult(): GameResultState {
 
   const me = players.find((p) => p.id === myId);
   const impostorPlayers = players.filter((p) => impostorIdSet.has(p.id));
-  const activeImpostors = players.filter(
-    (p) => impostorIdSet.has(p.id) && !p.isEjected && p.id !== ejectedId,
-  );
 
   const impostorNames =
     impostorPlayers.map((p) => p.name).join(", ") || "Unknown";
@@ -142,9 +138,13 @@ export function useGameResult(): GameResultState {
     // Crewmates win if every impostor is eliminated or out of guesses (and no
     // correct guess). Only read once the game is over, which is also the only
     // moment the impostors are known at all.
-    allImpostorsDefeated:
-      (activeImpostors.length === 0 || impostorOutOfGuesses) &&
-      !impostorGuessedCorrectly,
+    allImpostorsDefeated: areAllImpostorsDefeated({
+      players,
+      impostorIdSet,
+      ejectedId,
+      impostorGuessedCorrectly,
+      impostorOutOfGuesses,
+    }),
     impostorPlayers,
     impostorNames,
     severalImpostors: impostorIdSet.size > 1,

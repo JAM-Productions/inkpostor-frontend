@@ -1,4 +1,9 @@
 import { useEffect, useRef } from "react";
+import { isSpokenMode } from "../lib/constants";
+import {
+  areAllImpostorsDefeated,
+  resolveImpostorIds,
+} from "../lib/gameOutcome";
 import { useGameStore } from "../store/gameState";
 import { useSoundStore } from "../store/soundStore";
 
@@ -14,11 +19,15 @@ export function useGameSounds(): void {
   const myId = useGameStore((state) => state.myId);
   const amIImpostor = useGameStore((state) => state.amIImpostor);
   const gameEnded = useGameStore((state) => state.gameEnded);
-  const ejectedId = useGameStore((state) => state.ejectedId);
-  const ejectedWasImpostor = useGameStore((state) => state.ejectedWasImpostor);
-  const remainingImpostorCount = useGameStore(
-    (state) => state.remainingImpostorCount,
+  const endedByHost = useGameStore((state) => state.endedByHost);
+  const gameMode = useGameStore((state) => state.gameMode);
+  // Optional: this hook mounts with the app, ahead of any room state.
+  const virtualVotingEnabled = useGameStore(
+    (state) => state.gameOptions?.virtualVotingEnabled,
   );
+  const ejectedId = useGameStore((state) => state.ejectedId);
+  const impostorId = useGameStore((state) => state.impostorId);
+  const impostorIds = useGameStore((state) => state.impostorIds);
   const impostorGuessedCorrectly = useGameStore(
     (state) => state.impostorGuessedCorrectly,
   );
@@ -28,9 +37,16 @@ export function useGameSounds(): void {
   const playSound = useSoundStore((state) => state.actions.playSound);
 
   const playerCount = players?.length || 0;
+  // Counted rather than tested: the flag stays up for the rest of the match, so
+  // only a rise in the count marks a meeting actually being called. The server
+  // raises it in the same update that moves the room to VOTING, which is why
+  // the phase effect below can tell the two kinds of vote apart.
+  const emergencyCount =
+    players?.filter((p) => p.hasStartedEmergencyVoting).length || 0;
 
   const prevPhaseRef = useRef(phase);
   const prevPlayerCountRef = useRef(playerCount);
+  const prevEmergencyCountRef = useRef(emergencyCount);
   const prevTurnPlayerRef = useRef(currentTurnPlayerId);
   const prevGuessedCorrectlyRef = useRef(impostorGuessedCorrectly);
   const prevOutOfGuessesRef = useRef(impostorOutOfGuesses);
@@ -85,35 +101,69 @@ export function useGameSounds(): void {
         prevPhase === "LOBBY"
       ) {
         playSound("gameStart");
+      } else if (phase === "VOTING") {
+        // An emergency meeting announces itself with the bell; the vote that
+        // simply follows the drawing round gets the suspense pulse instead.
+        const isEmergency = emergencyCount > prevEmergencyCountRef.current;
+        playSound(isEmergency ? "emergencyAlert" : "heartbeat");
       } else if (phase === "RESULTS") {
         if (gameEnded) {
-          const isImpostorVictory =
-            Boolean(impostorGuessedCorrectly) ||
-            (typeof remainingImpostorCount === "number" &&
-              remainingImpostorCount > 0);
+          // A game the host closed (or a spoken round that was simply revealed)
+          // ends in neither a victory nor a defeat, so it gets its own sound.
+          const isRevealOnly =
+            endedByHost || (isSpokenMode(gameMode) && !virtualVotingEnabled);
 
-          const iWon = amIImpostor
-            ? isImpostorVictory
-            : !isImpostorVictory &&
-              (ejectedWasImpostor || impostorOutOfGuesses);
-
-          if (iWon) {
-            playSound("victory");
+          if (isRevealOnly) {
+            playSound("stalemate");
           } else {
-            playSound("defeat");
+            const impostorIdSet = resolveImpostorIds(impostorIds, impostorId);
+            const crewWon = areAllImpostorsDefeated({
+              players,
+              impostorIdSet,
+              ejectedId,
+              impostorGuessedCorrectly,
+              impostorOutOfGuesses,
+            });
+            // The roles come revealed with the final state, so they are a surer
+            // answer than `amIImpostor`, which is only kept as the fallback.
+            const wasIImpostor =
+              impostorIdSet.size > 0 && myId
+                ? impostorIdSet.has(myId)
+                : Boolean(amIImpostor);
+            const iWon = wasIImpostor ? !crewWon : crewWon;
+
+            playSound(iWon ? "victory" : "defeat");
           }
         } else if (ejectedId) {
           playSound("playerEjected");
+        } else {
+          // Nobody was ejected and the game goes on: nothing is settled.
+          playSound("suspense");
         }
       }
+      prevEmergencyCountRef.current = emergencyCount;
     }
     prevPhaseRef.current = phase;
+    // Outside a phase change the marker only ever follows the count *down* — a
+    // player with the flag leaving, or a new match resetting it. It must not
+    // follow it up, because the client that calls the meeting raises its own
+    // flag optimistically a beat before the phase change it announces, and
+    // moving the marker then would swallow the very rise being watched for.
+    if (emergencyCount < prevEmergencyCountRef.current) {
+      prevEmergencyCountRef.current = emergencyCount;
+    }
   }, [
     phase,
+    emergencyCount,
     gameEnded,
+    endedByHost,
+    gameMode,
+    virtualVotingEnabled,
     ejectedId,
-    ejectedWasImpostor,
-    remainingImpostorCount,
+    impostorId,
+    impostorIds,
+    players,
+    myId,
     impostorGuessedCorrectly,
     impostorOutOfGuesses,
     amIImpostor,

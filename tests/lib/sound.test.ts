@@ -2,8 +2,58 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import {
   playSoundEffect,
   resetAudioContextForTesting,
-  type SoundEffect,
+  SOUND_EFFECTS,
 } from "../../src/lib/sound";
+
+function createAudioParam() {
+  return {
+    value: 0,
+    setValueAtTime: vi.fn(),
+    exponentialRampToValueAtTime: vi.fn(),
+    linearRampToValueAtTime: vi.fn(),
+  };
+}
+
+/**
+ * Stands in for the whole Web Audio surface the sound library touches:
+ * oscillators, gains, filters, noise buffer sources and the reverb convolver.
+ */
+function createMockAudioContext() {
+  return {
+    currentTime: 0,
+    sampleRate: 44100,
+    state: "running",
+    destination: {},
+    createGain: vi.fn(() => ({ gain: createAudioParam(), connect: vi.fn() })),
+    createOscillator: vi.fn(() => ({
+      type: "sine",
+      frequency: createAudioParam(),
+      detune: createAudioParam(),
+      connect: vi.fn(),
+      start: vi.fn(),
+      stop: vi.fn(),
+    })),
+    createBiquadFilter: vi.fn(() => ({
+      type: "lowpass",
+      frequency: createAudioParam(),
+      Q: createAudioParam(),
+      connect: vi.fn(),
+    })),
+    createBufferSource: vi.fn(() => ({
+      buffer: null,
+      playbackRate: createAudioParam(),
+      connect: vi.fn(),
+      start: vi.fn(),
+      stop: vi.fn(),
+    })),
+    createBuffer: vi.fn((channels: number, length: number) => ({
+      getChannelData: vi.fn(() => new Float32Array(length)),
+      numberOfChannels: channels,
+    })),
+    createConvolver: vi.fn(() => ({ buffer: null, connect: vi.fn() })),
+    resume: vi.fn().mockResolvedValue(undefined),
+  };
+}
 
 describe("sound library", () => {
   const originalAudioContext = window.AudioContext;
@@ -37,74 +87,58 @@ describe("sound library", () => {
   });
 
   it("plays every defined sound effect without error when Web Audio API is available", () => {
-    const mockGainNode = {
-      gain: {
-        setValueAtTime: vi.fn(),
-        exponentialRampToValueAtTime: vi.fn(),
-        linearRampToValueAtTime: vi.fn(),
-      },
-      connect: vi.fn(),
-    };
-
-    const mockOscillatorNode = {
-      type: "sine",
-      frequency: {
-        setValueAtTime: vi.fn(),
-        exponentialRampToValueAtTime: vi.fn(),
-        linearRampToValueAtTime: vi.fn(),
-      },
-      connect: vi.fn(),
-      start: vi.fn(),
-      stop: vi.fn(),
-    };
-
-    const mockAudioContextInstance = {
-      currentTime: 0,
-      state: "running",
-      destination: {},
-      createGain: vi.fn(() => ({
-        ...mockGainNode,
-        gain: { ...mockGainNode.gain },
-      })),
-      createOscillator: vi.fn(() => ({
-        ...mockOscillatorNode,
-        frequency: { ...mockOscillatorNode.frequency },
-      })),
-      resume: vi.fn().mockResolvedValue(undefined),
-    };
+    const mockAudioContextInstance = createMockAudioContext();
 
     function MockAudioContext(this: unknown) {
       return mockAudioContextInstance;
     }
     window.AudioContext = MockAudioContext as unknown as typeof AudioContext;
 
-    const effects: SoundEffect[] = [
-      "click",
-      "playerJoin",
-      "gameStart",
-      "roleReveal",
-      "roleRevealCrew",
-      "roleRevealImpostor",
-      "turnAlert",
-      "timerTick",
-      "emergencyAlert",
-      "undo",
-      "inkStroke",
-      "voteCast",
-      "playerEjected",
-      "impostorGuessCorrect",
-      "impostorGuessWrong",
-      "victory",
-      "defeat",
-      "testSound",
-    ];
-
-    effects.forEach((effect) => {
+    // Straight from the catalogue, so an effect added later cannot slip past
+    // this without a test.
+    expect(SOUND_EFFECTS.length).toBeGreaterThan(20);
+    SOUND_EFFECTS.forEach((effect) => {
       expect(() => playSoundEffect(effect, 0.7)).not.toThrow();
     });
 
     expect(mockAudioContextInstance.createGain).toHaveBeenCalled();
     expect(mockAudioContextInstance.createOscillator).toHaveBeenCalled();
+  });
+
+  it("builds the noise and reverb nodes the textured effects rely on", () => {
+    const mockAudioContextInstance = createMockAudioContext();
+
+    function MockAudioContext(this: unknown) {
+      return mockAudioContextInstance;
+    }
+    window.AudioContext = MockAudioContext as unknown as typeof AudioContext;
+
+    // inkStroke is filtered noise; roleReveal additionally uses the reverb send.
+    playSoundEffect("inkStroke", 0.7);
+    expect(mockAudioContextInstance.createBufferSource).toHaveBeenCalled();
+    expect(mockAudioContextInstance.createBiquadFilter).toHaveBeenCalled();
+
+    playSoundEffect("roleReveal", 0.7);
+    expect(mockAudioContextInstance.createConvolver).toHaveBeenCalled();
+  });
+
+  it("reuses the generated noise and reverb buffers across calls", () => {
+    const mockAudioContextInstance = createMockAudioContext();
+
+    function MockAudioContext(this: unknown) {
+      return mockAudioContextInstance;
+    }
+    window.AudioContext = MockAudioContext as unknown as typeof AudioContext;
+
+    playSoundEffect("roleReveal", 0.7);
+    const buffersAfterFirst =
+      mockAudioContextInstance.createBuffer.mock.calls.length;
+    playSoundEffect("roleReveal", 0.7);
+
+    // One noise buffer plus one impulse response, generated once and cached.
+    expect(buffersAfterFirst).toBe(2);
+    expect(mockAudioContextInstance.createBuffer).toHaveBeenCalledTimes(2);
+    expect(mockAudioContextInstance.createConvolver).toHaveBeenCalledTimes(1);
   });
 
   it("resumes suspended AudioContext", () => {

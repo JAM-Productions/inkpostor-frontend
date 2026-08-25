@@ -46,7 +46,9 @@ export const useTurnTimer = (): void => {
       const prevSec = Math.ceil(remaining / 1000);
       const nextSec = Math.ceil(nextRemaining / 1000);
       if (prevSec !== nextSec && nextSec <= 5 && nextSec >= 1) {
-        useSoundStore.getState().actions.playSound("timerTick");
+        useSoundStore
+          .getState()
+          .actions.playSound(nextSec === 1 ? "timerTickFinal" : "timerTick");
       }
 
       setTimeLeftMs(nextRemaining);

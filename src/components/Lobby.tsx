@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
 import { useModalStore } from "../store/modalStore";
+import { useSoundStore } from "../store/soundStore";
 import { Users, Loader2, HelpCircle, Settings } from "lucide-react";
 import {
   DEFAULT_GAME_OPTIONS,
@@ -26,6 +27,7 @@ export const Lobby: React.FC = () => {
   const hostId = useGameStore((state) => state.hostId);
   const actions = useGameStore((state) => state.actions);
   const modalActions = useModalStore((state) => state.actions);
+  const playSound = useSoundStore((state) => state.actions.playSound);
 
   // A player leaving can take the impostor count out of range, and it is the
   // host's client that puts it back
@@ -152,7 +154,10 @@ export const Lobby: React.FC = () => {
             <button
               type="button"
               data-testid="start-game-btn"
-              onClick={actions.startGame}
+              onClick={() => {
+                playSound("click");
+                actions.startGame();
+              }}
               disabled={!canStart}
               className="w-full shrink-0 group relative overflow-hidden rounded-[22px_7px_18px_9px] border-3 border-stone-950 transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-50 disabled:hover:rotate-0 disabled:active:translate-x-0 disabled:active:translate-y-0 cursor-pointer bg-red-600 hover:bg-red-500 shadow-[4px_4px_0px_#000]"
             >

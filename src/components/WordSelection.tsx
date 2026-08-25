@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Check } from "lucide-react";
 import { useGameStore } from "../store/gameState";
+import { useSoundStore } from "../store/soundStore";
 import {
   isSpokenMode,
   MAX_CUSTOM_WORD_LENGTH,
@@ -15,6 +16,7 @@ export const WordSelection: React.FC = () => {
   const myId = useGameStore((state) => state.myId);
   const gameMode = useGameStore((state) => state.gameMode);
   const actions = useGameStore((state) => state.actions);
+  const playSound = useSoundStore((state) => state.actions.playSound);
 
   const me = players.find((p) => p.id === myId);
   const hasSubmitted = !!me?.hasSubmittedWord;
@@ -23,6 +25,7 @@ export const WordSelection: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid || hasSubmitted) return;
+    playSound("wordSelected");
     actions.submitCustomWord(word);
   };
 

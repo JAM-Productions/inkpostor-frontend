@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Maximize2, Minimize2 } from "lucide-react";
 import { useGameStore } from "../../store/gameState";
+import { useSoundStore } from "../../store/soundStore";
 import { CANVAS_COLORS } from "../../lib/canvasColors";
 import { UndoButton } from "./UndoButton";
 
@@ -40,6 +41,7 @@ const DrawingToolbarComponent: React.FC<DrawingToolbarProps> = ({
   const hasPalette = useGameStore(
     (state) => !state.gameOptions.playerColorsEnabled,
   );
+  const playSound = useSoundStore((state) => state.actions.playSound);
 
   const [isCompressed, setIsCompressed] = useState(false);
 
@@ -65,7 +67,10 @@ const DrawingToolbarComponent: React.FC<DrawingToolbarProps> = ({
               <button
                 type="button"
                 key={c}
-                onClick={() => onColorChange(c)}
+                onClick={() => {
+                  playSound("colorPick");
+                  onColorChange(c);
+                }}
                 aria-label={t(`canvas.colors.${c}`)}
                 className={`size-9 sm:size-10 shrink-0 rounded-full transition-transform border-3 ${color === c ? "scale-110 border-amber-300 shadow-[2px_2px_0px_#000]" : "scale-90 opacity-80 hover:opacity-100 border-stone-950"} cursor-pointer active:scale-95`}
                 style={{
