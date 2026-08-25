@@ -373,7 +373,10 @@
         "toggleMute": "Alternar efectes de so",
         "volume": "Volum",
         "volumeSlider": "Control lliscant de volum",
-        "test": "Provar so"
+        "test": "Provar so",
+        "music": "Música",
+        "toggleMusic": "Alternar música de fons",
+        "musicSlider": "Control lliscant de volum de música"
       }
     },
     "topbar": {

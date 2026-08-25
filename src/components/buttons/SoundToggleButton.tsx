@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Volume2, Volume1, VolumeX, Play } from "lucide-react";
+import { Volume2, Volume1, VolumeX, Play, Music } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSoundStore } from "../../store/soundStore";
 import { useClickOutside } from "../../hooks/useClickOutside";
@@ -12,16 +12,25 @@ export function SoundToggleButton() {
 
   const muted = useSoundStore((state) => state.muted);
   const volume = useSoundStore((state) => state.volume);
+  const musicEnabled = useSoundStore((state) => state.musicEnabled);
+  const musicVolume = useSoundStore((state) => state.musicVolume);
   const actions = useSoundStore((state) => state.actions);
 
   const percentage = Math.round(volume * 100);
+  const musicPercentage = Math.round(musicVolume * 100);
   const isMutedOrSilent = muted || volume <= 0;
+  // The master switch takes the music with it, so its own row goes dead too
+  const isMusicOff = muted || !musicEnabled;
 
   useClickOutside(dropdownRef, isOpen, setIsOpen);
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value) / 100;
     actions.setVolume(val);
+  };
+
+  const handleMusicVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    actions.setMusicVolume(Number(e.target.value) / 100);
   };
 
   const renderVolumeIcon = () => {
@@ -63,7 +72,7 @@ export function SoundToggleButton() {
       {isOpen && (
         <div
           data-testid="sound-popover"
-          className="fixed right-3 top-14 sm:absolute sm:top-full sm:right-0 sm:mt-3 w-72 sm:w-76 max-w-[calc(100vw-1.5rem)] p-3.5 bg-ink-surface border-3 border-stone-950 rounded-[18px_6px_20px_6px] shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-3 z-50 animate-fade-in-up"
+          className="fixed right-3 top-14 sm:absolute sm:top-full sm:right-0 sm:mt-3 w-72 sm:w-76 max-w-[calc(100vw-1.5rem)] p-3.5 pb-5 bg-ink-surface border-3 border-stone-950 rounded-[18px_6px_20px_6px] shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-3 z-50 animate-fade-in-up"
         >
           {/* Header & Master Audio Switch */}
           <div className="flex items-center justify-between gap-3">
@@ -112,7 +121,7 @@ export function SoundToggleButton() {
             </span>
           </div>
 
-          {/* Test Sound button */}
+          {/* Test Sound button, closing the effects section it previews */}
           <div className="flex justify-end pt-0.5">
             <button
               type="button"
@@ -124,6 +133,55 @@ export function SoundToggleButton() {
               <Play className="size-3 fill-current text-amber-300" />
               <span>{t("options.sound.test")}</span>
             </button>
+          </div>
+
+          {/* Music switch & its own level, which sits well under the effects */}
+          <div className="border-t-2 border-stone-800 pt-3 flex flex-col gap-2.5">
+            <div className="flex items-center justify-between gap-3">
+              <span className="font-handwritten font-bold text-base text-white uppercase tracking-wider whitespace-nowrap">
+                {t("options.sound.music")}
+              </span>
+              <OptionSwitch
+                checked={musicEnabled && !muted}
+                disabled={muted}
+                label={t("options.sound.toggleMusic")}
+                onChange={() => actions.setMusicEnabled(!musicEnabled)}
+                tone="amber"
+              />
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <span className="shrink-0">
+                <Music
+                  className={`size-4 ${isMusicOff ? "text-stone-500" : "text-amber-300"}`}
+                />
+              </span>
+              <label htmlFor="music-volume-slider" className="sr-only">
+                {t("options.sound.musicSlider")}
+              </label>
+              <input
+                id="music-volume-slider"
+                type="range"
+                min="0"
+                max="100"
+                step="1"
+                value={isMusicOff ? 0 : musicPercentage}
+                disabled={isMusicOff}
+                onChange={handleMusicVolumeChange}
+                data-testid="music-volume-slider"
+                aria-label={t("options.sound.musicSlider")}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={isMusicOff ? 0 : musicPercentage}
+                className="w-full h-2.5 bg-stone-800 rounded-lg appearance-none cursor-pointer accent-amber-400 disabled:opacity-40 disabled:cursor-not-allowed"
+              />
+              <span
+                data-testid="music-volume-value"
+                className="w-10 text-right font-handwritten text-sm font-bold text-amber-100"
+              >
+                {isMusicOff ? "0%" : `${musicPercentage}%`}
+              </span>
+            </div>
           </div>
         </div>
       )}

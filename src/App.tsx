@@ -13,6 +13,7 @@ import { GameResult } from "./components/GameResult";
 import { Topbar } from "./components/Topbar";
 import { ModalRenderer } from "./components/modals/ModalRenderer";
 import { useGameSounds } from "./hooks/useGameSounds";
+import { useGameMusic } from "./hooks/useGameMusic";
 
 // App orchestrates the current phase of the game
 function App() {
@@ -21,6 +22,7 @@ function App() {
   const myName = useGameStore((state) => state.myName);
 
   useGameSounds();
+  useGameMusic();
 
   const isJoinScreen = !roomId || !myName;
 

@@ -228,7 +228,11 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
   const startDrawing = useCallback(
     (e: React.MouseEvent | React.TouchEvent) => {
       const used = inkUsedRef.current;
-      if (!isMyTurn || (!hasUnlimitedInk && used >= MAX_INK)) return;
+      if (!isMyTurn) return;
+      if (!hasUnlimitedInk && used >= MAX_INK) {
+        playSound("inkEmpty");
+        return;
+      }
       e.preventDefault();
       setIsDrawing(true);
       // A stroke is the one moment the box is worth re-measuring: the layout may
@@ -325,6 +329,7 @@ export const useCanvasDrawing = (): UseCanvasDrawing => {
         setInk(MAX_INK);
         setIsDrawing(false);
         lastPoint.current = null;
+        playSound("inkEmpty");
         return;
       }
 

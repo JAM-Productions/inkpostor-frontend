@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameState";
+import { useSoundStore } from "../store/soundStore";
 import { Users } from "lucide-react";
 import { SERVICE_URL } from "../config";
 
@@ -13,10 +14,12 @@ export const JoinScreen: React.FC = () => {
   const [serviceOnline, setServiceOnline] = useState(false);
   const actions = useGameStore((state) => state.actions);
   const errorMessage = useGameStore((state) => state.errorMessage);
+  const playSound = useSoundStore((state) => state.actions.playSound);
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!playerName || !serviceOnline) return;
+    playSound("click");
     const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
     actions.connectAndCreate(newRoomId, playerName);
   };
@@ -24,8 +27,16 @@ export const JoinScreen: React.FC = () => {
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!playerName || !roomId || !serviceOnline) return;
+    playSound("click");
     actions.connectAndJoin(roomId.toUpperCase(), playerName);
   };
+
+  // A new error banner gets an audible cue; a repeat of the same message does not.
+  useEffect(() => {
+    if (errorMessage) {
+      playSound("error");
+    }
+  }, [errorMessage, playSound]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);

@@ -147,7 +147,10 @@ export const RoleReveal: React.FC = () => {
               <button
                 type="button"
                 data-testid="proceed-to-drawing-btn"
-                onClick={actions.proceedToDrawing}
+                onClick={() => {
+                  playSound("click");
+                  actions.proceedToDrawing();
+                }}
                 className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
               >
                 {isSpoken ? (

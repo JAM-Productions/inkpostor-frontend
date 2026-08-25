@@ -8,11 +8,15 @@ import {
   saveSoundVolume,
   saveSoundMuted,
   DEFAULT_SOUND_VOLUME,
+  DEFAULT_MUSIC_VOLUME,
+  MUSIC_VOLUME_KEY,
+  MUSIC_ENABLED_KEY,
 } from "../../src/store/soundStore";
 import * as soundLib from "../../src/lib/sound";
 
 vi.mock("../../src/lib/sound", () => ({
   playSoundEffect: vi.fn(),
+  setMusicTrack: vi.fn(),
 }));
 
 describe("soundStore", () => {
@@ -121,6 +125,69 @@ describe("soundStore", () => {
       playSound("click");
 
       expect(soundLib.playSoundEffect).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("music", () => {
+    beforeEach(() => {
+      useSoundStore.setState({
+        muted: false,
+        musicEnabled: true,
+        musicVolume: DEFAULT_MUSIC_VOLUME,
+        musicTrack: null,
+      });
+    });
+
+    it("starts the bed the phase asks for", () => {
+      useSoundStore.getState().actions.setMusicTrack("lobby");
+
+      expect(soundLib.setMusicTrack).toHaveBeenCalledWith(
+        "lobby",
+        DEFAULT_MUSIC_VOLUME,
+      );
+    });
+
+    it("keeps its own volume, remembered separately from the effects", () => {
+      useSoundStore.getState().actions.setMusicTrack("tension");
+      useSoundStore.getState().actions.setMusicVolume(0.2);
+
+      expect(localStorage.getItem(MUSIC_VOLUME_KEY)).toBe("0.2");
+      expect(localStorage.getItem(SOUND_VOLUME_KEY)).toBeNull();
+      expect(soundLib.setMusicTrack).toHaveBeenLastCalledWith("tension", 0.2);
+    });
+
+    it("stops the music when its own switch goes off", () => {
+      useSoundStore.getState().actions.setMusicTrack("lobby");
+      useSoundStore.getState().actions.setMusicEnabled(false);
+
+      expect(localStorage.getItem(MUSIC_ENABLED_KEY)).toBe("false");
+      expect(soundLib.setMusicTrack).toHaveBeenLastCalledWith(null, 0);
+    });
+
+    it("stops the music when the master mute goes on, and brings it back", () => {
+      useSoundStore.getState().actions.setMusicTrack("tension");
+
+      useSoundStore.getState().actions.setMuted(true);
+      expect(soundLib.setMusicTrack).toHaveBeenLastCalledWith(null, 0);
+
+      useSoundStore.getState().actions.setMuted(false);
+      expect(soundLib.setMusicTrack).toHaveBeenLastCalledWith(
+        "tension",
+        DEFAULT_MUSIC_VOLUME,
+      );
+    });
+
+    it("remembers the phase's track even while the music is off", () => {
+      useSoundStore.getState().actions.setMusicEnabled(false);
+      useSoundStore.getState().actions.setMusicTrack("tension");
+      expect(soundLib.setMusicTrack).toHaveBeenLastCalledWith(null, 0);
+
+      // Turning it back on picks up whatever phase the game is in by then
+      useSoundStore.getState().actions.setMusicEnabled(true);
+      expect(soundLib.setMusicTrack).toHaveBeenLastCalledWith(
+        "tension",
+        DEFAULT_MUSIC_VOLUME,
+      );
     });
   });
 });

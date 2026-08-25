@@ -373,7 +373,10 @@
         "toggleMute": "Alternar efectos de sonido",
         "volume": "Volumen",
         "volumeSlider": "Control deslizante de volumen",
-        "test": "Probar sonido"
+        "test": "Probar sonido",
+        "music": "Música",
+        "toggleMusic": "Alternar música de fondo",
+        "musicSlider": "Control deslizante de volumen de música"
       }
     },
     "topbar": {

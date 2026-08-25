@@ -2,13 +2,19 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { WordReveal } from "../../src/components/WordReveal";
 import { useGameStore } from "../../src/store/gameState";
+import { useSoundStore } from "../../src/store/soundStore";
 
 vi.mock("../../src/store/gameState", () => ({
   useGameStore: vi.fn(),
 }));
 
+vi.mock("../../src/store/soundStore", () => ({
+  useSoundStore: vi.fn(),
+}));
+
 describe("WordReveal", () => {
   const mockConfirmNewWord = vi.fn();
+  const mockPlaySound = vi.fn();
 
   const createState = (overrides = {}) => ({
     myId: "player-1",
@@ -38,6 +44,10 @@ describe("WordReveal", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    (useSoundStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (selector: (state: Record<string, unknown>) => unknown) =>
+        selector({ actions: { playSound: mockPlaySound } }),
+    );
   });
 
   it("shows the round and keeps the word hidden until held", () => {
@@ -142,5 +152,48 @@ describe("WordReveal", () => {
       screen.queryByRole("button", { name: /start drawing/i }),
     ).not.toBeInTheDocument();
     expect(mockConfirmNewWord).not.toHaveBeenCalled();
+  });
+
+  describe("sound", () => {
+    it("plays the reveal stinger once per hold, not once per event", () => {
+      mockStore();
+      render(<WordReveal />);
+      const card = screen
+        .getByText("Press and hold to reveal")
+        .closest("button")!;
+
+      // A mouse press fires pointerdown and its compatibility mousedown twin.
+      fireEvent.pointerDown(card);
+      fireEvent.mouseDown(card);
+
+      expect(mockPlaySound).toHaveBeenCalledTimes(1);
+      expect(mockPlaySound).toHaveBeenCalledWith("roleReveal");
+    });
+
+    it("plays the stinger again on a second look", () => {
+      mockStore();
+      render(<WordReveal />);
+      const card = screen
+        .getByText("Press and hold to reveal")
+        .closest("button")!;
+
+      fireEvent.pointerDown(card);
+      fireEvent.pointerUp(card);
+      fireEvent.pointerDown(card);
+
+      expect(mockPlaySound).toHaveBeenCalledTimes(2);
+    });
+
+    it("clicks when the word is confirmed", () => {
+      mockStore();
+      render(<WordReveal />);
+      revealCard();
+      mockPlaySound.mockClear();
+
+      fireEvent.click(screen.getByRole("button", { name: /start drawing/i }));
+
+      expect(mockPlaySound).toHaveBeenCalledWith("click");
+      expect(mockConfirmNewWord).toHaveBeenCalled();
+    });
   });
 });

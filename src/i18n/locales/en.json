@@ -373,7 +373,10 @@
         "toggleMute": "Toggle sound effects",
         "volume": "Volume",
         "volumeSlider": "Sound volume slider",
-        "test": "Test Sound"
+        "test": "Test Sound",
+        "music": "Music",
+        "toggleMusic": "Toggle background music",
+        "musicSlider": "Music volume slider"
       }
     },
     "topbar": {

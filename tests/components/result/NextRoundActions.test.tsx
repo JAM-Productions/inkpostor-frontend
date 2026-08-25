@@ -2,13 +2,19 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRoundActions } from "../../../src/components/result/NextRoundActions";
 import { useGameStore, type Player } from "../../../src/store/gameState";
+import { useSoundStore } from "../../../src/store/soundStore";
 
 vi.mock("../../../src/store/gameState", () => ({
   useGameStore: vi.fn(),
 }));
 
+vi.mock("../../../src/store/soundStore", () => ({
+  useSoundStore: vi.fn(),
+}));
+
 describe("NextRoundActions", () => {
   const mockNextRound = vi.fn();
+  const mockPlaySound = vi.fn();
 
   const createPlayer = (overrides: Partial<Player> = {}): Player => ({
     id: "p1",
@@ -41,6 +47,10 @@ describe("NextRoundActions", () => {
       (selector: (state: Record<string, unknown>) => unknown) =>
         selector({ actions: { nextRound: mockNextRound } }),
     );
+    (useSoundStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (selector: (state: Record<string, unknown>) => unknown) =>
+        selector({ actions: { playSound: mockPlaySound } }),
+    );
   });
 
   it("asks for the next round while this player has not", () => {
@@ -48,6 +58,7 @@ describe("NextRoundActions", () => {
 
     fireEvent.click(screen.getByTestId("next-round-btn"));
     expect(mockNextRound).toHaveBeenCalledTimes(1);
+    expect(mockPlaySound).toHaveBeenCalledWith("click");
   });
 
   it("counts only the players a round is waited on", () => {

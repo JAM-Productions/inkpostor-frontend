@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Brush, Eye, Flame } from "lucide-react";
 import { useGameStore } from "../store/gameState";
+import { useSoundStore } from "../store/soundStore";
 
 // Shown at the start of every HOT_WORD round: the word changed but the roles did
 // not, so only the word is revealed here.
@@ -16,6 +17,11 @@ export const WordReveal: React.FC = () => {
   const currentRound = useGameStore((state) => state.currentRound);
   const myId = useGameStore((state) => state.myId);
   const actions = useGameStore((state) => state.actions);
+  const playSound = useSoundStore((state) => state.actions.playSound);
+  // The card is press-and-hold, and a mouse press fires both the pointer event
+  // and its compatibility mouse twin — so the sting is gated on a ref rather
+  // than on `revealed`, which is still stale for the second of the pair.
+  const isRevealedRef = useRef(false);
 
   const me = players.find((p) => p.id === myId);
   const hasConfirmed = me?.hasRevealedNewWord;
@@ -25,8 +31,17 @@ export const WordReveal: React.FC = () => {
   const pendingPlayers = players.filter((p) => !p.isEjected);
 
   const handleReveal = () => {
+    if (!isRevealedRef.current) {
+      isRevealedRef.current = true;
+      playSound("roleReveal");
+    }
     setRevealed(true);
     setIsContinueButtonVisible(true);
+  };
+
+  const handleHide = () => {
+    isRevealedRef.current = false;
+    setRevealed(false);
   };
 
   return (
@@ -56,12 +71,12 @@ export const WordReveal: React.FC = () => {
             type="button"
             data-testid="reveal-word-card"
             onPointerDown={() => handleReveal()}
-            onPointerUp={() => setRevealed(false)}
-            onPointerCancel={() => setRevealed(false)}
-            onPointerLeave={() => setRevealed(false)}
+            onPointerUp={handleHide}
+            onPointerCancel={handleHide}
+            onPointerLeave={handleHide}
             onMouseDown={() => handleReveal()}
-            onMouseUp={() => setRevealed(false)}
-            onMouseLeave={() => setRevealed(false)}
+            onMouseUp={handleHide}
+            onMouseLeave={handleHide}
             className={`w-full aspect-video rounded-[255px_15px_225px_15px/15px_225px_15px_255px] border-3 transition-colors duration-300 flex flex-col items-center justify-center gap-4 cursor-pointer select-none animate-fade-in shadow-[6px_6px_0px_#0c0b09]
               ${
                 revealed
@@ -128,7 +143,10 @@ export const WordReveal: React.FC = () => {
               <button
                 type="button"
                 data-testid="confirm-word-btn"
-                onClick={actions.confirmNewWord}
+                onClick={() => {
+                  playSound("click");
+                  actions.confirmNewWord();
+                }}
                 className="animate-fade-in-up flex items-center justify-center gap-2.5 w-full rounded-[22px_7px_18px_9px] border-3 border-stone-950 bg-amber-300 hover:bg-amber-200 text-stone-950 px-8 py-3.5 font-handwritten font-bold text-xl transition-colors hover:-rotate-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#0c0b09] cursor-pointer shadow-[4px_4px_0px_#0c0b09]"
               >
                 <Brush className="size-6 text-stone-950" />
