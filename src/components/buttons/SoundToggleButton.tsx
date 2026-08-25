@@ -63,16 +63,16 @@ export function SoundToggleButton() {
       {isOpen && (
         <div
           data-testid="sound-popover"
-          className="absolute right-0 mt-2 sm:mt-3 w-64 p-3.5 bg-ink-surface border-3 border-stone-950 rounded-[18px_6px_20px_6px] shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-3 z-50 animate-fade-in-up"
+          className="fixed right-3 top-14 sm:absolute sm:top-full sm:right-0 sm:mt-3 w-72 sm:w-76 max-w-[calc(100vw-1.5rem)] p-3.5 bg-ink-surface border-3 border-stone-950 rounded-[18px_6px_20px_6px] shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-3 z-50 animate-fade-in-up"
         >
           {/* Header & Master Audio Switch */}
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Volume2 className="size-4 text-amber-300" />
-              <span className="font-handwritten font-bold text-base text-white uppercase tracking-wider">
-                {t("options.sound.title")}
-              </span>
-            </div>
+            <span
+              data-testid="sound-popover-title"
+              className="font-handwritten font-bold text-base text-white uppercase tracking-wider whitespace-nowrap"
+            >
+              {t("options.sound.title")}
+            </span>
             <OptionSwitch
               checked={!muted}
               disabled={false}

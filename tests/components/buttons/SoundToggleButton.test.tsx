@@ -123,4 +123,45 @@ describe("SoundToggleButton", () => {
     fireEvent.mouseDown(screen.getByTestId("outside-area"));
     expect(screen.queryByTestId("sound-popover")).not.toBeInTheDocument();
   });
+
+  it("aligns popover to right wall in mobile screens and prevents out-of-bounds overflow", async () => {
+    const user = userEvent.setup();
+    render(<SoundToggleButton />);
+
+    await user.click(screen.getByTestId("sound-toggle-btn"));
+    const popover = screen.getByTestId("sound-popover");
+
+    // Responsive classes: fixed right-3 on mobile to stay within bounds, sm:absolute sm:right-0 on desktop
+    expect(popover.className).toContain("fixed");
+    expect(popover.className).toContain("right-3");
+    expect(popover.className).toContain("max-w-[calc(100vw-1.5rem)]");
+    expect(popover.className).toContain("sm:absolute");
+    expect(popover.className).toContain("sm:right-0");
+  });
+
+  it("does not render an icon in the header next to the title, maintaining only the volume bar icon", async () => {
+    const user = userEvent.setup();
+    render(<SoundToggleButton />);
+
+    await user.click(screen.getByTestId("sound-toggle-btn"));
+    const title = screen.getByTestId("sound-popover-title");
+
+    // Header container contains the title and switch, without any preceding svg icon
+    expect(title.parentElement?.querySelector("svg")).toBeNull();
+
+    // The volume slider row retains its volume icon
+    const slider = screen.getByTestId("sound-volume-slider");
+    const sliderRow = slider.parentElement;
+    expect(sliderRow?.querySelector("svg")).not.toBeNull();
+  });
+
+  it("prevents the sound label from splitting across multiple lines with whitespace-nowrap", async () => {
+    const user = userEvent.setup();
+    render(<SoundToggleButton />);
+
+    await user.click(screen.getByTestId("sound-toggle-btn"));
+    const title = screen.getByTestId("sound-popover-title");
+
+    expect(title).toHaveClass("whitespace-nowrap");
+  });
 });
