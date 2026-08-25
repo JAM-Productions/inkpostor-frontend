@@ -62,7 +62,7 @@ export const SuspectsPopover: React.FC = () => {
       </button>
 
       {isSusListOpen && (
-        <div className="absolute top-full right-0 mt-3 p-3.5 bg-ink-surface rounded-[20px_6px_22px_7px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-2 min-w-60 animate-slide-pop-in z-50">
+        <div className="fixed top-16 right-3 sm:absolute sm:top-full sm:right-0 sm:mt-3 p-3.5 bg-ink-surface rounded-[20px_6px_22px_7px] border-3 border-stone-950 shadow-[6px_6px_0px_#0c0b09] flex flex-col gap-2 min-w-60 animate-slide-pop-in z-50">
           <div className="text-sm font-handwritten font-bold text-amber-300 uppercase tracking-wider mb-1 px-1">
             {t("canvas.suspects")}
           </div>
