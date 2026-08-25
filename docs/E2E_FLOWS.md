@@ -410,27 +410,27 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    subgraph Topbar & Quick Toggle
-        HostStart["Host Creates Room"] --> TopbarAudio["Topbar Speaker Button (Mute/Unmute)"]
-        TopbarAudio --> QuickMute["Click Mutes Audio & Persists in LocalStorage"]
+    subgraph Topbar Sound Controls
+        HostStart["Host Creates Room"] --> TopbarAudio["Topbar Speaker Button"]
+        TopbarAudio --> OpenPopover["Click Opens Sound & Volume Popover"]
+        OpenPopover --> Slider["Adjust Volume Slider (0% - 100%)"]
+        OpenPopover --> TestBtn["Click 'Test Sound' Audio Preview"]
+        OpenPopover --> MasterSwitch["Toggle Sound Effects Switch (ON/OFF)"]
+        MasterSwitch --> MuteDisable["Off: Volume Slider & Test Button Disabled"]
     end
 
-    subgraph Options Modal Sound Controls
-        OpenOptions["Open Options Modal"] --> SoundSec["Sound & Volume Section Rendered"]
-        SoundSec --> Slider["Adjust Volume Slider (0% - 100%)"]
-        SoundSec --> TestBtn["Click 'Test Sound' Audio Preview"]
-        SoundSec --> ModalMute["Toggle Mute Switch in Modal"]
-        ModalMute --> DisableSlider["Volume Slider & Test Button Disabled"]
+    subgraph Pure Game Options Separation
+        OpenGameOptions["Open Game Options Modal"] --> CheckNoSound["Pure Game Options (No Sound Section Mixed In)"]
     end
 
     subgraph Multi-Player & Reload Persistence
         PageReload["Reload Page"] --> RestoreSettings["Restores Volume & Mute State from LocalStorage"]
-        GuestJoin["Player 2 (Guest) Joins Room"] --> GuestOptions["Guest Opens Options Modal"]
-        GuestOptions --> GuestIndependentAudio["Guest Configures Personal Volume & Audio Independently"]
+        GuestJoin["Player 2 (Guest) Joins Room"] --> GuestTopbar["Guest Clicks Topbar Speaker Button"]
+        GuestTopbar --> GuestIndependentAudio["Guest Configures Personal Volume Independently via Popover"]
     end
 
-    QuickMute --> OpenOptions
-    DisableSlider --> PageReload
+    MuteDisable --> OpenGameOptions
+    CheckNoSound --> PageReload
     RestoreSettings --> GuestJoin
 ```
 

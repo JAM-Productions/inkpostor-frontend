@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Sound and Volume Options E2E Suite", () => {
-  test("Host and guest can toggle mute, adjust volume, and persist audio preferences", async ({
+  test("Host and guest can toggle mute, adjust volume, and persist audio preferences via topbar popover", async ({
     page,
     browser,
   }) => {
@@ -19,41 +19,18 @@ test.describe("Sound and Volume Options E2E Suite", () => {
       { timeout: 15000 },
     );
 
-    // 2. Test Topbar Sound Toggle button
+    // 2. Open Sound Settings popover from topbar
     const topbarSoundBtn = page.locator('[data-testid="sound-toggle-btn"]');
     await expect(topbarSoundBtn).toBeVisible();
     await expect(topbarSoundBtn).toHaveAttribute(
       "aria-label",
-      /mute sound|silenciar/i,
+      /sound settings|ajustes de sonido|ajustos de so/i,
     );
 
-    // Click topbar sound toggle to mute
     await topbarSoundBtn.click();
-    await expect(topbarSoundBtn).toHaveAttribute(
-      "aria-label",
-      /unmute sound|activar/i,
-    );
 
-    // Click topbar sound toggle to unmute
-    await topbarSoundBtn.click();
-    await expect(topbarSoundBtn).toHaveAttribute(
-      "aria-label",
-      /mute sound|silenciar/i,
-    );
-
-    // 3. Open Options modal
-    const openOptionsBtn = page
-      .locator(
-        'button[aria-label*="Options"i], button[aria-label*="Opciones"i], button:has(svg.lucide-settings)',
-      )
-      .first();
-    await openOptionsBtn.click();
-
-    const optionsDialog = page.getByRole("dialog");
-    await expect(optionsDialog).toBeVisible({ timeout: 10000 });
-
-    const soundSection = page.locator('[data-testid="sound-section"]');
-    await expect(soundSection).toBeVisible();
+    const soundPopover = page.locator('[data-testid="sound-popover"]');
+    await expect(soundPopover).toBeVisible();
 
     const volumeSlider = page.locator('[data-testid="sound-volume-slider"]');
     await expect(volumeSlider).toBeVisible();
@@ -70,18 +47,39 @@ test.describe("Sound and Volume Options E2E Suite", () => {
     const volumeValue = page.locator('[data-testid="sound-volume-value"]');
     await expect(volumeValue).toHaveText("40%");
 
-    // Toggle mute switch in options modal
-    const muteSwitch = soundSection.locator('button[role="switch"]').first();
-    await expect(muteSwitch).toHaveAttribute("aria-checked", "false");
-    await muteSwitch.click();
-    await expect(muteSwitch).toHaveAttribute("aria-checked", "true");
+    // Toggle master sound switch (ON -> OFF)
+    const soundSwitch = soundPopover.locator('button[role="switch"]').first();
+    await expect(soundSwitch).toHaveAttribute("aria-checked", "true");
+    await soundSwitch.click();
+    await expect(soundSwitch).toHaveAttribute("aria-checked", "false");
 
     // Slider and test button should now be disabled
     await expect(volumeSlider).toBeDisabled();
     await expect(testSoundBtn).toBeDisabled();
     await expect(volumeValue).toHaveText("0%");
 
-    // Close options modal
+    // Unmute sound
+    await soundSwitch.click();
+    await expect(soundSwitch).toHaveAttribute("aria-checked", "true");
+    await expect(volumeSlider).toBeEnabled();
+    await expect(volumeValue).toHaveText("40%");
+
+    // Close sound popover
+    await topbarSoundBtn.click();
+    await expect(soundPopover).toBeHidden();
+
+    // 3. Verify Options Modal is pure game options (no sound section inside)
+    const openOptionsBtn = page
+      .locator(
+        'button[aria-label*="Options"i], button[aria-label*="Opciones"i], button:has(svg.lucide-settings)',
+      )
+      .first();
+    await openOptionsBtn.click();
+
+    const optionsDialog = page.getByRole("dialog");
+    await expect(optionsDialog).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="sound-section"]')).toHaveCount(0);
+
     const closeBtn = page.locator('[data-testid="close-modal-button"]').first();
     await closeBtn.click();
     await expect(optionsDialog).toBeHidden({ timeout: 10000 });
@@ -97,28 +95,20 @@ test.describe("Sound and Volume Options E2E Suite", () => {
     const storedVolume = await page.evaluate(() =>
       localStorage.getItem("inkpostor_sound_volume"),
     );
-    expect(storedMuted).toBe("true");
+    expect(storedMuted).toBe("false");
     expect(storedVolume).toBe("0.4");
 
     await page.reload();
     await expect(topbarSoundBtn).toBeVisible();
-    await expect(topbarSoundBtn).toHaveAttribute(
-      "aria-label",
-      /unmute sound|activar/i,
-    );
 
-    // Unmute via topbar
+    // Open sound popover to verify value preserved after reload
     await topbarSoundBtn.click();
-    await expect(topbarSoundBtn).toHaveAttribute(
-      "aria-label",
-      /mute sound|silenciar/i,
-    );
-    const reloadedMuted = await page.evaluate(() =>
-      localStorage.getItem("inkpostor_sound_muted"),
-    );
-    expect(reloadedMuted).toBe("false");
+    await expect(soundPopover).toBeVisible();
+    await expect(volumeValue).toHaveText("40%");
+    await topbarSoundBtn.click();
+    await expect(soundPopover).toBeHidden();
 
-    // 5. Verify a second (guest) player also has functional sound controls
+    // 5. Verify a second (guest) player also has functional independent sound controls
     const guestContext = await browser.newContext();
     const guestPage = await guestContext.newPage();
     await guestPage.goto("/");
@@ -137,22 +127,15 @@ test.describe("Sound and Volume Options E2E Suite", () => {
       guestPage.locator('[data-testid="room-code-display"]'),
     ).toBeVisible({ timeout: 15000 });
 
-    // Guest opens options modal
-    const guestOptionsBtn = guestPage
-      .locator(
-        'button[aria-label*="Options"i], button[aria-label*="Opciones"i], button:has(svg.lucide-settings)',
-      )
-      .first();
-    await guestOptionsBtn.click();
+    // Guest opens sound settings from topbar
+    const guestSoundBtn = guestPage.locator('[data-testid="sound-toggle-btn"]');
+    await expect(guestSoundBtn).toBeVisible();
+    await guestSoundBtn.click();
 
-    const guestOptionsDialog = guestPage.getByRole("dialog");
-    await expect(guestOptionsDialog).toBeVisible({ timeout: 10000 });
-
-    // Guest can adjust sound options independently
-    const guestSoundSection = guestPage.locator(
-      '[data-testid="sound-section"]',
+    const guestSoundPopover = guestPage.locator(
+      '[data-testid="sound-popover"]',
     );
-    await expect(guestSoundSection).toBeVisible();
+    await expect(guestSoundPopover).toBeVisible();
 
     const guestVolumeSlider = guestPage.locator(
       '[data-testid="sound-volume-slider"]',

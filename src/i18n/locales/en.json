@@ -370,13 +370,14 @@
         "title": "Sound & Volume",
         "description": "Adjust game sound effects and master volume.",
         "mute": "Mute Sounds",
-        "toggleMute": "Toggle sound mute",
+        "toggleMute": "Toggle sound effects",
         "volume": "Volume",
         "volumeSlider": "Sound volume slider",
         "test": "Test Sound"
       }
     },
     "topbar": {
+      "soundSettings": "Sound settings",
       "mute": "Mute sound",
       "unmute": "Unmute sound"
     }

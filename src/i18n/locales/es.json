@@ -370,13 +370,14 @@
         "title": "Sonido y Volumen",
         "description": "Ajusta los efectos de sonido del juego y el volumen general.",
         "mute": "Silenciar sonidos",
-        "toggleMute": "Alternar silenciar sonidos",
+        "toggleMute": "Alternar efectos de sonido",
         "volume": "Volumen",
         "volumeSlider": "Control deslizante de volumen",
         "test": "Probar sonido"
       }
     },
     "topbar": {
+      "soundSettings": "Ajustes de sonido",
       "mute": "Silenciar sonido",
       "unmute": "Activar sonido"
     }
