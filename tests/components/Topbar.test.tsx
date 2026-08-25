@@ -23,6 +23,10 @@ vi.mock("../../src/components/buttons/ReturnHomeButton", () => ({
   ReturnHomeButton: () => <div data-testid="return-home-button" />,
 }));
 
+vi.mock("../../src/components/canvas/SuspectsPopover", () => ({
+  SuspectsPopover: () => <div data-testid="suspects-popover" />,
+}));
+
 vi.mock("../../src/components/buttons/RoomCodeButton", () => ({
   RoomCodeButton: ({ roomId }: { roomId: string }) => (
     <div data-testid="room-code-button">{roomId}</div>
@@ -53,6 +57,19 @@ describe("Topbar", () => {
 
     expect(screen.getByTestId("room-code-button")).toHaveTextContent("TESTX9");
     expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
+  });
+
+  it("shows the suspects popover only while drawing", () => {
+    render(<Topbar />);
+    expect(screen.queryByTestId("suspects-popover")).not.toBeInTheDocument();
+
+    (useGameStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (selector: (state: typeof mockState) => unknown) =>
+        selector({ ...mockState, phase: "DRAWING" }),
+    );
+
+    render(<Topbar />);
+    expect(screen.getByTestId("suspects-popover")).toBeInTheDocument();
   });
 
   it("shows the language switcher instead of the room code in the lobby", () => {

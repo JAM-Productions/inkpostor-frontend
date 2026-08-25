@@ -8,13 +8,12 @@ import {
 } from "../../lib/playerColors";
 import { EmergencyAlertButton } from "../buttons/EmergencyAlertButton";
 import { ImpostorGuessControl } from "./ImpostorGuessControl";
-import { SuspectsPopover } from "./SuspectsPopover";
 import { TurnCountdown } from "./TurnCountdown";
 
 /**
  * Banner at the top of the drawing screen. Shows whose turn it is, the per-turn
- * action buttons (guess word, suspects list, emergency alert), the countdown
- * clock and the "Done" button used by the active player to end their turn.
+ * action buttons (guess word, emergency alert), the countdown clock and the
+ * "Done" button used by the active player to end their turn.
  *
  * Memoized and prop-free: it takes everything from the store, so a pointer move
  * on the canvas below cannot drag it into a re-render.
@@ -76,7 +75,6 @@ const CanvasHeaderComponent: React.FC = () => {
       <div className="flex items-center gap-2 sm:gap-5 shrink-0">
         <div className="flex items-center gap-1.5">
           <ImpostorGuessControl />
-          <SuspectsPopover />
           {/* Alert Dropdown */}
           {!isMyTurn && <EmergencyAlertButton />}
         </div>

@@ -67,19 +67,15 @@ export const VotingScreen: React.FC = () => {
       {/* Background ambient light */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 blur-[130px] rounded-full opacity-25 pointer-events-none bg-red-950" />
 
-      <div className="z-10 w-full max-w-2xl space-y-6 pt-16">
-        <div className="text-center space-y-2 mb-2">
+      <div className="z-10 w-full max-w-2xl space-y-6 pt-9 sm:pt-16">
+        <div className="text-center space-y-2 mb-6">
           <h1 className="text-3xl sm:text-5xl text-white uppercase font-rubik-wet-paint tracking-wide">
             {t("voting.title")}
           </h1>
           <p className="text-amber-200/80 text-xl sm:text-2xl font-handwritten font-bold mb-4">
             {t("voting.round", { round: currentRound })}
           </p>
-          <p
-            className={`text-amber-200/60 text-lg font-handwritten font-bold tracking-wider ${
-              hasVoted ? "invisible" : "visible"
-            }`}
-          >
+          <p className="text-amber-200/60 text-lg font-handwritten font-bold tracking-wider">
             {t("voting.whoIsInkpostor")}
           </p>
         </div>

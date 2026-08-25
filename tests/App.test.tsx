@@ -44,6 +44,11 @@ vi.mock("../src/components/LanguageSwitcher", () => ({
     <div data-testid="language-switcher">Language Switcher</div>
   ),
 }));
+vi.mock("../src/components/canvas/SuspectsPopover", () => ({
+  SuspectsPopover: () => (
+    <div data-testid="suspects-popover">Suspects Popover</div>
+  ),
+}));
 vi.mock("../src/components/EndGameButton", () => ({
   EndGameButton: () => <div data-testid="end-game-button">End Game Button</div>,
 }));

@@ -1,5 +1,6 @@
 import { useGameStore } from "../store/gameState";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { SuspectsPopover } from "./canvas/SuspectsPopover";
 import { EndGameButton } from "./buttons/EndGameButton";
 import { ExitGameButton } from "./buttons/ExitGameButton";
 import { RoomCodeButton } from "./buttons/RoomCodeButton";
@@ -15,6 +16,7 @@ export function Topbar() {
   const showLanguageSwitcher = isJoinScreen || phase === "LOBBY";
   const showRoomCode = !isJoinScreen && phase !== "LOBBY" && !gameEnded;
   const showReturnHome = !isJoinScreen && phase === "RESULTS" && gameEnded;
+  const showSuspects = !isJoinScreen && phase === "DRAWING" && !gameEnded;
   const hasVisibleControls =
     showLanguageSwitcher || showReturnHome || (!isJoinScreen && !gameEnded);
 
@@ -39,6 +41,7 @@ export function Topbar() {
         <ReturnHomeButton />
       </div>
       <div className="fixed top-3 right-3 sm:top-4 sm:right-4 flex items-center justify-between gap-3 sm:gap-4 z-50">
+        {showSuspects && <SuspectsPopover />}
         <EndGameButton />
         {showLanguageSwitcher && <LanguageSwitcher />}
       </div>
