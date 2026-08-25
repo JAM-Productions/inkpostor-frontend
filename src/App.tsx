@@ -12,12 +12,15 @@ import { ImpostorFinalGuess } from "./components/ImpostorFinalGuess";
 import { GameResult } from "./components/GameResult";
 import { Topbar } from "./components/Topbar";
 import { ModalRenderer } from "./components/modals/ModalRenderer";
+import { useGameSounds } from "./hooks/useGameSounds";
 
 // App orchestrates the current phase of the game
 function App() {
   const phase = useGameStore((state) => state.phase);
   const roomId = useGameStore((state) => state.roomId);
   const myName = useGameStore((state) => state.myName);
+
+  useGameSounds();
 
   const isJoinScreen = !roomId || !myName;
 

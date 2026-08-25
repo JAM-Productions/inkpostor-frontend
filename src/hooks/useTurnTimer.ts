@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useGameStore } from "../store/gameState";
 import { useTurnTimerStore } from "../store/turnTimerStore";
+import { useSoundStore } from "../store/soundStore";
 
 /**
  * Drives the countdown for the current drawing turn.
@@ -41,7 +42,14 @@ export const useTurnTimer = (): void => {
         return;
       }
 
-      setTimeLeftMs(remaining - 100);
+      const nextRemaining = remaining - 100;
+      const prevSec = Math.ceil(remaining / 1000);
+      const nextSec = Math.ceil(nextRemaining / 1000);
+      if (prevSec !== nextSec && nextSec <= 5 && nextSec >= 1) {
+        useSoundStore.getState().actions.playSound("timerTick");
+      }
+
+      setTimeLeftMs(nextRemaining);
     }, 100);
 
     return () => clearInterval(interval);

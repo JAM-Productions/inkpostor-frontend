@@ -12,8 +12,9 @@ Inkpostor is a creative social deduction game. Players are given a secret word a
 - **Tooling:** Vite
 - **Styling:** Tailwind CSS + Lucide Icons
 - **State Management:** Zustand
+- **Audio & Sound:** Web Audio API Procedural Synthesizer
 - **Real-time Communication:** Socket.IO Client
-- **Testing:** Vitest, React Testing Library
+- **Testing:** Vitest, React Testing Library, Playwright
 - **Linting & Formatting:** ESLint, Oxlint, Prettier
 
 ## Running Locally

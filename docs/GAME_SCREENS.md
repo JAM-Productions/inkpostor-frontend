@@ -29,6 +29,9 @@ Lobby view with multiple connected players ready to start the game.
 Host options modal for configuring round timers, impostor counts, and gameplay rules.
 ![Modal Options Lobby](./screens/1.2%20Modal%20Options%20Lobby.png)
 
+### Sound & Volume Popover
+Convenient popover accessible from the Topbar speaker icon on any screen throughout the game. Allows all players (hosts and guests) to customize master sound effects volume (0%–100%), toggle sound effects on/off, and preview audio with the "Test Sound" button. Audio preferences are saved locally in localStorage without interrupting the match.
+
 ### Advanced Options Modal
 Extended gameplay options including guess attempt limits and canvas clearing options.
 ![Modal Options 2 Lobby](./screens/1.2.2%20Modal%20Options%202%20Lobby.png)

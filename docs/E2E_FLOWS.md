@@ -46,6 +46,7 @@ This document provides visual Mermaid flow diagrams for all 37 End-to-End (E2E) 
    - `timer-expirations.spec.ts`
    - `validations-errors.spec.ts`
    - `i18n-language.spec.ts`
+   - `sound-options.spec.ts`
 7. [Match Simulations](#7-match-simulations)
    - `real-gameplay-matches.spec.ts`
    - `extended-real-gameplay.spec.ts`
@@ -417,6 +418,34 @@ flowchart TD
 ```mermaid
 flowchart TD
     ToggleLang["User Toggles Language Selector (EN -> ES -> CA)"] --> Dynamici18n["UI Text Updates Instantly Across All Screens"]
+```
+
+### `sound-options.spec.ts` — Sound Effects & Volume Option Controls
+
+```mermaid
+flowchart TD
+    subgraph Topbar Sound Controls
+        HostStart["Host Creates Room"] --> TopbarAudio["Topbar Speaker Button"]
+        TopbarAudio --> OpenPopover["Click Opens Sound & Volume Popover"]
+        OpenPopover --> Slider["Adjust Volume Slider (0% - 100%)"]
+        OpenPopover --> TestBtn["Click 'Test Sound' Audio Preview"]
+        OpenPopover --> MasterSwitch["Toggle Sound Effects Switch (ON/OFF)"]
+        MasterSwitch --> MuteDisable["Off: Volume Slider & Test Button Disabled"]
+    end
+
+    subgraph Pure Game Options Separation
+        OpenGameOptions["Open Game Options Modal"] --> CheckNoSound["Pure Game Options (No Sound Section Mixed In)"]
+    end
+
+    subgraph Multi-Player & Reload Persistence
+        PageReload["Reload Page"] --> RestoreSettings["Restores Volume & Mute State from LocalStorage"]
+        GuestJoin["Player 2 (Guest) Joins Room"] --> GuestTopbar["Guest Clicks Topbar Speaker Button"]
+        GuestTopbar --> GuestIndependentAudio["Guest Configures Personal Volume Independently via Popover"]
+    end
+
+    MuteDisable --> OpenGameOptions
+    CheckNoSound --> PageReload
+    RestoreSettings --> GuestJoin
 ```
 
 ---

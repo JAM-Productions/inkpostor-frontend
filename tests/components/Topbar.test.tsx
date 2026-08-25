@@ -27,6 +27,10 @@ vi.mock("../../src/components/canvas/SuspectsPopover", () => ({
   SuspectsPopover: () => <div data-testid="suspects-popover" />,
 }));
 
+vi.mock("../../src/components/buttons/SoundToggleButton", () => ({
+  SoundToggleButton: () => <div data-testid="sound-toggle-btn" />,
+}));
+
 vi.mock("../../src/components/buttons/RoomCodeButton", () => ({
   RoomCodeButton: ({ roomId }: { roomId: string }) => (
     <div data-testid="room-code-button">{roomId}</div>
@@ -56,6 +60,7 @@ describe("Topbar", () => {
     render(<Topbar />);
 
     expect(screen.getByTestId("room-code-button")).toHaveTextContent("TESTX9");
+    expect(screen.getByTestId("sound-toggle-btn")).toBeInTheDocument();
     expect(screen.queryByTestId("language-switcher")).not.toBeInTheDocument();
   });
 
@@ -81,6 +86,7 @@ describe("Topbar", () => {
     render(<Topbar />);
 
     expect(screen.getByTestId("language-switcher")).toBeInTheDocument();
+    expect(screen.getByTestId("sound-toggle-btn")).toBeInTheDocument();
     expect(screen.queryByTestId("room-code-button")).not.toBeInTheDocument();
   });
 
