@@ -126,11 +126,17 @@ describe("CanvasHeader", () => {
     expect(screen.getByText("12.3")).toBeInTheDocument();
   });
 
-  it("hides the suspects and alert controls on my turn", () => {
+  it("hides the alert control on my turn", () => {
     mockStore();
     render(<CanvasHeader />);
 
-    expect(screen.queryByLabelText("Players")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Alert")).not.toBeInTheDocument();
+  });
+
+  it("no longer hosts the suspects popover, which lives in the topbar", () => {
+    mockStore({ currentTurnPlayerId: "socket-456" });
+    render(<CanvasHeader />);
+
+    expect(screen.queryByLabelText("Players")).not.toBeInTheDocument();
   });
 });

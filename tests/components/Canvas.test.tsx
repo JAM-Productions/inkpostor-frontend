@@ -220,25 +220,6 @@ describe("Canvas", () => {
     expect(screen.getByLabelText("Undo last stroke")).toBeInTheDocument();
   });
 
-  it("allows marking a player as suspicious from the player list popover", () => {
-    mockStore({
-      myId: "socket-123",
-      currentTurnPlayerId: "socket-456",
-    });
-
-    render(<Canvas />);
-
-    // Open the players list popover
-    const playersBtn = screen.getByLabelText("Players");
-    fireEvent.click(playersBtn);
-
-    // Find Player 2 in the list and click it
-    const player2Btn = screen.getByTitle("Player 2");
-    fireEvent.click(player2Btn);
-
-    expect(mockToggleSus).toHaveBeenCalledWith("socket-456");
-  });
-
   it("displays big Out of Ink message when ink is exhausted", () => {
     mockStore();
 
