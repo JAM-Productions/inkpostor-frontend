@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {
   playSoundEffect,
   setMusicTrack,
+  unlockAudio,
   type MusicTrack,
   type SoundEffect,
 } from "../lib/sound";
@@ -131,6 +132,7 @@ export const useSoundStore = create<SoundState>()((set, get) => {
       playSound: (effect: SoundEffect) => {
         const { muted, volume } = get();
         if (muted || volume <= 0) return;
+        unlockAudio();
         playSoundEffect(effect, volume);
       },
       setMusicVolume: (volume: number) => {

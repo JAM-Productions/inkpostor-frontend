@@ -7,19 +7,146 @@
  */
 
 const SILENCE = 0.0001;
+const SILENT_WAV_URI =
+  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
 
 let audioCtx: AudioContext | null = null;
 let noiseBuffer: AudioBuffer | null = null;
 let reverbNode: ConvolverNode | null = null;
+let isAudioUnlocked = false;
+
+/** Configures the WebKit AudioSession category to playback (iOS 15+). */
+export function enableAudioSessionPlayback(): void {
+  if (typeof navigator !== "undefined" && "audioSession" in navigator) {
+    try {
+      (
+        navigator as unknown as { audioSession: { type: string } }
+      ).audioSession.type = "playback";
+    } catch {
+      // Gracefully ignore if restricted or unsupported
+    }
+  }
+}
+
+/** Resumes an AudioContext if it is in suspended or interrupted state. */
+export function resumeAudioContext(
+  ctx: AudioContext | null = audioCtx,
+): Promise<void> {
+  if (!ctx) return Promise.resolve();
+  if (ctx.state === "suspended" || (ctx.state as string) === "interrupted") {
+    return ctx.resume().catch(() => {});
+  }
+  return Promise.resolve();
+}
+
+/**
+ * Unlocks the Web Audio and HTML5 audio pipeline on iOS Safari / PWA.
+ * Must be callable from user interaction events (touchstart, pointerdown, click).
+ */
+export function unlockAudio(): void {
+  if (typeof window === "undefined") return;
+
+  enableAudioSessionPlayback();
+
+  const ctx = getAudioContext();
+  if (ctx) {
+    void resumeAudioContext(ctx);
+
+    // Warm up Web Audio buffer pipeline
+    try {
+      const buffer = ctx.createBuffer(1, 1, 22050);
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.start(0);
+    } catch {
+      // Ignore
+    }
+  }
+
+  if (isAudioUnlocked) return;
+  isAudioUnlocked = true;
+
+  // Play a tiny silent HTML5 audio element to switch the process-level
+  // AVAudioSession from Ambient to Playback channel on iOS Safari/PWA.
+  try {
+    const audio = document.createElement("audio");
+    audio.setAttribute("x-webkit-airplay", "deny");
+    audio.setAttribute("disableRemotePlayback", "true");
+    audio.preload = "auto";
+    audio.src = SILENT_WAV_URI;
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {});
+    }
+  } catch {
+    // Ignore
+  }
+}
+
+/**
+ * Registers global capture-phase listeners for the first user interaction
+ * to ensure AudioContext and iOS AVAudioSession are immediately unmuted.
+ */
+export function initAudioListeners(): () => void {
+  if (typeof window === "undefined" || typeof document === "undefined") {
+    return () => {};
+  }
+
+  const userEvents = [
+    "touchstart",
+    "touchend",
+    "pointerdown",
+    "pointerup",
+    "mousedown",
+    "keydown",
+    "click",
+  ] as const;
+
+  const handleUserInteraction = () => {
+    unlockAudio();
+  };
+
+  const handleVisibilityOrFocus = () => {
+    if (!document.hidden) {
+      void resumeAudioContext();
+    }
+  };
+
+  userEvents.forEach((evt) => {
+    window.addEventListener(evt, handleUserInteraction, {
+      capture: true,
+      passive: true,
+    });
+  });
+
+  document.addEventListener("visibilitychange", handleVisibilityOrFocus);
+  window.addEventListener("pageshow", handleVisibilityOrFocus);
+  window.addEventListener("focus", handleVisibilityOrFocus);
+
+  return () => {
+    userEvents.forEach((evt) => {
+      window.removeEventListener(evt, handleUserInteraction, {
+        capture: true,
+      });
+    });
+    document.removeEventListener("visibilitychange", handleVisibilityOrFocus);
+    window.removeEventListener("pageshow", handleVisibilityOrFocus);
+    window.removeEventListener("focus", handleVisibilityOrFocus);
+  };
+}
 
 export function resetAudioContextForTesting(): void {
   audioCtx = null;
   noiseBuffer = null;
   reverbNode = null;
+  isAudioUnlocked = false;
 }
 
-function getAudioContext(): AudioContext | null {
+export function getAudioContext(): AudioContext | null {
   if (typeof window === "undefined") return null;
+
+  enableAudioSessionPlayback();
 
   const AudioCtxClass =
     window.AudioContext ||
@@ -36,9 +163,7 @@ function getAudioContext(): AudioContext | null {
     }
   }
 
-  if (audioCtx.state === "suspended") {
-    audioCtx.resume().catch(() => {});
-  }
+  void resumeAudioContext(audioCtx);
 
   return audioCtx;
 }
@@ -155,7 +280,7 @@ function applyFilter(
   const filter = bus.ctx.createBiquadFilter();
   filter.type = options.type;
   filter.frequency.setValueAtTime(options.freq, t0);
-  if (options.sweepTo) {
+  if (options.sweepTo && options.sweepTo > 0) {
     filter.frequency.exponentialRampToValueAtTime(
       options.sweepTo,
       t0 + duration,
@@ -170,13 +295,14 @@ function applyFilter(
 
 function envelope(bus: Bus, options: VoiceOptions, t0: number): GainNode {
   const gain = bus.ctx.createGain();
-  const peak = options.peak ?? 0.3;
+  const peak = Math.max(SILENCE, options.peak ?? 0.3);
   const attack = options.swell
     ? options.duration * 0.8
     : Math.min(options.attack ?? 0.004, options.duration * 0.5);
-  gain.gain.setValueAtTime(SILENCE, t0);
-  gain.gain.exponentialRampToValueAtTime(peak, t0 + attack);
-  gain.gain.exponentialRampToValueAtTime(SILENCE, t0 + options.duration);
+  const safeT0 = Math.max(bus.ctx.currentTime, t0);
+  gain.gain.setValueAtTime(SILENCE, safeT0);
+  gain.gain.exponentialRampToValueAtTime(peak, safeT0 + attack);
+  gain.gain.exponentialRampToValueAtTime(SILENCE, safeT0 + options.duration);
   return gain;
 }
 
@@ -196,7 +322,10 @@ function route(bus: Bus, node: AudioNode, reverbAmount = 0): void {
 
 export function tone(bus: Bus, options: ToneOptions): void {
   const { ctx } = bus;
-  const t0 = options.at ?? ctx.currentTime + (options.start ?? 0);
+  const t0 = Math.max(
+    ctx.currentTime,
+    options.at ?? ctx.currentTime + (options.start ?? 0),
+  );
   const end = t0 + options.duration;
 
   const osc = ctx.createOscillator();
@@ -205,7 +334,7 @@ export function tone(bus: Bus, options: ToneOptions): void {
   const slideTo =
     options.slideTo ??
     (options.slideRatio ? options.freq * options.slideRatio : undefined);
-  if (slideTo) {
+  if (slideTo && slideTo > 0) {
     osc.frequency.exponentialRampToValueAtTime(slideTo, end);
   }
   options.sweep?.forEach(([offset, freq]) => {
@@ -241,7 +370,10 @@ export function noise(bus: Bus, options: NoiseOptions): void {
   const buffer = getNoiseBuffer(ctx);
   if (!buffer) return;
 
-  const t0 = options.at ?? ctx.currentTime + (options.start ?? 0);
+  const t0 = Math.max(
+    ctx.currentTime,
+    options.at ?? ctx.currentTime + (options.start ?? 0),
+  );
   const source = ctx.createBufferSource();
   source.buffer = buffer;
   if (options.rate !== undefined) {

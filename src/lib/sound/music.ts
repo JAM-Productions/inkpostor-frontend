@@ -164,13 +164,23 @@ function fadeOutCurrent(): void {
     const closing = bus;
     try {
       const now = closing.ctx.currentTime;
-      closing.out.gain.cancelScheduledValues?.(now);
-      closing.out.gain.setValueAtTime(closing.out.gain.value, now);
+      if (typeof closing.out.gain.cancelAndHoldAtTime === "function") {
+        closing.out.gain.cancelAndHoldAtTime(now);
+      } else if (typeof closing.out.gain.cancelScheduledValues === "function") {
+        closing.out.gain.cancelScheduledValues(now);
+        closing.out.gain.setValueAtTime(closing.out.gain.value, now);
+      }
       closing.out.gain.linearRampToValueAtTime(0, now + FADE);
       // Its own bus is thrown away, so notes already queued on it cannot come
       // back when the next track fades in.
       setTimeout(
-        () => closing.out.disconnect(),
+        () => {
+          try {
+            closing.out.disconnect();
+          } catch {
+            // Ignore
+          }
+        },
         (FADE + SCHEDULE_AHEAD) * 1000,
       );
     } catch {
@@ -222,11 +232,13 @@ export function setMusicTrack(track: MusicTrack | null, level: number): void {
   current = track;
   try {
     const now = next.ctx.currentTime;
-    next.out.gain.setValueAtTime(0, now);
-    next.out.gain.linearRampToValueAtTime(
-      volume * TRACKS[track].level,
-      now + FADE,
-    );
+    const targetVolume = volume * TRACKS[track].level;
+    if (next.ctx.state === "running") {
+      next.out.gain.setValueAtTime(0, now);
+      next.out.gain.linearRampToValueAtTime(targetVolume, now + FADE);
+    } else {
+      next.out.gain.setValueAtTime(targetVolume, now);
+    }
     nextLoopAt = now + 0.05;
     schedule();
     timer = setInterval(schedule, TICK_MS);
@@ -241,8 +253,12 @@ export function setMusicVolume(level: number): void {
   if (!bus || !current) return;
   try {
     const now = bus.ctx.currentTime;
-    bus.out.gain.cancelScheduledValues?.(now);
-    bus.out.gain.setValueAtTime(bus.out.gain.value, now);
+    if (typeof bus.out.gain.cancelAndHoldAtTime === "function") {
+      bus.out.gain.cancelAndHoldAtTime(now);
+    } else if (typeof bus.out.gain.cancelScheduledValues === "function") {
+      bus.out.gain.cancelScheduledValues(now);
+      bus.out.gain.setValueAtTime(bus.out.gain.value, now);
+    }
     bus.out.gain.linearRampToValueAtTime(
       volume * TRACKS[current].level,
       now + 0.2,
