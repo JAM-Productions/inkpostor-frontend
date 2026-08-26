@@ -17,6 +17,7 @@ import * as soundLib from "../../src/lib/sound";
 vi.mock("../../src/lib/sound", () => ({
   playSoundEffect: vi.fn(),
   setMusicTrack: vi.fn(),
+  unlockAudio: vi.fn(),
 }));
 
 describe("soundStore", () => {
@@ -101,10 +102,11 @@ describe("soundStore", () => {
       expect(localStorage.getItem(SOUND_MUTED_KEY)).toBe("false");
     });
 
-    it("plays sound when not muted and volume > 0", () => {
+    it("plays sound and unlocks audio when not muted and volume > 0", () => {
       const { playSound } = useSoundStore.getState().actions;
       playSound("click");
 
+      expect(soundLib.unlockAudio).toHaveBeenCalledTimes(1);
       expect(soundLib.playSoundEffect).toHaveBeenCalledWith(
         "click",
         DEFAULT_SOUND_VOLUME,

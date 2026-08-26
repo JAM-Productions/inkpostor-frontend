@@ -14,6 +14,7 @@ import { Topbar } from "./components/Topbar";
 import { ModalRenderer } from "./components/modals/ModalRenderer";
 import { useGameSounds } from "./hooks/useGameSounds";
 import { useGameMusic } from "./hooks/useGameMusic";
+import { initAudioListeners } from "./lib/sound";
 
 // App orchestrates the current phase of the game
 function App() {
@@ -23,6 +24,10 @@ function App() {
 
   useGameSounds();
   useGameMusic();
+
+  useEffect(() => {
+    return initAudioListeners();
+  }, []);
 
   const isJoinScreen = !roomId || !myName;
 
